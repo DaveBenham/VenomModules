@@ -58,11 +58,11 @@ jobs:
           pluginversion=`jq -r '.version' plugin.json`
           echo "Set plugin version from $pluginversion to $pluginversion-$gitrev"
           cat <<< `jq --arg VERSION "$pluginversion-$gitrev" '.version=$VERSION' plugin.json` > plugin.json
-      - name: Initialize CodeQL
-        if: runner.os == 'Linux'
-        uses: github/codeql-action/init@v2
-        with:
-          languages: ${{ matrix.language }}
+      # - name: Initialize CodeQL
+      #   if: runner.os == 'Linux'
+      #   uses: github/codeql-action/init@v2
+      #   with:
+      #     languages: ${{ matrix.language }}
       - name: Build plugin
         run: |
           ${{ matrix.config.prepare-os }}
@@ -75,9 +75,9 @@ jobs:
         with:
           path: dist
           name: ${{ matrix.config.name }}
-      - name: Perform CodeQL Analysis
-        if: runner.os == 'Linux'
-        uses: github/codeql-action/analyze@v2
+      # - name: Perform CodeQL Analysis
+      #   if: runner.os == 'Linux'
+      #   uses: github/codeql-action/analyze@v2
 
   publish:
     name: Publish plugin
