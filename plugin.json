@@ -1,0 +1,24 @@
+{
+  "slug": "VenomModules",
+  "name": "VenomModules",
+  "version": "2.0.0",
+  "license": "GPL-3.0-or-later",
+  "brand": "VenomModules",
+  "author": "David Venom & Andrew Hanson",
+  "authorEmail": "",
+  "authorUrl": "",
+  "pluginUrl": "https://github.com/DaveBenham/VenomModules",
+  "manualUrl": "https://github.com/DaveBenham/VenomModules",
+  "sourceUrl": "https://github.com/DaveBenham/VenomModules",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+  	{
+      "slug": "RandomRhythmGenerator1",
+      "name": "RandomRhythmGenerator1",
+      "description": "",
+      "manualUrl": "",
+      "tags": []
+    }
+  ]
+}
