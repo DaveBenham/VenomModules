@@ -5,7 +5,7 @@
 #define MAX_PATTERN_LENGTH 16
 #define MAX_UNIT64 18446744073709551615ul
 
-static const std::string SLIDER_LABELS[SLIDER_COUNT] = {
+static const std::vector<std::string> SLIDER_LABELS = {
 	"1/4",
 	"1/8",
 	"1/16",
@@ -32,6 +32,7 @@ struct RandomRhythmGenerator1 : Module {
 		ENUMS(DENSITY_PARAM, SLIDER_COUNT),
 		NEW_SEED_BUTTON_PARAM,
 		PATERN_LENGTH_PARAM,
+		ENUMS(RATE_PARAM, SLIDER_COUNT),
 		PARAMS_LEN
 	};
 	enum InputId {
@@ -75,7 +76,9 @@ struct RandomRhythmGenerator1 : Module {
 		configParam(PATERN_LENGTH_PARAM, 1, MAX_PATTERN_LENGTH, 4, "Pattern Length");
 
 		for(int si = 0; si < SLIDER_COUNT; si++){
-			configParam(DENSITY_PARAM + si, 0.f, 10.f, 0.f, SLIDER_LABELS[si] + " density", " V");
+			std::string si_s = std::to_string(si+1);
+			configSwitch(RATE_PARAM + si, 0, 7, si, "Rate " + si_s, SLIDER_LABELS);
+			configParam(DENSITY_PARAM + si, 0.f, 10.f, 0.f, "Density " + si_s, " V");
 			configOutput(GATE_OUTPUT + si, SLIDER_LABELS[si] + " gate");
 		}
 
@@ -138,7 +141,9 @@ struct RandomRhythmGenerator1 : Module {
 					}
 				}
 
-				int gateLength = GATE_LENGTH[si];
+				int rate = static_cast<int>(params[RATE_PARAM + si].getValue());
+
+				int gateLength = GATE_LENGTH[rate];
 				bool gateCheck = currentPulse % gateLength == 0;
 				if(gateCheck){
 					float rndFloat = ((rng() >> 32) * 2.32830629e-10f) * 10.f;
@@ -187,6 +192,21 @@ struct RandomRhythmGenerator1 : Module {
 
 
 struct RandomRhythmGenerator1Widget : ModuleWidget {
+
+	struct RateSwitch : app::SvgSwitch {
+		RateSwitch() {
+			shadow->opacity = 0.0;
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_0.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_1.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_2.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_3.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_4.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_5.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_6.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_7.svg")));
+		}
+	};
+
 	RandomRhythmGenerator1Widget(RandomRhythmGenerator1* module) {
 		setModule(module);
 		setPanel(createPanel(asset::plugin(pluginInstance, "res/Blank26hp.svg")));
@@ -221,6 +241,7 @@ struct RandomRhythmGenerator1Widget : ModuleWidget {
 		
 		for(int si = 0; si < SLIDER_COUNT; si++){
 			y = yStart;
+			addParam(createParamCentered<RateSwitch>(Vec(x,y), module, RandomRhythmGenerator1::RATE_PARAM + si));
 			y += dy * 2;
 			addParam(createParamCentered<VCVSlider>(Vec(x,y), module, RandomRhythmGenerator1::DENSITY_PARAM + si));
 			y += dy * 2;
