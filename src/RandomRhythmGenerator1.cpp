@@ -39,6 +39,8 @@ struct RandomRhythmGenerator1 : Module {
 		BAR_LENGTH_PARAM,
 		LINEAR_GATE_PARAM,
 		OFFBEAT_GATE_PARAM,
+		ENUMS(MODE_CHANNEL_PARAM, SLIDER_COUNT),
+		XOR_MODE_PARAM,
 		PARAMS_LEN
 	};
 	enum InputId {
@@ -52,6 +54,7 @@ struct RandomRhythmGenerator1 : Module {
 		RUN_GATE_INPUT,
 		LINEAR_GATE_INPUT,
 		OFFBEAT_GATE_INPUT,
+		XOR_MODE_INPUT,
 		INPUTS_LEN
 	};
 	enum OutputId {
@@ -59,6 +62,8 @@ struct RandomRhythmGenerator1 : Module {
 		SEED_OUTPUT,
 		GATE_POLY_OUTPUT,
 		BAR_OUTPUT,
+		GATE_OR_OUTPUT,
+		GATE_XOR_OUTPUT,
 		OUTPUTS_LEN
 	};
 	enum LightId {
@@ -66,6 +71,7 @@ struct RandomRhythmGenerator1 : Module {
 		RUN_GATE_LIGHT,
 		LINEAR_GATE_LIGHT,
 		OFFBEAT_GATE_LIGHT,
+		XOR_MODE_LIGHT,
 		LIGHTS_LEN
 	};
 
@@ -75,6 +81,7 @@ struct RandomRhythmGenerator1 : Module {
 	bool runGateActive;
 	bool linearModeActive;
 	bool offbeatModeActive;
+	bool xorModeActive;
 
 	//Non Persistant State
 
@@ -92,6 +99,8 @@ struct RandomRhythmGenerator1 : Module {
 	bool linearModeTrigHigh;
 	bool offbeatModeBtnHigh;
 	bool offbeatModeTrigHigh;
+	bool xorModeBtnHigh;
+	bool xorModeTrigHigh;
 	int gateHigh [SLIDER_COUNT];
 
 	RandomRhythmGenerator1() {
@@ -116,9 +125,15 @@ struct RandomRhythmGenerator1 : Module {
 		configButton(OFFBEAT_GATE_PARAM, "Offbeat Mode");
 		configInput(OFFBEAT_GATE_INPUT,"Offbeat Mode");
 
+		configButton(XOR_MODE_PARAM, "XOR Mode");
+		configInput(XOR_MODE_INPUT,"XOR Mode");
+		configOutput(GATE_XOR_OUTPUT,"XOR Output");
+
+		configOutput(GATE_OR_OUTPUT,"OR Output");
+
 		configParam(PATERN_LENGTH_PARAM, 1, MAX_PATTERN_LENGTH, 4, "Pattern Length");
 		configParam(BAR_LENGTH_PARAM, 1, MAX_PATTERN_LENGTH, 4, "Bar Length");
-		configOutput(SEED_OUTPUT,"Bar Output");
+		configOutput(BAR_OUTPUT,"Bar Output");
 
 		for(int si = 0; si < SLIDER_COUNT; si++){
 			std::string si_s = std::to_string(si+1);
@@ -127,6 +142,7 @@ struct RandomRhythmGenerator1 : Module {
 			configOutput(GATE_OUTPUT + si, "Gate " + si_s);
 			configInput(DENSITY_CHANNEL_INPUT + si, "Density CV" + si_s);
 			configSwitch(MUTE_CHANNEL_PARAM + si, 0, 1 , 0, "Mute " + si_s, {"Off","On"});
+			configSwitch(MODE_CHANNEL_PARAM + si, 0, 2 , 2, "Mode " + si_s, {"None","Linear","Offbeat"});
 		}
 		configInput(DENSITY_CHANNEL_POLY_INPUT,"Density Poly CV");
 
@@ -142,9 +158,10 @@ struct RandomRhythmGenerator1 : Module {
 		currentPulse = 0;
 		currentCycle = 0;
 		rng = {};
-		runGateActive = false;
+		runGateActive = true;
 		linearModeActive = false;
 		offbeatModeActive = false;
+		xorModeActive = false;
 		clockHigh = false;
 		resetTrigHigh = false;
 		resetBtnHigh = false;
@@ -156,9 +173,12 @@ struct RandomRhythmGenerator1 : Module {
 		linearModeTrigHigh = false;
 		offbeatModeBtnHigh = false;
 		offbeatModeTrigHigh = false;
+		xorModeBtnHigh = false;
+		xorModeTrigHigh = false;
 		memset(gateHigh, 0, sizeof(gateHigh));
 		internalSeed = rack::random::uniform() * 10.f;
 		reseedRng();
+		updateLights();
 	}
 
 	json_t *dataToJson() override{
@@ -168,6 +188,7 @@ struct RandomRhythmGenerator1 : Module {
 		json_object_set_new(jobj, "runGateActive", json_bool(runGateActive));
 		json_object_set_new(jobj, "linearModeActive", json_bool(linearModeActive));
 		json_object_set_new(jobj, "offbeatModeActive", json_bool(offbeatModeActive));
+		json_object_set_new(jobj, "xorModeActive", json_bool(xorModeActive));
 		
 
 		return jobj;
@@ -179,9 +200,17 @@ struct RandomRhythmGenerator1 : Module {
 		runGateActive = json_is_true(json_object_get(jobj, "runGateActive"));
 		linearModeActive = json_is_true(json_object_get(jobj, "linearModeActive"));
 		offbeatModeActive = json_is_true(json_object_get(jobj, "offbeatModeActive"));
+		xorModeActive = json_is_true(json_object_get(jobj, "xorModeActive"));
+
+		reseedRng();
+		updateLights();
+	}
+
+	void updateLights(){
 		lights[RUN_GATE_LIGHT].setBrightness(runGateActive ? 1 : 0);
 		lights[LINEAR_GATE_LIGHT].setBrightness(linearModeActive ? 1 : 0);
 		lights[OFFBEAT_GATE_LIGHT].setBrightness(offbeatModeActive ? 1 : 0);
+		lights[XOR_MODE_LIGHT].setBrightness(xorModeActive ? 1 : 0);
 	}
 
 	void process(const ProcessArgs& args) override {		
@@ -193,7 +222,7 @@ struct RandomRhythmGenerator1 : Module {
 		if(buttonTrigger(resetBtnHigh,params[RESET_BUTTON_PARAM].getValue())) resetEvent = true;
 
 		bool newSeedEvent = false;
-		if(schmittTrigger(newSeedBtnHigh,inputs[NEW_SEED_TRIGGER_INPUT].getVoltage())) newSeedEvent = true;
+		if(schmittTrigger(newSeedTrigHigh,inputs[NEW_SEED_TRIGGER_INPUT].getVoltage())) newSeedEvent = true;
 		if(buttonTrigger(newSeedBtnHigh,params[NEW_SEED_BUTTON_PARAM].getValue())) newSeedEvent = true;
 
 		schmittTrigger(runGateTrigHigh,inputs[RUN_GATE_INPUT].getNormalVoltage(10));
@@ -207,17 +236,21 @@ struct RandomRhythmGenerator1 : Module {
 			linearModeActive = !linearModeActive;
 			lights[LINEAR_GATE_LIGHT].setBrightness(linearModeActive ? 1 : 0);
 		}
+		bool linearModeOn = linearModeActive == linearModeTrigHigh;
 
 		schmittTrigger(offbeatModeTrigHigh,inputs[OFFBEAT_GATE_INPUT].getNormalVoltage(10));
 		if(buttonTrigger(offbeatModeBtnHigh,params[OFFBEAT_GATE_PARAM].getValue())){
 			offbeatModeActive = !offbeatModeActive;
 			lights[OFFBEAT_GATE_LIGHT].setBrightness(offbeatModeActive ? 1 : 0);
 		}
+		bool offbeatModeOn = offbeatModeActive == offbeatModeTrigHigh;
 
-		//Supress clock events if runGate does not match theRunGatTrig
-		if(runGateActive != runGateTrigHigh){
-			clockEvent = false;
+		schmittTrigger(xorModeTrigHigh,inputs[XOR_MODE_INPUT].getNormalVoltage(10));
+		if(buttonTrigger(xorModeBtnHigh,params[XOR_MODE_PARAM].getValue())){
+			xorModeActive = !xorModeActive;
+			lights[XOR_MODE_LIGHT].setBrightness(xorModeActive ? 1 : 0);
 		}
+		bool xorModeOn = xorModeActive == xorModeTrigHigh;
 
 		bool newCycle = false;
 		bool endOfCycle = false;
@@ -235,14 +268,14 @@ struct RandomRhythmGenerator1 : Module {
 			internalSeed = rack::random::uniform() * 10.f;
 		}
 
-		if(clockEvent){
+		//Supress clock events if runGate does not match theRunGatTrig
+		if(clockEvent && runGateActive == runGateTrigHigh){
 			
 			//Bar Logic
 			{
 				int barLength = params[BAR_LENGTH_PARAM].getValue() * 12;
 				int barPart = currentPulse / barLength;
 				outputs[BAR_OUTPUT].setVoltage(barPart % 2 == 0 ? 10.f : 0.f);
-				DEBUG("currentPulse:%i barLength:%i barPart:%i",currentPulse,barLength,barPart);
 			}
 
 			currentPulse++;
@@ -252,6 +285,7 @@ struct RandomRhythmGenerator1 : Module {
 
 			bool linearModeShadow = false;
 			bool offbeatModeShadow = false;
+			int outGateCount = 0;
 			for(int si = 0; si < SLIDER_COUNT; si++){
 				if(gateHigh[si] > 0){
 					// DEBUG("gateHigh[%i] = %i",si,gateHigh[si]);
@@ -268,16 +302,24 @@ struct RandomRhythmGenerator1 : Module {
 				int gateLength = GATE_LENGTH[rate];
 				bool gateCheck = currentPulse % gateLength == 0;
 				if(gateCheck){
+					// uint64_t k = rng();
+					// uint32_t k2 = (k >> 32);
+					// float k3 = (k2 * 2.32830629e-10f);
 					float rndFloat = ((rng() >> 32) * 2.32830629e-10f) * 10.f;
 					rndFloat = inputs[RNG_OVERRIDE_INPUT].getNormalVoltage(rndFloat, si);
 					float threshold = params[DENSITY_PARAM + si].getValue();
 					threshold = inputs[DENSITY_CHANNEL_INPUT + si].getNormalVoltage(threshold);
 					threshold = inputs[DENSITY_CHANNEL_POLY_INPUT].getNormalVoltage(threshold, si);
 
+					if(si == 0) DEBUG("rndFloat:%f threshold:%f",rndFloat,threshold);
+					//if(si == 0) DEBUG("rndFloat:%f threshold:%f k:%llu k2:%u k3:%f",rndFloat,threshold,k,k2,k3);
+
 					bool modePermits = true;
 
-					if(offbeatModeActive && offbeatModeShadow) modePermits = false;
-					if(linearModeActive && linearModeShadow) modePermits = false;
+					int channelMode = (int)params[MODE_CHANNEL_PARAM + si].getValue();
+
+					if(channelMode >= 2 && offbeatModeOn && offbeatModeShadow) modePermits = false;
+					if(channelMode >= 1 && linearModeOn && linearModeShadow) modePermits = false;
 
 					if(modePermits){
 						offbeatModeShadow = true;
@@ -287,11 +329,18 @@ struct RandomRhythmGenerator1 : Module {
 								outputs[GATE_OUTPUT + si].setVoltage(10.f);
 								outputs[GATE_POLY_OUTPUT].setVoltage(10.f, si);
 								gateHigh[si] = gateLength / 2;
+								outGateCount ++;
 							}
 						}
 					}
 				}	
 			}
+
+			//Or Output
+			outputs[GATE_OR_OUTPUT].setVoltage(outGateCount > 0 ? 10.f : 0.f);
+
+			//Xor Output
+			outputs[GATE_XOR_OUTPUT].setVoltage((xorModeOn ? (outGateCount == 1) : (outGateCount % 2 == 1)) ? 10.f : 0.f);
 		}
 
 		if(newCycle){
@@ -348,6 +397,15 @@ struct RandomRhythmGenerator1Widget : ModuleWidget {
 			shadow->opacity = 0.0;
 			addFrame(Svg::load(asset::plugin(pluginInstance,"res/mute_0.svg")));
 			addFrame(Svg::load(asset::plugin(pluginInstance,"res/mute_1.svg")));
+		}
+	};
+
+	struct ModeSwitch : app::SvgSwitch {
+		ModeSwitch() {
+			shadow->opacity = 0.0;
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_0.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_1.svg")));
+			addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_2.svg")));
 		}
 	};
 
@@ -415,7 +473,9 @@ struct RandomRhythmGenerator1Widget : ModuleWidget {
 			y += dy;
 			addOutput(createOutputCentered<PJ3410Port>(Vec(x,y), module, RandomRhythmGenerator1::GATE_OUTPUT + si));
 			y += dy;
-			addParam(createParamCentered<MuteSwitch>(Vec(x,y), module, RandomRhythmGenerator1::MUTE_CHANNEL_PARAM + si));			
+			addParam(createParamCentered<MuteSwitch>(Vec(x,y), module, RandomRhythmGenerator1::MUTE_CHANNEL_PARAM + si));
+			y += dy;
+			addParam(createParamCentered<ModeSwitch>(Vec(x,y), module, RandomRhythmGenerator1::MODE_CHANNEL_PARAM + si));
 
 			x += dx;
 		}
@@ -432,6 +492,19 @@ struct RandomRhythmGenerator1Widget : ModuleWidget {
 			addChild(createLightCentered<MediumLight<BlueLight>>(Vec(x,y), module, RandomRhythmGenerator1::PATERN_STEP_LIGHT + li));
 			x += dx * 0.5f;
 		}
+
+		x = xStart + dx * 3;
+		y = yStart + dy * 10;
+
+		addOutput(createOutputCentered<PJ3410Port>(Vec(x,y), module, RandomRhythmGenerator1::GATE_OR_OUTPUT));
+		x += dx;
+		x += dx;
+		addOutput(createOutputCentered<PJ3410Port>(Vec(x,y), module, RandomRhythmGenerator1::GATE_XOR_OUTPUT));
+		x += dx;
+		addParam(createParamCentered<VCVButton>(Vec(x,y), module, RandomRhythmGenerator1::XOR_MODE_PARAM));
+		addChild(createLightCentered<VCVBezelLight<GreenLight>>(Vec(x,y), module, RandomRhythmGenerator1::XOR_MODE_LIGHT));
+		x += dx;
+		addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RandomRhythmGenerator1::XOR_MODE_INPUT));
 
 	}
 
