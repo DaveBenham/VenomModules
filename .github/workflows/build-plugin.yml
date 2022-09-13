@@ -17,7 +17,7 @@ jobs:
         config:        
         - {
             name: Linux,
-            os: ubuntu-18.04,
+            os: ubuntu-22.04,
             prepare-os: sudo apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages update,
             prepare-os2: sudo apt install -y libglu-dev,
             postfix: lin
