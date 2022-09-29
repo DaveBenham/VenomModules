@@ -31,7 +31,7 @@ struct RandomRhythmGenerator1 : Module {
 	enum ParamId {
 		ENUMS(DENSITY_PARAM, SLIDER_COUNT),
 		NEW_SEED_BUTTON_PARAM,
-		PATERN_LENGTH_PARAM,
+		BAR_COUNT_PARAM,
 		ENUMS(RATE_PARAM, SLIDER_COUNT),
 		RESET_BUTTON_PARAM,
 		ENUMS(MUTE_CHANNEL_PARAM, SLIDER_COUNT),
@@ -61,9 +61,12 @@ struct RandomRhythmGenerator1 : Module {
 		ENUMS(GATE_OUTPUT, SLIDER_COUNT),
 		SEED_OUTPUT,
 		GATE_POLY_OUTPUT,
-		BAR_OUTPUT,
+		START_OF_MEASURE_OUTPUT,
 		GATE_OR_OUTPUT,
 		GATE_XOR_OUTPUT,
+		GATE_XOR_ODD_OUTPUT,
+		GATE_XOR_ONE_OUTPUT,
+		START_OF_CYCLE_OUTPUT,
 		OUTPUTS_LEN
 	};
 	enum LightId {
@@ -127,13 +130,16 @@ struct RandomRhythmGenerator1 : Module {
 
 		configButton(XOR_MODE_PARAM, "XOR Mode");
 		configInput(XOR_MODE_INPUT,"XOR Mode");
-		configOutput(GATE_XOR_OUTPUT,"XOR Output");
+		configOutput(GATE_XOR_OUTPUT,"XOR");
 
-		configOutput(GATE_OR_OUTPUT,"OR Output");
+		configOutput(GATE_OR_OUTPUT,"OR");
+		configOutput(GATE_XOR_ODD_OUTPUT,"XOR Odd Parity");
+		configOutput(GATE_XOR_ONE_OUTPUT,"XOR 1 Hot");
 
-		configParam(PATERN_LENGTH_PARAM, 1, MAX_PATTERN_LENGTH, 4, "Pattern Length");
+		configParam(BAR_COUNT_PARAM, 1, MAX_PATTERN_LENGTH, 4, "Bar Count");
 		configParam(BAR_LENGTH_PARAM, 1, MAX_PATTERN_LENGTH, 4, "Bar Length");
-		configOutput(BAR_OUTPUT,"Bar Output");
+		configOutput(START_OF_MEASURE_OUTPUT,"Start of Measure");
+		configOutput(START_OF_CYCLE_OUTPUT,"Start of Cycle");
 
 		for(int si = 0; si < SLIDER_COUNT; si++){
 			std::string si_s = std::to_string(si+1);
@@ -145,6 +151,7 @@ struct RandomRhythmGenerator1 : Module {
 			configSwitch(MODE_CHANNEL_PARAM + si, 0, 2 , 2, "Mode " + si_s, {"None","Linear","Offbeat"});
 		}
 		configInput(DENSITY_CHANNEL_POLY_INPUT,"Density Poly CV");
+		configOuptut(GATE_POLY_OUTPUT, "Gate Poly");
 
 		initalize();
 	}
@@ -271,12 +278,12 @@ struct RandomRhythmGenerator1 : Module {
 		//Supress clock events if runGate does not match theRunGatTrig
 		if(clockEvent && runGateActive == runGateTrigHigh){
 			
-			//Bar Logic
-			{
-				int barLength = params[BAR_LENGTH_PARAM].getValue() * 12;
-				int barPart = currentPulse / barLength;
-				outputs[BAR_OUTPUT].setVoltage(barPart % 2 == 0 ? 10.f : 0.f);
-			}
+			// //Bar Logic
+			// {
+			// 	int barLength = params[BAR_LENGTH_PARAM].getValue() * 12;
+			// 	int barPart = currentPulse / barLength;
+			// 	outputs[BAR_OUTPUT].setVoltage(barPart % 2 == 0 ? 10.f : 0.f);
+			// }
 
 			currentPulse++;
 			if(currentPulse % 24 == 0){
@@ -341,16 +348,22 @@ struct RandomRhythmGenerator1 : Module {
 
 			//Xor Output
 			outputs[GATE_XOR_OUTPUT].setVoltage((xorModeOn ? (outGateCount == 1) : (outGateCount % 2 == 1)) ? 10.f : 0.f);
+			outputs[GATE_XOR_ODD_OUTPUT].setVoltage((outGateCount % 2 == 1) ? 10.f : 0.f);
+			outputs[GATE_XOR_ONE_OUTPUT].setVoltage((outGateCount == 1) ? 10.f : 0.f);
 		}
 
 		if(newCycle){
 			currentCycle++;
-			int maxCycle = params[PATERN_LENGTH_PARAM].getValue();
+			int maxMeasure = params[BAR_COUNT_PARAM].getValue();
+			int barLength = params[BAR_LENGTH_PARAM].getValue();
+			int maxCycle = maxMeasure * barLength;
 			if(currentCycle >= maxCycle){
 				currentCycle = 0;
 				currentPulse = 0;
 				endOfCycle = true;
 			}
+			outputs[START_OF_CYCLE_OUTPUT].setVoltage(currentCycle == 0 ? 10.f : 0.f);
+			outputs[START_OF_MEASURE_OUTPUT].setVoltage(currentCycle % barLength == 0 ? 10.f : 0.f);
 		}
 
 		if(endOfCycle){
@@ -444,10 +457,11 @@ struct RandomRhythmGenerator1Widget : ModuleWidget {
 		addChild(createLightCentered<VCVBezelLight<GreenLight>>(Vec(x,y), module, RandomRhythmGenerator1::RUN_GATE_LIGHT));
 		addInput(createInputCentered<PJ301MPort>(Vec(x + dx,y), module, RandomRhythmGenerator1::RUN_GATE_INPUT));
 		y += dy;
-		addParam(createParamCentered<RotarySwitch<RoundSmallBlackKnob>>(Vec(x,y), module, RandomRhythmGenerator1::PATERN_LENGTH_PARAM));
+		addParam(createParamCentered<RotarySwitch<RoundSmallBlackKnob>>(Vec(x,y), module, RandomRhythmGenerator1::BAR_COUNT_PARAM));
+		addOutput(createOutputCentered<PJ3410Port>(Vec(x + dx,y), module, RandomRhythmGenerator1::START_OF_CYCLE_OUTPUT));
 		y += dy;
 		addParam(createParamCentered<RotarySwitch<RoundSmallBlackKnob>>(Vec(x,y), module, RandomRhythmGenerator1::BAR_LENGTH_PARAM));
-		addOutput(createOutputCentered<PJ3410Port>(Vec(x + dx,y), module, RandomRhythmGenerator1::BAR_OUTPUT));
+		addOutput(createOutputCentered<PJ3410Port>(Vec(x + dx,y), module, RandomRhythmGenerator1::START_OF_MEASURE_OUTPUT));
 		y += dy;
 		addParam(createParamCentered<VCVButton>(Vec(x,y), module, RandomRhythmGenerator1::LINEAR_GATE_PARAM));
 		addChild(createLightCentered<VCVBezelLight<GreenLight>>(Vec(x,y), module, RandomRhythmGenerator1::LINEAR_GATE_LIGHT));
@@ -497,6 +511,10 @@ struct RandomRhythmGenerator1Widget : ModuleWidget {
 		y = yStart + dy * 10;
 
 		addOutput(createOutputCentered<PJ3410Port>(Vec(x,y), module, RandomRhythmGenerator1::GATE_OR_OUTPUT));
+		x += dx;
+		addOutput(createOutputCentered<PJ3410Port>(Vec(x,y), module, RandomRhythmGenerator1::GATE_XOR_ONE_OUTPUT));
+		x += dx;
+		addOutput(createOutputCentered<PJ3410Port>(Vec(x,y), module, RandomRhythmGenerator1::GATE_XOR_ODD_OUTPUT));
 		x += dx;
 		x += dx;
 		addOutput(createOutputCentered<PJ3410Port>(Vec(x,y), module, RandomRhythmGenerator1::GATE_XOR_OUTPUT));
