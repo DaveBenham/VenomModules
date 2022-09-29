@@ -151,7 +151,7 @@ struct RandomRhythmGenerator1 : Module {
 			configSwitch(MODE_CHANNEL_PARAM + si, 0, 2 , 2, "Mode " + si_s, {"None","Linear","Offbeat"});
 		}
 		configInput(DENSITY_CHANNEL_POLY_INPUT,"Density Poly CV");
-		configOuptut(GATE_POLY_OUTPUT, "Gate Poly");
+		configOutput(GATE_POLY_OUTPUT, "Gate Poly");
 
 		initalize();
 	}
