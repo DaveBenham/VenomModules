@@ -25,7 +25,7 @@ Each input is summed with the corresponding OFFSET value. The OFFSETS are bipola
 - **CLAMP** = A clamped to within B +/- TOL
 - **OVER** = The overflow (positive or negative) from the CLAMP operation, computed as A - CLAMP.
 - **A==B** = This gate is high if A is within B +/- TOL. OVER will be 0V when A==B is high. Computed as |A-B| <= |T|
-- **A<>B** = This gate is high if A is not within B +/- TOL. OVER will be non-zero when A<>B is high. Comuted as |A-B| > |T|
+- **A<>B** = This gate is high if A is not within B +/- TOL. OVER will be non-zero when A<>B is high. Computed as |A-B| > |T|
 - **A<=B** = This gate is high if A is less than or equal to B +/- TOL. Computed as A < B + |T|
 - **A>=B** = This gate is high if A is greater than or equal to B +/- TOL. Computed as A > B - |T|
 - **A<B** = This gate is high if A is less than B +/- TOL. Computed as A < B - |T|
