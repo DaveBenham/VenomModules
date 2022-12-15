@@ -54,7 +54,7 @@ All outputs are 0V if the module is bypassed.
 
 ## RECURSE
 
-Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes available to less than 16 for each input channel.
+Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes available to less than 16 for each input channel. There are no limits placed on any of the inputs or outputs.
 
 #### Recursion Count knob and display
 
