@@ -59,10 +59,10 @@ struct BernoulliSwitch : Module {
     configParam<ModeQuantity>(MODE_PARAM, 0.f, 2.0f, 1.0f, "Probability Mode", "");
     configParam(RISE_PARAM, -10.f, 10.f, 1.f, "Rise Threshold", " V");
     configParam(FALL_PARAM, -10.f, 10.f, 0.1f, "Fall Threshold", " V");
-    configParam(OFFSET_A_PARAM, -10.f, 10.f, 0.f, "Offset A", " V");
-    configParam(OFFSET_B_PARAM, -10.f, 10.f, 0.f, "Offset B", " V");
-    configParam(SCALE_A_PARAM, -1.f, 1.f, 1.f, "Scale A", "");
-    configParam(SCALE_B_PARAM, -1.f, 1.f, 1.f, "Scale B", "");
+    configParam(OFFSET_A_PARAM, -10.f, 10.f, 0.f, "A Offset", " V");
+    configParam(OFFSET_B_PARAM, -10.f, 10.f, 0.f, "B Offset", " V");
+    configParam(SCALE_A_PARAM, -1.f, 1.f, 1.f, "A Scale", "");
+    configParam(SCALE_B_PARAM, -1.f, 1.f, 1.f, "B Scale", "");
     configInput(A_INPUT, "A");
     configInput(B_INPUT, "B");
     configInput(TRIG_INPUT, "Trigger");
