@@ -2,6 +2,7 @@
 Venom VCV Rack Modules
 
 ## WINCOMP
+![WINCOMP module image](./doc/WinComp.PNG)  
 A windowed comparator inspired by the VCV Fundamental COMPARE module, based on specs originally proposed at 
 https://community.vcvrack.com/t/vcv-compare-gates-logic-and-process/17828/17?u=davevenom.
 
@@ -53,7 +54,7 @@ A glowing red light in the upper right corner indicates the output has the inver
 All outputs are 0V if the module is bypassed.
 
 ## RECURSE
-
+![RECURSE module image](./doc/Recurse.PNG)  
 Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes available to less than 16 for each input channel. There are no limits placed on any of the inputs or outputs.
 
 #### Recursion Count knob and display
@@ -97,7 +98,7 @@ Since the Return is normalled to the Send, it is possible to generate a polyphon
 The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND will be monophonic 0V.
 
 ## BERNOULLI SWITCH
-
+![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
 doc in progress
 
 
