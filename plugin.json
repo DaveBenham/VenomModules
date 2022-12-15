@@ -13,12 +13,55 @@
   "donateUrl": "",
   "changelogUrl": "",
   "modules": [
-  	{
+    {
+      "slug": "BernoulliSwitch",
+      "name": "BernoulliSwitch",
+      "description": "Randomly route two inputs to two outputs, with built in scaling and offset capabilities",
+      "manualUrl": "",
+      "tags": [
+        "Polyphonic",
+        "Utility",
+        "Random",
+        "Switch"
+      ]
+    },
+    {
+      "slug": "Recurse",
+      "name": "Recurse",
+      "description": "Recursively process an input with built in scaling and offset cababilities",
+      "manualUrl": "",
+      "tags": [
+        "Polyphonic",
+        "Utility",
+        "Ring modulator"
+      ]
+    },
+    {
       "slug": "RandomRhythmGenerator1",
       "name": "RandomRhythmGenerator1",
       "description": "",
       "manualUrl": "",
       "tags": []
+    },
+    {
+      "slug": "VenomVCO",
+      "name": "VCO",
+      "description": "Voltage controlled oscillator with true through-zero FM and 0Hz carrier mode",
+      "manualURL": "",
+      "tags": [
+        "Oscillator"
+      ]
+    },
+    {
+      "slug": "WinComp",
+      "name": "WinComp",
+      "description": "Windowed comparator and rectifier",
+      "tags": [
+        "Logic",
+        "Polyphonic",
+        "Utility",
+        "Waveshaper"
+      ]
     }
   ]
 }
