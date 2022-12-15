@@ -24,12 +24,12 @@ Each input is summed with the corresponding OFFSET value. The OFFSETS are bipola
 - **MAX** = Maximum output - the instantaneous maximum of the A and B inputs. TOL does not affect MAX.
 - **CLAMP** = A clamped to within B +/- TOL
 - **OVER** = The overflow (positive or negative) from the CLAMP operation, computed as A - CLAMP.
-- **A==B** = This gate is high if A is within B +/- TOL. OVER will be 0V when A==B is high. Computed as |A-B| <= |T|
-- **A<>B** = This gate is high if A is not within B +/- TOL. OVER will be non-zero when A<>B is high. Computed as |A-B| > |T|
-- **A<=B** = This gate is high if A is less than or equal to B +/- TOL. Computed as A < B + |T|
-- **A>=B** = This gate is high if A is greater than or equal to B +/- TOL. Computed as A > B - |T|
-- **A<B** = This gate is high if A is less than B +/- TOL. Computed as A < B - |T|
-- **A>B** = This gate is high if A is greater than B +/- TOL. Computed as A > B + |T|
+- **A==B** = This gate is high if A is within B +/- TOL. OVER will be 0V when A==B is high. Computed as |A-B| <= |TOL|
+- **A<>B** = This gate is high if A is not within B +/- TOL. OVER will be non-zero when A<>B is high. Computed as |A-B| > |TOL|
+- **A<=B** = This gate is high if A is less than or equal to B +/- TOL. Computed as A < B + |TOL|
+- **A>=B** = This gate is high if A is greater than or equal to B +/- TOL. Computed as A > B - |TOL|
+- **A<B** = This gate is high if A is less than B +/- TOL. Computed as A < B - |TOL|
+- **A>B** = This gate is high if A is greater than B +/- TOL. Computed as A > B + |TOL|
 
 Each gate output has a small light in the upper right corner that glows yellow when the gate is high and the ouput is monophonic.
 The light glows blue if the output is polyphonic and at least one channel is high.
