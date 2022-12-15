@@ -115,8 +115,8 @@ struct BernoulliSwitch : Module {
       lightOff = false;
     }
     for (int c=0; c<channels; c++){
-      float prob = inputs[PROB_INPUT].getVoltage(c)/10.f + probOff;
-      float trigIn = inputs[TRIG_INPUT].getVoltage(c);
+      float prob = inputs[PROB_INPUT].getPolyVoltage(c)/10.f + probOff;
+      float trigIn = inputs[TRIG_INPUT].getPolyVoltage(c);
       float inA = inputs[A_INPUT].getNormalPolyVoltage(trigIn, c) * scaleA + offA;
       float inB = inputs[B_INPUT].getPolyVoltage(c) * scaleB + offB;
       if (trig[c].process(invTrig ? -trigIn : trigIn, fall, rise)){
