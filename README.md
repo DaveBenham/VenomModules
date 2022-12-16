@@ -110,7 +110,7 @@ The actual routing event is controlled by the unlabeled 3 position sliding switc
 
 The module generally responds to a leading edge transition from low to high of the TRIG input. The RISE knob sets the threshold for a transition to high, and the FALL knob sets the threshold for a transition to low. By default the RISE is set to 1V, and the FALL to 0.1V. If currently low, then a TRIG input >= the RISE threshold transistions to HIGH. The input remains high until the input falls below the FALL threshold, upon which it returns to a low state.
 
-If the RISE threshold is less than the FALL threshold, then the roles are reversed, and the Bernoullie Switch is triggered by a trailing transition from high to low. If using GATE mode, the routing will always have a swapped configuration whenever the input is high, and the configuration may switch to no-swap upon transition to low.
+If the RISE threshold is less than the FALL threshold, then the roles are reversed, and the Bernoulli Switch is triggered by a trailing transition from high to low. If using GATE mode, the routing will always have a swapped configuration whenever the input is high, and the configuration may switch to no-swap upon transition to low.
 
 A pair of yellow lights indicate the current routing configuration. A yellow light glowing to the left of the PROB knob indicates a no-swap configuration. A glowing yellow light to the right indicates a swap configuration.
 
