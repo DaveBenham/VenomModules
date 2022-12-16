@@ -71,7 +71,7 @@ The Input is the signal to be recursively processed, and the result is sent to t
 
 The Send output and Return input channel count can be computed as input channels x recursion count. The maximum number of input channels is the integral division of 16 / recursion count. Input channels that exceed the computed maximum are dropped.
 
-If there are 3 input channels and a recursion count of 5, then Send/Return channels 1-5 will be for input channel 1, 6-10 for input channel 2, and 11-15 for input channel 3.
+If there are 3 input channels and a recursion count of 5, then Send/Return channels 1-5 will be for input channel 1, 6-10 for input channel 2, and 11-15 for input channel 3. If the recursion count is bumped up to 6 while the input channel count remains 3, then Send/Return channels 1-6 are assigned to channel 1, 7-12 channel 2, and channel 3 is dropped because there are not enough channels remaining to complete 6 recursive passes.
 
 The Return input is normalled to the Send output.
 
