@@ -47,7 +47,7 @@
       "slug": "VenomVCO",
       "name": "VCO",
       "description": "Voltage controlled oscillator with true through-zero FM and 0Hz carrier mode",
-      "manualURL": "https://github.com/DaveBenham/VenomModules#VCO",
+      "manualURL": "https://github.com/DaveBenham/VenomModules#vco",
       "tags": [
         "Oscillator"
       ]
