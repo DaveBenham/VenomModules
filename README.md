@@ -99,6 +99,21 @@ The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND w
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
-doc in progress
+Randomly route two inputs to two outputs. Upon receiving a trigger or gate, a virtual coin toss determines if input A goes to output A and B to B (no-swap), or if A goes to B and B to A (swap). Each input can be attenuated and/or inverted by a bipolar SCALE knob ranging from -1 to 1, and offset by an OFFSET knob, ranging from -10 to 10. The A input is normalled to the TRIG input and the B input is normalled to 0V, so if both inputs are left unpatched, the Bernoulli Switch will function a "traditional" Bernoulli Gate. A "latched" mode may be achieved by leaving the B input at 0V and setting the A input SCALE to 0 and the A OFFSET to 10V.
 
+The PROB knob and PROB input determine the probability that a particular routing operation will occur. If there is no PROB input, then a fully counterclockwise PROB knob yields a 0% chance of the the routing event, and fully clockwise is 100% chance. The range is linear, with 50% at noon. The probability can be modulated by bipolar PROB input, with each volt equating to 10% chance.
 
+The actual routing event is controlled by the unlabeled 3 position sliding switch, with the following possible values:
+- **TOGGLE**: The probability is the chance that the routing will toggle from the current routing to the opposite. If currently swapped, then a positive result will switch to un-swapped. If currently unswapped, then a positive result will switch to swapped. A negative result yields no change.
+- **SWAP**: The probabiliy is the chance that the routing will be set to swapped, regardless of the current routing. A positive result yields a swapped routing, a negative result yields a no-swap routing. 
+- **GATE**: The routing is always in a swap configuration whenever the TRIG input is low. Upon transition to high, a positive coin toss results in a no-swap routing throughout the TRIG high state. A negative result remains in a swap configuration.
+
+The module generally responds to a leading edge transition from low to high of the TRIG input. The RISE knob sets the threshold for a transition to high, and the FALL knob sets the threshold for a transition to low. By default the RISE is set to 1V, and the FALL to 0.1V. If currently low, then a TRIG input >= the RISE threshold transistions to HIGH. The input remains high until the input falls below the FALL threshold, upon which it returns to a low state.
+
+If the RISE threshold is less than the FALL threshold, then the roles are reversed, and the Bernoullie Switch is triggered by a trailing transition from high to low. If using GATE mode, the routing will always have a swapped configuration whenever the input is high, and the configuration may switch to no-swap upon transition to low.
+
+A pair of yellow lights indicate the current routing configuration. A yellow light glowing to the left of the PROB knob indicates a no-swap configuration. A glowing yellow light to the right indicates a swap configuration.
+
+Bernoulli Switch is fully polyphonic. The number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels will get 0V for the missing channels. Each channel gets its own independent coin toss, even if driven by a monophonic TRIG input.
+
+The yellow lights only monitor a single channel, channel one by default. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of output channels, then the yellow lights will remain dark - no monitoring will be done.
