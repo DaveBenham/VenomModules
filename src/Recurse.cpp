@@ -46,10 +46,10 @@ struct Recurse : Module {
         Recurse* module = reinterpret_cast<Recurse*>(this->module);
         int val = static_cast<int>(module->params[Recurse::TIMING_PARAM].getValue());
         switch (val) {
-          case 0: return "Before 1st send";
-          case 1: return "Before all sends";
-          case 2: return "After all returns";
-          case 3: return "After last return";
+          case 0: return "0 = Before 1st send";
+          case 1: return "1 = Before all sends";
+          case 2: return "2 = After all returns";
+          case 3: return "3 = After last return";
           default: return "Error";
         };
       }

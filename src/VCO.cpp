@@ -65,8 +65,19 @@ struct VCO : Module {
   dsp::SchmittTrigger resetTrigger;
 
   VCO() {
+    struct OctaveQuantity : ParamQuantity {
+      std::string getDisplayValueString() override {
+        VCO* module = reinterpret_cast<VCO*>(this->module);
+        int val = static_cast<int>(module->params[VCO::OCT_PARAM].getValue()) - 4;
+        if (val == -1)
+          return "-1 = 0Hz Carrier";
+        else
+          return std::to_string(val);
+      }
+    };
     config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-    configParam(OCT_PARAM, 3, 13, 8, "Octave", "", 0.f, 1.f, -4.f);
+//    configParam<OctaveQuantity>(OCT_PARAM, 3, 13, 8, "Octave", "", 0.f, 1.f, -4.f);
+    configParam<OctaveQuantity>(OCT_PARAM, 3, 13, 8, "Octave", "");
     configParam(PITCH_PARAM, -5, 5, 0, "V/Oct", " Volt");
     configParam(PW_PARAM, 0.01, 0.99, 0.5, "Pulse Width", "%", 0.f, 100.f, 0.f);
     configParam(EXP_FM_PARAM, -1.0, 1.0, 0.0, "Exp. FM");
@@ -237,27 +248,27 @@ void VCO::process(const ProcessArgs &args) {
 struct VCOWidget : ModuleWidget {
   VCOWidget(VCO *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Panels/VCO.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/VCO.svg")));
 
-    addParam(createParam<kHzKnobSnap>(Vec(36, 40), module, VCO::OCT_PARAM));
+    addParam(createParam<RoundBigBlackKnobSnap>(Vec(38, 40), module, VCO::OCT_PARAM));
 
-    addParam(createParam<kHzKnobSmall>(Vec(16, 112), module, VCO::PITCH_PARAM));
-    addParam(createParam<kHzKnobSmall>(Vec(72, 112), module, VCO::PW_PARAM));
+    addParam(createParam<RoundLargeBlackKnob>(Vec(14.0, 110.0), module, VCO::PITCH_PARAM));
+    addParam(createParam<RoundLargeBlackKnob>(Vec(70, 110), module, VCO::PW_PARAM));
 
-    addParam(createParam<kHzKnobSmall>(Vec(16, 168), module, VCO::EXP_FM_PARAM));
-    addParam(createParam<kHzKnobSmall>(Vec(72, 168), module, VCO::LIN_FM_PARAM));
+    addParam(createParam<RoundLargeBlackKnob>(Vec(14, 166), module, VCO::EXP_FM_PARAM));
+    addParam(createParam<RoundLargeBlackKnob>(Vec(70, 166), module, VCO::LIN_FM_PARAM));
 
-    addInput(createInput<kHzPort>(Vec(10, 234), module, VCO::EXP_FM_INPUT));
-    addInput(createInput<kHzPort>(Vec(47, 234), module, VCO::V_OCT_INPUT));
-    addInput(createInput<kHzPort>(Vec(84, 234), module, VCO::LIN_FM_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(10, 234), module, VCO::EXP_FM_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(47, 234), module, VCO::V_OCT_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(84, 234), module, VCO::LIN_FM_INPUT));
 
-    addInput(createInput<kHzPort>(Vec(10, 276), module, VCO::RESET_INPUT));
-    addOutput(createOutput<kHzPort>(Vec(47, 276), module, VCO::SAW_OUTPUT));
-    addInput(createInput<kHzPort>(Vec(84, 276), module, VCO::PWM_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(10, 276), module, VCO::RESET_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(47, 276), module, VCO::SAW_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(84, 276), module, VCO::PWM_INPUT));
 
-    addOutput(createOutput<kHzPort>(Vec(10, 318), module, VCO::SQR_OUTPUT));
-    addOutput(createOutput<kHzPort>(Vec(47, 318), module, VCO::TRI_OUTPUT));
-    addOutput(createOutput<kHzPort>(Vec(84, 318), module, VCO::SIN_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(10, 318), module, VCO::SQR_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(47, 318), module, VCO::TRI_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(84, 318), module, VCO::SIN_OUTPUT));
 
   }
 };
