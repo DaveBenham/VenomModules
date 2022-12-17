@@ -153,7 +153,7 @@ struct CountDisplay : ChannelDisplay {
 struct RecurseWidget : ModuleWidget {
   RecurseWidget(Recurse* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/Recurse.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, "res/Recurse3.svg")));
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 39.8)));
     countDisplay->box.size = mm2px(Vec(8.197, 8.197));
     countDisplay->module = module;

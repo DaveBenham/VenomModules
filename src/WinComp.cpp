@@ -301,7 +301,7 @@ struct WinComp : Module {
 struct WinCompWidget : ModuleWidget {
   WinCompWidget(WinComp* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/WinComp.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, "res/WinComp3.svg")));
 
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 15.93)), module, WinComp::A_INPUT));
     addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 15.93)), module, WinComp::A_PARAM));
