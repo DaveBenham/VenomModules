@@ -140,7 +140,7 @@ I have adapted the code with the following improvements:
 - Added pulse width modulation, with an attempt to eliminate DC offset
 - Added a -1 octave which runs at 0Hz so the VCO can be used conveniently as a 0 Hz carrier for linear FM. In this mode, the Pitch knob and V/Oct input serve to bias the 0 Hz carrier, giving motion to the FM
 - Modified the phase relationships between the waveforms to better suit some of my patching needs.
-- Not an improvement - but I swapped in stock components for the 21kHz knobs and ports. I still need to work on the faceplate layout.
+- Not an improvement - but I swapped in stock components for the 21kHz knobs and ports. I still need to work on the faceplate layout. For example, I need to add a PWM attenuverter.
 
 Current Bugs:
 - Triangle antialising works just fine until it reaches ~1/4 the Nyquist frequency, at which point all hell breaks loose. I've tested at multiple sample rates, and there is definitely something going on with the math, but I do not understand the polyBLAMP, so I don't know how to fix it. The breakdowns occur at:
