@@ -1,5 +1,8 @@
 # VenomModules
 Venom VCV Rack Modules
+|[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[VCO](#vco)|
+|----|----|----|----|
+|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![VCO module image](./doc/VCO.PNG)|
 
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
