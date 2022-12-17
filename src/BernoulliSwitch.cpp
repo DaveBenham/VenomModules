@@ -137,10 +137,12 @@ struct BernoulliSwitch : Module {
           lights[SWAP_LIGHT].setBrightness(swap[c]);
         }
       }
-      if (c == lightChannel && mode == GATE_MODE && !swap[c] && !trig[c].isHigh()) {
+      if (mode == GATE_MODE && !swap[c] && !trig[c].isHigh()) {
         swap[c] = true;
-        lights[NO_SWAP_LIGHT].setBrightness(false);
-        lights[SWAP_LIGHT].setBrightness(true);
+        if (c == lightChannel){
+          lights[NO_SWAP_LIGHT].setBrightness(false);
+          lights[SWAP_LIGHT].setBrightness(true);
+        }
       }
       outputs[A_OUTPUT].setVoltage( swap[c] ? inB : inA, c);
       outputs[B_OUTPUT].setVoltage( swap[c] ? inA : inB, c);
