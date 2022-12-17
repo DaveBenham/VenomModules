@@ -69,13 +69,23 @@ struct DigitalDisplay : Widget {
   }
 };
 
-
-struct ChannelDisplay : DigitalDisplay {
-  ChannelDisplay() {
+struct DigitalDisplay18 : DigitalDisplay {
+  DigitalDisplay18() {
     fontPath = asset::system("res/fonts/DSEG7ClassicMini-BoldItalic.ttf");
     textPos = Vec(22, 20);
     bgText = "18";
     fontSize = 16;
+    box.size = mm2px(Vec(8.197, 8.197));
+  }
+};
+
+struct DigitalDisplay188 : DigitalDisplay {
+  DigitalDisplay188() {
+    fontPath = asset::system("res/fonts/DSEG7ClassicMini-BoldItalic.ttf");
+    textPos = Vec(33.5, 20);
+    bgText = "188";
+    fontSize = 16;
+    box.size = mm2px(Vec(12, 8.197));
   }
 };
 

@@ -136,7 +136,7 @@ struct Recurse : Module {
 
 };
 
-struct CountDisplay : ChannelDisplay {
+struct CountDisplay : DigitalDisplay18 {
   Recurse* module;
   void step() override {
     if (module) {
@@ -149,13 +149,11 @@ struct CountDisplay : ChannelDisplay {
   }
 };
 
-
 struct RecurseWidget : ModuleWidget {
   RecurseWidget(Recurse* module) {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, "res/Recurse4.svg")));
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 39.8)));
-    countDisplay->box.size = mm2px(Vec(8.197, 8.197));
     countDisplay->module = module;
     addChild(countDisplay);
     addParam(createParamCentered<RoundSmallBlackKnobSnap>(mm2px(Vec(18.134, 43.87)), module, Recurse::COUNT_PARAM));
