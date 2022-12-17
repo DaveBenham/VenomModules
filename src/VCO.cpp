@@ -248,7 +248,7 @@ void VCO::process(const ProcessArgs &args) {
 struct VCOWidget : ModuleWidget {
   VCOWidget(VCO *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/VCO3.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/VCO5.svg")));
 
     addParam(createParam<RoundBigBlackKnobSnap>(Vec(38, 40), module, VCO::OCT_PARAM));
 
@@ -258,17 +258,17 @@ struct VCOWidget : ModuleWidget {
     addParam(createParam<RoundLargeBlackKnob>(Vec(14, 166), module, VCO::EXP_FM_PARAM));
     addParam(createParam<RoundLargeBlackKnob>(Vec(70, 166), module, VCO::LIN_FM_PARAM));
 
-    addInput(createInput<PJ301MPort>(Vec(10, 234), module, VCO::EXP_FM_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(47, 234), module, VCO::V_OCT_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(84, 234), module, VCO::LIN_FM_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(11, 234), module, VCO::EXP_FM_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(48, 234), module, VCO::V_OCT_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(85, 234), module, VCO::LIN_FM_INPUT));
 
-    addInput(createInput<PJ301MPort>(Vec(10, 276), module, VCO::RESET_INPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(47, 276), module, VCO::SAW_OUTPUT));
-    addInput(createInput<PJ301MPort>(Vec(84, 276), module, VCO::PWM_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(11, 276), module, VCO::RESET_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(48, 276), module, VCO::SAW_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(85, 276), module, VCO::PWM_INPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(10, 318), module, VCO::SQR_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(47, 318), module, VCO::TRI_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(84, 318), module, VCO::SIN_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(11, 318), module, VCO::SQR_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(48, 318), module, VCO::TRI_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(85, 318), module, VCO::SIN_OUTPUT));
 
   }
 };
