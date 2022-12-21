@@ -26,6 +26,16 @@
       ]
     },
     {
+      "slug": "HQ",
+      "name": "HQ",
+      "description": "Computes a selected harmonic or subharmonic partial relative to a root V/Oct, or quantizes input V/Oct to the nearest partial relative to the root",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules#hq",
+      "tags": [
+        "Polyphonic",
+        "Quantizer"
+      ]
+    },
+    {
       "slug": "Recurse",
       "name": "Recurse",
       "description": "Recursively process an input with built in scaling and offset cababilities",

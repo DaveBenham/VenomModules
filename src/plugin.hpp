@@ -9,6 +9,7 @@ extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
 extern Model* modelBernoulliSwitch;
+extern Model* modelHQ;
 extern Model* modelRandomRhythmGenerator1;
 extern Model* modelRecurse;
 extern Model* modelVCO;
@@ -127,6 +128,18 @@ struct RoundHugeBlackKnobSnap : RoundHugeBlackKnob {
 
 struct RoundBigBlackKnobSnap : RoundBigBlackKnob {
   RoundBigBlackKnobSnap() {
+    snap = true;
+  }
+};
+
+struct RoundLargeBlackKnobSnap : RoundLargeBlackKnob {
+  RoundLargeBlackKnobSnap() {
+    snap = true;
+  }
+};
+
+struct RoundBlackKnobSnap : RoundBlackKnob {
+  RoundBlackKnobSnap() {
     snap = true;
   }
 };

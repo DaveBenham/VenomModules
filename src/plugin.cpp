@@ -9,6 +9,7 @@ void init(Plugin* p) {
 
 	// Add modules here
 	p->addModel(modelBernoulliSwitch);
+	p->addModel(modelHQ);
 	p->addModel(modelRandomRhythmGenerator1);
         p->addModel(modelRecurse);
         p->addModel(modelVCO);
