@@ -54,24 +54,6 @@ struct HQ : Module {
     }
   }
 
-  void partialParamSetRange() {
-    ParamQuantity* q = getParamQuantity(HQ::PARTIAL_PARAM);
-    switch(static_cast<int>(params[SERIES_PARAM].getValue())){
-      case ALL:
-        q->minValue = ranges[range][0];
-        q->maxValue = ranges[range][1];
-        break;
-      case ODD:
-        q->minValue = ranges[range][0]/2;
-        q->maxValue = ranges[range][1]/2;
-        break;
-      case EVEN:
-        q->minValue = (ranges[range][0]+(ranges[range][0]<0 ? -1 : 1))/2;
-        q->maxValue = (ranges[range][1]+1)/2;
-        break;
-    }
-  }
-
   int monitor = 0;
   int monitorVal = 0;
   enum monitorEnum {MONITOR_OFF=999};
@@ -90,6 +72,24 @@ struct HQ : Module {
       return std::to_string(val + (val<0 ? -1 : 1));
     }
   };
+
+  void partialParamSetRange() {
+    ParamQuantity* q = getParamQuantity(HQ::PARTIAL_PARAM);
+    switch(static_cast<int>(params[SERIES_PARAM].getValue())){
+      case ALL:
+        q->minValue = ranges[range][0];
+        q->maxValue = ranges[range][1];
+        break;
+      case ODD:
+        q->minValue = ranges[range][0]/2;
+        q->maxValue = ranges[range][1]/2;
+        break;
+      case EVEN:
+        q->minValue = (ranges[range][0]+(ranges[range][0]<0 ? -1 : 1))/2;
+        q->maxValue = (ranges[range][1]+1)/2;
+        break;
+    }
+  }
 
   struct SeriesQuantity : ParamQuantity {
     std::string getDisplayValueString() override {
@@ -276,7 +276,7 @@ struct HQWidget : ModuleWidget {
     rangeLabels.push_back("-32 - 32");
     rangeLabels.push_back("-64 - 64");
     rangeLabels.push_back("-128 - 128");
-    menu->addChild(createIndexSubmenuItem("Harmonic Partial Range", rangeLabels,
+    menu->addChild(createIndexSubmenuItem("Partial Range", rangeLabels,
       [=]() {return module->range;},
       [=](int i) {
         module->range = i;
