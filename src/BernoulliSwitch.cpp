@@ -42,21 +42,9 @@ struct BernoulliSwitch : Module {
   bool lightOff = false;
 
   BernoulliSwitch() {
-    struct ModeQuantity : ParamQuantity {
-      std::string getDisplayValueString() override {
-        BernoulliSwitch* module = reinterpret_cast<BernoulliSwitch*>(this->module);
-        int val = static_cast<int>(module->params[BernoulliSwitch::MODE_PARAM].getValue());
-        switch (val) {
-          case 0: return "0 = Toggle";
-          case 1: return "1 = Swap";
-          case 2: return "2 = Gate";
-          default: return "Error";
-        };
-      }
-    };
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(PROB_PARAM, 0.f, 1.f, 0.5f, "Probability", "%", 0.f, 100.f, 0.f);
-    configParam<ModeQuantity>(MODE_PARAM, 0.f, 2.0f, 1.0f, "Probability Mode", "");
+    configSwitch(MODE_PARAM, 0, 2, 1, "Probability Mode", {"Toggle", "Swap", "Gate"});
     configParam(RISE_PARAM, -10.f, 10.f, 1.f, "Rise Threshold", " V");
     configParam(FALL_PARAM, -10.f, 10.f, 0.1f, "Fall Threshold", " V");
     configParam(OFFSET_A_PARAM, -10.f, 10.f, 0.f, "A Offset", " V");

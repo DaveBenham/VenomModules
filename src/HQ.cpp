@@ -66,10 +66,26 @@ struct HQ : Module {
   };
 
   struct PartialQuantity : ParamQuantity {
-    std::string getDisplayValueString() override {
+    float getDisplayValue() override {
       HQ* module = reinterpret_cast<HQ*>(this->module);
       int val = module->partialParamGetValue();
-      return std::to_string(val + (val<0 ? -1 : 1));
+      return val + (val<0 ? -1 : 1);
+    }
+    void setDisplayValue(float v) override {
+      HQ* module = reinterpret_cast<HQ*>(this->module);
+      int val = static_cast<int>(v);
+      switch (static_cast<int>(module->params[HQ::SERIES_PARAM].getValue())) {
+        case HQ::ALL:
+          val += val>0 ? -1 : val<0 ? 1 : 0;
+          break;
+        case HQ::ODD:
+          val = val>0 ? (val-1)/2 : val<0 ? (val+1)/2 : 0;
+          break;
+        case EVEN:
+          val = val>-2 && val<2 ? 0 : val/2;
+          break;
+      }
+      setValue(static_cast<float>(val));
     }
   };
 
@@ -91,22 +107,9 @@ struct HQ : Module {
     }
   }
 
-  struct SeriesQuantity : ParamQuantity {
-    std::string getDisplayValueString() override {
-      HQ* module = reinterpret_cast<HQ*>(this->module);
-      int val = static_cast<int>(module->params[HQ::SERIES_PARAM].getValue());
-      switch (val) {
-        case 0: return "0 = All";
-        case 1: return "1 = Odd";
-        case 2: return "2 = Even";
-        default: return "Error";
-      };
-    }
-  };
-
   HQ() {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-    configParam<SeriesQuantity>(SERIES_PARAM, 0.f, 2.0f, 0.0f, "Harmonic Series", "");
+    configSwitch(SERIES_PARAM, 0, 2, 0, "Harmonic Series", {"All", "Odd", "Even"});
     configParam<PartialQuantity>(PARTIAL_PARAM, ranges[range][0], ranges[range][1], 0.f, "Partial", "");
     configParam(CV_PARAM, -1.f, 1.f, 0.f, "CV", "%", 0.f, 100.f, 0.f);
     configInput(CV_INPUT, "CV");
@@ -115,13 +118,6 @@ struct HQ : Module {
     configOutput(OUT_OUTPUT, "V/Oct");
     configBypass(IN_INPUT, OUT_OUTPUT);
   }
-
-/*
-  void onReset() override {
-    recurCount = 1;
-    recurCountErr = false;
-  }
-*/
 
   void process(const ProcessArgs& args) override {
     int channels = std::max({ 1,
