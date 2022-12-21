@@ -1,7 +1,7 @@
 # VenomModules
 Venom VCV Rack Modules
-|[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[VCO](#vco)|
-|----|----|----|----|
+|[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[VCO](#vco)|
+|----|----|----|----|----|
 |![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![VCO module image](./doc/VCO.PNG)|
 
 ## WINCOMP
@@ -122,6 +122,46 @@ Bernoulli Switch is fully polyphonic. The number of output channels is set to th
 The yellow lights only monitor a single channel, channel one by default. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of output channels, then the yellow lights will remain dark - no monitoring will be done.
 
 Outputs are 0V when the module is bypassed.
+
+## Harmonic Quantizer
+![Harmonic Quantizer module image](./doc/HQ.PNG)  
+Computes a selected harmonic or subharmonic partial relative to a fundamental root V/Oct, or quantizes an input V/Oct to the nearest partial relative to the root.
+
+This module is fully polyphonic. The number of output channels is the maximum channel count found across all three inputs. Any monophonic input is replicated to match the output channel count. A polyphonic input with fewer channels uses 0V for any missing channels.
+
+#### Digital Display (unlabled)
+Displays the integral partial number that is currently being output for a single channel. A yellow value indicates a positive value, representing a true partial from the natural harmonic series. A red value indicates a negative value, representing a subharmonic.
+
+By default the display monitors channel 1. A different channel may be selected via the module context menu. The display will be blank if the selected channel is Off, or greater than the number of output channels.
+
+#### Harmonic Series switch (unlabled)
+Selects one of three possible series
+* A = All partials -  (default)
+* O = Odd partials
+* E = Even partials (includes the fundamental partial, even though it is odd)
+
+The output will be constrained to the selected series.
+
+#### Partial knob
+Selects a single integral partial number. By default the range is from 1 (fundamental) to 16 (4 octaves above the fundamental). The context menu allows selection of any one of the following ranges:
+* 1 - 16 (default
+* 1 - 32
+* 1 - 64
+* 1 - 128
+* -1 - 16
+* -1 - 32
+* -1 - 64
+* -1 - 128
+* -16 - 16
+* -32 - 32
+* -64 - 64
+* -128 - 128
+
+#### CV knob and input
+The bipolar CV input modulates the selected partial at a rate of 0.1V per partial. The input is attenuated and/or inverted by the CV knob. The resultant partial is clamped to within the currently active Partial range.
+
+#### ROOT input
+Establishes the fundamental V/Oct value (1st partial)
 
 ## VCO
 ### Incomplete - Work in progress
