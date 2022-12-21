@@ -2,7 +2,7 @@
 Venom VCV Rack Modules
 |[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[VCO](#vco)|
 |----|----|----|----|----|
-|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![VCO module image](./doc/VCO.PNG)|
+|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![VCO module image](./doc/VCO.PNG)|
 
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
