@@ -204,10 +204,10 @@ struct HQ : Module {
         out = root + (pround>=0.f ? partials[static_cast<int>(pround)].voct : -partials[-static_cast<int>(pround)].voct);
       }
       outputs[OUT_OUTPUT].setVoltage(out, c);
-      outputs[OUT_OUTPUT].setChannels(channels);
     }
     if (monitor >= channels)
       monitorVal = MONITOR_OFF;
+    outputs[OUT_OUTPUT].setChannels(channels);
   }
 
   json_t* dataToJson() override {
