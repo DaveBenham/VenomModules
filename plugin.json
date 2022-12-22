@@ -29,7 +29,7 @@
       "slug": "HQ",
       "name": "HQ - Harmonic Quantizer",
       "description": "Computes a selected harmonic or subharmonic partial relative to a root V/Oct, or quantizes input V/Oct to the nearest partial relative to the root",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules#hq",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules#harmonic-quantizer",
       "tags": [
         "Polyphonic",
         "Quantizer"
