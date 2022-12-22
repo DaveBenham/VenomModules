@@ -158,10 +158,22 @@ Selects a single integral partial number. By default the range is from 1 (fundam
 * -128 - 128
 
 #### CV knob and input
-The bipolar CV input modulates the selected partial at a rate of 0.1V per partial. The input is attenuated and/or inverted by the CV knob. The resultant partial is clamped to within the currently active Partial range.
+The bipolar CV input modulates the selected partial, adding or subtracting 1 partial for every 0.1 volt. The CV input is attenuated and/or inverted by the CV knob. The resultant partial is clamped to within the currently active Partial range.
+
+The Partial knob, CV knob, and CV input are all ignored if the IN input is patched (although the CV input can still modify the number of output channels).
 
 #### ROOT input
 Establishes the fundamental V/Oct value (1st partial)
+
+#### IN input
+If this port is patched, then the V/Oct input is quantized to the nearest harmonic or subharmonic partial relative to the ROOT input. The computation is clamped to within +/- 128 partials (+/- 7 octaves). The Partial knob, CV knob, and CV input are all ignored when quantizing IN input.
+
+#### OUT output
+The final computed partial is converted into a delta V/Oct and added to the ROOT to establish the final output V/Oct value.
+
+#### Bypass
+
+If HQ is bypassed, then the output is monophonic constant 0V.
 
 ## VCO
 ### Incomplete - Work in progress
