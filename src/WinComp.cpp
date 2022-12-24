@@ -175,26 +175,7 @@ struct WinComp : Module {
     outputs[LS_OUTPUT].setChannels(channels);
 
     if (lightDivider.process()) {
-//      float lightTime = args.sampleTime * lightDivider.getDivision();
-/*
-      lights[EQ_LIGHT + 0].setBrightnessSmooth(anyEq && channels <= 1, lightTime);
-      lights[EQ_LIGHT + 1].setBrightnessSmooth(anyEq && channels > 1, lightTime);
-
-      lights[NEQ_LIGHT + 0].setBrightnessSmooth(anyNeq && channels <= 1, lightTime);
-      lights[NEQ_LIGHT + 1].setBrightnessSmooth(anyNeq && channels > 1, lightTime);
-
-      lights[LSEQ_LIGHT + 0].setBrightnessSmooth(anyLsEq && channels <= 1, lightTime);
-      lights[LSEQ_LIGHT + 1].setBrightnessSmooth(anyLsEq && channels > 1, lightTime);
-
-      lights[GREQ_LIGHT + 0].setBrightnessSmooth(anyGrEq && channels <= 1, lightTime);
-      lights[GREQ_LIGHT + 1].setBrightnessSmooth(anyGrEq && channels > 1, lightTime);
-
-      lights[LS_LIGHT + 0].setBrightnessSmooth(anyLs && channels <= 1, lightTime);
-      lights[LS_LIGHT + 1].setBrightnessSmooth(anyLs && channels > 1, lightTime);
-
-      lights[GR_LIGHT + 0].setBrightnessSmooth(anyGr && channels <= 1, lightTime);
-      lights[GR_LIGHT + 1].setBrightnessSmooth(anyGr && channels > 1, lightTime);
-*/
+      float lightTime = args.sampleTime * lightDivider.getDivision();
       if (absMin != absMinOld) {
         absMinOld = absMin;
         lights[MIN_ABS_LIGHT].setBrightness(absMin);
@@ -212,7 +193,7 @@ struct WinComp : Module {
         invMaxOld = invMax;
         lights[MAX_INV_LIGHT].setBrightness(invMax);
       }
-      
+
       if (absClamp != absClampOld) {
         absClampOld = absClamp;
         lights[CLAMP_ABS_LIGHT].setBrightness(absClamp);
@@ -231,23 +212,23 @@ struct WinComp : Module {
         lights[OVER_INV_LIGHT].setBrightness(invOver);
       }
 
-      lights[EQ_LIGHT + 0].setBrightness(anyEq && channels <= 1);
-      lights[EQ_LIGHT + 1].setBrightness(anyEq && channels > 1);
+      lights[EQ_LIGHT + 0].setBrightnessSmooth(anyEq && channels <= 1, lightTime);
+      lights[EQ_LIGHT + 1].setBrightnessSmooth(anyEq && channels > 1, lightTime);
 
-      lights[NEQ_LIGHT + 0].setBrightness(anyNeq && channels <= 1);
-      lights[NEQ_LIGHT + 1].setBrightness(anyNeq && channels > 1);
+      lights[NEQ_LIGHT + 0].setBrightnessSmooth(anyNeq && channels <= 1, lightTime);
+      lights[NEQ_LIGHT + 1].setBrightnessSmooth(anyNeq && channels > 1, lightTime);
 
-      lights[LSEQ_LIGHT + 0].setBrightness(anyLsEq && channels <= 1);
-      lights[LSEQ_LIGHT + 1].setBrightness(anyLsEq && channels > 1);
+      lights[LSEQ_LIGHT + 0].setBrightnessSmooth(anyLsEq && channels <= 1, lightTime);
+      lights[LSEQ_LIGHT + 1].setBrightnessSmooth(anyLsEq && channels > 1, lightTime);
 
-      lights[GREQ_LIGHT + 0].setBrightness(anyGrEq && channels <= 1);
-      lights[GREQ_LIGHT + 1].setBrightness(anyGrEq && channels > 1);
+      lights[GREQ_LIGHT + 0].setBrightnessSmooth(anyGrEq && channels <= 1, lightTime);
+      lights[GREQ_LIGHT + 1].setBrightnessSmooth(anyGrEq && channels > 1, lightTime);
 
-      lights[LS_LIGHT + 0].setBrightness(anyLs && channels <= 1);
-      lights[LS_LIGHT + 1].setBrightness(anyLs && channels > 1);
+      lights[LS_LIGHT + 0].setBrightnessSmooth(anyLs && channels <= 1, lightTime);
+      lights[LS_LIGHT + 1].setBrightnessSmooth(anyLs && channels > 1, lightTime);
 
-      lights[GR_LIGHT + 0].setBrightness(anyGr && channels <= 1);
-      lights[GR_LIGHT + 1].setBrightness(anyGr && channels > 1);
+      lights[GR_LIGHT + 0].setBrightnessSmooth(anyGr && channels <= 1, lightTime);
+      lights[GR_LIGHT + 1].setBrightnessSmooth(anyGr && channels > 1, lightTime);
     }
   }
 
