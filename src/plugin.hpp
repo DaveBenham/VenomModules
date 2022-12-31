@@ -9,6 +9,7 @@ extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
 extern Model* modelBernoulliSwitch;
+extern Model* modelCVMix;
 extern Model* modelHQ;
 extern Model* modelRandomRhythmGenerator1;
 extern Model* modelRecurse;
