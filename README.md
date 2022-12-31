@@ -1,8 +1,8 @@
 # VenomModules
 Venom VCV Rack Modules
-|[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[VCO](#vco)<br />Incomplete|
-|----|----|----|----|----|
-|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![VCO module image](./doc/VCO.PNG)|
+|[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
+|----|----|----|----|----|----|
+|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![CVMIX module image](./doc/CVMIX.PNG)|![VCO module image](./doc/VCO.PNG)|
 
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
@@ -180,6 +180,17 @@ The final computed partial is converted into a delta V/Oct and added to the ROOT
 #### Bypass
 
 If HQ is bypassed, then the output is monophonic constant 0V.
+
+## CVMIX
+### Tentative
+![CVMIX module image](./doc/CVMIX.PNG)  
+This is simply a copy of the VCV Fundamental CV MIX module, except the knobs change scaling as follows:
+- unpatched = +/- 10V
+- patched = +/- 100%
+
+Also the faceplate has been changed to make the functionality a bit clearer
+
+I have requested these changes as enhancements to the Fundamental CV MIX module via Rack support. My version will only be released if Andrew declines to make the knob scaling enhancement.
 
 ## VCO
 ### Incomplete - Work in progress
