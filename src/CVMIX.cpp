@@ -1,6 +1,5 @@
 #include "plugin.hpp"
 
-
 using simd::float_4;
 
 struct CVMix : Module {
@@ -19,37 +18,24 @@ struct CVMix : Module {
   enum LightId {
     LIGHTS_LEN
   };
-  
-  bool isConnected[3];
+
+  dsp::ClockDivider paramDivider;
 
   CVMix() {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i = 0; i < 3; i++)
       configParam(LEVEL_PARAMS + i, -1.f, 1.f, 0.f, string::f("Level %d", i + 1), "V", 0, 10);
-
     for (int i = 0; i < 3; i++)
       configInput(CV_INPUTS + i, string::f("CV %d", i + 1));
-
     configOutput(MIX_OUTPUT, "Mix");
+    paramDivider.setDivision(2048);
   }
 
   void process(const ProcessArgs& args) override {
 
-    /** Set the level param units to either V or %, depending on whether a cable is connected. */
-    for (int i = 0; i < 3; i++) {
-      if (isConnected[i] != inputs[CV_INPUTS + i].isConnected()){
-        isConnected[i] = !isConnected[i];
-        ParamQuantity* pq = getParamQuantity(LEVEL_PARAMS + i);
-        if (isConnected[i]) {
-          pq->unit = "%";
-          pq->displayMultiplier = 100.f;
-        }
-        else {
-          pq->unit = "V";
-          pq->displayMultiplier = 10.f;
-        }
-      }
-    }
+    if (paramDivider.process())
+      refreshParamQuantities();
+
     if (!outputs[MIX_OUTPUT].isConnected())
       return;
 
@@ -75,9 +61,25 @@ struct CVMix : Module {
     }
     outputs[MIX_OUTPUT].setChannels(channels);
   }
+  
+  /** Set the level param units to either V or %, depending on whether a cable is connected. */
+  void refreshParamQuantities() {
+    for (int i = 0; i < 3; i++) {
+      ParamQuantity* pq = paramQuantities[LEVEL_PARAMS + i];
+      if (!pq)
+        continue;
+      if (inputs[CV_INPUTS + i].isConnected()) {
+        pq->unit = "%";
+        pq->displayMultiplier = 100.f;
+      }
+      else {
+        pq->unit = "V";
+        pq->displayMultiplier = 10.f;
+      }
+    }
+  }
 
 };
-
 
 struct CVMixWidget : ModuleWidget {
   CVMixWidget(CVMix* module) {
@@ -95,6 +97,5 @@ struct CVMixWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.62, 113.115)), module, CVMix::MIX_OUTPUT));
   }
 };
-
 
 Model* modelCVMix = createModel<CVMix, CVMixWidget>("CVMix");
