@@ -152,7 +152,7 @@ struct CountDisplay : DigitalDisplay18 {
 struct RecurseWidget : ModuleWidget {
   RecurseWidget(Recurse* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/Recurse4.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, "res/Recurse.svg")));
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 39.8)));
     countDisplay->module = module;
     addChild(countDisplay);

@@ -248,7 +248,7 @@ void VCO::process(const ProcessArgs &args) {
 struct VCOWidget : ModuleWidget {
   VCOWidget(VCO *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/VCO5.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/VCO.svg")));
 
     addParam(createParam<RoundBigBlackKnobSnap>(Vec(38, 40), module, VCO::OCT_PARAM));
 

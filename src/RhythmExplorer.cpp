@@ -135,7 +135,7 @@ struct RhythmExplorer : Module {
     configInput(CLOCK_INPUT,"Clock");
     configInput(NEW_SEED_TRIGGER_INPUT,"Dice Trigger");
     configInput(RESET_TRIGGER_INPUT,"Reset Trigger");
-    configInput(SEED_INPUT,"Seed Input");
+    configInput(SEED_INPUT,"Seed");
     configInput(RNG_OVERRIDE_INPUT,"Random Override");
     configOutput(SEED_OUTPUT,"Seed Output");
 

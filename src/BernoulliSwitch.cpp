@@ -164,7 +164,7 @@ struct BernoulliSwitch : Module {
 struct BernoulliSwitchWidget : ModuleWidget {
   BernoulliSwitchWidget(BernoulliSwitch* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/BernoulliSwitch5.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, "res/BernoulliSwitch.svg")));
     
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(5.0, 18.75)), module, BernoulliSwitch::NO_SWAP_LIGHT));
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(20.431, 18.75)), module, BernoulliSwitch::SWAP_LIGHT));
