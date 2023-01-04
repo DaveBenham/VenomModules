@@ -15,7 +15,7 @@
   "modules": [
     {
       "slug": "BernoulliSwitch",
-      "name": "BernoulliSwitch",
+      "name": "Bernoulli Switch",
       "description": "Randomly route two inputs to two outputs, with built in scaling and offset capabilities",
       "manualUrl": "https://github.com/DaveBenham/VenomModules#bernoulli-switch",
       "tags": [
@@ -59,11 +59,15 @@
       ]
     },
     {
-      "slug": "RandomRhythmGenerator1",
-      "name": "RandomRhythmGenerator1",
-      "description": "",
+      "slug": "RhythmExplorer",
+      "name": "Random Explorer",
+      "description": "Random rhythm generator, gate sequencer and clock divider",
       "manualUrl": "",
-      "tags": []
+      "tags": [
+        "Sequencer",
+        "Clock modulator",
+        "Random"
+      ]
     },
     {
       "slug": "VenomVCO",

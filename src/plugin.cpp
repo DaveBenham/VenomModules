@@ -11,7 +11,7 @@ void init(Plugin* p) {
 	p->addModel(modelBernoulliSwitch);
 	p->addModel(modelCVMix);
 	p->addModel(modelHQ);
-	p->addModel(modelRandomRhythmGenerator1);
+	p->addModel(modelRhythmExplorer);
         p->addModel(modelRecurse);
         p->addModel(modelVCO);
         p->addModel(modelWinComp);

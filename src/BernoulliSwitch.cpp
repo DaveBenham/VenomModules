@@ -1,5 +1,7 @@
 #include "plugin.hpp"
 
+#define LIGHT_OFF 0.02f
+
 struct BernoulliSwitch : Module {
   enum ParamId {
     PROB_PARAM,
@@ -136,7 +138,7 @@ struct BernoulliSwitch : Module {
           lights[SWAP_LIGHT].setBrightness(true);
         }
       }
-      lights[TRIG_LIGHT].setBrightness(manual);
+      lights[TRIG_LIGHT].setBrightness(manual ? 1.f : LIGHT_OFF);
       outputs[A_OUTPUT].setVoltage( swap[c] ? inB : inA, c);
       outputs[B_OUTPUT].setVoltage( swap[c] ? inA : inB, c);
     }

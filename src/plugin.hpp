@@ -11,7 +11,7 @@ extern Plugin* pluginInstance;
 extern Model* modelBernoulliSwitch;
 extern Model* modelCVMix;
 extern Model* modelHQ;
-extern Model* modelRandomRhythmGenerator1;
+extern Model* modelRhythmExplorer;
 extern Model* modelRecurse;
 extern Model* modelVCO;
 extern Model* modelWinComp;
