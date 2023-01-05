@@ -6,9 +6,8 @@
 #define MAX_UNIT64 18446744073709551615ul
 #define LIGHT_OFF 0.02f
 #define LIGHT_DIM 0.1f
-#define LIGHT_LOW 0.3f
 
-static const std::vector<std::string> SLIDER_LABELS = {
+static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/2",
   "1/4",
   "1/8",
@@ -19,6 +18,19 @@ static const std::vector<std::string> SLIDER_LABELS = {
   "1/8 Triplet",
   "1/16 Triplet",
   "1/32 Triplet"
+};
+
+static const std::vector<std::string> CHANNEL_MODE_LABELS = {
+  "All",
+  "Linear",
+  "Offbeat",
+  "Global Default"
+};
+
+static const std::vector<std::string> POLY_MODE_LABELS = {
+  "All",
+  "Linear",
+  "Offbeat"
 };
 
 static const int GATE_LENGTH [10] = {
@@ -44,8 +56,6 @@ struct RhythmExplorer : Module {
     ENUMS(MUTE_CHANNEL_PARAM, SLIDER_COUNT),
     RUN_GATE_PARAM,
     BAR_LENGTH_PARAM,
-    LINEAR_GATE_PARAM,
-    OFFBEAT_GATE_PARAM,
     ENUMS(MODE_CHANNEL_PARAM, SLIDER_COUNT),
     MODE_POLY_PARAM,
     MUTE_POLY_PARAM,
@@ -62,8 +72,6 @@ struct RhythmExplorer : Module {
     MODE_POLY_INPUT,
     NEW_SEED_TRIGGER_INPUT,
     RUN_GATE_INPUT,
-    LINEAR_GATE_INPUT,
-    OFFBEAT_GATE_INPUT,
     BAR_COUNT_INPUT,
     BAR_LENGTH_INPUT,
     INPUTS_LEN
@@ -91,23 +99,23 @@ struct RhythmExplorer : Module {
     NEW_SEED_LIGHT,
     RESET_LIGHT,
     RUN_GATE_LIGHT,
-    LINEAR_GATE_LIGHT,
-    OFFBEAT_GATE_LIGHT,
     LIGHTS_LEN
   };
 
+  enum Modes {
+    ALL_MODE,
+    LINEAR_MODE,
+    OFFBEAT_MODE,
+    GLOBAL_MODE
+  };
+  
   //Persistant State
-
   float internalSeed;
   bool runGateActive;
-  bool linearModeActive;
-  bool offbeatModeActive;
-  bool xorModeActive;
   bool channelMuteActive[SLIDER_COUNT];
   bool polyMuteActive;
 
   //Non Persistant State
-
   int currentPulse;
   int currentCycle;
   int currentBar;
@@ -119,15 +127,8 @@ struct RhythmExplorer : Module {
   bool newSeedTrigHigh;
   bool runGateBtnHigh;
   bool runGateTrigHigh;
-  bool linearModeBtnHigh;
-  bool linearModeTrigHigh;
-  bool offbeatModeBtnHigh;
-  bool offbeatModeTrigHigh;
-  bool xorModeBtnHigh;
-  bool xorModeTrigHigh;
   bool channelMuteHigh[SLIDER_COUNT];
   bool polyMuteHigh;
-  int gateHigh [SLIDER_COUNT];
 
   RhythmExplorer() {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -145,12 +146,6 @@ struct RhythmExplorer : Module {
     configButton(RUN_GATE_PARAM, "Run Gate");
     configInput(RUN_GATE_INPUT,"Run Gate");
 
-    configButton(LINEAR_GATE_PARAM, "Linear Gate");
-    configInput(LINEAR_GATE_INPUT,"Linear Gate");
-
-    configButton(OFFBEAT_GATE_PARAM, "Offbeat Mode");
-    configInput(OFFBEAT_GATE_INPUT,"Offbeat Mode");
-
     configOutput(GATE_OR_OUTPUT,"OR Trigger");
     configOutput(GATE_XOR_ODD_OUTPUT,"XOR Odd Parity Trigger");
     configOutput(GATE_XOR_ONE_OUTPUT,"XOR 1 Hot Trigger");
@@ -164,7 +159,7 @@ struct RhythmExplorer : Module {
 
     for(int si = 0; si < SLIDER_COUNT; si++){
       std::string si_s = std::to_string(si+1);
-      configSwitch(RATE_PARAM + si, 0, 9, si+1, "Rate " + si_s, SLIDER_LABELS);
+      configSwitch(RATE_PARAM + si, 0, 9, si+1, "Rate " + si_s, CHANNEL_DIVISION_LABELS);
       configParam(DENSITY_PARAM + si, 0.f, 10.f, 0.f, "Density " + si_s, " V");
       lights[DENSITY_LIGHT + si].setBrightness(LIGHT_DIM);
       configOutput(GATE_OUTPUT + si, "Gate " + si_s);
@@ -172,32 +167,29 @@ struct RhythmExplorer : Module {
       configInput(DENSITY_CHANNEL_INPUT + si, "Density CV " + si_s);
       configInput(MODE_CHANNEL_INPUT + si, "Mode CV " + si_s);
       configButton(MUTE_CHANNEL_PARAM + si, "Mute " + si_s);
-      configSwitch(MODE_CHANNEL_PARAM + si, 0, 3 , 0, "Mode " + si_s, {"All","Linear","Offbeat","Global Default"});
+      configSwitch(MODE_CHANNEL_PARAM + si, 0, 3 , 0, "Mode " + si_s, CHANNEL_MODE_LABELS);
     }
-    configSwitch(MODE_POLY_PARAM, 0, 2 , 0, "Global Mode", {"All","Linear","Offbeat"});
+    configSwitch(MODE_POLY_PARAM, 0, 2 , 0, "Global Mode", POLY_MODE_LABELS);
     configButton(MUTE_POLY_PARAM, "Global Mute");
     configInput(MODE_POLY_INPUT, "Global Mode CV");
     configInput(DENSITY_POLY_INPUT,"Density Poly CV");
     configOutput(CLOCK_POLY_OUTPUT, "Clock Poly");
     configOutput(GATE_POLY_OUTPUT, "Gate Poly");
 
-    initalize();
+    initialize();
   }
 
   void onReset(const ResetEvent& e) override {
     Module::onReset(e);
-    initalize();
+    initialize();
   }
 
-  void initalize(){
+  void initialize(){
     currentPulse = 0;
     currentCycle = 0;
     currentBar = 0;
     rng = {};
     runGateActive = true;
-    linearModeActive = false;
-    offbeatModeActive = false;
-    xorModeActive = false;
     clockHigh = false;
     resetTrigHigh = false;
     resetBtnHigh = false;
@@ -205,17 +197,10 @@ struct RhythmExplorer : Module {
     newSeedTrigHigh = false;
     runGateBtnHigh = false;
     runGateTrigHigh = false;
-    linearModeBtnHigh = false;
-    linearModeTrigHigh = false;
-    offbeatModeBtnHigh = false;
-    offbeatModeTrigHigh = false;
-    xorModeBtnHigh = false;
-    xorModeTrigHigh = false;
     for (int i=0; i<SLIDER_COUNT; i++)
       channelMuteHigh[i] = false;
     polyMuteHigh = false;
-    memset(gateHigh, 0, sizeof(gateHigh));
-    internalSeed = rack::random::uniform() * 10.f;
+    getSeed();
     reseedRng();
     updateLights();
   }
@@ -225,9 +210,6 @@ struct RhythmExplorer : Module {
 
     json_object_set_new(jobj, "internalSeed", json_real(internalSeed));
     json_object_set_new(jobj, "runGateActive", json_bool(runGateActive));
-    json_object_set_new(jobj, "linearModeActive", json_bool(linearModeActive));
-    json_object_set_new(jobj, "offbeatModeActive", json_bool(offbeatModeActive));
-    json_object_set_new(jobj, "xorModeActive", json_bool(xorModeActive));
     json_object_set_new(jobj, "channelMuteActive0", json_bool(channelMuteActive[0]));
     json_object_set_new(jobj, "channelMuteActive1", json_bool(channelMuteActive[1]));
     json_object_set_new(jobj, "channelMuteActive2", json_bool(channelMuteActive[2]));
@@ -245,9 +227,6 @@ struct RhythmExplorer : Module {
 
     internalSeed = json_real_value(json_object_get(jobj, "internalSeed"));
     runGateActive = json_is_true(json_object_get(jobj, "runGateActive"));
-    linearModeActive = json_is_true(json_object_get(jobj, "linearModeActive"));
-    offbeatModeActive = json_is_true(json_object_get(jobj, "offbeatModeActive"));
-    xorModeActive = json_is_true(json_object_get(jobj, "xorModeActive"));
     channelMuteActive[0] = json_is_true(json_object_get(jobj, "channelMuteActive0"));
     channelMuteActive[1] = json_is_true(json_object_get(jobj, "channelMuteActive1"));
     channelMuteActive[2] = json_is_true(json_object_get(jobj, "channelMuteActive2"));
@@ -264,8 +243,6 @@ struct RhythmExplorer : Module {
 
   void updateLights(){
     lights[RUN_GATE_LIGHT].setBrightness(runGateActive ? 1.f : LIGHT_OFF);
-    lights[LINEAR_GATE_LIGHT].setBrightness(linearModeActive ? 1.f : LIGHT_OFF);
-    lights[OFFBEAT_GATE_LIGHT].setBrightness(offbeatModeActive ? 1.f : LIGHT_OFF);
     for (int i=0; i<SLIDER_COUNT; i++)
       lights[MUTE_CHANNEL_LIGHT + i].setBrightness(channelMuteActive[i] ? 1.f : LIGHT_OFF);
     lights[MUTE_POLY_LIGHT].setBrightness(polyMuteActive ? 1.f : LIGHT_OFF);
@@ -277,7 +254,21 @@ struct RhythmExplorer : Module {
     bool newBar = false;
     bool newPhrase = false;
 
+    bool oldClockHigh = clockHigh;
     bool clockEvent = schmittTrigger(clockHigh,inputs[CLOCK_INPUT].getVoltage());
+    if (oldClockHigh && !clockHigh) { // clear triggers
+      outputs[GATE_OR_OUTPUT].setVoltage(0.f);
+      outputs[GATE_XOR_ODD_OUTPUT].setVoltage(0.f);
+      outputs[GATE_XOR_ONE_OUTPUT].setVoltage(0.f);
+      for (int i=0; i<SLIDER_COUNT; i++){
+        outputs[GATE_OUTPUT + i].setVoltage(0.f);
+        outputs[GATE_POLY_OUTPUT].setVoltage(0.f, i);
+        outputs[CLOCK_OUTPUT + i].setVoltage(0.f);
+        outputs[CLOCK_POLY_OUTPUT].setVoltage(0.f, i);
+        lights[DENSITY_LIGHT + i].setBrightness(LIGHT_DIM);
+      }
+    }
+
     bool resetEvent = false;
 
     if (inputs[RUN_GATE_INPUT].isConnected()) {
@@ -308,20 +299,6 @@ struct RhythmExplorer : Module {
     if(buttonTrigger(newSeedBtnHigh,params[NEW_SEED_BUTTON_PARAM].getValue())) newSeedEvent = true;
     lights[NEW_SEED_LIGHT].setBrightness(newSeedTrigHigh || newSeedBtnHigh ? 1.f : LIGHT_OFF);
 
-    schmittTrigger(linearModeTrigHigh,inputs[LINEAR_GATE_INPUT].getNormalVoltage(10));
-    if(buttonTrigger(linearModeBtnHigh,params[LINEAR_GATE_PARAM].getValue())){
-      linearModeActive = !linearModeActive;
-      lights[LINEAR_GATE_LIGHT].setBrightness(linearModeActive ? 1 : LIGHT_OFF);
-    }
-    bool linearModeOn = linearModeActive == linearModeTrigHigh;
-
-    schmittTrigger(offbeatModeTrigHigh,inputs[OFFBEAT_GATE_INPUT].getNormalVoltage(10));
-    if(buttonTrigger(offbeatModeBtnHigh,params[OFFBEAT_GATE_PARAM].getValue())){
-      offbeatModeActive = !offbeatModeActive;
-      lights[OFFBEAT_GATE_LIGHT].setBrightness(offbeatModeActive ? 1 : LIGHT_OFF);
-    }
-    bool offbeatModeOn = offbeatModeActive == offbeatModeTrigHigh;
-
     // Mutes
     for (int i=0; i<SLIDER_COUNT; i++) {
       if(buttonTrigger(channelMuteHigh[i],params[MUTE_CHANNEL_PARAM + i].getValue())) {
@@ -338,30 +315,23 @@ struct RhythmExplorer : Module {
     bool endOfCycle = false;
 
     outputs[GATE_POLY_OUTPUT].setChannels(8);
+    outputs[CLOCK_POLY_OUTPUT].setChannels(8);
 
     if(resetEvent){
       currentPulse = 0;
       currentCycle = 0;
       currentBar = 0;
       endOfCycle = true;
-      newSeedEvent = true;
       newBar = true;
       newPhrase = true;
     }
 
     if(newSeedEvent){
-      internalSeed = rack::random::uniform() * 10.f;
+      getSeed();
     }
 
     //Supress clock events if runGate does not match theRunGatTrig
     if(clockEvent && runGateActive){
-
-      // //Bar Logic
-      // {
-      //  int barLength = params[BAR_LENGTH_PARAM].getValue() * 12;
-      //  int barPart = currentPulse / barLength;
-      //  outputs[BAR_OUTPUT].setVoltage(barPart % 2 == 0 ? 10.f : 0.f);
-      // }
 
       if (!resetEvent)
         currentPulse++;
@@ -369,65 +339,67 @@ struct RhythmExplorer : Module {
         newCycle = true;
       }
 
-      bool linearModeShadow = false;
-      bool offbeatModeShadow = false;
+      bool linearChannelShadow = false;
+      bool linearGlobalShadow = false;
+      bool offbeatShadow = false;
       int outGateCount = 0;
       for(int si = 0; si < SLIDER_COUNT; si++){
-        if(gateHigh[si] > 0){
-          // DEBUG("gateHigh[%i] = %i",si,gateHigh[si]);
-          gateHigh[si]--;
-          if(gateHigh[si] == 0){
-            //Gate Low
-            outputs[GATE_OUTPUT + si].setVoltage(0.f);
-            outputs[GATE_POLY_OUTPUT].setVoltage(0.f, si);
-            lights[DENSITY_LIGHT + si].setBrightness(LIGHT_DIM);
-          }
-        }
+        int gateLength = GATE_LENGTH[ static_cast<int>(params[RATE_PARAM + si].getValue()) ];
+        if(currentPulse % gateLength == 0){
+          outputs[CLOCK_OUTPUT + si].setVoltage(10.f);
+          outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, si);
+          float rndFloat = (rng() >> 32) * 2.32830629e-9f;
+          rndFloat = rack::math::clamp(inputs[RNG_OVERRIDE_INPUT].getNormalPolyVoltage(rndFloat, si), 0.f, 10.f);
+          float threshold = rack::math::clamp(
+            rack::math::clamp(
+              params[DENSITY_PARAM + si].getValue()
+              + inputs[DENSITY_POLY_INPUT].getPolyVoltage(si),
+              0.f, 10.f
+            ) + inputs[DENSITY_CHANNEL_INPUT + si].getVoltage(),
+            0.f, 10.f
+          );
+          bool thresholdMet = rndFloat < threshold;
 
-        int rate = static_cast<int>(params[RATE_PARAM + si].getValue());
+          int globalMode = rack::math::clamp(
+            static_cast<int>(
+              inputs[MODE_POLY_INPUT].getNormalPolyVoltage(
+                params[MODE_POLY_PARAM].getValue(),
+                si
+              )
+            ),
+            0,2
+          );
+          int channelMode = rack::math::clamp(
+            static_cast<int>(
+              inputs[MODE_CHANNEL_INPUT + si].getNormalPolyVoltage(
+                params[MODE_CHANNEL_PARAM + si].getValue(),
+                si
+              )
+            ),
+            0,3
+          );
+          if (channelMode == GLOBAL_MODE)
+            channelMode = globalMode;
 
-        int gateLength = GATE_LENGTH[rate];
-        bool gateCheck = currentPulse % gateLength == 0;
-        if(gateCheck){
-          // uint64_t k = rng();
-          // uint32_t k2 = (k >> 32);
-          // float k3 = (k2 * 2.32830629e-10f);
-          float rndFloat = ((rng() >> 32) * 2.32830629e-10f) * 10.f;
-          rndFloat = inputs[RNG_OVERRIDE_INPUT].getNormalVoltage(rndFloat, si);
-          float threshold = params[DENSITY_PARAM + si].getValue();
-          threshold = inputs[DENSITY_CHANNEL_INPUT + si].getNormalVoltage(threshold);
-          threshold = inputs[DENSITY_POLY_INPUT].getNormalVoltage(threshold, si);
-
-          if(si == 0) DEBUG("rndFloat:%f threshold:%f",rndFloat,threshold);
-          //if(si == 0) DEBUG("rndFloat:%f threshold:%f k:%llu k2:%u k3:%f",rndFloat,threshold,k,k2,k3);
-
-          bool modePermits = true;
-
-          int channelMode = (int)params[MODE_CHANNEL_PARAM + si].getValue();
-
-          if(channelMode >= 2 && offbeatModeOn && offbeatModeShadow) modePermits = false;
-          if(channelMode >= 1 && linearModeOn && linearModeShadow) modePermits = false;
-
-          if(modePermits){
-            offbeatModeShadow = true;
-            if(rndFloat < threshold){
-              linearModeShadow = true;
-              if(!channelMuteActive[si] && !polyMuteActive){
+          if (thresholdMet) {
+            if (channelMode == ALL_MODE || (channelMode == LINEAR_MODE && !linearChannelShadow) || (channelMode == OFFBEAT_MODE && !offbeatShadow)){
+              linearChannelShadow = true;
+              if (!channelMuteActive[si] && !polyMuteActive) {
                 outputs[GATE_OUTPUT + si].setVoltage(10.f);
                 outputs[GATE_POLY_OUTPUT].setVoltage(10.f, si);
                 lights[DENSITY_LIGHT + si].setBrightness(1.f);
-                gateHigh[si] = gateLength / 2;
-                outGateCount ++;
               }
             }
+            if (!polyMuteActive && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
+              linearGlobalShadow = true;
+              outGateCount++;
+            }
           }
+          offbeatShadow = true;
         }
       }
 
-      //Or Output
       outputs[GATE_OR_OUTPUT].setVoltage(outGateCount > 0 ? 10.f : 0.f);
-
-      //Xor Output
       outputs[GATE_XOR_ODD_OUTPUT].setVoltage((outGateCount % 2 == 1) ? 10.f : 0.f);
       outputs[GATE_XOR_ONE_OUTPUT].setVoltage((outGateCount == 1) ? 10.f : 0.f);
 
@@ -441,13 +413,14 @@ struct RhythmExplorer : Module {
       if (currentCycle >= maxBar){
         newBar = true;
         currentCycle = 0;
-        if (++currentBar >= maxPhrase){
-          currentPulse = 0;
-          currentBar = 0;
-          endOfCycle = true;
-          newPhrase = true;
-        }
+        currentBar++;
       }
+    }
+    if (currentBar >= maxPhrase){
+      currentPulse = 0;
+      currentBar = 0;
+      endOfCycle = true;
+      newPhrase = true;
     }
     outputs[START_OF_PHRASE_OUTPUT].setVoltage(newPhrase ? 10.f : 0.f);
     outputs[START_OF_BAR_OUTPUT].setVoltage(newBar ? 10.f : 0.f);
@@ -470,14 +443,21 @@ struct RhythmExplorer : Module {
 
     outputs[SEED_OUTPUT].setVoltage(internalSeed);
   }
+  
+  void getSeed(){
+    internalSeed = inputs[SEED_INPUT].isConnected() ? rack::math::clamp(inputs[SEED_INPUT].getVoltage(), 0.f, 10.f) : rack::math::clamp(rack::random::uniform() * 10.f, 1e-19f, 10.f);
+    if (internalSeed < 1e-19f)
+      internalSeed = 0.f;
+  }
 
   void reseedRng(){
-    float seed = inputs[SEED_INPUT].getNormalVoltage(internalSeed);
-    float seed1 = seed / 10.f;
-    float seed2 = std::fmod(seed,1.f);
-    uint64_t s1 = seed1 * MAX_UNIT64;
-    uint64_t s2 = seed2 * MAX_UNIT64;
-    rng.seed(s1, s2);
+    if (internalSeed > 0.f) {
+      float seed1 = internalSeed / 10.f;
+      float seed2 = std::fmod(internalSeed,1.f);
+      uint64_t s1 = seed1 * MAX_UNIT64;
+      uint64_t s2 = seed2 * MAX_UNIT64;
+      rng.seed(s1, s2);
+    }
   }
 };
 
@@ -564,16 +544,6 @@ struct RhythmExplorerWidget : ModuleWidget {
     addParam(createLightParamCentered<VCVBezelLightBigWhite>(Vec(x,y), module, RhythmExplorer::RESET_BUTTON_PARAM, RhythmExplorer::RESET_LIGHT));
     y += dy + dy;
     addParam(createLightParamCentered<VCVBezelLightBigWhite>(Vec(x,y), module, RhythmExplorer::RUN_GATE_PARAM, RhythmExplorer::RUN_GATE_LIGHT));
-    y += dy + dy;
-    addParam(createParamCentered<VCVButton>(Vec(x,y), module, RhythmExplorer::LINEAR_GATE_PARAM));
-    addChild(createLightCentered<VCVBezelLight<GreenLight>>(Vec(x,y), module, RhythmExplorer::LINEAR_GATE_LIGHT));
-    y += dy;
-    addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::LINEAR_GATE_INPUT));
-    y += dy;
-    addParam(createParamCentered<VCVButton>(Vec(x,y), module, RhythmExplorer::OFFBEAT_GATE_PARAM));
-    addChild(createLightCentered<VCVBezelLight<GreenLight>>(Vec(x,y), module, RhythmExplorer::OFFBEAT_GATE_LIGHT));
-    y += dy;
-    addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::OFFBEAT_GATE_INPUT));
 
     x = xStart + dx * 2.5f;
     y = yStart + dy * 3.5f;
@@ -647,9 +617,9 @@ struct RhythmExplorerWidget : ModuleWidget {
     x += dx * 1.5f;
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_OR_OUTPUT));
     x += dx;
-    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ONE_OUTPUT));
-    x += dx;
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ODD_OUTPUT));
+    x += dx;
+    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ONE_OUTPUT));
     x += dx * 1.5f;
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::SEED_OUTPUT));
 
