@@ -6,6 +6,7 @@
 #define MAX_UNIT64 18446744073709551615ul
 #define LIGHT_OFF 0.02f
 #define LIGHT_DIM 0.1f
+#define LIGHT_FADE 5e-6f
 
 static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/2",
@@ -129,6 +130,8 @@ struct RhythmExplorer : Module {
   bool runGateTrigHigh;
   bool channelMuteHigh[SLIDER_COUNT];
   bool polyMuteHigh;
+  bool densityLightOn[SLIDER_COUNT];
+  dsp::ClockDivider lightDivider;
 
   RhythmExplorer() {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -175,6 +178,8 @@ struct RhythmExplorer : Module {
     configInput(DENSITY_POLY_INPUT,"Density Poly CV");
     configOutput(CLOCK_POLY_OUTPUT, "Clock Poly");
     configOutput(GATE_POLY_OUTPUT, "Gate Poly");
+    
+    lightDivider.setDivision(32);
 
     initialize();
   }
@@ -197,8 +202,10 @@ struct RhythmExplorer : Module {
     newSeedTrigHigh = false;
     runGateBtnHigh = false;
     runGateTrigHigh = false;
-    for (int i=0; i<SLIDER_COUNT; i++)
+    for (int i=0; i<SLIDER_COUNT; i++){
       channelMuteHigh[i] = false;
+      densityLightOn[i] = false;
+    }
     polyMuteHigh = false;
     getSeed();
     reseedRng();
@@ -256,7 +263,7 @@ struct RhythmExplorer : Module {
 
     bool oldClockHigh = clockHigh;
     bool clockEvent = schmittTrigger(clockHigh,inputs[CLOCK_INPUT].getVoltage());
-    if (oldClockHigh && !clockHigh) { // clear triggers
+    if (oldClockHigh && !clockHigh) { // clear triggers && lights
       outputs[GATE_OR_OUTPUT].setVoltage(0.f);
       outputs[GATE_XOR_ODD_OUTPUT].setVoltage(0.f);
       outputs[GATE_XOR_ONE_OUTPUT].setVoltage(0.f);
@@ -265,7 +272,14 @@ struct RhythmExplorer : Module {
         outputs[GATE_POLY_OUTPUT].setVoltage(0.f, i);
         outputs[CLOCK_OUTPUT + i].setVoltage(0.f);
         outputs[CLOCK_POLY_OUTPUT].setVoltage(0.f, i);
-        lights[DENSITY_LIGHT + i].setBrightness(LIGHT_DIM);
+        densityLightOn[i] = false;
+      }
+    }
+    if (lightDivider.process()) {
+      float lightTime = args.sampleTime * lightDivider.getDivision();
+      for (int i=0; i<SLIDER_COUNT; i++){
+        if (!densityLightOn[i])
+          lights[DENSITY_LIGHT + i].setBrightnessSmooth(LIGHT_DIM, lightTime);
       }
     }
 
@@ -278,7 +292,6 @@ struct RhythmExplorer : Module {
         runGateActive = !runGateActive;
         if (runGateActive)
           resetEvent = true;
-        lights[RUN_GATE_LIGHT].setBrightness(runGateActive ? 1 : LIGHT_OFF);
       }
     }
     else {
@@ -286,18 +299,19 @@ struct RhythmExplorer : Module {
         runGateActive = !runGateActive;
         if (runGateActive)
           resetEvent = true;
-        lights[RUN_GATE_LIGHT].setBrightness(runGateActive ? 1 : LIGHT_OFF);
       }
     }
+    lights[RUN_GATE_LIGHT].setBrightnessSmooth(runGateActive ? 1.f : LIGHT_OFF, args.sampleTime);
+
 
     if(schmittTrigger(resetTrigHigh,inputs[RESET_TRIGGER_INPUT].getVoltage())) resetEvent = true;
     if(buttonTrigger(resetBtnHigh,params[RESET_BUTTON_PARAM].getValue())) resetEvent = true;
-    lights[RESET_LIGHT].setBrightness(resetTrigHigh || resetBtnHigh ? 1.f : LIGHT_OFF);
+    lights[RESET_LIGHT].setBrightnessSmooth(resetTrigHigh || resetBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
 
     bool newSeedEvent = false;
     if(schmittTrigger(newSeedTrigHigh,inputs[NEW_SEED_TRIGGER_INPUT].getVoltage())) newSeedEvent = true;
     if(buttonTrigger(newSeedBtnHigh,params[NEW_SEED_BUTTON_PARAM].getValue())) newSeedEvent = true;
-    lights[NEW_SEED_LIGHT].setBrightness(newSeedTrigHigh || newSeedBtnHigh ? 1.f : LIGHT_OFF);
+    lights[NEW_SEED_LIGHT].setBrightnessSmooth(newSeedTrigHigh || newSeedBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
 
     // Mutes
     for (int i=0; i<SLIDER_COUNT; i++) {
@@ -388,9 +402,10 @@ struct RhythmExplorer : Module {
                 outputs[GATE_OUTPUT + si].setVoltage(10.f);
                 outputs[GATE_POLY_OUTPUT].setVoltage(10.f, si);
                 lights[DENSITY_LIGHT + si].setBrightness(1.f);
+                densityLightOn[si] = true;
               }
             }
-            if (!polyMuteActive && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
+            if (!channelMuteActive[si] && !polyMuteActive && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
               linearGlobalShadow = true;
               outGateCount++;
             }
@@ -431,13 +446,15 @@ struct RhythmExplorer : Module {
 
     //Update Cycle Lights
     for(int ci = 0; ci < MAX_STEP_LENGTH; ci++){
-      lights[BAR_STEP_LIGHT + ci].setBrightness(
+      lights[BAR_STEP_LIGHT + ci].setBrightnessSmooth(
         ci <= currentCycle ? 1.f :
-        ci < maxBar ? LIGHT_DIM : 0.f
+        ci < maxBar ? LIGHT_DIM : 0.f,
+        args.sampleTime
       );
-      lights[PHRASE_STEP_LIGHT + ci].setBrightness(
+      lights[PHRASE_STEP_LIGHT + ci].setBrightnessSmooth(
         ci <= currentBar ? 1.f :
-        ci < maxPhrase ? LIGHT_DIM : 0.f
+        ci < maxPhrase ? LIGHT_DIM : 0.f,
+        args.sampleTime
       );
     }
 
