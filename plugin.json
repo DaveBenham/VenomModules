@@ -61,7 +61,7 @@
     {
       "slug": "RhythmExplorer",
       "name": "Rhythm Explorer",
-      "description": "Random rhythm generator, gate sequencer and clock divider",
+      "description": "Random rhythm generator, trigger sequencer and clock divider",
       "manualUrl": "https://github.com/DaveBenham/VenomModules#rhythm-explorer",
       "tags": [
         "Sequencer",
