@@ -60,7 +60,7 @@
     },
     {
       "slug": "RhythmExplorer",
-      "name": "Random Explorer",
+      "name": "Rhythm Explorer",
       "description": "Random rhythm generator, gate sequencer and clock divider",
       "manualUrl": "",
       "tags": [

@@ -60,6 +60,10 @@ struct RhythmExplorer : Module {
     ENUMS(MODE_CHANNEL_PARAM, SLIDER_COUNT),
     MODE_POLY_PARAM,
     MUTE_POLY_PARAM,
+    POLAR_PARAM,
+    LOCK_PARAM,
+    INIT_DENSITY_PARAM,
+    PATOFF_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -89,6 +93,8 @@ struct RhythmExplorer : Module {
     GATE_XOR_ODD_OUTPUT,
     GATE_XOR_ONE_OUTPUT,
     START_OF_PHRASE_OUTPUT,
+    RESET_TRIGGER_OUTPUT,
+    RUN_GATE_OUTPUT,
     OUTPUTS_LEN
   };
   enum LightId {
@@ -100,6 +106,9 @@ struct RhythmExplorer : Module {
     NEW_SEED_LIGHT,
     RESET_LIGHT,
     RUN_GATE_LIGHT,
+    LOCK_LIGHT,
+    INIT_DENSITY_LIGHT,
+    PATOFF_LIGHT,
     LIGHTS_LEN
   };
 
@@ -109,14 +118,17 @@ struct RhythmExplorer : Module {
     OFFBEAT_MODE,
     GLOBAL_MODE
   };
-  
+
   //Persistant State
   float internalSeed;
   bool runGateActive;
+  bool patOffActive;
+  bool lockActive;
   bool channelMuteActive[SLIDER_COUNT];
   bool polyMuteActive;
 
   //Non Persistant State
+  bool isUni;
   int currentPulse;
   int currentCycle;
   int currentBar;
@@ -128,15 +140,26 @@ struct RhythmExplorer : Module {
   bool newSeedTrigHigh;
   bool runGateBtnHigh;
   bool runGateTrigHigh;
+  bool patOffBtnHigh;
+  bool lockBtnHigh;
+  bool initBtnHigh;
   bool channelMuteHigh[SLIDER_COUNT];
   bool polyMuteHigh;
   bool densityLightOn[SLIDER_COUNT];
   dsp::ClockDivider lightDivider;
+  dsp::PulseGenerator trigGenerator;
 
   RhythmExplorer() {
+
+    struct FixedSwitchQuantity : SwitchQuantity {
+      std::string getDisplayValueString() override {
+        return labels[getValue()];
+      }
+    };
+
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configInput(CLOCK_INPUT,"Clock");
+    configInput(CLOCK_INPUT,"24PPQN Clock");
     configInput(NEW_SEED_TRIGGER_INPUT,"Dice Trigger");
     configInput(RESET_TRIGGER_INPUT,"Reset Trigger");
     configInput(SEED_INPUT,"Seed");
@@ -148,6 +171,8 @@ struct RhythmExplorer : Module {
 
     configButton(RUN_GATE_PARAM, "Run Gate");
     configInput(RUN_GATE_INPUT,"Run Gate");
+    
+    configButton(PATOFF_PARAM, "Pattern Off");
 
     configOutput(GATE_OR_OUTPUT,"OR Trigger");
     configOutput(GATE_XOR_ODD_OUTPUT,"XOR Odd Parity Trigger");
@@ -162,29 +187,46 @@ struct RhythmExplorer : Module {
 
     for(int si = 0; si < SLIDER_COUNT; si++){
       std::string si_s = std::to_string(si+1);
-      configSwitch(RATE_PARAM + si, 0, 9, si+1, "Rate " + si_s, CHANNEL_DIVISION_LABELS);
-      configParam(DENSITY_PARAM + si, 0.f, 10.f, 0.f, "Density " + si_s, " V");
+      configSwitch<FixedSwitchQuantity>(RATE_PARAM + si, 0, 9, si+1, "Division " + si_s, CHANNEL_DIVISION_LABELS);
+      configParam(DENSITY_PARAM + si, 0.f, 10.f, 0.f, "Density " + si_s, "%", 0.f, 10.f);
       lights[DENSITY_LIGHT + si].setBrightness(LIGHT_DIM);
       configOutput(GATE_OUTPUT + si, "Gate " + si_s);
       configOutput(CLOCK_OUTPUT + si, "Clock " + si_s);
       configInput(DENSITY_CHANNEL_INPUT + si, "Density CV " + si_s);
-      configInput(MODE_CHANNEL_INPUT + si, "Mode CV " + si_s);
+      if (si>0)
+        configInput(MODE_CHANNEL_INPUT + si, "Mode CV " + si_s);
       configButton(MUTE_CHANNEL_PARAM + si, "Mute " + si_s);
-      configSwitch(MODE_CHANNEL_PARAM + si, 0, 3 , 0, "Mode " + si_s, CHANNEL_MODE_LABELS);
+      if (si==0)
+        configSwitch<FixedSwitchQuantity>(MODE_CHANNEL_PARAM + si, 0, 0, 0, "Mode " + si_s, {"All"});
+      else
+        configSwitch<FixedSwitchQuantity>(MODE_CHANNEL_PARAM + si, 0, 3, 0, "Mode " + si_s, CHANNEL_MODE_LABELS);
     }
+    configSwitch<FixedSwitchQuantity>(POLAR_PARAM, 0, 1, 0, "Density Polarity", {"Uniploar", "Bipolar"});
     configSwitch(MODE_POLY_PARAM, 0, 2 , 0, "Global Mode", POLY_MODE_LABELS);
     configButton(MUTE_POLY_PARAM, "Global Mute");
     configInput(MODE_POLY_INPUT, "Global Mode CV");
     configInput(DENSITY_POLY_INPUT,"Density Poly CV");
     configOutput(CLOCK_POLY_OUTPUT, "Clock Poly");
     configOutput(GATE_POLY_OUTPUT, "Gate Poly");
-    
+    configOutput(RESET_TRIGGER_OUTPUT, "Reset Trigger");
+    configOutput(RUN_GATE_OUTPUT, "Run Gate");
+    configButton(LOCK_PARAM, "Lock Divisions, Modes, and Polarity");
+    configButton(INIT_DENSITY_PARAM, "Initialize Densities");
+
     lightDivider.setDivision(32);
 
     initialize();
   }
 
   void onReset(const ResetEvent& e) override {
+    ParamQuantity* q;
+    for (int i=0; i<SLIDER_COUNT; i++){
+      q = getParamQuantity(DENSITY_PARAM + i);
+      if (!q) continue;
+      q->defaultValue = 0.f;
+      q->displayMultiplier = 10.f;
+      q->displayOffset = 0.f;
+    }
     Module::onReset(e);
     initialize();
   }
@@ -194,7 +236,12 @@ struct RhythmExplorer : Module {
     currentCycle = 0;
     currentBar = 0;
     rng = {};
-    runGateActive = true;
+    runGateActive = false;
+    patOffActive = false;
+    lockActive = false;
+    patOffBtnHigh = false;
+    lockBtnHigh = false;
+    initBtnHigh = false;
     clockHigh = false;
     resetTrigHigh = false;
     resetBtnHigh = false;
@@ -202,14 +249,18 @@ struct RhythmExplorer : Module {
     newSeedTrigHigh = false;
     runGateBtnHigh = false;
     runGateTrigHigh = false;
+    isUni = true;
     for (int i=0; i<SLIDER_COUNT; i++){
       channelMuteHigh[i] = false;
+      channelMuteActive[i] = false;
       densityLightOn[i] = false;
     }
     polyMuteHigh = false;
+    polyMuteActive = false;
     getSeed();
     reseedRng();
     updateLights();
+    setLockStatus();
   }
 
   json_t *dataToJson() override{
@@ -217,6 +268,8 @@ struct RhythmExplorer : Module {
 
     json_object_set_new(jobj, "internalSeed", json_real(internalSeed));
     json_object_set_new(jobj, "runGateActive", json_bool(runGateActive));
+    json_object_set_new(jobj, "patOffActive", json_bool(patOffActive));
+    json_object_set_new(jobj, "lockActive", json_bool(lockActive));
     json_object_set_new(jobj, "channelMuteActive0", json_bool(channelMuteActive[0]));
     json_object_set_new(jobj, "channelMuteActive1", json_bool(channelMuteActive[1]));
     json_object_set_new(jobj, "channelMuteActive2", json_bool(channelMuteActive[2]));
@@ -234,6 +287,8 @@ struct RhythmExplorer : Module {
 
     internalSeed = json_real_value(json_object_get(jobj, "internalSeed"));
     runGateActive = json_is_true(json_object_get(jobj, "runGateActive"));
+    patOffActive = json_is_true(json_object_get(jobj, "patOffActive"));
+    lockActive = json_is_true(json_object_get(jobj, "lockActive"));
     channelMuteActive[0] = json_is_true(json_object_get(jobj, "channelMuteActive0"));
     channelMuteActive[1] = json_is_true(json_object_get(jobj, "channelMuteActive1"));
     channelMuteActive[2] = json_is_true(json_object_get(jobj, "channelMuteActive2"));
@@ -246,6 +301,7 @@ struct RhythmExplorer : Module {
 
     reseedRng();
     updateLights();
+    setLockStatus();
   }
 
   void updateLights(){
@@ -253,9 +309,24 @@ struct RhythmExplorer : Module {
     for (int i=0; i<SLIDER_COUNT; i++)
       lights[MUTE_CHANNEL_LIGHT + i].setBrightness(channelMuteActive[i] ? 1.f : LIGHT_OFF);
     lights[MUTE_POLY_LIGHT].setBrightness(polyMuteActive ? 1.f : LIGHT_OFF);
+    lights[PATOFF_LIGHT].setBrightness(patOffActive ? 1.f : LIGHT_OFF);
+    lights[LOCK_LIGHT].setBrightness(lockActive ? 1.f : LIGHT_OFF);
   }
 
-  void process(const ProcessArgs& args) override {    
+  void process(const ProcessArgs& args) override {
+    
+    if ((params[POLAR_PARAM].getValue()==0) != isUni){
+      isUni = !isUni;
+      ParamQuantity* q;
+      for (int i=0; i<SLIDER_COUNT; i++){
+        q = getParamQuantity(DENSITY_PARAM + i);
+        if (!q) continue;
+        q->defaultValue = isUni ? 0.f : 5.f;
+        q->displayMultiplier = isUni ? 10.f : 20.f;
+        q->displayOffset = isUni ? 0.f : -100.f;
+      }
+    }
+    
 
     //Clock Logic
     bool newBar = false;
@@ -267,6 +338,10 @@ struct RhythmExplorer : Module {
       outputs[GATE_OR_OUTPUT].setVoltage(0.f);
       outputs[GATE_XOR_ODD_OUTPUT].setVoltage(0.f);
       outputs[GATE_XOR_ONE_OUTPUT].setVoltage(0.f);
+      outputs[START_OF_PHRASE_OUTPUT].setVoltage(0.f);
+      outputs[CLOCK_POLY_OUTPUT].setVoltage(0.f, 8);
+      outputs[START_OF_BAR_OUTPUT].setVoltage(0.f);
+      outputs[CLOCK_POLY_OUTPUT].setVoltage(0.f, 9);
       for (int i=0; i<SLIDER_COUNT; i++){
         outputs[GATE_OUTPUT + i].setVoltage(0.f);
         outputs[GATE_POLY_OUTPUT].setVoltage(0.f, i);
@@ -302,10 +377,31 @@ struct RhythmExplorer : Module {
       }
     }
     lights[RUN_GATE_LIGHT].setBrightnessSmooth(runGateActive ? 1.f : LIGHT_OFF, args.sampleTime);
+    outputs[RUN_GATE_OUTPUT].setVoltage(runGateActive ? 10.f : 0.f);
 
+    if(buttonTrigger(patOffBtnHigh,params[PATOFF_PARAM].getValue())){
+      patOffActive = !patOffActive;
+    }
+    lights[PATOFF_LIGHT].setBrightnessSmooth(patOffActive ? 1.f : LIGHT_OFF, args.sampleTime);
 
-    if(schmittTrigger(resetTrigHigh,inputs[RESET_TRIGGER_INPUT].getVoltage())) resetEvent = true;
-    if(buttonTrigger(resetBtnHigh,params[RESET_BUTTON_PARAM].getValue())) resetEvent = true;
+    if(buttonTrigger(lockBtnHigh,params[LOCK_PARAM].getValue())){
+      lockActive = !lockActive;
+      setLockStatus();
+    }
+    lights[LOCK_LIGHT].setBrightnessSmooth(lockActive ? 1.f : LIGHT_OFF, args.sampleTime);
+    
+    if(buttonTrigger(initBtnHigh,params[INIT_DENSITY_PARAM].getValue())){
+      ParamQuantity* q;
+      for (int i=0; i<SLIDER_COUNT; i++){
+        if ((q = getParamQuantity(DENSITY_PARAM + i))){
+          q->reset();
+        }
+      }
+    }
+    lights[INIT_DENSITY_LIGHT].setBrightnessSmooth(initBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
+
+    if(schmittTrigger(resetTrigHigh,inputs[RESET_TRIGGER_INPUT].getVoltage()) && trigGenerator.remaining <= 0) resetEvent = true;
+    if(buttonTrigger(resetBtnHigh,params[RESET_BUTTON_PARAM].getValue()) && trigGenerator.remaining <= 0) resetEvent = true;
     lights[RESET_LIGHT].setBrightnessSmooth(resetTrigHigh || resetBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
 
     bool newSeedEvent = false;
@@ -329,7 +425,7 @@ struct RhythmExplorer : Module {
     bool endOfCycle = false;
 
     outputs[GATE_POLY_OUTPUT].setChannels(8);
-    outputs[CLOCK_POLY_OUTPUT].setChannels(8);
+    outputs[CLOCK_POLY_OUTPUT].setChannels(10);
 
     if(resetEvent){
       currentPulse = 0;
@@ -338,7 +434,9 @@ struct RhythmExplorer : Module {
       endOfCycle = true;
       newBar = true;
       newPhrase = true;
+      trigGenerator.trigger();
     }
+    outputs[RESET_TRIGGER_OUTPUT].setVoltage(trigGenerator.process(args.sampleTime) ? 10.f : 0.f);
 
     if(newSeedEvent){
       getSeed();
@@ -363,12 +461,12 @@ struct RhythmExplorer : Module {
           outputs[CLOCK_OUTPUT + si].setVoltage(10.f);
           outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, si);
           float rndFloat = (rng() >> 32) * 2.32830629e-9f;
-          rndFloat = rack::math::clamp(inputs[RNG_OVERRIDE_INPUT].getNormalPolyVoltage(rndFloat, si), 0.f, 10.f);
+          rndFloat = rack::math::clamp(inputs[RNG_OVERRIDE_INPUT].getNormalPolyVoltage(rndFloat, si), 0.f, 10.f - 5e-7f);
           float threshold = rack::math::clamp(
             rack::math::clamp(
-              params[DENSITY_PARAM + si].getValue()
+              params[DENSITY_PARAM + si].getValue() * (isUni ? 1.f : 2.f) - (isUni ? 0.f : 10.f)
               + inputs[DENSITY_POLY_INPUT].getPolyVoltage(si),
-              0.f, 10.f
+              isUni ? 0.f : -10.f, 10.f
             ) + inputs[DENSITY_CHANNEL_INPUT + si].getVoltage(),
             0.f, 10.f
           );
@@ -383,7 +481,7 @@ struct RhythmExplorer : Module {
             ),
             0,2
           );
-          int channelMode = rack::math::clamp(
+          int channelMode = si==0 ? 0 : rack::math::clamp(
             static_cast<int>(
               inputs[MODE_CHANNEL_INPUT + si].getNormalPolyVoltage(
                 params[MODE_CHANNEL_PARAM + si].getValue(),
@@ -420,8 +518,8 @@ struct RhythmExplorer : Module {
 
     }
 
-    int maxPhrase = params[BAR_COUNT_PARAM].getValue();
-    int maxBar = params[BAR_LENGTH_PARAM].getValue();
+    int maxPhrase = rack::math::clamp(params[BAR_COUNT_PARAM].getValue() + inputs[BAR_COUNT_INPUT].getVoltage()*3.f/2.f, 1.f, 16.f);
+    int maxBar = rack::math::clamp(params[BAR_LENGTH_PARAM].getValue() + inputs[BAR_LENGTH_INPUT].getVoltage()*3.f/2.f, 1.f, 16.f);
     if(newCycle){
       if (!resetEvent)
         currentCycle++;
@@ -437,8 +535,14 @@ struct RhythmExplorer : Module {
       endOfCycle = true;
       newPhrase = true;
     }
-    outputs[START_OF_PHRASE_OUTPUT].setVoltage(newPhrase ? 10.f : 0.f);
-    outputs[START_OF_BAR_OUTPUT].setVoltage(newBar ? 10.f : 0.f);
+    if (newPhrase) {
+      outputs[START_OF_PHRASE_OUTPUT].setVoltage(10.f);
+      outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, 8);
+    }
+    if (newBar) {
+      outputs[START_OF_BAR_OUTPUT].setVoltage(10.f);
+      outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, 9);
+    }
 
     if(endOfCycle){
       reseedRng();
@@ -468,7 +572,7 @@ struct RhythmExplorer : Module {
   }
 
   void reseedRng(){
-    if (internalSeed > 0.f) {
+    if (internalSeed > 0.f && !patOffActive) {
       float seed1 = internalSeed / 10.f;
       float seed2 = std::fmod(internalSeed,1.f);
       uint64_t s1 = seed1 * MAX_UNIT64;
@@ -476,6 +580,38 @@ struct RhythmExplorer : Module {
       rng.seed(s1, s2);
     }
   }
+
+  void setLockStatus(){
+    ParamQuantity* q;
+    float val;
+    for (int i=0; i<SLIDER_COUNT; i++){
+      if ((q = getParamQuantity(RATE_PARAM + i))){
+        val = q->getValue();
+        q->minValue = lockActive ? val : 0.f;
+        q->maxValue = lockActive ? val : 9.f;
+        q->defaultValue = lockActive ? val : i+1;
+      }
+      if (i>0 && (q = getParamQuantity(MODE_CHANNEL_PARAM + i))){
+        val = q->getValue();
+        q->minValue = lockActive ? val : 0.f;
+        q->maxValue = lockActive ? val : 3.f;
+        q->defaultValue = lockActive ? val : 0.f;
+      }
+    }
+    if ((q = getParamQuantity(MODE_POLY_PARAM))) {
+      val = q->getValue();
+      q->minValue = lockActive ? val : 0.f;
+      q->maxValue = lockActive ? val : 2.f;
+      q->defaultValue = lockActive ? val : 0.f;
+    }
+    if ((q = getParamQuantity(POLAR_PARAM))){
+      val = q->getValue();
+      q->minValue = lockActive ? val : 0.f;
+      q->maxValue = lockActive ? val : 1.f;
+      q->defaultValue = lockActive ? val : 0.f;
+    }
+  }
+
 };
 
 struct VCVBezelBig : app::SvgSwitch {
@@ -561,6 +697,10 @@ struct RhythmExplorerWidget : ModuleWidget {
     addParam(createLightParamCentered<VCVBezelLightBigWhite>(Vec(x,y), module, RhythmExplorer::RESET_BUTTON_PARAM, RhythmExplorer::RESET_LIGHT));
     y += dy + dy;
     addParam(createLightParamCentered<VCVBezelLightBigWhite>(Vec(x,y), module, RhythmExplorer::RUN_GATE_PARAM, RhythmExplorer::RUN_GATE_LIGHT));
+    
+    x = xStart + dx/2.f;
+    y = yStart + dy * 7.6f;
+    addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::PATOFF_PARAM, RhythmExplorer::PATOFF_LIGHT));
 
     x = xStart + dx * 2.5f;
     y = yStart + dy * 3.5f;
@@ -596,12 +736,14 @@ struct RhythmExplorerWidget : ModuleWidget {
       y += dy;
       addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::DENSITY_CHANNEL_INPUT + si));
       y += dy;
-      addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::MODE_CHANNEL_INPUT + si));
+      if (si > 0)
+        addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::MODE_CHANNEL_INPUT + si));
       y += dy;
       addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::CLOCK_OUTPUT + si));
       y += dy;
       addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_OUTPUT + si));
     }
+    addParam(createParam<CKSS>(Vec(x, yStart + dy*0.75f), module, RhythmExplorer::POLAR_PARAM));
     x += dx * 0.5f;
     y = yStart + dy * 3.6f;
     addParam(createParamCentered<ModeSwitch>(Vec(x,y), module, RhythmExplorer::MODE_POLY_PARAM));
@@ -615,9 +757,15 @@ struct RhythmExplorerWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::CLOCK_POLY_OUTPUT));
     y += dy;
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_POLY_OUTPUT));
+    x += dx * 1.5f;
+    y = yStart;
+    addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::LOCK_PARAM, RhythmExplorer::LOCK_LIGHT));
+    y += dy * 1.82f;
+    addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::INIT_DENSITY_PARAM, RhythmExplorer::INIT_DENSITY_LIGHT));
 
     x = xStart + dx * 2.5f;
     dx *= 1.1f;
+    x -= dx/2.f;
     y = yStart + dy * 10.1f;
 
     addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::CLOCK_INPUT));
@@ -637,8 +785,12 @@ struct RhythmExplorerWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ODD_OUTPUT));
     x += dx;
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ONE_OUTPUT));
-    x += dx * 1.5f;
+    x += dx;
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::SEED_OUTPUT));
+    x += dx;
+    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::RESET_TRIGGER_OUTPUT));
+    x += dx;
+    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::RUN_GATE_OUTPUT));
 
   }
 
