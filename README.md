@@ -6,7 +6,7 @@ Venom VCV Rack Modules
 
 |[Rhythm Explorer](#rhythm-explorer)|
 |----|
-|![Rhthm Explorer module image](./doc/RhthmExplorer.PNG)|
+|![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|
 
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
