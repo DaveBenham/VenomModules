@@ -133,6 +133,7 @@ struct RhythmExplorer : Module {
   int currentCycle;
   int currentBar;
   rack::random::Xoroshiro128Plus rng;
+  bool resetEvent;
   bool clockHigh;
   bool resetTrigHigh;
   bool resetBtnHigh;
@@ -236,6 +237,7 @@ struct RhythmExplorer : Module {
     currentCycle = 0;
     currentBar = 0;
     rng = {};
+    resetEvent = false;
     runGateActive = false;
     patOffActive = false;
     lockActive = false;
@@ -313,8 +315,56 @@ struct RhythmExplorer : Module {
     lights[LOCK_LIGHT].setBrightness(lockActive ? 1.f : LIGHT_OFF);
   }
 
+  void getSeed(){
+    internalSeed = inputs[SEED_INPUT].isConnected() ? rack::math::clamp(inputs[SEED_INPUT].getVoltage(), 0.f, 10.f) : rack::math::clamp(rack::random::uniform() * 10.f, 1e-19f, 10.f);
+    if (internalSeed < 1e-19f)
+      internalSeed = 0.f;
+  }
+
+  void reseedRng(){
+    if (internalSeed > 0.f && !patOffActive) {
+      float seed1 = internalSeed / 10.f;
+      float seed2 = std::fmod(internalSeed,1.f);
+      uint64_t s1 = seed1 * MAX_UNIT64;
+      uint64_t s2 = seed2 * MAX_UNIT64;
+      rng.seed(s1, s2);
+    }
+  }
+
+  void setLockStatus(){
+    ParamQuantity* q;
+    float val;
+    for (int i=0; i<SLIDER_COUNT; i++){
+      if ((q = getParamQuantity(RATE_PARAM + i))){
+        val = q->getValue();
+        q->minValue = lockActive ? val : 0.f;
+        q->maxValue = lockActive ? val : 9.f;
+        q->defaultValue = lockActive ? val : i+1;
+      }
+      if (i>0 && (q = getParamQuantity(MODE_CHANNEL_PARAM + i))){
+        val = q->getValue();
+        q->minValue = lockActive ? val : 0.f;
+        q->maxValue = lockActive ? val : 3.f;
+        q->defaultValue = lockActive ? val : 0.f;
+      }
+    }
+    if ((q = getParamQuantity(MODE_POLY_PARAM))) {
+      val = q->getValue();
+      q->minValue = lockActive ? val : 0.f;
+      q->maxValue = lockActive ? val : 2.f;
+      q->defaultValue = lockActive ? val : 0.f;
+    }
+    if ((q = getParamQuantity(POLAR_PARAM))){
+      val = q->getValue();
+      q->minValue = lockActive ? val : 0.f;
+      q->maxValue = lockActive ? val : 1.f;
+      q->defaultValue = lockActive ? val : 0.f;
+    }
+  }
+
   void process(const ProcessArgs& args) override {
     
+    // Density polarity
     if ((params[POLAR_PARAM].getValue()==0) != isUni){
       isUni = !isUni;
       ParamQuantity* q;
@@ -326,9 +376,44 @@ struct RhythmExplorer : Module {
         q->displayOffset = isUni ? 0.f : -100.f;
       }
     }
-    
 
-    //Clock Logic
+    // Pattern Off
+    if(buttonTrigger(patOffBtnHigh,params[PATOFF_PARAM].getValue())){
+      patOffActive = !patOffActive;
+    }
+    lights[PATOFF_LIGHT].setBrightnessSmooth(patOffActive ? 1.f : LIGHT_OFF, args.sampleTime);
+
+    // Lock
+    if(buttonTrigger(lockBtnHigh,params[LOCK_PARAM].getValue())){
+      lockActive = !lockActive;
+      setLockStatus();
+    }
+    lights[LOCK_LIGHT].setBrightnessSmooth(lockActive ? 1.f : LIGHT_OFF, args.sampleTime);
+
+    // Init Density
+    if(buttonTrigger(initBtnHigh,params[INIT_DENSITY_PARAM].getValue())){
+      ParamQuantity* q;
+      for (int i=0; i<SLIDER_COUNT; i++){
+        if ((q = getParamQuantity(DENSITY_PARAM + i))){
+          q->reset();
+        }
+      }
+    }
+    lights[INIT_DENSITY_LIGHT].setBrightnessSmooth(initBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
+
+    // Mutes
+    for (int i=0; i<SLIDER_COUNT; i++) {
+      if(buttonTrigger(channelMuteHigh[i],params[MUTE_CHANNEL_PARAM + i].getValue())) {
+        channelMuteActive[i] = !channelMuteActive[i];
+        lights[MUTE_CHANNEL_LIGHT + i].setBrightness(channelMuteActive[i] ? 1.f : LIGHT_OFF);
+      }
+    }
+    if(buttonTrigger(polyMuteHigh,params[MUTE_POLY_PARAM].getValue())) {
+      polyMuteActive = !polyMuteActive;
+      lights[MUTE_POLY_LIGHT].setBrightness(polyMuteActive ? 1.f : LIGHT_OFF);
+    }
+
+    //Clock Logic and event timing
     bool newBar = false;
     bool newPhrase = false;
 
@@ -350,15 +435,6 @@ struct RhythmExplorer : Module {
         densityLightOn[i] = false;
       }
     }
-    if (lightDivider.process()) {
-      float lightTime = args.sampleTime * lightDivider.getDivision();
-      for (int i=0; i<SLIDER_COUNT; i++){
-        if (!densityLightOn[i])
-          lights[DENSITY_LIGHT + i].setBrightnessSmooth(LIGHT_DIM, lightTime);
-      }
-    }
-
-    bool resetEvent = false;
 
     if (inputs[RUN_GATE_INPUT].isConnected()) {
       schmittTrigger(runGateTrigHigh,inputs[RUN_GATE_INPUT].getVoltage());
@@ -379,27 +455,6 @@ struct RhythmExplorer : Module {
     lights[RUN_GATE_LIGHT].setBrightnessSmooth(runGateActive ? 1.f : LIGHT_OFF, args.sampleTime);
     outputs[RUN_GATE_OUTPUT].setVoltage(runGateActive ? 10.f : 0.f);
 
-    if(buttonTrigger(patOffBtnHigh,params[PATOFF_PARAM].getValue())){
-      patOffActive = !patOffActive;
-    }
-    lights[PATOFF_LIGHT].setBrightnessSmooth(patOffActive ? 1.f : LIGHT_OFF, args.sampleTime);
-
-    if(buttonTrigger(lockBtnHigh,params[LOCK_PARAM].getValue())){
-      lockActive = !lockActive;
-      setLockStatus();
-    }
-    lights[LOCK_LIGHT].setBrightnessSmooth(lockActive ? 1.f : LIGHT_OFF, args.sampleTime);
-    
-    if(buttonTrigger(initBtnHigh,params[INIT_DENSITY_PARAM].getValue())){
-      ParamQuantity* q;
-      for (int i=0; i<SLIDER_COUNT; i++){
-        if ((q = getParamQuantity(DENSITY_PARAM + i))){
-          q->reset();
-        }
-      }
-    }
-    lights[INIT_DENSITY_LIGHT].setBrightnessSmooth(initBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
-
     if(schmittTrigger(resetTrigHigh,inputs[RESET_TRIGGER_INPUT].getVoltage()) && trigGenerator.remaining <= 0) resetEvent = true;
     if(buttonTrigger(resetBtnHigh,params[RESET_BUTTON_PARAM].getValue()) && trigGenerator.remaining <= 0) resetEvent = true;
     lights[RESET_LIGHT].setBrightnessSmooth(resetTrigHigh || resetBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
@@ -409,46 +464,51 @@ struct RhythmExplorer : Module {
     if(buttonTrigger(newSeedBtnHigh,params[NEW_SEED_BUTTON_PARAM].getValue())) newSeedEvent = true;
     lights[NEW_SEED_LIGHT].setBrightnessSmooth(newSeedTrigHigh || newSeedBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
 
-    // Mutes
-    for (int i=0; i<SLIDER_COUNT; i++) {
-      if(buttonTrigger(channelMuteHigh[i],params[MUTE_CHANNEL_PARAM + i].getValue())) {
-        channelMuteActive[i] = !channelMuteActive[i];
-        lights[MUTE_CHANNEL_LIGHT + i].setBrightness(channelMuteActive[i] ? 1.f : LIGHT_OFF);
-      }
-    }
-    if(buttonTrigger(polyMuteHigh,params[MUTE_POLY_PARAM].getValue())) {
-      polyMuteActive = !polyMuteActive;
-      lights[MUTE_POLY_LIGHT].setBrightness(polyMuteActive ? 1.f : LIGHT_OFF);
-    }
-
-    bool newCycle = false;
-    bool endOfCycle = false;
-
     outputs[GATE_POLY_OUTPUT].setChannels(8);
     outputs[CLOCK_POLY_OUTPUT].setChannels(10);
-
-    if(resetEvent){
-      currentPulse = 0;
-      currentCycle = 0;
-      currentBar = 0;
-      endOfCycle = true;
-      newBar = true;
-      newPhrase = true;
-      trigGenerator.trigger();
-    }
-    outputs[RESET_TRIGGER_OUTPUT].setVoltage(trigGenerator.process(args.sampleTime) ? 10.f : 0.f);
 
     if(newSeedEvent){
       getSeed();
     }
 
-    //Supress clock events if runGate does not match theRunGatTrig
+    int maxPhrase = rack::math::clamp(params[BAR_COUNT_PARAM].getValue() + inputs[BAR_COUNT_INPUT].getVoltage()*3.f/2.f, 1.f, 16.f);
+    int maxBar = rack::math::clamp(params[BAR_LENGTH_PARAM].getValue() + inputs[BAR_LENGTH_INPUT].getVoltage()*3.f/2.f, 1.f, 16.f);
+
+    //Supress clock events if not running
     if(clockEvent && runGateActive){
 
-      if (!resetEvent)
-        currentPulse++;
-      if (currentPulse % 24 == 0){
-        newCycle = true;
+      if(resetEvent){
+        currentPulse = 0;
+        currentCycle = 0;
+        currentBar = 0;
+        newBar = true;
+        newPhrase = true;
+        // Reset always delayed until start of clock cycle
+        trigGenerator.trigger();
+        resetEvent = false;
+      }
+      else {
+        if (++currentPulse % 24 == 0)
+          currentCycle++;
+        if (currentCycle >= maxBar){
+          newBar = true;
+          currentCycle = 0;
+          currentBar++;
+        }
+        if (currentBar >= maxPhrase){
+          currentPulse = 0;
+          currentBar = 0;
+          newPhrase = true;
+        }
+      }
+      if (newBar) {
+        outputs[START_OF_BAR_OUTPUT].setVoltage(10.f);
+        outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, 9);
+      }
+      if (newPhrase) {
+        outputs[START_OF_PHRASE_OUTPUT].setVoltage(10.f);
+        outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, 8);
+        reseedRng();
       }
 
       bool linearChannelShadow = false;
@@ -517,99 +577,31 @@ struct RhythmExplorer : Module {
       outputs[GATE_XOR_ONE_OUTPUT].setVoltage((outGateCount == 1) ? 10.f : 0.f);
 
     }
+    outputs[RESET_TRIGGER_OUTPUT].setVoltage(trigGenerator.process(args.sampleTime) ? 10.f : 0.f);
 
-    int maxPhrase = rack::math::clamp(params[BAR_COUNT_PARAM].getValue() + inputs[BAR_COUNT_INPUT].getVoltage()*3.f/2.f, 1.f, 16.f);
-    int maxBar = rack::math::clamp(params[BAR_LENGTH_PARAM].getValue() + inputs[BAR_LENGTH_INPUT].getVoltage()*3.f/2.f, 1.f, 16.f);
-    if(newCycle){
-      if (!resetEvent)
-        currentCycle++;
-      if (currentCycle >= maxBar){
-        newBar = true;
-        currentCycle = 0;
-        currentBar++;
+    if (lightDivider.process()) {
+      float lightTime = args.sampleTime * lightDivider.getDivision();
+      // Density slider lights off
+      for (int i=0; i<SLIDER_COUNT; i++){
+        if (!densityLightOn[i])
+          lights[DENSITY_LIGHT + i].setBrightnessSmooth(LIGHT_DIM, lightTime);
       }
-    }
-    if (currentBar >= maxPhrase){
-      currentPulse = 0;
-      currentBar = 0;
-      endOfCycle = true;
-      newPhrase = true;
-    }
-    if (newPhrase) {
-      outputs[START_OF_PHRASE_OUTPUT].setVoltage(10.f);
-      outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, 8);
-    }
-    if (newBar) {
-      outputs[START_OF_BAR_OUTPUT].setVoltage(10.f);
-      outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, 9);
-    }
-
-    if(endOfCycle){
-      reseedRng();
-    }
-
-    //Update Cycle Lights
-    for(int ci = 0; ci < MAX_STEP_LENGTH; ci++){
-      lights[BAR_STEP_LIGHT + ci].setBrightnessSmooth(
-        ci <= currentCycle ? 1.f :
-        ci < maxBar ? LIGHT_DIM : 0.f,
-        args.sampleTime
-      );
-      lights[PHRASE_STEP_LIGHT + ci].setBrightnessSmooth(
-        ci <= currentBar ? 1.f :
-        ci < maxPhrase ? LIGHT_DIM : 0.f,
-        args.sampleTime
-      );
+      //Update Cycle Lights
+      for(int ci = 0; ci < MAX_STEP_LENGTH; ci++){
+        lights[BAR_STEP_LIGHT + ci].setBrightnessSmooth(
+          ci <= currentCycle ? 1.f :
+          ci < maxBar ? LIGHT_DIM : 0.f,
+          lightTime
+        );
+        lights[PHRASE_STEP_LIGHT + ci].setBrightnessSmooth(
+          ci <= currentBar ? 1.f :
+          ci < maxPhrase ? LIGHT_DIM : 0.f,
+          lightTime
+        );
+      }
     }
 
     outputs[SEED_OUTPUT].setVoltage(internalSeed);
-  }
-  
-  void getSeed(){
-    internalSeed = inputs[SEED_INPUT].isConnected() ? rack::math::clamp(inputs[SEED_INPUT].getVoltage(), 0.f, 10.f) : rack::math::clamp(rack::random::uniform() * 10.f, 1e-19f, 10.f);
-    if (internalSeed < 1e-19f)
-      internalSeed = 0.f;
-  }
-
-  void reseedRng(){
-    if (internalSeed > 0.f && !patOffActive) {
-      float seed1 = internalSeed / 10.f;
-      float seed2 = std::fmod(internalSeed,1.f);
-      uint64_t s1 = seed1 * MAX_UNIT64;
-      uint64_t s2 = seed2 * MAX_UNIT64;
-      rng.seed(s1, s2);
-    }
-  }
-
-  void setLockStatus(){
-    ParamQuantity* q;
-    float val;
-    for (int i=0; i<SLIDER_COUNT; i++){
-      if ((q = getParamQuantity(RATE_PARAM + i))){
-        val = q->getValue();
-        q->minValue = lockActive ? val : 0.f;
-        q->maxValue = lockActive ? val : 9.f;
-        q->defaultValue = lockActive ? val : i+1;
-      }
-      if (i>0 && (q = getParamQuantity(MODE_CHANNEL_PARAM + i))){
-        val = q->getValue();
-        q->minValue = lockActive ? val : 0.f;
-        q->maxValue = lockActive ? val : 3.f;
-        q->defaultValue = lockActive ? val : 0.f;
-      }
-    }
-    if ((q = getParamQuantity(MODE_POLY_PARAM))) {
-      val = q->getValue();
-      q->minValue = lockActive ? val : 0.f;
-      q->maxValue = lockActive ? val : 2.f;
-      q->defaultValue = lockActive ? val : 0.f;
-    }
-    if ((q = getParamQuantity(POLAR_PARAM))){
-      val = q->getValue();
-      q->minValue = lockActive ? val : 0.f;
-      q->maxValue = lockActive ? val : 1.f;
-      q->defaultValue = lockActive ? val : 0.f;
-    }
   }
 
 };
