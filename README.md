@@ -4,6 +4,10 @@ Venom VCV Rack Modules
 |----|----|----|----|----|----|
 |![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![CVMIX module image](./doc/CVMIX.PNG)|![VCO module image](./doc/VCO.PNG)|
 
+|[Rhythm Explorer](#rhythm-explorer)|
+|----|
+|![Rhthm Explorer module image](./doc/RhthmExplorer.PNG)|
+
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
 A windowed comparator inspired by the VCV Fundamental COMPARE module, based on specs originally proposed at 
@@ -224,3 +228,6 @@ Assuming I can resolve the aliasing problems, I would like to add the following 
 - I may also add a mixer with inversion capabilities to simplify creation of complex waveforms.
 
 The last two options could be build in, added through an expander, or possibly another module.
+
+## Rhythm Explorer
+![Rhythm Explorer module image](./doc/RhythmExplorer.PNG)  
