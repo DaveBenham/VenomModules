@@ -183,8 +183,8 @@ struct RhythmExplorer : Module {
     configParam(BAR_LENGTH_PARAM, 1, MAX_STEP_LENGTH, 4, "Bar 1/4 Count");
     configInput(BAR_COUNT_INPUT,"Phrase Bar Count CV");
     configInput(BAR_LENGTH_INPUT,"Bar 1/4 Count CV");
-    configOutput(START_OF_BAR_OUTPUT,"Start of Measure Trigger");
-    configOutput(START_OF_PHRASE_OUTPUT,"Start of Cycle Trigger");
+    configOutput(START_OF_BAR_OUTPUT,"Start of Bar Trigger");
+    configOutput(START_OF_PHRASE_OUTPUT,"Start of Phrase Trigger");
 
     for(int si = 0; si < SLIDER_COUNT; si++){
       std::string si_s = std::to_string(si+1);
