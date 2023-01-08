@@ -1,10 +1,10 @@
 {
   "slug": "VenomModules",
   "name": "VenomModules",
-  "version": "2.0.0",
+  "version": "2.0.beta1",
   "license": "GPL-3.0-or-later",
   "brand": "VenomModules",
-  "author": "David Venom & Andrew Hanson",
+  "author": "David Benham",
   "authorEmail": "",
   "authorUrl": "",
   "pluginUrl": "https://github.com/DaveBenham/VenomModules",
