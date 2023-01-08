@@ -412,5 +412,5 @@ The XOR 1 output only allows a beat through if there is only one beat across all
 
 In addition, the GLOBAL MODE further defines which beats are allowed through, using the same logic as for the individual gates. Note that if all the global modes are set to linear or offbeat mode, then the OR, XOR ODD, and XOR 1 will all emit identical patterns since by definition, those modes don't allow simultaneous beats.
 
-*** Bypass
+### Bypass
 All outputs are monophonic 0V when the module is bypassed.
