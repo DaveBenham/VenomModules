@@ -374,7 +374,7 @@ The global mute button mutes all the division gate outputs, as well as the OR, X
 The global density CV can modulate the density for all divisions. If the input is monophonic, then the value is applied to all divisions. If the input is polyphonic, then each channel is directed to the appropriate division. The global CV can be bipolar, with each volt representing 10%. The global CV value is summed with the division density slider value and then clamped to a valid range before any division CV is applied.
 
 #### GLOBAL MODE CV
-The global mode CV overides the global button mode value. If monophonic, then it is applied to all divisions. If polyphonic then each channel is directed to the appropriate division.
+The global mode CV overides the global button mode value. If monophonic, then it is applied to all divisions. If polyphonic then each channel is directed to the appropriate division mode. The only way to have different modes for divisions used in the OR output is via the GLOBAL MODE CV. Note that channel 1 is for the first (left most) division, even thouth the 1st division does not have mode CV input - it simply ignores any value there.
 
 #### GLOBAL CLOCK output
 The global clock output is polyphonic with 10 channels
@@ -401,3 +401,13 @@ The density Init button will reset all division density sliders to 0%
 The Lock button will lock the division values, division and global modes, and the density polarity to their current values so as to prevent inadvertant changes while manipulating the density sliders during a performance.
 
 ### OR, XOR ODD, and XOR 1 summed outputs
+
+In addition to the individual division gate outputs, there are three outputs where the individual division gates are combined into one stream of gates.
+
+The OR output simply combines all gates, with simultaneous beats across two divisions results in one beat.
+
+The XOR ODD output only allows the beat through if there are an odd number of simultaneous beats. An even number of simultaneous beats effectively cancel each other out.
+
+The XOR 1 output only allows a beat through if there is only one beat across all divisions - all simultaneous beats are blocked.
+
+In addition, the GLOBAL MODE further defines which beats are allowed through, using the same logic as for the individual gates. Note that if all the global modes are set to linear or offbeat mode, then the OR, XOR ODD, and XOR 1 will all emit identical patterns since by definition, those modes don't allow simultaneous beats.
