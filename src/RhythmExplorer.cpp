@@ -554,14 +554,12 @@ struct RhythmExplorer : Module {
             channelMode = globalMode;
 
           if (thresholdMet) {
-            if (channelMode == ALL_MODE || (channelMode == LINEAR_MODE && !linearChannelShadow) || (channelMode == OFFBEAT_MODE && !offbeatShadow)){
+            if ( !channelMuteActive[si] && !polyMuteActive && (channelMode == ALL_MODE || (channelMode == LINEAR_MODE && !linearChannelShadow) || (channelMode == OFFBEAT_MODE && !offbeatShadow))){
               linearChannelShadow = true;
-              if (!channelMuteActive[si] && !polyMuteActive) {
-                outputs[GATE_OUTPUT + si].setVoltage(10.f);
-                outputs[GATE_POLY_OUTPUT].setVoltage(10.f, si);
-                lights[DENSITY_LIGHT + si].setBrightness(1.f);
-                densityLightOn[si] = true;
-              }
+              outputs[GATE_OUTPUT + si].setVoltage(10.f);
+              outputs[GATE_POLY_OUTPUT].setVoltage(10.f, si);
+              lights[DENSITY_LIGHT + si].setBrightness(1.f);
+              densityLightOn[si] = true;
             }
             if (!channelMuteActive[si] && !polyMuteActive && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
               linearGlobalShadow = true;
