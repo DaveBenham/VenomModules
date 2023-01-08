@@ -267,8 +267,60 @@ Typically the seed value is sampled from an internal RNG. Alternatively, you can
 
 Wherever the seed value comes from, the sampled value is continuously output to the SEED output.
 
+### PAT OFF and 0V Seed
+
+If the PAT OFF button is activated, then the RNG will never be reseeded, so the resultant output will be constantly changing, without any pattern.
+
+If using CV SEED input, then the same effect can be achieved by using a 0V SEED input.
+
+Note that the internal RNG will never generate a 0V seed value.
+
 ### RAND
 
 Normally the patterns are established by an internal RNG that has been seeded with the sampled seed value. Alternatively, any varying CV can be patched into the RAND input to override the internal RNG. Each division will sample the RAND signal at the appropriate time to establish the next "random" value to compare against the division slider threshold. Note that the seed value has no effect when using an external RAND source.
 
-The result when using external RAND may or may not have a pattern, depending on the RAND signal. You may be able to patch the RESET output to your random source to establish a pattern that repeats at the beginning of each phrase.
+If the RAND input is monophonic, then all divisions will sample the same RAND input. But if you provide a polyphonic input with 8 channels, then each division will get its own "random" input. Note that if you patch a polyphonic input with fewer than 8 channels, then the missing channels will get constant 0V.
+
+The result when using external RAND may or may not have a pattern, depending on the RAND signal. You may be able to patch the Rhythm Explorer RESET output to your random source to establish a pattern that repeats at the beginning of each phrase.
+
+### BAR and PHRASE
+
+The BAR knob sets the number of 1/4 notes that make up 1 bar or measure, with a value ranging from 1 to 16. The PHRASE knob sets the number of bars that make up one phrase, also with a range from 1 to 16. Upon completion of a phrase, the sequencer cycles back to the beginning of bar 1, and the pattern is reset. Each knob has a set of 16 lights above to show both the current count setting, as well as where in the cycle the sequencer is at.
+
+Both BAR and PHRASE can be modulated via bipolar CV at the inputs below the knobs, which is added to the knob value. The scale is linear, with 0V representing 1, and 10V representing 16. The result is clamped to 0 - 10V (1 - 16 count).
+
+### BAR START and PHRASE START
+
+The BAR START outpout issues a high gate lasting one 24 ppqn clock pulse at the start of every bar. Likewise the PHRASE START output issues a gate at the start of each phrase.
+
+The phrase start pulse is also sent to channel 9, and the bar start pulse to channel 10 of the GLOBAL polyphonic clock output.
+
+### 8 Division Matrix
+
+There is a matrix with 8 divisions arrayed horizontally, and a mixture of controls, inputs, and outputs arrayed vertically. The behaviour of each control/input/output is the same for each division.
+
+### DIVISION Button
+
+The square division button at the top of each column indicates the currently selected division value for that column. Pressing the button cycles through the 10 available values, and right clicking presents a menu allowing you to directly select one of the values. The available values are
+- 1/2 Note
+- 1/4 Note
+- 1/8 Note
+- 1/16 Note
+- 1/32 Note
+- 1/2 Note Triplet
+- 1/4 Note Triplet
+- 1/8 Note Triplet
+- 1/16 Note Triplet
+- 1/32 Note Triplet
+
+Note that sometimes you may want to reuse the same division for multiple columns. Also note that the order of the columns can make a difference in the result depending on the mode selection (described later)
+
+### DENSITY Slider
+Each slider specifies a threshold at which any given division beat is likely to issue a high gate. Typically the values are unipolar ranging from 0 to 100%. Each density can be modulated by the division density CV input, or the Global density CV input.
+
+### MODE Button
+The mode can influence whether a given beat will fire. Pressing the button cycles through the available values, and right clicking provides a menu to directly select any one value.
+- ALL - All beats that meet the random threshold will fire. Note that the left most division is fixed at ALL because it cannot be influenced by any other divisions.
+- LIN - Linear mode, meaning that the beat will be blocked if one of the divisions to its left is firing at the same time. If all divisions are set to LIN (except the 1st one), then there will never be more than one division playing at a time, the definition of linear drumming.
+- OFF - Offbeat mode, meaning that the beat will be blocked if one of the divisions to the left coincides with this division's beat, regardless whether the left division actually fires or not. This is a special case of linear drumming. For example, if division 1 is 1/4 note, and division 2 is 1/8 note with OFF mode, then the 1/8 will never fire with the 1/4 beats - it will fire only on the "and" of each beat.
+- --- Global default, meaning the division will inherit the mode that is specified at the global level.
