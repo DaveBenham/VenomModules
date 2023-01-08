@@ -231,3 +231,44 @@ The last two options could be build in, added through an expander, or possibly a
 
 ## Rhythm Explorer
 ![Rhythm Explorer module image](./doc/RhythmExplorer.PNG)  
+Rhythm Explorer is a trigger sequencer that randomly generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
+
+### Basic Operation
+Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 ppqn clock into the CLOCK input, and patch any combination of the GATE, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
+
+### Basic Principles
+Random Rhythm uses a pseudo Random Number Generator (RNG) to establish a sequence of seemingly random numbers. However, the RNG is seeded with another random number, and every time it is reseeded with the same number, it issues the exact same sequence. Each division gets its own sequence of random numbers. With the initial setup, the reseed occurs after each set of 4 1/4 notes, thus establishing a pattern.
+
+Each division has its own density slider ranging from 0 to 100%. Assuming all divisions are set to All mode, then when the slider value is > than the current random number for that division, then the high gate will be issued. If the density is at 100%, then all beats will be played. If at 0%, then no beats will be played. The percents in between do not specify the precise density for any given pattern, but rather specify the average frequency across all possible patterns.
+
+### CLOCK Input
+The Rhythm Explorer will not run properly until a 24 ppqn (pulses per quarter note) clock is patched into the CLOCK input.
+
+### RUN
+If the RUN input is not patched, then every press of the RUN button will toggle the run state on or off. The RUN button will be brightly lit while running, and off (actually very dimly lit) when not running.
+
+Alternatively, the module run status can be controlled by patching CV into the RUN input. A high gate turns the run status on, and a low gate off. Again, the RUN light indicates the run status. When controlled by CV, the RUN button becomes momentary, and inverts the current run status. If currently running, then pressing the RUN button stops the module for as long as it is held down. Releasing the button starts the sequence again. Conversely, if the sequencer is stopped, then holding the button down starts the sequence, and releasing stops it again.
+
+The RUN output gate will be high when the sequence is running, and low when stopped.
+
+The sequence is reset to restart at the beginning of the phrase pattern every time the sequencer starts. A 1 ms trigger is also sent to the RESET output.
+
+### RESET
+
+Pressing the RESET button or sending a CV trigger to the RESET input arms the sequencer to perform a reset, and restart the phrase pattern from the beginning. The reset action will wait until the next pulse leading edge of the 24 ppqn clock. For typical tempos, a 24 ppqn clock is fast enough that the reset is perceived as nearly instantaneous.
+
+A 1 ms trigger is sent to the RESET output upon every reset action.
+
+### DICE and SEED
+
+Pressing the DICE button or sending a CV trigger to the DICE input causes the sequencer to sample a new seed value to establish a new pattern. The new seed value will not take effect until the start of the next phrase, whether due to a RESET, or reaching the end of the phrase and cycling back. If you want the DICE to immediately take effect, then send a trigger to both the RESET and DICE inputs.
+
+Typically the seed value is sampled from an internal RNG. Alternatively, you can provide your own unipolar CV seed value at the SEED input. The input is clamped to 0-10V. A sample and hold is used to save the seed value at the time of the dice action.
+
+Wherever the seed value comes from, the sampled value is continuously output to the SEED output.
+
+### RAND
+
+Normally the patterns are established by an internal RNG that has been seeded with the sampled seed value. Alternatively, any varying CV can be patched into the RAND input to override the internal RNG. Each division will sample the RAND signal at the appropriate time to establish the next "random" value to compare against the division slider threshold. Note that the seed value has no effect when using an external RAND source.
+
+The result when using external RAND may or may not have a pattern, depending on the RAND signal. You may be able to patch the RESET output to your random source to establish a pattern that repeats at the beginning of each phrase.
