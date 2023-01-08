@@ -44,26 +44,45 @@ struct HQ : Module {
     #include "HQ.data"
   };
 
-  int partialParamGetValue() {
-    int val = static_cast<int>(params[PARTIAL_PARAM].getValue());
-    switch (static_cast<int>(params[SERIES_PARAM].getValue())) {
-      case ALL: return val;
-      case ODD: return val*2;
-      case EVEN: 
-      default:  return val>0 ? val*2-1 : val<0 ? val*2+1 : 0;
-    }
-  }
-
   int monitor = 0;
   int monitorVal = 0;
   enum monitorEnum {MONITOR_OFF=999};
-  int oldSeries = 0;
   int range = 0;
   int ranges[12][2] = {
     {0,15}, {0,31}, {0,63}, {0,127},
     {-15,0}, {-31,0}, {-63,0}, {-127,0},
     {-15,15}, {-31,31}, {-63,63}, {-127,127}
   };
+  int allScales[12][2] /*{offset,scale}*/ = {
+    {0,15}, {0,31}, {0,63}, {0,127},
+    {-15,15}, {-31,31}, {-63,63}, {-127,127},
+    {-15,30}, {-31,62}, {-63,126}, {-127,254}
+  };
+  int oddScales[12][2] = {
+    {0,7}, {0,15}, {0,31}, {0,63},
+    {-7,7}, {-15,15}, {-31,31}, {-63,63},
+    {-7,14}, {-15,30}, {-31,62}, {-63,126}
+  };
+  int evenScales[12][2] = {
+    {0,8}, {0,16}, {0,32}, {0,64},
+    {-8,8}, {-16,16}, {-32,32}, {-64,64},
+    {-8,16}, {-16,32}, {-32,64}, {-64,128}
+  };
+
+  int partialParamGetValue() {
+    float val = params[PARTIAL_PARAM].getValue();
+    int rtn;
+    switch (static_cast<int>(params[HQ::SERIES_PARAM].getValue())) {
+      case ALL:
+        return static_cast<int>(round(val * allScales[range][1] + allScales[range][0]));
+      case ODD:
+        return static_cast<int>(round(val * oddScales[range][1] + oddScales[range][0])) * 2;
+      case EVEN:
+      default:
+        rtn = static_cast<int>(round(val * evenScales[range][1] + evenScales[range][0])) * 2;
+        return rtn + (rtn > 0 ? -1 : rtn < 0 ? 1 : 0);
+    }
+  }
 
   struct PartialQuantity : ParamQuantity {
     float getDisplayValue() override {
@@ -74,43 +93,26 @@ struct HQ : Module {
     void setDisplayValue(float v) override {
       HQ* module = reinterpret_cast<HQ*>(this->module);
       int val = static_cast<int>(v);
+      int range = module->range;
       switch (static_cast<int>(module->params[HQ::SERIES_PARAM].getValue())) {
         case HQ::ALL:
-          val += val>0 ? -1 : val<0 ? 1 : 0;
+          v = static_cast<float>(val - module->allScales[range][0] - (val > 0 ? 1 : val < 0 ? -1 : 0)) / static_cast<float>(module->allScales[range][1]);
           break;
         case HQ::ODD:
-          val = val>0 ? (val-1)/2 : val<0 ? (val+1)/2 : 0;
+          v = static_cast<float>((val - (val > 0 ? 1 : val < 0 ? -1 : 0))/2 - module->oddScales[range][0]) / static_cast<float>(module->oddScales[range][1]);
           break;
         case EVEN:
-          val = val>-2 && val<2 ? 0 : val/2;
+          v = static_cast<float>(val/2 - module->evenScales[range][0]) / static_cast<float>(module->evenScales[range][1]);
           break;
       }
-      setValue(static_cast<float>(val));
+      setValue(clamp(v,0.f,1.f));
     }
   };
-
-  void partialParamSetRange() {
-    ParamQuantity* q = getParamQuantity(HQ::PARTIAL_PARAM);
-    switch(static_cast<int>(params[SERIES_PARAM].getValue())){
-      case ALL:
-        q->minValue = ranges[range][0];
-        q->maxValue = ranges[range][1];
-        break;
-      case ODD:
-        q->minValue = ranges[range][0]/2;
-        q->maxValue = ranges[range][1]/2;
-        break;
-      case EVEN:
-        q->minValue = (ranges[range][0]+(ranges[range][0]<0 ? -1 : 1))/2;
-        q->maxValue = (ranges[range][1]+1)/2;
-        break;
-    }
-  }
 
   HQ() {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch(SERIES_PARAM, 0, 2, 0, "Harmonic Series", {"All", "Odd", "Even"});
-    configParam<PartialQuantity>(PARTIAL_PARAM, ranges[range][0], ranges[range][1], 0.f, "Partial", "");
+    configParam<PartialQuantity>(PARTIAL_PARAM, 0.f, 1.f, 0.f, "Partial", "");
     configParam(CV_PARAM, -1.f, 1.f, 0.f, "CV", "%", 0.f, 100.f, 0.f);
     configInput(CV_INPUT, "CV");
     configInput(ROOT_INPUT, "Root");
@@ -127,10 +129,6 @@ struct HQ : Module {
     });
     bool inConnected = inputs[IN_INPUT].isConnected();
     int series = static_cast<int>(params[SERIES_PARAM].getValue());
-    if (series != oldSeries){
-      partialParamSetRange();
-      oldSeries = series;
-    }
     float scale, pfloat=0.f, out=0.f, root;
     int partial, pround=0;
     if (!inConnected) {
@@ -216,7 +214,6 @@ struct HQ : Module {
     json_t* val = json_object_get(rootJ, "range");
     if (val)
       range = json_integer_value(val);
-    partialParamSetRange();
   }
 
 };
@@ -246,7 +243,7 @@ struct HQWidget : ModuleWidget {
     partialDisplay->module = module;
     addChild(partialDisplay);
     addParam(createParam<CKSSThreeHorizontal>(mm2px(Vec(2.9, 25.5)), module, HQ::SERIES_PARAM));
-    addParam(createParamCentered<RoundBlackSnapKnob>(mm2px(Vec(7.62, 42.9)), module, HQ::PARTIAL_PARAM));
+    addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(7.62, 42.9)), module, HQ::PARTIAL_PARAM));
     addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(7.62, 58)), module, HQ::CV_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 68)), module, HQ::CV_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 83)), module, HQ::ROOT_INPUT));
@@ -276,7 +273,6 @@ struct HQWidget : ModuleWidget {
       [=]() {return module->range;},
       [=](int i) {
         module->range = i;
-        module->partialParamSetRange();
       }
     ));
 
