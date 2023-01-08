@@ -299,7 +299,7 @@ The phrase start pulse is also sent to channel 9, and the bar start pulse to cha
 
 There is a matrix with 8 divisions arrayed horizontally, and a mixture of controls, inputs, and outputs arrayed vertically. The behaviour of each control/input/output is the same for each division.
 
-### DIVISION Button
+#### DIVISION Button
 
 The square division button at the top of each column indicates the currently selected division value for that column. Pressing the button cycles through the 10 available values, and right clicking presents a menu allowing you to directly select one of the values. The available values are
 - 1/2 Note
@@ -315,12 +315,89 @@ The square division button at the top of each column indicates the currently sel
 
 Note that sometimes you may want to reuse the same division for multiple columns. Also note that the order of the columns can make a difference in the result depending on the mode selection (described later)
 
-### DENSITY Slider
+#### DENSITY Slider
 Each slider specifies a threshold at which any given division beat is likely to issue a high gate. Typically the values are unipolar ranging from 0 to 100%. Each density can be modulated by the division density CV input, or the Global density CV input.
 
-### MODE Button
-The mode can influence whether a given beat will fire. Pressing the button cycles through the available values, and right clicking provides a menu to directly select any one value.
+The density slider knob blinks bright yellow each time the beat fires for that division. Note that the mode logic used for OR, XOR ODD, and XOR 1 outputs can be different then what is used for the individual division outpust, so the blinking sliders may not match the OR, XOR ODD, or XOR 1 outputs.
+
+#### MODE Button
+The mode can influence whether a given beat will fire. Pressing the square button cycles through the available values, and right clicking provides a menu to directly select any one value.
 - ALL - All beats that meet the random threshold will fire. Note that the left most division is fixed at ALL because it cannot be influenced by any other divisions.
 - LIN - Linear mode, meaning that the beat will be blocked if one of the divisions to its left is firing at the same time. If all divisions are set to LIN (except the 1st one), then there will never be more than one division playing at a time, the definition of linear drumming.
 - OFF - Offbeat mode, meaning that the beat will be blocked if one of the divisions to the left coincides with this division's beat, regardless whether the left division actually fires or not. This is a special case of linear drumming. For example, if division 1 is 1/4 note, and division 2 is 1/8 note with OFF mode, then the 1/8 will never fire with the 1/4 beats - it will fire only on the "and" of each beat.
 - --- Global default, meaning the division will inherit the mode that is specified at the global level.
+
+The mode can be overridden by global or division Mode CV.
+
+#### MUTE Button
+
+Pressing the mute button toggles between muting and unmuting the division GATE output. Note that a muted division will never block any division to the right that is set to LIN mode. There is no mute CV - use the density CV if you need to effectively mute via CV.
+
+#### DENS CV input
+
+This bipolar CV input modulates the division density at a rate of 10% per volt. It is additive with the density sliders and the global density CV. The sum of slider plus global CV is clamped to 0-10V prior to adding the division CV, so a CV of -10V is guaranteed to effectively mute the division.
+
+#### MODE CV input
+
+The division mode CV input overrides the value set by the button or global CV.
+The values are as follows:
+- 0V = ALL
+- 1V = LIN (linear)
+- 2V = OFF (offbeat)
+- 3V = --- (global default)
+
+The CV value is rounded to the nearest integer, and clamped to be within the valid range.
+
+#### CLOCK output
+
+Each division outputs an appropriately divided clock division for that division. Each clock pulse has a length of one 24 ppqn clock pulse. Each division clock is also sent to one channel in the GLOBAL CLOCK poly output.
+
+#### GATE output
+
+When the random number for a given beat is within the threshold of the density value, a gate is sent to the GATE output with length of one 24 ppqn clock pulse. Each division gate is also sent to one channel in the GLOBAL GATE poly output.
+
+### GLOBAL Column
+
+To the right of the 8 division matrix is a global column that can serve multiple purposes
+
+#### GLOBAL MODE Button
+The global mode has the same values as the division mode, except there is no --- (global default) value available.
+
+The global mode serves two purposes:
+- It defines the mode used to compute the OR, XOR ODD, and XOR 1 outputs. Note that 
+- If a given division has its mode set to --- (Gobal Default), then the global value also defines the mode for that division.
+
+#### GLOBAL MUTE Button
+The global mute button mutes all the division gate outputs, as well as the OR, XOR ODD, and XOR 1 outputs. Each press toggles between muting and unmuting the outputs.
+
+#### GLOBAL DENS CV
+The global density CV can modulate the density for all divisions. If the input is monophonic, then the value is applied to all divisions. If the input is polyphonic, then each channel is directed to the appropriate division. The global CV can be bipolar, with each volt representing 10%. The global CV value is summed with the division density slider value and then clamped to a valid range before any division CV is applied.
+
+#### GLOBAL MODE CV
+The global mode CV overides the global button mode value. If monophonic, then it is applied to all divisions. If polyphonic then each channel is directed to the appropriate division.
+
+#### GLOBAL CLOCK output
+The global clock output is polyphonic with 10 channels
+- Channels 1 through 8 are for the clocks for divisions 1 through 8
+- Channel 9 is for the Phrase Start clock
+- Channel 10 is for the Bar Start clock
+
+#### GLOBAL GATE output
+The global gate output is polyphonic with 8 channels, one for each division.
+
+### DENSITY Slider Polarity switch
+The vertical slider switch controls whether the division density sliders are unipolar from 0% to 100%, or bipolar from -100% to 100%
+
+Normally the sliders are set to unipolar. But if controlling the density via CV, then you may want to modulate the density up or down during performance, hence the bipolar mode.
+
+When in normal unipolar mode, the sum of slider value and global value is clamped to a range of 0 to 100 before being added with the division CV input.
+
+But when in bipolar mode, the slider and global sum is clamped to a range of -100 to 100 before being added with the division CV input. Only then is the final density value clamped to a range of 0 to 100.
+
+### DENSITY INIT Button
+The density Init button will reset all division density sliders to 0%
+
+### LOCK button
+The Lock button will lock the division values, division and global modes, and the density polarity to their current values so as to prevent inadvertant changes while manipulating the density sliders during a performance.
+
+### OR, XOR ODD, and XOR 1 summed outputs
