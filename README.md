@@ -286,7 +286,7 @@ Normally the patterns are established by an internal RNG that has been seeded wi
 
 If the RAND input is monophonic, then all divisions will sample the same RAND input. But if you provide a polyphonic input with 8 channels, then each division will get its own "random" input. Note that if you patch a polyphonic input with fewer than 8 channels, then the missing channels will get constant 0V.
 
-The result when using external RAND may or may not have a pattern, depending on the RAND signal. You may be able to patch the Rhythm Explorer RESET output to your random source to establish a pattern that repeats at the beginning of each phrase.
+The result when using external RAND may or may not have a pattern, depending on the RAND signal. You may be able to patch the Rhythm Explorer PHRASE START output to your random source reset or sync input to establish a pattern that repeats at the beginning of each phrase.
 
 ### BAR and PHRASE
 
