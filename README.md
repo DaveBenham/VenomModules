@@ -1,6 +1,8 @@
 # VenomModules
 Venom VCV Rack Modules created by Dave Benham (Dave Venom)
 
+Binaries for Beta version 1 are available at https://github.com/DaveBenham/VenomModules/releases/tag/2.0.beta1-c1cab27
+
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for helping me set up the develoment environment, providing advice, and for writing the initial prototype code for the Rhythm Explorer prior to my decision to take the plunge and write my own code.
 
 |[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
