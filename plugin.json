@@ -23,7 +23,9 @@
         "Utility",
         "Random",
         "Switch",
-        "Attenuator"
+        "Attenuator",
+        "Logic",
+        "Controller"
       ]
     },
     {
@@ -33,6 +35,7 @@
       "manualUrl": "https://github.com/DaveBenham/VenomModules#cvmix",
       "tags": [
         "Mixer",
+        "Attenuator"
         "Utility",
         "Polyphonic"
       ]
@@ -50,7 +53,7 @@
     {
       "slug": "Recurse",
       "name": "Recurse",
-      "description": "Recursively process an input with built in scaling and offset cababilities",
+      "description": "Recursively process an input via Send/Return, with built in scaling and offset cababilities",
       "manualUrl": "https://github.com/DaveBenham/VenomModules#recurse",
       "tags": [
         "Polyphonic",
@@ -87,7 +90,9 @@
         "Logic",
         "Polyphonic",
         "Utility",
-        "Waveshaper"
+        "Waveshaper",
+        "Distortion",
+        "Limiter"
       ]
     }
   ]
