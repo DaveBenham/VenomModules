@@ -1,7 +1,9 @@
 # VenomModules
 Venom VCV Rack Modules created by Dave Benham (Dave Venom)
 
-Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for helping me set up the develoment environment, providing advice, and for writing the initial prototype code for the Rhythm Explorer prior to my decision to take the plunge and write my own code.
+Binaries for Beta version 1 are available at https://github.com/DaveBenham/VenomModules/releases/tag/2.0.beta1-c1cab27
+
+Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
 |[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
 |----|----|----|----|----|----|
@@ -111,7 +113,7 @@ The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND w
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
-The Bernoullie Switch randomly routes two inputs to two outputs. Upon receiving a trigger or gate, a virtual coin toss determines if input A goes to output A and B to B (no-swap), or if A goes to B and B to A (swap). Each input can be attenuated and/or inverted by a bipolar SCALE knob ranging from -1 to 1, and offset by an OFFSET knob, ranging from -10 to 10. The A input is normalled to the TRIG input and the B input is normalled to 0V, so if both inputs are left unpatched, the Bernoulli Switch will function as a "traditional" Bernoulli Gate. A "latched" mode may be achieved by leaving the B input at 0V and setting the A input SCALE to 0 and the A OFFSET to 10V.
+The Bernoulli Switch randomly routes two inputs to two outputs. Upon receiving a trigger or gate, a virtual coin toss determines if input A goes to output A and B to B (no-swap), or if A goes to B and B to A (swap). Each input can be attenuated and/or inverted by a bipolar SCALE knob ranging from -1 to 1, and offset by an OFFSET knob, ranging from -10 to 10. The A input is normalled to the TRIG input and the B input is normalled to 0V, so if both inputs are left unpatched, the Bernoulli Switch will function as a "traditional" Bernoulli Gate. A "latched" mode may be achieved by leaving the B input at 0V and setting the A input SCALE to 0 and the A OFFSET to 10V.
 
 The PROB knob and PROB input determine the probability that a particular routing operation will occur. If there is no PROB input, then a fully counterclockwise PROB knob yields a 0% chance of the the routing event, and fully clockwise is 100% chance. The range is linear, with 50% at noon. The probability can be modulated by bipolar PROB input, with each volt equating to 10% chance.
 
@@ -240,9 +242,9 @@ Rhythm Explorer is a trigger sequencer that randomly generates repeating pattern
 Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 ppqn clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
 
 ### Basic Principles
-Random Rhythm uses a pseudo Random Number Generator (RNG) to establish a sequence of seemingly random numbers. However, the RNG is seeded with another random number, and every time it is reseeded with the same number, it issues the exact same sequence. Each division gets its own sequence of "random" numbers. With the initial setup, the reseed occurs after each set of 4 1/4 notes, thus establishing a pattern.
+Random Rhythm uses a pseudo Random Number Generator (RNG) to establish a sequence of seemingly random numbers. However, the "random" sequence is dictated by a seed number - every time the RNG is reseeded with the same number, it generates the exact same sequence. With the initial setup, the reseed occurs after each set of 4 quarter notes, thus establishing a pattern. When the DICE button is pressed, a new seed number is generated, so the pattern will change.
 
-Each division has its own density slider ranging from 0 to 100%. Assuming all divisions are set to All mode, then when the slider value is greater than the current random number for that division, then the high gate will be issued for that beat. If the density is at 100%, then all beats will be played. If at 0%, then no beats will be played. The values in between do not specify the precise density for any given pattern, but rather specify the average frequency across all possible patterns.
+Each division has its own density slider ranging from 0 to 100%, and each division also gets its own sequence of "random" numbers. Assuming all divisions are set to All mode, then when the slider value is greater than the current random number for that division, then the high gate will be issued for that beat. If the density is at 100%, then all beats will be played. If at 0%, then no beats will be played. The values in between do not specify the precise density for any given pattern, but rather specify the average frequency across all possible patterns.
 
 ### CLOCK Input
 The Rhythm Explorer will not run properly until a 24 ppqn (pulses per quarter note) clock is patched into the CLOCK input.
@@ -284,7 +286,7 @@ Normally the patterns are established by an internal RNG that has been seeded wi
 
 If the RAND input is monophonic, then all divisions will sample the same RAND input. But if you provide a polyphonic input with 8 channels, then each division will get its own "random" input. Note that if you patch a polyphonic input with fewer than 8 channels, then the missing channels will get constant 0V.
 
-The result when using external RAND may or may not have a pattern, depending on the RAND signal. You may be able to patch the Rhythm Explorer RESET output to your random source to establish a pattern that repeats at the beginning of each phrase.
+The result when using external RAND may or may not have a pattern, depending on the RAND signal. You may be able to patch the Rhythm Explorer PHRASE START output to your random source reset or sync input to establish a pattern that repeats at the beginning of each phrase.
 
 ### BAR and PHRASE
 
@@ -321,12 +323,12 @@ Note that sometimes you may want to reuse the same division for multiple columns
 #### DENSITY Slider
 Each slider specifies a threshold at which any given division beat is likely to issue a high gate. Typically the values are unipolar ranging from 0 to 100%. Each density can be modulated by the division density CV input, and/or the Global density CV input.
 
-The density slider knob blinks bright yellow each time the beat fires for that division. Note that the mode logic used for OR, XOR ODD, and XOR 1 outputs can be different then what is used for the individual division outpust, so the blinking sliders may not match the OR, XOR ODD, or XOR 1 outputs.
+The density slider knob blinks bright yellow each time the beat fires for that division. Note that the mode logic used for OR, XOR ODD, and XOR 1 outputs can be different then what is used for the individual division outputs, so the blinking sliders may not match the OR, XOR ODD, or XOR 1 outputs.
 
 #### MODE Button
 The mode can influence whether a given beat will fire. Pressing the square button cycles through the available values, and right clicking provides a menu to directly select any one value.
 - ALL - All beats that meet the random threshold will fire. Note that the left most division is fixed at ALL because it cannot be influenced by any other divisions.
-- LIN - Linear mode, meaning that the beat will be blocked if one of the divisions to its left is firing at the same time. If all divisions are set to LIN (except the 1st one), then there will never be more than one division playing at a time, the definition of linear drumming.
+- LIN - Linear mode, meaning that the beat will be blocked if one of the divisions to its left is firing at the same time. If all divisions are set to LIN (disregarding the 1st one of course), then there will never be more than one division playing at a time, the definition of linear drumming.
 - OFF - Offbeat mode, meaning that the beat will be blocked if one of the divisions to the left coincides with this division's beat, regardless whether the left division actually fires or not. This is a special case of linear drumming. For example, if division 1 is 1/4 note, and division 2 is 1/8 note with OFF mode, then the 1/8 will never fire with the 1/4 beats - it will fire only on the "and" of each beat.
 - --- Global default, meaning the division will inherit the mode that is specified at the global level.
 
