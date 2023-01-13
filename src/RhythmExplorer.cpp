@@ -160,6 +160,22 @@ struct RhythmExplorer : Module {
         return labels[getValue()];
       }
     };
+    struct GlobalModeQuantity : SwitchQuantity {
+      std::string getDisplayValueString() override {
+        RhythmExplorer* module = reinterpret_cast<RhythmExplorer*>(this->module);
+        Input* input = &module->inputs[RhythmExplorer::MODE_POLY_INPUT];
+        if (input->isPolyphonic()) {
+          std::string rtn = "";
+          for(int i=0; i<SLIDER_COUNT; i++)
+            rtn += "\nMode " + std::to_string(i+1) + " " + labels[rack::math::clamp(static_cast<int>(input->getPolyVoltage(i)), 0, 2)];
+          return rtn;
+        }
+        if (input->isConnected())
+          return labels[rack::math::clamp(static_cast<int>(input->getVoltage()), 0, 2)];
+        // else paramter
+        return labels[getValue()];
+      }
+    };
 
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
@@ -206,7 +222,7 @@ struct RhythmExplorer : Module {
         configSwitch<FixedSwitchQuantity>(MODE_CHANNEL_PARAM + si, 0, 3, 0, "Mode " + si_s, CHANNEL_MODE_LABELS);
     }
     configSwitch<FixedSwitchQuantity>(POLAR_PARAM, 0, 1, 0, "Density Polarity", {"Uniploar", "Bipolar"});
-    configSwitch(MODE_POLY_PARAM, 0, 2 , 0, "Global Mode", POLY_MODE_LABELS);
+    configSwitch<GlobalModeQuantity>(MODE_POLY_PARAM, 0, 2 , 0, "Global Mode", POLY_MODE_LABELS);
     configButton(MUTE_POLY_PARAM, "Global Mute");
     configInput(MODE_POLY_INPUT, "Global Mode CV");
     configInput(DENSITY_POLY_INPUT,"Density Poly CV");
@@ -404,13 +420,17 @@ struct RhythmExplorer : Module {
     }
     lights[INIT_DENSITY_LIGHT].setBrightnessSmooth(initBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
 
-    // Mutes
+    // Mutes - fully handled,  Modes - handled for button lable display only, LOCK may prevent true display
     for (int i=0; i<SLIDER_COUNT; i++) {
+      if(i>0 && inputs[MODE_CHANNEL_INPUT + i].isConnected())
+        params[MODE_CHANNEL_PARAM + i].setValue(rack::math::clamp(static_cast <int>(inputs[MODE_CHANNEL_INPUT + i].getVoltage()), 0, 3));
       if(buttonTrigger(channelMuteHigh[i],params[MUTE_CHANNEL_PARAM + i].getValue())) {
         channelMuteActive[i] = !channelMuteActive[i];
         lights[MUTE_CHANNEL_LIGHT + i].setBrightness(channelMuteActive[i] ? 1.f : LIGHT_OFF);
       }
     }
+    if(inputs[MODE_POLY_INPUT].isConnected())
+      params[MODE_POLY_PARAM].setValue(rack::math::clamp(static_cast <int>(inputs[MODE_POLY_INPUT].getVoltage()), 0, 2));
     if(buttonTrigger(polyMuteHigh,params[MUTE_POLY_PARAM].getValue())) {
       polyMuteActive = !polyMuteActive;
       lights[MUTE_POLY_LIGHT].setBrightness(polyMuteActive ? 1.f : LIGHT_OFF);
@@ -544,15 +564,13 @@ struct RhythmExplorer : Module {
             ),
             0,2
           );
-          int channelMode = si==0 ? 0 : rack::math::clamp(
-            static_cast<int>(
-              inputs[MODE_CHANNEL_INPUT + si].getNormalPolyVoltage(
-                params[MODE_CHANNEL_PARAM + si].getValue(),
-                si
-              )
-            ),
-            0,3
-          );
+          int channelMode;
+          if (si == 0)
+            channelMode = ALL_MODE;
+          else if (inputs[MODE_CHANNEL_INPUT + si].isConnected())
+            channelMode = rack::math::clamp( static_cast <int>(inputs[MODE_CHANNEL_INPUT + si].getVoltage()), 0, 3);
+          else
+            channelMode = params[MODE_CHANNEL_PARAM + si].getValue();
           if (channelMode == GLOBAL_MODE)
             channelMode = globalMode;
 
