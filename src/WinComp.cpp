@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include "util.hpp"
 
 
 struct WinComp : Module {
@@ -282,7 +283,7 @@ struct WinComp : Module {
 struct WinCompWidget : ModuleWidget {
   WinCompWidget(WinComp* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/WinComp.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("WinComp"))));
 
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 15.93)), module, WinComp::A_INPUT));
     addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 15.93)), module, WinComp::A_PARAM));
@@ -303,20 +304,20 @@ struct WinCompWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, WinComp::LS_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 116.0)), module, WinComp::GR_OUTPUT));
 
-    addChild(createLightCentered<TinyLight<GrnLight<>>>(mm2px(Vec( 3.567, 54.58)), module, WinComp::MIN_ABS_LIGHT));
-    addChild(createLightCentered<TinyLight<RdLight<>>>(mm2px(Vec(11.027, 54.58)), module, WinComp::MIN_INV_LIGHT));
-    addChild(createLightCentered<TinyLight<GrnLight<>>>(mm2px(Vec(14.404, 54.58)), module, WinComp::MAX_ABS_LIGHT));
-    addChild(createLightCentered<TinyLight<RdLight<>>>(mm2px(Vec(21.864, 54.58)), module, WinComp::MAX_INV_LIGHT));
-    addChild(createLightCentered<TinyLight<GrnLight<>>>(mm2px(Vec( 3.567, 69.03)), module, WinComp::CLAMP_ABS_LIGHT));
-    addChild(createLightCentered<TinyLight<RdLight<>>>(mm2px(Vec(11.027, 69.03)), module, WinComp::CLAMP_INV_LIGHT));
-    addChild(createLightCentered<TinyLight<GrnLight<>>>(mm2px(Vec(14.404, 69.03)), module, WinComp::OVER_ABS_LIGHT));
-    addChild(createLightCentered<TinyLight<RdLight<>>>(mm2px(Vec(21.864, 69.03)), module, WinComp::OVER_INV_LIGHT));
-    addChild(createLightCentered<TinyLight<YellowBlueLight<>>>(mm2px(Vec(11.027, 83.38)), module, WinComp::EQ_LIGHT));
-    addChild(createLightCentered<TinyLight<YellowBlueLight<>>>(mm2px(Vec(21.864, 83.38)), module, WinComp::NEQ_LIGHT));
-    addChild(createLightCentered<TinyLight<YellowBlueLight<>>>(mm2px(Vec(11.027, 97.83)), module, WinComp::LSEQ_LIGHT));
-    addChild(createLightCentered<TinyLight<YellowBlueLight<>>>(mm2px(Vec(21.864, 97.83)), module, WinComp::GREQ_LIGHT));
-    addChild(createLightCentered<TinyLight<YellowBlueLight<>>>(mm2px(Vec(11.027, 112.28)), module, WinComp::LS_LIGHT));
-    addChild(createLightCentered<TinyLight<YellowBlueLight<>>>(mm2px(Vec(21.864, 112.28)), module, WinComp::GR_LIGHT));
+    addChild(createLightCentered<SmallLight<GrnLight<>>>(mm2px(Vec( 3.547, 54.58+7.46)), module, WinComp::MIN_ABS_LIGHT));
+    addChild(createLightCentered<SmallLight<RdLight<>>>(mm2px(Vec(11.047, 54.58+7.46)), module, WinComp::MIN_INV_LIGHT));
+    addChild(createLightCentered<SmallLight<GrnLight<>>>(mm2px(Vec(14.384, 54.58+7.46)), module, WinComp::MAX_ABS_LIGHT));
+    addChild(createLightCentered<SmallLight<RdLight<>>>(mm2px(Vec(21.884, 54.58+7.46)), module, WinComp::MAX_INV_LIGHT));
+    addChild(createLightCentered<SmallLight<GrnLight<>>>(mm2px(Vec( 3.547, 69.03+7.46)), module, WinComp::CLAMP_ABS_LIGHT));
+    addChild(createLightCentered<SmallLight<RdLight<>>>(mm2px(Vec(11.047, 69.03+7.46)), module, WinComp::CLAMP_INV_LIGHT));
+    addChild(createLightCentered<SmallLight<GrnLight<>>>(mm2px(Vec(14.384, 69.03+7.46)), module, WinComp::OVER_ABS_LIGHT));
+    addChild(createLightCentered<SmallLight<RdLight<>>>(mm2px(Vec(21.884, 69.03+7.46)), module, WinComp::OVER_INV_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowBlueLight<>>>(mm2px(Vec(11.047, 83.38+7.46)), module, WinComp::EQ_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowBlueLight<>>>(mm2px(Vec(21.884, 83.38+7.46)), module, WinComp::NEQ_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowBlueLight<>>>(mm2px(Vec(11.047, 97.83+7.46)), module, WinComp::LSEQ_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowBlueLight<>>>(mm2px(Vec(21.884, 97.83+7.46)), module, WinComp::GREQ_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowBlueLight<>>>(mm2px(Vec(11.047, 112.28+7.46)), module, WinComp::LS_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowBlueLight<>>>(mm2px(Vec(21.884, 112.28+7.46)), module, WinComp::GR_LIGHT));
   }
 
   void appendContextMenu(Menu* menu) override {

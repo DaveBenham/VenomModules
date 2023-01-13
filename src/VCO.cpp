@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "dsp/math.hpp"
 #include <array>
+#include "util.hpp"
 
 using std::array;
 
@@ -248,7 +249,7 @@ void VCO::process(const ProcessArgs &args) {
 struct VCOWidget : ModuleWidget {
   VCOWidget(VCO *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/VCO.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, faceplatePath("VCO"))));
 
     addParam(createParam<RoundBigBlackKnobSnap>(Vec(38, 40), module, VCO::OCT_PARAM));
 

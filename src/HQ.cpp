@@ -1,5 +1,6 @@
 #include "plugin.hpp"
 #include <float.h>
+#include "util.hpp"
 
 
 struct HQ : Module {
@@ -238,7 +239,7 @@ struct PartialDisplay : DigitalDisplay188 {
 struct HQWidget : ModuleWidget {
   HQWidget(HQ* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/HQ.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("HQ"))));
     PartialDisplay* partialDisplay = createWidget<PartialDisplay>(mm2px(Vec(1.75, 14.0)));
     partialDisplay->module = module;
     addChild(partialDisplay);

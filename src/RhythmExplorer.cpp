@@ -288,18 +288,18 @@ struct RhythmExplorer : Module {
     json_t *jobj = json_object();
 
     json_object_set_new(jobj, "internalSeed", json_real(internalSeed));
-    json_object_set_new(jobj, "runGateActive", json_bool(runGateActive));
-    json_object_set_new(jobj, "patOffActive", json_bool(patOffActive));
-    json_object_set_new(jobj, "lockActive", json_bool(lockActive));
-    json_object_set_new(jobj, "channelMuteActive0", json_bool(channelMuteActive[0]));
-    json_object_set_new(jobj, "channelMuteActive1", json_bool(channelMuteActive[1]));
-    json_object_set_new(jobj, "channelMuteActive2", json_bool(channelMuteActive[2]));
-    json_object_set_new(jobj, "channelMuteActive3", json_bool(channelMuteActive[3]));
-    json_object_set_new(jobj, "channelMuteActive4", json_bool(channelMuteActive[4]));
-    json_object_set_new(jobj, "channelMuteActive5", json_bool(channelMuteActive[5]));
-    json_object_set_new(jobj, "channelMuteActive6", json_bool(channelMuteActive[6]));
-    json_object_set_new(jobj, "channelMuteActive7", json_bool(channelMuteActive[7]));
-    json_object_set_new(jobj, "polyMuteActive", json_bool(polyMuteActive));
+    json_object_set_new(jobj, "runGateActive", json_boolean(runGateActive));
+    json_object_set_new(jobj, "patOffActive", json_boolean(patOffActive));
+    json_object_set_new(jobj, "lockActive", json_boolean(lockActive));
+    json_object_set_new(jobj, "channelMuteActive0", json_boolean(channelMuteActive[0]));
+    json_object_set_new(jobj, "channelMuteActive1", json_boolean(channelMuteActive[1]));
+    json_object_set_new(jobj, "channelMuteActive2", json_boolean(channelMuteActive[2]));
+    json_object_set_new(jobj, "channelMuteActive3", json_boolean(channelMuteActive[3]));
+    json_object_set_new(jobj, "channelMuteActive4", json_boolean(channelMuteActive[4]));
+    json_object_set_new(jobj, "channelMuteActive5", json_boolean(channelMuteActive[5]));
+    json_object_set_new(jobj, "channelMuteActive6", json_boolean(channelMuteActive[6]));
+    json_object_set_new(jobj, "channelMuteActive7", json_boolean(channelMuteActive[7]));
+    json_object_set_new(jobj, "polyMuteActive", json_boolean(polyMuteActive));
 
     return jobj;
   }
@@ -659,8 +659,21 @@ struct LightButton : TBase {
   }
 };
 
-
 using VCVBezelLightBigWhite = LightButton<VCVBezelBig, VCVBezelLightBig<WhiteLight>>;
+
+template <typename TBase>
+struct RotarySwitch : TBase {
+	RotarySwitch() {
+		this->snap = true;
+		this->smooth = false;
+	}
+
+	// handle the manually entered values
+	void onChange(const event::Change &e) override {
+		SvgKnob::onChange(e);
+		this->getParamQuantity()->setValue(roundf(this->getParamQuantity()->getValue()));
+	}
+};
 
 struct RhythmExplorerWidget : ModuleWidget {
 
@@ -692,7 +705,7 @@ struct RhythmExplorerWidget : ModuleWidget {
 
   RhythmExplorerWidget(RhythmExplorer* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/RhythmExplorer.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("RhythmExplorer"))));
 
     float dx = RACK_GRID_WIDTH * 2.f;
     float dy = RACK_GRID_WIDTH * 2.f;

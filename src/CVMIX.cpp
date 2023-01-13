@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include "util.hpp"
 
 using simd::float_4;
 
@@ -84,7 +85,7 @@ struct CVMix : Module {
 struct CVMixWidget : ModuleWidget {
   CVMixWidget(CVMix* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/CVMix.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("CVMix"))));
 
     addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(7.62, 24.723)), module, CVMix::LEVEL_PARAMS + 0));
     addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(7.62, 41.327)), module, CVMix::LEVEL_PARAMS + 1));

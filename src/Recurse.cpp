@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include "util.hpp"
 
 
 struct Recurse : Module {
@@ -152,7 +153,7 @@ struct CountDisplay : DigitalDisplay18 {
 struct RecurseWidget : ModuleWidget {
   RecurseWidget(Recurse* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, "res/Recurse.svg")));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("Recurse"))));
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 39.8)));
     countDisplay->module = module;
     addChild(countDisplay);
