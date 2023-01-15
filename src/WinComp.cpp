@@ -1,6 +1,8 @@
 #include "plugin.hpp"
 #include "util.hpp"
 
+#define MODULE_NAME WinComp
+static const std::string moduleName = "WinComp";
 
 struct WinComp : Module {
   enum ParamId {
@@ -68,6 +70,8 @@ struct WinComp : Module {
   bool invMaxOld = false;
   bool invClampOld = false;
   bool invOverOld = false;
+
+  #include "ThemeModVars.hpp"
 
   dsp::ClockDivider lightDivider;
 
@@ -244,6 +248,7 @@ struct WinComp : Module {
     json_object_set_new(rootJ, "invClamp", json_boolean(invClamp));
     json_object_set_new(rootJ, "invOver", json_boolean(invOver));
     json_object_set_new(rootJ, "gateType", json_integer(gateType));
+    #include "ThemeToJson.hpp"
     return rootJ;
   }
 
@@ -275,6 +280,7 @@ struct WinComp : Module {
     val = json_object_get(rootJ, "gateType");
     if (val)
       gateType = json_integer_value(val);
+    #include "ThemeFromJson.hpp"
   }
 
 };
@@ -283,7 +289,7 @@ struct WinComp : Module {
 struct WinCompWidget : ModuleWidget {
   WinCompWidget(WinComp* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("WinComp"))));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
 
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 15.93)), module, WinComp::A_INPUT));
     addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 15.93)), module, WinComp::A_PARAM));
@@ -344,8 +350,10 @@ struct WinCompWidget : ModuleWidget {
     menu->addChild(createBoolPtrMenuItem("Clamp invert", "", &module->invClamp));
     menu->addChild(createBoolPtrMenuItem("Overflow absolute value", "", &module->absOver));
     menu->addChild(createBoolPtrMenuItem("Overflow invert", "", &module->invOver));
+    #include "ThemeMenu.hpp"
   }
 
+  #include "ThemeStep.hpp"
 };
 
 

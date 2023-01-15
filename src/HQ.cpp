@@ -2,6 +2,8 @@
 #include <float.h>
 #include "util.hpp"
 
+#define MODULE_NAME HQ
+static const std::string moduleName = "HQ";
 
 struct HQ : Module {
   enum ParamId {
@@ -69,6 +71,8 @@ struct HQ : Module {
     {-8,8}, {-16,16}, {-32,32}, {-64,64},
     {-8,16}, {-16,32}, {-32,64}, {-64,128}
   };
+
+  #include "ThemeModVars.hpp"
 
   int partialParamGetValue() {
     float val = params[PARTIAL_PARAM].getValue();
@@ -208,6 +212,7 @@ struct HQ : Module {
   json_t* dataToJson() override {
     json_t* rootJ = json_object();
     json_object_set_new(rootJ, "range", json_integer(range));
+    #include "ThemeToJson.hpp"
     return rootJ;
   }
 
@@ -215,6 +220,7 @@ struct HQ : Module {
     json_t* val = json_object_get(rootJ, "range");
     if (val)
       range = json_integer_value(val);
+    #include "ThemeFromJson.hpp"
   }
 
 };
@@ -239,7 +245,7 @@ struct PartialDisplay : DigitalDisplay188 {
 struct HQWidget : ModuleWidget {
   HQWidget(HQ* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("HQ"))));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
     PartialDisplay* partialDisplay = createWidget<PartialDisplay>(mm2px(Vec(1.75, 14.0)));
     partialDisplay->module = module;
     addChild(partialDisplay);
@@ -285,9 +291,10 @@ struct HQWidget : ModuleWidget {
       [=]() {return module->monitor;},
       [=](int i) {module->monitor = i;}
     ));
-
+    #include "ThemeMenu.hpp"
   }
 
+  #include "ThemeStep.hpp"
 };
 
 Model* modelHQ = createModel<HQ, HQWidget>("HQ");

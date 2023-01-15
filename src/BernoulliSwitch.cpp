@@ -3,6 +3,10 @@
 
 #define LIGHT_OFF 0.02f
 
+#define MODULE_NAME BernoulliSwitch
+static const std::string moduleName = "BernoulliSwitch";
+
+
 struct BernoulliSwitch : Module {
   enum ParamId {
     PROB_PARAM,
@@ -45,6 +49,8 @@ struct BernoulliSwitch : Module {
   int oldChannels = 0;
   int lightChannel = 0;
   bool lightOff = false;
+
+  #include "ThemeModVars.hpp"
 
   BernoulliSwitch() {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -151,6 +157,7 @@ struct BernoulliSwitch : Module {
   json_t* dataToJson() override {
     json_t* rootJ = json_object();
     json_object_set_new(rootJ, "monitorChannel", json_integer(lightChannel));
+    #include "ThemeToJson.hpp"
     return rootJ;
   }
 
@@ -158,6 +165,7 @@ struct BernoulliSwitch : Module {
     json_t* val = json_object_get(rootJ, "monitorChannel");
     if (val)
       lightChannel = json_integer_value(val);
+    #include "ThemeFromJson.hpp"
   }
 
 };
@@ -165,7 +173,7 @@ struct BernoulliSwitch : Module {
 struct BernoulliSwitchWidget : ModuleWidget {
   BernoulliSwitchWidget(BernoulliSwitch* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("BernoulliSwitch"))));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
     
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(5.0, 18.75)), module, BernoulliSwitch::NO_SWAP_LIGHT));
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(20.431, 18.75)), module, BernoulliSwitch::SWAP_LIGHT));
@@ -204,8 +212,10 @@ struct BernoulliSwitchWidget : ModuleWidget {
         module->lights[BernoulliSwitch::SWAP_LIGHT].setBrightness(i > module->oldChannels ? false : module->swap[i]);
       }
     ));
+    #include "ThemeMenu.hpp"
   }
 
+  #include "ThemeStep.hpp"
 };
 
 Model* modelBernoulliSwitch = createModel<BernoulliSwitch, BernoulliSwitchWidget>("BernoulliSwitch");

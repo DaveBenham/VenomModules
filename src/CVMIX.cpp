@@ -3,6 +3,9 @@
 
 using simd::float_4;
 
+#define MODULE_NAME CVMix
+static const std::string moduleName = "CVMix";
+
 struct CVMix : Module {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 3),
@@ -19,6 +22,8 @@ struct CVMix : Module {
   enum LightId {
     LIGHTS_LEN
   };
+  
+  #include "ThemeModVars.hpp"
 
   dsp::ClockDivider paramDivider;
 
@@ -62,7 +67,7 @@ struct CVMix : Module {
     }
     outputs[MIX_OUTPUT].setChannels(channels);
   }
-  
+
   /** Set the level param units to either V or %, depending on whether a cable is connected. */
   void refreshParamQuantities() {
     for (int i = 0; i < 3; i++) {
@@ -80,12 +85,21 @@ struct CVMix : Module {
     }
   }
 
+  json_t* dataToJson() override {
+    json_t* rootJ = json_object();
+    #include "ThemeToJson.hpp"
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    #include "ThemeFromJson.hpp"
+  }
 };
 
 struct CVMixWidget : ModuleWidget {
   CVMixWidget(CVMix* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("CVMix"))));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
 
     addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(7.62, 24.723)), module, CVMix::LEVEL_PARAMS + 0));
     addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(7.62, 41.327)), module, CVMix::LEVEL_PARAMS + 1));
@@ -97,6 +111,14 @@ struct CVMixWidget : ModuleWidget {
 
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.62, 113.115)), module, CVMix::MIX_OUTPUT));
   }
+
+  void appendContextMenu(Menu* menu) override {
+    CVMix* module = dynamic_cast<CVMix*>(this->module);
+    assert(module);
+    #include "ThemeMenu.hpp"
+  }
+
+  #include "ThemeStep.hpp"
 };
 
 Model* modelCVMix = createModel<CVMix, CVMixWidget>("CVMix");

@@ -1,6 +1,8 @@
 #include "plugin.hpp"
 #include "util.hpp"
 
+#define MODULE_NAME Recurse
+static const std::string moduleName = "Recurse";
 
 struct Recurse : Module {
   enum ParamId {
@@ -33,6 +35,8 @@ struct Recurse : Module {
   bool recurCountErr = false;
   int order = 0;
   int oldOrder = -1;
+  
+  #include "ThemeModVars.hpp"
 
   enum ModTiming {
     PRE_START_1,
@@ -126,6 +130,7 @@ struct Recurse : Module {
   json_t* dataToJson() override {
     json_t* rootJ = json_object();
     json_object_set_new(rootJ, "orderOp", json_integer(order));
+    #include "ThemeToJson.hpp"
     return rootJ;
   }
 
@@ -133,6 +138,7 @@ struct Recurse : Module {
     json_t* val = json_object_get(rootJ, "orderOp");
     if (val)
       order = json_integer_value(val);
+    #include "ThemeFromJson.hpp"
   }
 
 };
@@ -153,7 +159,7 @@ struct CountDisplay : DigitalDisplay18 {
 struct RecurseWidget : ModuleWidget {
   RecurseWidget(Recurse* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("Recurse"))));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 39.8)));
     countDisplay->module = module;
     addChild(countDisplay);
@@ -183,7 +189,10 @@ struct RecurseWidget : ModuleWidget {
       [=]() {return module->order;},
       [=](int i) {module->order = i;}
     ));
+    #include "ThemeMenu.hpp"
   }
+
+  #include "ThemeStep.hpp"
 
 };
 

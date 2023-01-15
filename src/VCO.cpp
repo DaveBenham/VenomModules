@@ -3,6 +3,9 @@
 #include <array>
 #include "util.hpp"
 
+#define MODULE_NAME VCO
+static const std::string moduleName = "VCO";
+
 using std::array;
 
 struct VCO : Module {
@@ -55,13 +58,15 @@ struct VCO : Module {
   bool oldSqNeg = false;
   bool oldTriDisc = false;
   bool oldTriNeg = false;
-  
+
   array<float, 4> sawBuffer;
   array<float, 4> sqrBuffer;
   array<float, 4> triBuffer;
   array<float, 4> pwBuffer;
 
   float log2sampleFreq = 15.4284f;
+
+  #include "ThemeModVars.hpp"
 
   dsp::SchmittTrigger resetTrigger;
 
@@ -96,6 +101,15 @@ struct VCO : Module {
   void process(const ProcessArgs &args) override;
   void onSampleRateChange() override;
 
+  json_t* dataToJson() override {
+    json_t* rootJ = json_object();
+    #include "ThemeToJson.hpp"
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    #include "ThemeFromJson.hpp"
+  }
 };
 
 
@@ -249,7 +263,7 @@ void VCO::process(const ProcessArgs &args) {
 struct VCOWidget : ModuleWidget {
   VCOWidget(VCO *module) {
     setModule(module);
-    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, faceplatePath("VCO"))));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
 
     addParam(createParam<RoundBigBlackKnobSnap>(Vec(38, 40), module, VCO::OCT_PARAM));
 
@@ -272,6 +286,15 @@ struct VCOWidget : ModuleWidget {
     addOutput(createOutput<PJ301MPort>(Vec(85, 318), module, VCO::SIN_OUTPUT));
 
   }
+
+  void appendContextMenu(Menu* menu) override {
+    VCO* module = dynamic_cast<VCO*>(this->module);
+    assert(module);
+    #include "ThemeMenu.hpp"
+  }
+
+  #include "ThemeStep.hpp"
+
 };
 
 Model *modelVCO = createModel<VCO, VCOWidget>("VenomVCO");

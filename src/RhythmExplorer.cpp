@@ -11,6 +11,9 @@
 #define LIGHT_DIM 0.1f
 #define LIGHT_FADE 5e-6f
 
+#define MODULE_NAME RhythmExplorer
+static const std::string moduleName = "RhythmExplorer";
+
 static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/2",
   "1/4",
@@ -129,6 +132,8 @@ struct RhythmExplorer : Module {
   bool lockActive;
   bool channelMuteActive[SLIDER_COUNT];
   bool polyMuteActive;
+
+  #include "ThemeModVars.hpp"
 
   //Non Persistant State
   bool isUni;
@@ -285,40 +290,42 @@ struct RhythmExplorer : Module {
   }
 
   json_t *dataToJson() override{
-    json_t *jobj = json_object();
+    json_t *rootJ = json_object();
 
-    json_object_set_new(jobj, "internalSeed", json_real(internalSeed));
-    json_object_set_new(jobj, "runGateActive", json_boolean(runGateActive));
-    json_object_set_new(jobj, "patOffActive", json_boolean(patOffActive));
-    json_object_set_new(jobj, "lockActive", json_boolean(lockActive));
-    json_object_set_new(jobj, "channelMuteActive0", json_boolean(channelMuteActive[0]));
-    json_object_set_new(jobj, "channelMuteActive1", json_boolean(channelMuteActive[1]));
-    json_object_set_new(jobj, "channelMuteActive2", json_boolean(channelMuteActive[2]));
-    json_object_set_new(jobj, "channelMuteActive3", json_boolean(channelMuteActive[3]));
-    json_object_set_new(jobj, "channelMuteActive4", json_boolean(channelMuteActive[4]));
-    json_object_set_new(jobj, "channelMuteActive5", json_boolean(channelMuteActive[5]));
-    json_object_set_new(jobj, "channelMuteActive6", json_boolean(channelMuteActive[6]));
-    json_object_set_new(jobj, "channelMuteActive7", json_boolean(channelMuteActive[7]));
-    json_object_set_new(jobj, "polyMuteActive", json_boolean(polyMuteActive));
+    json_object_set_new(rootJ, "internalSeed", json_real(internalSeed));
+    json_object_set_new(rootJ, "runGateActive", json_boolean(runGateActive));
+    json_object_set_new(rootJ, "patOffActive", json_boolean(patOffActive));
+    json_object_set_new(rootJ, "lockActive", json_boolean(lockActive));
+    json_object_set_new(rootJ, "channelMuteActive0", json_boolean(channelMuteActive[0]));
+    json_object_set_new(rootJ, "channelMuteActive1", json_boolean(channelMuteActive[1]));
+    json_object_set_new(rootJ, "channelMuteActive2", json_boolean(channelMuteActive[2]));
+    json_object_set_new(rootJ, "channelMuteActive3", json_boolean(channelMuteActive[3]));
+    json_object_set_new(rootJ, "channelMuteActive4", json_boolean(channelMuteActive[4]));
+    json_object_set_new(rootJ, "channelMuteActive5", json_boolean(channelMuteActive[5]));
+    json_object_set_new(rootJ, "channelMuteActive6", json_boolean(channelMuteActive[6]));
+    json_object_set_new(rootJ, "channelMuteActive7", json_boolean(channelMuteActive[7]));
+    json_object_set_new(rootJ, "polyMuteActive", json_boolean(polyMuteActive));
+    #include "ThemeToJson.hpp"
 
-    return jobj;
+    return rootJ;
   }
 
-  void dataFromJson(json_t *jobj) override {
+  void dataFromJson(json_t *rootJ) override {
 
-    internalSeed = json_real_value(json_object_get(jobj, "internalSeed"));
-    runGateActive = json_is_true(json_object_get(jobj, "runGateActive"));
-    patOffActive = json_is_true(json_object_get(jobj, "patOffActive"));
-    lockActive = json_is_true(json_object_get(jobj, "lockActive"));
-    channelMuteActive[0] = json_is_true(json_object_get(jobj, "channelMuteActive0"));
-    channelMuteActive[1] = json_is_true(json_object_get(jobj, "channelMuteActive1"));
-    channelMuteActive[2] = json_is_true(json_object_get(jobj, "channelMuteActive2"));
-    channelMuteActive[3] = json_is_true(json_object_get(jobj, "channelMuteActive3"));
-    channelMuteActive[4] = json_is_true(json_object_get(jobj, "channelMuteActive4"));
-    channelMuteActive[5] = json_is_true(json_object_get(jobj, "channelMuteActive5"));
-    channelMuteActive[6] = json_is_true(json_object_get(jobj, "channelMuteActive6"));
-    channelMuteActive[7] = json_is_true(json_object_get(jobj, "channelMuteActive7"));
-    polyMuteActive = json_is_true(json_object_get(jobj, "polyMuteActive"));
+    internalSeed = json_real_value(json_object_get(rootJ, "internalSeed"));
+    runGateActive = json_is_true(json_object_get(rootJ, "runGateActive"));
+    patOffActive = json_is_true(json_object_get(rootJ, "patOffActive"));
+    lockActive = json_is_true(json_object_get(rootJ, "lockActive"));
+    channelMuteActive[0] = json_is_true(json_object_get(rootJ, "channelMuteActive0"));
+    channelMuteActive[1] = json_is_true(json_object_get(rootJ, "channelMuteActive1"));
+    channelMuteActive[2] = json_is_true(json_object_get(rootJ, "channelMuteActive2"));
+    channelMuteActive[3] = json_is_true(json_object_get(rootJ, "channelMuteActive3"));
+    channelMuteActive[4] = json_is_true(json_object_get(rootJ, "channelMuteActive4"));
+    channelMuteActive[5] = json_is_true(json_object_get(rootJ, "channelMuteActive5"));
+    channelMuteActive[6] = json_is_true(json_object_get(rootJ, "channelMuteActive6"));
+    channelMuteActive[7] = json_is_true(json_object_get(rootJ, "channelMuteActive7"));
+    polyMuteActive = json_is_true(json_object_get(rootJ, "polyMuteActive"));
+    #include "ThemeFromJson.hpp"
 
     reseedRng();
     updateLights();
@@ -379,6 +386,28 @@ struct RhythmExplorer : Module {
       q->maxValue = lockActive ? val : 1.f;
       q->defaultValue = lockActive ? val : 0.f;
     }
+  }
+
+  inline bool schmittTrigger(bool & state, float input){
+    if(!state && input >= 2.0f){
+      state = true;
+      return true;
+    }else if(state && input <= 0.1f){
+      state = false;
+      return false;
+    }
+    return false;
+  }
+  
+  inline bool buttonTrigger(bool & state, float input){
+    if(!state && input >= 1.0f){
+      state = true;
+      return true;
+    }else if(state && input <= 0.f){
+      state = false;
+      return false;
+    }
+    return false;
   }
 
   void process(const ProcessArgs& args) override {
@@ -705,7 +734,7 @@ struct RhythmExplorerWidget : ModuleWidget {
 
   RhythmExplorerWidget(RhythmExplorer* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath("RhythmExplorer"))));
+    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
 
     float dx = RACK_GRID_WIDTH * 2.f;
     float dy = RACK_GRID_WIDTH * 2.f;
@@ -818,12 +847,13 @@ struct RhythmExplorerWidget : ModuleWidget {
 
   }
 
-  // void appendContextMenu(Menu* menu) override {
-  //  RhythmExplorer* module = dynamic_cast<RhythmExplorer*>(this->module);
+  void appendContextMenu(Menu* menu) override {
+    RhythmExplorer* module = dynamic_cast<RhythmExplorer*>(this->module);
+    assert(module);
+    #include "ThemeMenu.hpp"
+  }
 
-  //  menu->addChild(new MenuEntry); //Blank Row
-  //  menu->addChild(createMenuLabel("RhythmExplorer"));
-  // }
+  #include "ThemeStep.hpp"
 };
 
 

@@ -18,6 +18,9 @@ extern Model* modelWinComp;
 
 ////////////////////////////////
 
+int getDefaultTheme();
+void setDefaultTheme(int theme);
+
 struct CKSSNarrow : app::SvgSwitch {
   CKSSNarrow() {
     addFrame(Svg::load(asset::plugin(pluginInstance, "res/components/SwitchNarrow_0.svg")));
