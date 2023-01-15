@@ -13,6 +13,11 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 |----|
 |![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|
 
+## Themes
+The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
+
+![Venom themes image](./doc/Themes.PNG)
+
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
 A windowed comparator inspired by the VCV Fundamental COMPARE module, based on specs originally proposed at 
@@ -44,7 +49,7 @@ Each input is summed with the corresponding OFFSET value. The OFFSETS are bipola
 - **A<B** = This gate is high if A is less than B +/- TOL. Computed as A < B - |TOL|
 - **A>B** = This gate is high if A is greater than B +/- TOL. Computed as A > B + |TOL|
 
-Each gate output has a small light in the upper right corner that glows yellow when the gate is high and the ouput is monophonic.
+Each gate output has a small light in the lower right corner that glows yellow when the gate is high and the ouput is monophonic.
 The light glows blue if the output is polyphonic and at least one channel is high.
 
 ### Context Menu
@@ -59,8 +64,8 @@ The context menu includes an option to specify the low and high gate values. The
 The MIN, MAX, CLAMP, and OVER outputs each have independent options to take the absolute value and or invert the output.
 The absolute value operation is performed prior to the inversion, so the output is guaranteed to be <=0V if both absolute value and invert are enabled.
 
-A glowing green light in the upper left corner of the port indicates the output has the absolute value option enabled.
-A glowing red light in the upper right corner indicates the output has the invert option enabled.
+A glowing green light in the lower left corner of the port indicates the output has the absolute value option enabled.
+A glowing red light in the lower right corner indicates the output has the invert option enabled.
 
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.
