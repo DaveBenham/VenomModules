@@ -1,5 +1,5 @@
 #include "plugin.hpp"
-#include "util.hpp"
+#include "ThemeStrings.hpp"
 
 #define MODULE_NAME WinComp
 static const std::string moduleName = "WinComp";

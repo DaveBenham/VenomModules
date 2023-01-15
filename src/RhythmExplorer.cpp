@@ -2,7 +2,7 @@
 // that I was able to flesh out into this final form
 
 #include "plugin.hpp"
-#include "util.hpp"
+#include "ThemeStrings.hpp"
 
 #define SLIDER_COUNT 8
 #define MAX_STEP_LENGTH 16

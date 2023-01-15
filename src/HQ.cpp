@@ -1,6 +1,6 @@
 #include "plugin.hpp"
 #include <float.h>
-#include "util.hpp"
+#include "ThemeStrings.hpp"
 
 #define MODULE_NAME HQ
 static const std::string moduleName = "HQ";

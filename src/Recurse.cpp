@@ -1,5 +1,5 @@
 #include "plugin.hpp"
-#include "util.hpp"
+#include "ThemeStrings.hpp"
 
 #define MODULE_NAME Recurse
 static const std::string moduleName = "Recurse";

@@ -1,7 +1,7 @@
 #include "plugin.hpp"
 #include "dsp/math.hpp"
 #include <array>
-#include "util.hpp"
+#include "ThemeStrings.hpp"
 
 #define MODULE_NAME VCO
 static const std::string moduleName = "VCO";

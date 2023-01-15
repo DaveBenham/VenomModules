@@ -1,5 +1,5 @@
 #include "plugin.hpp"
-#include "util.hpp"
+#include "ThemeStrings.hpp"
 
 #define LIGHT_OFF 0.02f
 
