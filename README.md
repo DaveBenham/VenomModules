@@ -5,9 +5,9 @@ Binaries for Beta version 1 are available at https://github.com/DaveBenham/Venom
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
-|[WINCOMP](#wincomp)|[RECURSE](#recurse)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
-|----|----|----|----|----|----|
-|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![CVMIX module image](./doc/CVMIX.PNG)|![VCO module image](./doc/VCO.PNG)|
+|[WINCOMP](#wincomp)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
+|----|----|----|----|----|----|----|
+|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![CVMIX module image](./doc/CVMIX.PNG)|![VCO module image](./doc/VCO.PNG)|
 
 |[Rhythm Explorer](#rhythm-explorer)|
 |----|
@@ -115,6 +115,9 @@ Since the Return is normalled to the Send, it is possible to generate a polyphon
 #### Bypass
 
 The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND will be monophonic 0V.
+
+## RECURSE STEREO
+![Recurse Stereo module image](./doc/RecurseStereo.PNG)
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
