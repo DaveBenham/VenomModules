@@ -706,8 +706,8 @@ struct RotarySwitch : TBase {
 
 struct RhythmExplorerWidget : ModuleWidget {
 
-  struct RateSwitch : app::SvgSwitch {
-    RateSwitch() {
+  struct DivSwitch : app::SvgSwitch {
+    DivSwitch() {
       shadow->opacity = 0.0;
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_0.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_1.svg")));
@@ -779,7 +779,11 @@ struct RhythmExplorerWidget : ModuleWidget {
 
     for(int si = 0; si < SLIDER_COUNT; si++, x+=dx){
       y = yStart;
-      addParam(createParamCentered<RateSwitch>(Vec(x,y), module, RhythmExplorer::RATE_PARAM + si));
+      DivSwitch* divSwitch = createParamCentered<DivSwitch>(Vec(x,y), module, RhythmExplorer::RATE_PARAM + si);
+      if (!module) {
+        divSwitch->sw->svg = divSwitch->frames[si+1];
+      }
+      addParam(divSwitch);
       y += dy * 1.8f;
       addParam(createLightParamCentered<VCVLightSlider<YellowLight>>(Vec(x,y), module, RhythmExplorer::DENSITY_PARAM + si, RhythmExplorer::DENSITY_LIGHT + si));
       y += dy * 1.8f;
