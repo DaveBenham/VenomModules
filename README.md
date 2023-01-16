@@ -126,6 +126,8 @@ The Right Input is normalled to the Left Input.
 
 In addition, The Left Return is normalled to the Left Send, and the Right Return is normalled to the Right Send.
 
+The Recursion Count, Scale, Offset, and Modulation Timing settings are applied to both Left and Right identically.
+
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
