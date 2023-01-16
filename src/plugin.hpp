@@ -13,6 +13,7 @@ extern Model* modelCVMix;
 extern Model* modelHQ;
 extern Model* modelRhythmExplorer;
 extern Model* modelRecurse;
+extern Model* modelRecurseStereo;
 extern Model* modelVCO;
 extern Model* modelWinComp;
 

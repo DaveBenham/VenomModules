@@ -62,6 +62,17 @@
       ]
     },
     {
+      "slug": "RecurseStereo",
+      "name": "Recurse Stereo",
+      "description": "Recursively process mono or stereo input via Send/Return, with built in scaling and offset cababilities",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules#recurse-stereo",
+      "tags": [
+        "Polyphonic",
+        "Utility",
+        "Ring modulator"
+      ]
+    },
+    {
       "slug": "RhythmExplorer",
       "name": "Rhythm Explorer",
       "description": "Random rhythm generator, trigger sequencer and clock divider",

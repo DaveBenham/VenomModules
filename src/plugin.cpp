@@ -44,6 +44,7 @@ void init(Plugin* p) {
   p->addModel(modelHQ);
   p->addModel(modelRhythmExplorer);
   p->addModel(modelRecurse);
+  p->addModel(modelRecurseStereo);
   p->addModel(modelVCO);
   p->addModel(modelWinComp);
 
