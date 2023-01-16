@@ -117,7 +117,15 @@ Since the Return is normalled to the Send, it is possible to generate a polyphon
 The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND will be monophonic 0V.
 
 ## RECURSE STEREO
-![Recurse Stereo module image](./doc/RecurseStereo.PNG)
+![Recurse Stereo module image](./doc/RecurseStereo.PNG)  
+Recurse Stereo is identical to [Recurse](#recurse) except the Input/Send inputs and Output/Return outputs are doubled to support left and right channels of a stereo pair.
+
+The number of input polyphonic channels is strictly controlled by the Left Input. Any extra channels in the Right Input are ignored.
+
+The Right Input is normalled to the Left Input.
+
+In addition, The Left Return is normalled to the Left Send, and the Right Return is normalled to the Right Send.
+
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
