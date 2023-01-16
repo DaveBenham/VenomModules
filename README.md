@@ -362,8 +362,9 @@ This bipolar CV input modulates the division density at a rate of 10% per volt. 
 
 #### MODE CV input
 
-The division mode CV input overrides the value set by the button or global CV.
-The values are as follows:
+The division mode CV input overrides the value set by the button or global CV. The CV actually sets the mode button to match you get a visual indicator of the active mode.
+
+The mode values are as follows:
 - 0V = ALL
 - 1V = LIN (linear)
 - 2V = OFF (offbeat)
@@ -398,6 +399,10 @@ The global density CV can modulate the density for all divisions. If the input i
 
 #### GLOBAL MODE CV
 The global mode CV overides the global button mode value. If monophonic, then it is applied to all divisions. If polyphonic then each channel is directed to the appropriate division mode. The only way to have different modes for divisions used in the OR output is via the GLOBAL MODE CV. Note that channel 1 is for the first (left most) division, even though the 1st division does not have mode CV input - it simply ignores any value there.
+
+The voltage values are the same as for the Division Mode CV input, except the value is capped at 2V.
+
+The Global Mode CV updates the value of the Global Mode button, showing the value that is assigned to channel 1. You can see the global modes that are assigned to all 8 divisions by hovering over the Global Mode button.
 
 #### GLOBAL CLOCK output
 The global clock output is polyphonic with 10 channels
