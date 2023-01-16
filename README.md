@@ -1,7 +1,7 @@
 # VenomModules
 Venom VCV Rack Modules created by Dave Benham (Dave Venom)
 
-Binaries for Beta version 1 are available at https://github.com/DaveBenham/VenomModules/releases/tag/2.0.beta1-c1cab27
+Binaries for Beta version 2 are available at https://github.com/DaveBenham/VenomModules/releases/tag/2.0.beta2-feb308d
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
