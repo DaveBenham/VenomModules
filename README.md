@@ -440,5 +440,9 @@ The XOR 1 output only allows a beat through if there is only one beat across all
 
 In addition, the GLOBAL MODE further defines which beats are allowed through, using the same logic as for the individual gates. Note that if all the global modes are set to linear or offbeat mode, then the OR, XOR ODD, and XOR 1 will all emit identical patterns since by definition, those modes don't allow simultaneous beats.
 
+### Factory Preset
+
+There is a Vermona randomRHYTHM preset available that configures the Rhythm Explorer to make it easy to get a flavor of what it would be like to actually use the Vermona hardware. It configures the first four divisions for 1/4, 1/8, 1/16, and 1/4T, and disables (mutes) the remainder. It also sets the Global Mode to Offset so the OR output will behave like the Vermona.
+
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.
