@@ -9,15 +9,15 @@
   "authorUrl": "",
   "pluginUrl": "https://github.com/DaveBenham/VenomModules",
   "manualUrl": "https://github.com/DaveBenham/VenomModules",
-  "sourceUrl": "https://github.com/DaveBenham/VenomModules",
+  "sourceUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md",
   "donateUrl": "",
-  "changelogUrl": "",
+  "changelogUrl": "https://github.com/DaveBenham/VenomModules/blob/main/changelog.md",
   "modules": [
     {
       "slug": "BernoulliSwitch",
       "name": "Bernoulli Switch",
       "description": "Randomly route two inputs to two outputs, with built in scaling and offset capabilities",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules#bernoulli-switch",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bernoulli-switch",
       "tags": [
         "Polyphonic",
         "Utility",
@@ -32,7 +32,7 @@
       "slug": "CVMix",
       "name": "CVMIX",
       "description": "Mixes 3 CV signals with attenuverters",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules#cvmix",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#cvmix",
       "hidden": true,
       "tags": [
         "Mixer",
@@ -45,7 +45,7 @@
       "slug": "HQ",
       "name": "HQ - Harmonic Quantizer",
       "description": "Computes a selected harmonic or subharmonic partial relative to a root V/Oct, or quantizes input V/Oct to the nearest partial relative to the root",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules#harmonic-quantizer",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#harmonic-quantizer",
       "tags": [
         "Polyphonic",
         "Quantizer"
@@ -55,7 +55,7 @@
       "slug": "Recurse",
       "name": "Recurse",
       "description": "Recursively process an input via Send/Return, with built in scaling and offset cababilities",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules#recurse",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#recurse",
       "tags": [
         "Polyphonic",
         "Utility",
@@ -66,7 +66,7 @@
       "slug": "RecurseStereo",
       "name": "Recurse Stereo",
       "description": "Recursively process mono or stereo input via Send/Return, with built in scaling and offset cababilities",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules#recurse-stereo",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#recurse-stereo",
       "tags": [
         "Polyphonic",
         "Utility",
@@ -77,7 +77,7 @@
       "slug": "RhythmExplorer",
       "name": "Rhythm Explorer",
       "description": "Random rhythm generator, trigger sequencer and clock divider",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules#rhythm-explorer",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#rhythm-explorer",
       "tags": [
         "Sequencer",
         "Clock modulator",
@@ -88,7 +88,7 @@
       "slug": "VenomVCO",
       "name": "VCO",
       "description": "Voltage controlled oscillator with true through-zero FM and 0Hz carrier mode",
-      "manualURL": "https://github.com/DaveBenham/VenomModules#vco",
+      "manualURL": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vco",
       "hidden": true,
       "tags": [
         "Oscillator"
@@ -98,7 +98,7 @@
       "slug": "WinComp",
       "name": "WinComp",
       "description": "Windowed comparator and rectifier",
-      "manualURL": "https://github.com/DaveBenham/VenomModules#wincomp",
+      "manualURL": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#wincomp",
       "tags": [
         "Logic",
         "Polyphonic",
