@@ -24,7 +24,7 @@ There are two additional hidden modules that are not yet ready to be released. B
 The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
 
 |Ivory|Coal|Earth|Danger|
-|---|---|---|----|
+|---|---|---|---|
 |![Ivory theme image](./doc/Ivory.png)|![Coal theme image](./doc/Coal.png)|![Earth theme image](./doc/Earth.png)|![Danger theme image](./doc/Danger.png)|
 
 ## BERNOULLI SWITCH
