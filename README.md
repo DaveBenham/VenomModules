@@ -7,7 +7,7 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[WINCOMP](#wincomp)|
 |----|----|----|----|----|
-|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
+|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
 
 |[Rhythm Explorer](#rhythm-explorer)|
 |----|
