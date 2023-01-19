@@ -7,7 +7,7 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 |[WINCOMP](#wincomp)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
 |----|----|----|----|----|----|----|
-|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![CVMIX module image](./doc/CVMIX.PNG)|![VCO module image](./doc/VenomVCO.PNG)|
+|![WINCOMP module image](./doc/WinComp.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![CVMIX module image](./doc/CVMIX.PNG)|![VCO module image](./doc/VenomVCO.png)|
 
 |[Rhythm Explorer](#rhythm-explorer)|
 |----|
@@ -221,7 +221,7 @@ I have requested these changes as enhancements to the Fundamental CV MIX module 
 
 ## VCO
 ### Incomplete - Work in progress
-![VCO module image](./doc/VenomVCO.PNG)  
+![VCO module image](./doc/VenomVCO.png)  
 A VCO derived from 21kHz Palm Loop code.
 
 The Palm Loop is the only existing VCO I have found that can do true through zero linear FM (not phase modulation), with the negative frequencies properly reflected, and decent anti-aliasing, even with negative frequencies, all with low CPU usage. It uses an unusual (in VCV world anyway) polyBlamp method for antialiasing the triangle wave. Bogaudio and VCV VCOs can also do through zero linear FM with 0Hz carrier, except the negative frequencies are flawed - the negative frequency antialiasing is broken for both, and the Bogaudio saw becomes unipolar at negative frequencies.
