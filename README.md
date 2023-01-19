@@ -17,7 +17,7 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
 
 |Ivory|Coal|Earth|Danger|
-|---|---|---|---|
+|---|---|---|----|
 |![Ivory theme image](./doc/Ivory.png)|![Coal theme image](./doc/Coal.png)|![Earth theme image](./doc/Earth.png)|![Danger theme image](./doc/Danger.png)|
 
 ## WINCOMP
