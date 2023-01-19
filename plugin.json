@@ -33,6 +33,7 @@
       "name": "CVMIX",
       "description": "Mixes 3 CV signals with attenuverters",
       "manualUrl": "https://github.com/DaveBenham/VenomModules#cvmix",
+      "hidden": true,
       "tags": [
         "Mixer",
         "Attenuator",
@@ -88,6 +89,7 @@
       "name": "VCO",
       "description": "Voltage controlled oscillator with true through-zero FM and 0Hz carrier mode",
       "manualURL": "https://github.com/DaveBenham/VenomModules#vco",
+      "hidden": true,
       "tags": [
         "Oscillator"
       ]
