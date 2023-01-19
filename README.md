@@ -18,7 +18,7 @@ The context menu of every module includes options to set the default theme for t
 
 |Ivory|Coal|Earth|Danger|
 |---|---|---|---|
-|![Ivory theme image](./doc/Ivory.png)|![Coal theme image](./doc/Ivory.png)|![Coal theme image](./doc/Ivory.png)|![Earth theme image](./doc/Earth.png)|![Danger theme image](./doc/Danger.png)|
+|![Ivory theme image](./doc/Ivory.png)|![Coal theme image](./doc/Coal.png)|![Earth theme image](./doc/Earth.png)|![Danger theme image](./doc/Danger.png)|
 
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
