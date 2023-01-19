@@ -4,19 +4,19 @@
 
 static const std::vector<std::string> modThemes = {
   "Venom Default",
-  "Danger",
-  "Earth",
+  "Ivory",
   "Coal",
-  "Ivory"
+  "Earth",
+  "Danger"
 };
 
 static const std::vector<std::string> themes = {
-  "Danger",
-  "Earth",
+  "Ivory",
   "Coal",
-  "Ivory"
+  "Earth",
+  "Danger"
 };
 
-inline std::string faceplatePath(std::string mod, std::string theme = "Danger") {
+inline std::string faceplatePath(std::string mod, std::string theme = "Ivory") {
   return "res/"+theme+"/"+mod+"_"+theme+".svg";
 }
