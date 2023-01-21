@@ -46,11 +46,25 @@ If the RISE threshold is less than the FALL threshold, then the roles are revers
 
 The TRIG button is not guaranteed to always trigger a coin toss - it depends on how the RISE and FALL are configured, as well as the current TRIG input value.
 
+Bernoulli Switch is fully polyphonic. There are two modes available from the context menu that determine how many virtual coin tosses are performed based on the number of channels on each input:
+- **Trig and Prob only** (default)
+
+  The number of coin flips is the maximum channel count found across the Trig and Prog inputs. If one of the inputs is monophonic, and the other polyphonic, then the monophonic input is replicated to match the channel count of the polyphonic input.
+
+  If the coin flip count is 1 (both Trig and Prob are mono), then polyphonic inputs to A and/or B are treated as a whole - all of the channels on the A input are directed to either the A or B output. The same for the B input. The number of channels need not match across A and B.
+
+  But if either of Trig or Prob are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B. Missing channels in A and/or B are treated as 0V. Extra channels are ignored. This can result in A and B input channelse being scrambled across the A and B outputs.
+
+- **All inputs**
+
+  The number of coin flips is the maximum channel count found across all four inputs - Trig, Prog, A, and B. Monophonic channels are replicated to match the maximum channel count. Polyphonic channels with missing channels treat the missing channel as 0V.
+  
+  Polphonic inputs in A and/or B can always be scrambled across A and B outputs.
+
+
 A pair of yellow lights indicate the current routing configuration. A yellow light glowing to the left of the PROB knob indicates a no-swap configuration. A glowing yellow light to the right indicates a swap configuration.
 
-Bernoulli Switch is fully polyphonic. The number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels will get 0V for the missing channels. Each channel gets its own independent coin toss, even if driven by a monophonic TRIG input.
-
-The yellow lights only monitor a single channel - by default they monitor channel one. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of output channels, then the yellow lights will remain dark - no monitoring will be done.
+The yellow lights only monitor a single channel - by default they monitor channel one. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of coin flip channels, then the yellow lights will remain dark - no monitoring will be done.
 
 Outputs are 0V when the module is bypassed.
 
