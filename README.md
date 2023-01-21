@@ -15,7 +15,7 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 ## Hidden Unreleased (Beta) Modules
 There are two additional hidden modules that are not yet ready to be released. But you can enable them by editing the  
-\<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden modules within that file, and change the "hidden" value to false. But bear in mind that these modules may never be released, and may disappear entirely from a future release.  
+\<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden modules within that file, and change the "hidden" value to false. But bear in mind that these modules may never be released, and may disappear entirely from a future release. Or if they are released, they may not be backwardly compatible with the hidden versions.  
 
 |[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
 |---|---|
