@@ -49,6 +49,7 @@ struct BernoulliSwitch : Module {
   int oldChannels = 0;
   int lightChannel = 0;
   bool lightOff = false;
+  bool inputPolyControl = false;
 
   #include "ThemeModVars.hpp"
 
@@ -89,15 +90,20 @@ struct BernoulliSwitch : Module {
           probOff = params[PROB_PARAM].getValue(),
           manual = params[TRIG_PARAM].getValue() > 0.f ? 10.f : 0.f;
     bool invTrig = rise < fall;
+    int aChannels = inputs[A_INPUT].getChannels();
+    int bChannels = inputs[B_INPUT].getChannels();
     int mode = static_cast<int>(params[MODE_PARAM].getValue());
     if (invTrig) {
       rise = -rise;
       fall = -fall;
     }
-    int channels = std::max({ 1,
-      inputs[A_INPUT].getChannels(), inputs[B_INPUT].getChannels(),
-      inputs[TRIG_INPUT].getChannels(), inputs[PROB_INPUT].getChannels()
-    });
+    int channels = inputPolyControl ?
+      std::max({ 1, aChannels, bChannels,
+        inputs[TRIG_INPUT].getChannels(), inputs[PROB_INPUT].getChannels()
+      }) :
+      std::max({ 1,
+        inputs[TRIG_INPUT].getChannels(), inputs[PROB_INPUT].getChannels()
+      });
     if (channels > oldChannels) {
       for (int c=oldChannels; c<channels; c++){
         trig[c].reset();
@@ -118,8 +124,6 @@ struct BernoulliSwitch : Module {
     for (int c=0; c<channels; c++){
       float prob = inputs[PROB_INPUT].getPolyVoltage(c)/10.f + probOff;
       float trigIn = inputs[TRIG_INPUT].getPolyVoltage(c) + manual;
-      float inA = inputs[A_INPUT].getNormalPolyVoltage(trigIn, c) * scaleA + offA;
-      float inB = inputs[B_INPUT].getPolyVoltage(c) * scaleB + offB;
       if (trig[c].process(invTrig ? -trigIn : trigIn, fall, rise)){
         bool toss = (prob == 1.0f || random::uniform() < prob);
         switch(mode) {
@@ -146,25 +150,35 @@ struct BernoulliSwitch : Module {
         }
       }
       lights[TRIG_LIGHT].setBrightness(manual ? 1.f : LIGHT_OFF);
-      outputs[A_OUTPUT].setVoltage( swap[c] ? inB : inA, c);
-      outputs[B_OUTPUT].setVoltage( swap[c] ? inA : inB, c);
+      if (channels == 1 && !inputPolyControl) {
+        for (int i=0; i<aChannels; i++)
+          outputs[swap[c] ? B_OUTPUT : A_OUTPUT].setVoltage(inputs[A_INPUT].getNormalPolyVoltage(trigIn, i) * scaleA + offA, i);
+        for (int i=0; i<bChannels; i++)
+          outputs[swap[c] ? A_OUTPUT : B_OUTPUT].setVoltage(inputs[B_INPUT].getPolyVoltage(i) * scaleB + offB, i);
+      } else {
+        outputs[swap[c] ? B_OUTPUT : A_OUTPUT].setVoltage(inputs[A_INPUT].getNormalPolyVoltage(trigIn, c) * scaleA + offA, c);
+        outputs[swap[c] ? A_OUTPUT : B_OUTPUT].setVoltage(inputs[B_INPUT].getPolyVoltage(c) * scaleB + offB, c);
+      }
     }
-    outputs[A_OUTPUT].setChannels(channels);
-    outputs[B_OUTPUT].setChannels(channels);
+    outputs[A_OUTPUT].setChannels( (channels==1 && !inputPolyControl) ? (swap[0] ? bChannels : aChannels) : channels);
+    outputs[B_OUTPUT].setChannels( (channels==1 && !inputPolyControl) ? (swap[0] ? aChannels : bChannels) : channels);
   }
 
 
   json_t* dataToJson() override {
     json_t* rootJ = json_object();
     json_object_set_new(rootJ, "monitorChannel", json_integer(lightChannel));
+    json_object_set_new(rootJ, "inputPolyControl", json_boolean(inputPolyControl));
     #include "ThemeToJson.hpp"
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
-    json_t* val = json_object_get(rootJ, "monitorChannel");
-    if (val)
+    json_t* val;
+    if ((val = json_object_get(rootJ, "monitorChannel")))
       lightChannel = json_integer_value(val);
+    if ((val = json_object_get(rootJ, "inputPolyControl")))
+      inputPolyControl = json_boolean_value(val);
     #include "ThemeFromJson.hpp"
   }
 
@@ -174,7 +188,7 @@ struct BernoulliSwitchWidget : ModuleWidget {
   BernoulliSwitchWidget(BernoulliSwitch* module) {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
-    
+
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(5.0, 18.75)), module, BernoulliSwitch::NO_SWAP_LIGHT));
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(20.431, 18.75)), module, BernoulliSwitch::SWAP_LIGHT));
 
@@ -204,6 +218,11 @@ struct BernoulliSwitchWidget : ModuleWidget {
     for (int i=1; i<=16; i++)
       lightChannelLabels.push_back(std::to_string(i));
     lightChannelLabels.push_back("Off");
+    menu->addChild(createIndexPtrSubmenuItem(
+      "Polyphony control",
+      {"Trig and Prob only", "All inputs"},
+      &module->inputPolyControl
+    ));
     menu->addChild(createIndexSubmenuItem("Monitor channel", lightChannelLabels,
       [=]() {return module->lightChannel;},
       [=](int i) {
