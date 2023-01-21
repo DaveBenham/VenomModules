@@ -5,11 +5,11 @@ Binaries for Beta version 2 are available at https://github.com/DaveBenham/Venom
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[Harmonic<br />Quantizer](#harmonic-quantizer)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[WINCOMP](#wincomp)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[WINCOMP](#wincomp)|
 |----|----|----|----|----|
 |![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
 
-|[Rhythm Explorer](#rhythm-explorer)|
+|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|
 |![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|
 
