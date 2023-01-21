@@ -52,9 +52,9 @@ Bernoulli Switch is fully polyphonic. There are two modes available from the con
 
   The number of coin flips is the maximum channel count found across the TRIG and PROG inputs. If one of the inputs is monophonic, and the other polyphonic, then the monophonic input is replicated to match the channel count of the polyphonic input. If a polyphonic input is missing channels, then the missing channels are treated as 0V.
 
-  If the coin flip count is 1 (both Trig and Prob are mono), then polyphonic inputs to A and/or B are treated as a whole - all of the channels on the A input are directed to either the A or B output. The same for the B input. The number of channels need not match across A and B.
+  If the coin flip count is 1 (both TRIG and PROB are mono), then polyphonic inputs to A and/or B are treated as a whole - all of the channels on the A input are directed to either the A or B output. The same for the B input. The number of channels need not match across A and B.
 
-  But if either of Trig or Prob are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B. This can result in A and B input channels being scrambled across the A and B outputs. Missing channels in A and/or B are treated as 0V. Extra channels are ignored.
+  But if either of TRIG or PROB are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B inputs. This can result in A and B input channels being scrambled across the A and B outputs. Missing channels in A and/or B are treated as 0V. Extra channels are ignored.
 
 - **All inputs**
 
