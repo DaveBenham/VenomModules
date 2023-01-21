@@ -54,14 +54,13 @@ Bernoulli Switch is fully polyphonic. There are two modes available from the con
 
   If the coin flip count is 1 (both TRIG and PROB are mono), then polyphonic inputs to A and/or B are treated as a whole - all of the channels on the A input are directed to either the A or B output. The same for the B input. The number of channels need not match across A and B.
 
-  But if either of TRIG or PROB are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B inputs. This can result in A and B input channels being scrambled across the A and B outputs. Missing channels in A and/or B are treated as 0V. Extra channels are ignored.
+  But if either of TRIG or PROB are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B inputs. This can result in A and B input channels being scrambled across the A and B outputs. Monophonic A and/or B inputs are replicated to match the coin flip channel count. Missing channels in A and/or B are treated as 0V. Extra channels are ignored.
 
 - **All inputs**
 
   The number of coin flips is the maximum channel count found across all four inputs - TRIG, PROG, A, and B. Monophonic inputs are replicated to match the maximum channel count. Polyphonic channels with missing channels treat the missing channel as 0V.
   
   Polphonic inputs in A and/or B can always be scrambled across A and B outputs.
-
 
 A pair of yellow lights indicate the current routing configuration. A yellow light glowing to the left of the PROB knob indicates a no-swap configuration. A glowing yellow light to the right indicates a swap configuration.
 
