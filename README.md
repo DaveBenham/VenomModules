@@ -47,17 +47,17 @@ If the RISE threshold is less than the FALL threshold, then the roles are revers
 The TRIG button is not guaranteed to always trigger a coin toss - it depends on how the RISE and FALL are configured, as well as the current TRIG input value.
 
 Bernoulli Switch is fully polyphonic. There are two modes available from the context menu that determine how many virtual coin tosses are performed based on the number of channels on each input:
-- **Trig and Prob only** (default)
+- **TRIG and PROB only** (default)
 
-  The number of coin flips is the maximum channel count found across the Trig and Prog inputs. If one of the inputs is monophonic, and the other polyphonic, then the monophonic input is replicated to match the channel count of the polyphonic input.
+  The number of coin flips is the maximum channel count found across the TRIG and PROG inputs. If one of the inputs is monophonic, and the other polyphonic, then the monophonic input is replicated to match the channel count of the polyphonic input. If a polyphonic input is missing channels, then the missing channels are treated as 0V.
 
   If the coin flip count is 1 (both Trig and Prob are mono), then polyphonic inputs to A and/or B are treated as a whole - all of the channels on the A input are directed to either the A or B output. The same for the B input. The number of channels need not match across A and B.
 
-  But if either of Trig or Prob are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B. Missing channels in A and/or B are treated as 0V. Extra channels are ignored. This can result in A and B input channelse being scrambled across the A and B outputs.
+  But if either of Trig or Prob are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B. This can result in A and B input channels being scrambled across the A and B outputs. Missing channels in A and/or B are treated as 0V. Extra channels are ignored.
 
 - **All inputs**
 
-  The number of coin flips is the maximum channel count found across all four inputs - Trig, Prog, A, and B. Monophonic channels are replicated to match the maximum channel count. Polyphonic channels with missing channels treat the missing channel as 0V.
+  The number of coin flips is the maximum channel count found across all four inputs - TRIG, PROG, A, and B. Monophonic inputs are replicated to match the maximum channel count. Polyphonic channels with missing channels treat the missing channel as 0V.
   
   Polphonic inputs in A and/or B can always be scrambled across A and B outputs.
 
