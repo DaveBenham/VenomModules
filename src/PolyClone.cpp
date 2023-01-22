@@ -31,8 +31,9 @@ struct PolyClone : Module {
   PolyClone() {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(CLONE_PARAM, 1.f, 16.f, 1.f, "Clone count");
-//    configInput(POLY_INPUT, "Poly");
-//    configOutput(POLY_OUTPUT, "Poly");
+    configInput(POLY_INPUT, "Poly");
+    configOutput(POLY_OUTPUT, "Poly");
+    configBypass(POLY_INPUT, POLY_OUTPUT);
     lightDivider.setDivision(44);
   }
 

@@ -79,6 +79,7 @@ struct RecurseStereo : Module {
     configOutput(OUT_L_OUTPUT, "Left Signal");
     configOutput(OUT_R_OUTPUT, "Left Signal");
     configBypass(IN_L_INPUT, OUT_L_OUTPUT);
+    configBypass(IN_R_INPUT, OUT_R_OUTPUT);
   }
 
   void onReset() override {
