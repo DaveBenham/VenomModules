@@ -66,10 +66,26 @@ A pair of yellow lights indicate the current routing configuration. A yellow lig
 
 The yellow lights only monitor a single channel - by default they monitor channel one. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of coin flip channels, then the yellow lights will remain dark - no monitoring will be done.
 
-Outputs are 0V when the module is bypassed.
+Outputs are monophonic 0V when the module is bypassed.
 
 ## CLONE MERGE
 ![Clone Merge module image](./doc/CloneMerge.png)  
+Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursions count.
+
+### CLONE knob
+Selects the number of times to clone or replicate each input. Possible values range from 1 to 16.
+
+### MONO inputs
+The 8 monophonic inputs should be populated from top to bottom. Each input is replicated based on the Clone count as long as the total channel count across all replicated inputs does not exceed 16. Inputs that cannot be replicated the full amount are ignored.
+
+An LED light glows yellow for each input that is successfully replicated. The LED glows red if the input cannot be replicated. Unpatched inputs below the last patched input are ignored and corresponding LED is off (black).
+
+### POLY output
+All of the replicated inputs are merged into the single polyphonic output. The poly output starts with all clones from input 1, followed by clones from input 2, etc.
+
+### Bypass
+
+If Clone Merge is bypassed then the output is monophonic 0V.
 
 ## CVMIX
 ### Tentative
@@ -136,11 +152,28 @@ If HQ is bypassed, then the output is monophonic constant 0V.
 
 ## POLY CLONE
 ![Poly Clone module image](./doc/PolyClone.png)  
+Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Poly provides a convenient way to replicate already polyphonnic CV inputs to match the recursions count.
+
+### CLONE knob
+Selects the number of times to clone or replicate each input channel. Possible values range from 1 to 16.
+
+### POLY inputs
+Each channel from the polyphonic input is replicated based on the Clone count as long as the total replicated channel count does not exceed 16. Channels that cannot be replicated the full amount are ignored.
+
+For each channel appearing at the input, the corresponding LED above glows yellow if the channel could be successfully replicated, and red if it could not be replicated. LEDs beyond the input channel count remain off (black).
+
+### POLY output
+All of the replicated channels are merged into the single polyphonic output. The poly output starts with all clones from input channel 1, followed by clones from input channel 2, etc.
+
+
+### Bypass
+
+If Clone Merge is bypassed then the output is monophonic 0V.
 
 
 ## RECURSE
 ![RECURSE module image](./doc/Recurse.PNG)  
-Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes available to less than 16 for each input channel. There are no limits placed on any of the input or output voltages.
+Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes to less than 16 for each input channel. There are no limits placed on any of the input or output voltages.
 
 ### Recursion Count knob and display
 
@@ -195,6 +228,8 @@ The Right Input is normalled to the Left Input.
 In addition, The Left Return is normalled to the Left Send, and the Right Return is normalled to the Right Send.
 
 The Recursion Count, Scale, Offset, and Modulation Timing settings are applied to both Left and Right identically.
+
+Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. Both left and right send are monophonic 0V.
 
 
 ## Rhythm Explorer
