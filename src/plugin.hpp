@@ -9,6 +9,7 @@ extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
 extern Model* modelBernoulliSwitch;
+extern Model* modelCloneMerge;
 extern Model* modelCVMix;
 extern Model* modelHQ;
 extern Model* modelRhythmExplorer;
@@ -21,6 +22,20 @@ extern Model* modelWinComp;
 
 int getDefaultTheme();
 void setDefaultTheme(int theme);
+
+template <typename TBase>
+struct RotarySwitch : TBase {
+	RotarySwitch() {
+		this->snap = true;
+		this->smooth = false;
+	}
+
+	// handle the manually entered values
+	void onChange(const event::Change &e) override {
+		SvgKnob::onChange(e);
+		this->getParamQuantity()->setValue(roundf(this->getParamQuantity()->getValue()));
+	}
+};
 
 struct CKSSNarrow : app::SvgSwitch {
   CKSSNarrow() {
@@ -124,6 +139,13 @@ struct YellowBlueLight : TBase {
   }
 };
 
+template <typename TBase = GrayModuleLightWidget>
+struct YellowRedLight : TBase {
+  YellowRedLight() {
+    this->addBaseColor(SCHEME_YELLOW);
+    this->addBaseColor(SCHEME_RED);
+  }
+};
 
 struct RoundHugeBlackKnobSnap : RoundHugeBlackKnob {
   RoundHugeBlackKnobSnap() {

@@ -690,20 +690,6 @@ struct LightButton : TBase {
 
 using VCVBezelLightBigWhite = LightButton<VCVBezelBig, VCVBezelLightBig<WhiteLight>>;
 
-template <typename TBase>
-struct RotarySwitch : TBase {
-	RotarySwitch() {
-		this->snap = true;
-		this->smooth = false;
-	}
-
-	// handle the manually entered values
-	void onChange(const event::Change &e) override {
-		SvgKnob::onChange(e);
-		this->getParamQuantity()->setValue(roundf(this->getParamQuantity()->getValue()));
-	}
-};
-
 struct RhythmExplorerWidget : ModuleWidget {
 
   struct DivSwitch : app::SvgSwitch {

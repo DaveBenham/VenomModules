@@ -40,6 +40,7 @@ void init(Plugin* p) {
 
   // Add modules here
   p->addModel(modelBernoulliSwitch);
+  p->addModel(modelCloneMerge);
   p->addModel(modelCVMix);
   p->addModel(modelHQ);
   p->addModel(modelRhythmExplorer);
