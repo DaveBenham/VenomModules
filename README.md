@@ -7,7 +7,7 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[POLY<br />CLONE](#poly-clone)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[WINCOMP](#wincomp)|
 |----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Clone Merge module image](./doc/CloneMerge.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![Poly Clone module image](./doc/PolyClone.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
+|![Bernoulli Switch module image](./doc/BernoulliSwitch.png)|![Clone Merge module image](./doc/CloneMerge.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![Poly Clone module image](./doc/PolyClone.png)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
 
 |[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|
@@ -69,7 +69,7 @@ The yellow lights only monitor a single channel - by default they monitor channe
 Outputs are 0V when the module is bypassed.
 
 ## CLONE MERGE
-![Clone Merge module image](./doc/CloneMerge.PNG)  
+![Clone Merge module image](./doc/CloneMerge.png)  
 
 ## CVMIX
 ### Tentative
@@ -135,7 +135,7 @@ The final computed partial is converted into a delta V/Oct and added to the ROOT
 If HQ is bypassed, then the output is monophonic constant 0V.
 
 ## POLY CLONE
-![Poly Clone module image](./doc/PolyClone.PNG)  
+![Poly Clone module image](./doc/PolyClone.png)  
 
 
 ## RECURSE
