@@ -12,9 +12,10 @@ extern Model* modelBernoulliSwitch;
 extern Model* modelCloneMerge;
 extern Model* modelCVMix;
 extern Model* modelHQ;
-extern Model* modelRhythmExplorer;
+extern Model* modelPolyClone;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
+extern Model* modelRhythmExplorer;
 extern Model* modelVCO;
 extern Model* modelWinComp;
 
@@ -96,7 +97,7 @@ struct DigitalDisplay18 : DigitalDisplay {
     textPos = Vec(22, 20);
     bgText = "18";
     fontSize = 16;
-    box.size = mm2px(Vec(8.197, 8.197));
+    box.size = mm2px(Vec(8.197, 8.197)); // 31px square
   }
 };
 

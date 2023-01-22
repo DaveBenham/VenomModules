@@ -743,12 +743,11 @@ struct RhythmExplorerWidget : ModuleWidget {
 
     x = xStart + dx * 2.5f;
     y = yStart + dy * 3.5f;
-    for(int li = 0; li < 8; li++, y-=dy/4.f){
+    for(int li = 0; li < 8; li++, y-=dy/2.f){
       addChild(createLightCentered<MediumLight<YellowLight>>(Vec(x-dx/5.f,y), module, RhythmExplorer::PHRASE_STEP_LIGHT + li));
       addChild(createLightCentered<MediumLight<YellowLight>>(Vec(x+dx/5.f,y), module, RhythmExplorer::PHRASE_STEP_LIGHT + li + 8));
       addChild(createLightCentered<MediumLight<YellowLight>>(Vec(x+dx-dx/5.f,y), module, RhythmExplorer::BAR_STEP_LIGHT + li));
       addChild(createLightCentered<MediumLight<YellowLight>>(Vec(x+dx+dx/5.f,y), module, RhythmExplorer::BAR_STEP_LIGHT + li + 8));
-      y -= dy/4.f;
     }
 
     y = yStart + dy * 4.6f;

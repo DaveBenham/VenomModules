@@ -62,6 +62,16 @@
       ]
     },
     {
+      "slug": "PolyClone",
+      "name": "Poly Clone",
+      "description": "Clone each channel of a polyphonic input and merge the results into a single polyphonic output",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-clone",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "Recurse",
       "name": "Recurse",
       "description": "Recursively process an input via Send/Return, with built in scaling and offset cababilities",

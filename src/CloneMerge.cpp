@@ -1,8 +1,6 @@
 #include "plugin.hpp"
 #include "ThemeStrings.hpp"
 
-using simd::float_4;
-
 #define MODULE_NAME CloneMerge
 static const std::string moduleName = "CloneMerge";
 
@@ -84,7 +82,7 @@ struct CloneMergeWidget : ModuleWidget {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
 
-    float x = 22.5;
+    float x = 22.5f;
     float y = RACK_GRID_WIDTH * 3.55f;
     float dy = RACK_GRID_WIDTH * 2.f;
 
@@ -93,7 +91,7 @@ struct CloneMergeWidget : ModuleWidget {
     y+=dy*1.25f;
     for (int i=0; i<8; i++, y+=dy) {
       addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, CloneMerge::MONO_INPUTS + i));
-      addChild(createLightCentered<TinyLight<YellowRedLight<>>>(Vec(x+dy*0.35f, y-dy*0.35f), module, CloneMerge::MONO_LIGHTS + i*2));
+      addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(x+dy*0.5f, y-dy*0.3f), module, CloneMerge::MONO_LIGHTS + i*2));
     }
     y+=dy*0.33f;
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, CloneMerge::POLY_OUTPUT));

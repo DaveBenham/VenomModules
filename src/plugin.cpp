@@ -43,9 +43,10 @@ void init(Plugin* p) {
   p->addModel(modelCloneMerge);
   p->addModel(modelCVMix);
   p->addModel(modelHQ);
-  p->addModel(modelRhythmExplorer);
+  p->addModel(modelPolyClone);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);
+  p->addModel(modelRhythmExplorer);
   p->addModel(modelVCO);
   p->addModel(modelWinComp);
 
