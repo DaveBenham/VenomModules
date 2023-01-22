@@ -5,9 +5,9 @@ Binaries for Beta version 3 are available at https://github.com/DaveBenham/Venom
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[WINCOMP](#wincomp)|
-|----|----|----|----|----|
-|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[POLY<br />CLONE](#poly-clone)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[WINCOMP](#wincomp)|
+|----|----|----|----|----|----|----|
+|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Clone Merge module image](./doc/CloneMerge.PNG)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![Poly Clone module image](./doc/PolyClone.PNG)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
 
 |[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|
@@ -67,6 +67,9 @@ A pair of yellow lights indicate the current routing configuration. A yellow lig
 The yellow lights only monitor a single channel - by default they monitor channel one. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of coin flip channels, then the yellow lights will remain dark - no monitoring will be done.
 
 Outputs are 0V when the module is bypassed.
+
+## CLONE MERGE
+![Clone Merge module image](./doc/CloneMerge.PNG)  
 
 ## CVMIX
 ### Tentative
@@ -130,6 +133,10 @@ The final computed partial is converted into a delta V/Oct and added to the ROOT
 ### Bypass
 
 If HQ is bypassed, then the output is monophonic constant 0V.
+
+## POLY CLONE
+![Poly Clone module image](./doc/PolyClone.PNG)  
+
 
 ## RECURSE
 ![RECURSE module image](./doc/Recurse.PNG)  
