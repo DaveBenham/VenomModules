@@ -90,8 +90,8 @@ struct BernoulliSwitch : Module {
           probOff = params[PROB_PARAM].getValue(),
           manual = params[TRIG_PARAM].getValue() > 0.f ? 10.f : 0.f;
     bool invTrig = rise < fall;
-    int aChannels = inputs[A_INPUT].getChannels();
-    int bChannels = inputs[B_INPUT].getChannels();
+    int aChannels = std::max(1, inputs[A_INPUT].getChannels());
+    int bChannels = std::max(1, inputs[B_INPUT].getChannels());
     int mode = static_cast<int>(params[MODE_PARAM].getValue());
     if (invTrig) {
       rise = -rise;
