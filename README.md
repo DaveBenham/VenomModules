@@ -70,7 +70,7 @@ Outputs are monophonic 0V when the module is bypassed.
 
 ## CLONE MERGE
 ![Clone Merge module image](./doc/CloneMerge.png)  
-Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursions count.
+Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursion count.
 
 ### CLONE knob
 Selects the number of times to clone or replicate each input. Possible values range from 1 to 16.
@@ -78,7 +78,7 @@ Selects the number of times to clone or replicate each input. Possible values ra
 ### MONO inputs
 The 8 monophonic inputs should be populated from top to bottom. Each input is replicated based on the Clone count as long as the total channel count across all replicated inputs does not exceed 16. Inputs that cannot be replicated the full amount are ignored.
 
-An LED light glows yellow for each input that is successfully replicated. The LED glows red if the input cannot be replicated. Unpatched inputs below the last patched input are ignored and corresponding LED is off (black).
+An LED glows yellow for each input that is successfully replicated. The LED glows red if the input cannot be replicated. Unpatched inputs below the last patched input are ignored and the corresponding LED is off (black).
 
 ### POLY output
 All of the replicated inputs are merged into the single polyphonic output. The poly output starts with all clones from input 1, followed by clones from input 2, etc.
@@ -152,12 +152,12 @@ If HQ is bypassed, then the output is monophonic constant 0V.
 
 ## POLY CLONE
 ![Poly Clone module image](./doc/PolyClone.png)  
-Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Poly provides a convenient way to replicate already polyphonnic CV inputs to match the recursions count.
+Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Poly provides a convenient way to replicate already polyphonnic CV inputs to match the recursion count.
 
 ### CLONE knob
 Selects the number of times to clone or replicate each input channel. Possible values range from 1 to 16.
 
-### POLY inputs
+### POLY input
 Each channel from the polyphonic input is replicated based on the Clone count as long as the total replicated channel count does not exceed 16. Channels that cannot be replicated the full amount are ignored.
 
 For each channel appearing at the input, the corresponding LED above glows yellow if the channel could be successfully replicated, and red if it could not be replicated. LEDs beyond the input channel count remain off (black).
@@ -165,10 +165,9 @@ For each channel appearing at the input, the corresponding LED above glows yello
 ### POLY output
 All of the replicated channels are merged into the single polyphonic output. The poly output starts with all clones from input channel 1, followed by clones from input channel 2, etc.
 
-
 ### Bypass
 
-If Clone Merge is bypassed then the output is monophonic 0V.
+If Clone Merge is bypassed then the input is passed unchanged to the output.
 
 
 ## RECURSE
@@ -229,7 +228,7 @@ In addition, The Left Return is normalled to the Left Send, and the Right Return
 
 The Recursion Count, Scale, Offset, and Modulation Timing settings are applied to both Left and Right identically.
 
-Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. Both left and right send are monophonic 0V.
+Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. Bypassed left and right send are monophonic 0V.
 
 
 ## Rhythm Explorer
