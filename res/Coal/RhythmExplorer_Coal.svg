@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   sodipodi:docname="RhythmExplorer_Dark.svg"
+   sodipodi:docname="RhythmExplorer_Coal.svg"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    id="svg4352"
    version="1.1"
@@ -17,6 +17,17 @@
    xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4346">
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect3633"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
     <mask
        id="mask130">
       <g
@@ -473,8 +484,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="246.78571"
-     inkscape:cy="237.5"
+     inkscape:cx="331.07143"
+     inkscape:cy="273.21429"
      inkscape:document-units="mm"
      inkscape:current-layer="layer2"
      showgrid="true"
@@ -589,28 +600,36 @@
      inkscape:label="components"
      style="display:inline">
     <g
-       id="g3620"
+       id="g6535"
        style="fill:#ede7dc;fill-opacity:1">
       <rect
-         style="fill:#ede7dc;stroke:none;stroke-width:0.1;fill-opacity:1"
+         style="fill:#ede7dc;fill-opacity:1;stroke:none;stroke-width:0.105264"
          id="rect250385"
-         width="75.358673"
-         height="15.837965"
+         width="75.359009"
+         height="21.318621"
          x="88.683472"
-         y="105.87036"
-         rx="0.0083521819" />
+         y="100.38969"
+         rx="2.1817098"
+         ry="3.0364218" />
       <rect
-         style="fill:#ede7dc;stroke:none;stroke-width:0.1;fill-opacity:1"
+         style="fill:#ede7dc;fill-opacity:1;stroke:none;stroke-width:0.1"
          id="rect250387"
          width="144.10733"
          height="21.142599"
          x="19.931358"
          y="85.145363"
-         rx="0.0083521819"
-         ry="0" />
+         rx="2.6458261"
+         ry="2.834825" />
+      <path
+         style="fill:#ede7dc;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 89.06757,108.91233 c 0,0 0,-3.20723 0,-3.20723 0,0 -3.207234,0.26725 -3.207234,0.26725 0.868625,0.22273 1.737539,0.44553 2.227409,0.99133 0.489871,0.5458 0.601229,1.41439 0.701426,1.79289 0.100198,0.37851 0.189309,0.26712 0.278399,0.15576 z"
+         id="path3631"
+         inkscape:path-effect="#path-effect3633"
+         inkscape:original-d="m 89.06757,108.91233 v -3.20723 l -3.207234,0.26725 c 0,0 1.737492,0.44571 2.605876,0.66818 0.11163,0.86892 0.222989,1.73751 0.334088,2.60588 0.08936,-0.1111 0.26727,-0.33408 0.26727,-0.33408 z"
+         sodipodi:nodetypes="ccccsc" />
     </g>
     <g
-       id="g43435"
+       id="g32697"
        style="fill:#252525;fill-opacity:1">
       <g
          id="g118284"
