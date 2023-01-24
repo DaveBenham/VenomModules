@@ -134,8 +134,8 @@ struct HQ : Module {
     });
     bool inConnected = inputs[IN_INPUT].isConnected();
     int series = static_cast<int>(params[SERIES_PARAM].getValue());
-    float scale, pfloat=0.f, out=0.f, root;
-    int partial, pround=0;
+    float scale=0.f, pfloat=0.f, out=0.f, root;
+    int partial=0, pround=0;
     if (!inConnected) {
       scale = params[CV_PARAM].getValue() * 10.f;
       partial = partialParamGetValue();
