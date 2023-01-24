@@ -152,7 +152,7 @@ If HQ is bypassed, then the output is monophonic constant 0V.
 
 ## POLY CLONE
 ![Poly Clone module image](./doc/PolyClone.png)  
-Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Poly provides a convenient way to replicate already polyphonnic CV inputs to match the recursion count.
+Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
 ### CLONE knob
 Selects the number of times to clone or replicate each input channel. Possible values range from 1 to 16.
