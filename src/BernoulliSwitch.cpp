@@ -70,6 +70,8 @@ struct BernoulliSwitch : Module {
     configInput(PROB_INPUT, "Probability");
     configOutput(A_OUTPUT, "A");
     configOutput(B_OUTPUT, "B");
+    configBypass(A_INPUT, A_OUTPUT);
+    configBypass(B_INPUT, B_OUTPUT);
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
   }
