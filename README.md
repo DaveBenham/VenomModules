@@ -85,7 +85,7 @@ All of the replicated inputs are merged into the single polyphonic output. The p
 
 ### Bypass
 
-If Clone Merge is bypassed then the output is monophonic 0V.
+If Clone Merge is bypassed then the A input is passed to the A output, and B input to the B output unchanged. However, the A input is not normalled to the TRIG input while bypassed.
 
 ## CVMIX
 ### Tentative
