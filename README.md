@@ -66,7 +66,7 @@ A pair of yellow lights indicate the current routing configuration. A yellow lig
 
 The yellow lights only monitor a single channel - by default they monitor channel one. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of coin flip channels, then the yellow lights will remain dark - no monitoring will be done.
 
-Outputs are monophonic 0V when the module is bypassed.
+If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. However, the A input is not normalled to the TRIG input while bypassed.
 
 ## CLONE MERGE
 ![Clone Merge module image](./doc/CloneMerge.png)  
@@ -85,7 +85,7 @@ All of the replicated inputs are merged into the single polyphonic output. The p
 
 ### Bypass
 
-If Clone Merge is bypassed then the A input is passed to the A output, and B input to the B output unchanged. However, the A input is not normalled to the TRIG input while bypassed.
+If Clone Merge is bypassed then the output is constant monophonic 0V.
 
 ## CVMIX
 ### Tentative
