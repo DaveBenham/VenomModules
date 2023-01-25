@@ -696,14 +696,12 @@ struct RhythmExplorerWidget : ModuleWidget {
     void drawLayer(const DrawArgs& args, int layer) override {
       if (layer==1) {
         if (module && !module->isBypassed()) {
-          std::shared_ptr<window::Svg> svg = frames[static_cast<int>(getParamQuantity()->getValue())];
-          if (svg)
-            window::svgDraw(args.vg, svg->handle);
+          draw(args);
         }
       }
     }
   };
-  
+
   struct DivSwitch : GlowingSvgSwitch {
     DivSwitch() {
       shadow->opacity = 0.0;
