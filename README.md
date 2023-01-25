@@ -148,7 +148,7 @@ The final computed partial is converted into a delta V/Oct and added to the ROOT
 
 ### Bypass
 
-If HQ is bypassed, then the output is monophonic constant 0V.
+The IN input is passed unchanged to the OUT output when the Harmonic Quantizer is bypassed.
 
 ## POLY CLONE
 ![Poly Clone module image](./doc/PolyClone.png)  
