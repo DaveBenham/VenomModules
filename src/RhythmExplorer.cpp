@@ -706,6 +706,16 @@ struct RhythmExplorerWidget : ModuleWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_8.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_9.svg")));
     }
+
+    void drawLayer(const DrawArgs& args, int layer) override {
+      if (layer==1) {
+        if (module && !module->isBypassed()) {
+          std::shared_ptr<window::Svg> svg = frames[static_cast<int>(module->params[paramId].getValue())];
+          if (svg)
+            window::svgDraw(args.vg, svg->handle);
+        }
+      }
+    }
   };
 
   struct ModeSwitch : app::SvgSwitch {
@@ -715,6 +725,16 @@ struct RhythmExplorerWidget : ModuleWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_1.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_2.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_3.svg")));
+    }
+
+    void drawLayer(const DrawArgs& args, int layer) override {
+      if (layer==1) {
+        if (module && !module->isBypassed()) {
+          std::shared_ptr<window::Svg> svg = frames[static_cast<int>(module->params[paramId].getValue())];
+          if (svg)
+            window::svgDraw(args.vg, svg->handle);
+        }
+      }
     }
   };
 
