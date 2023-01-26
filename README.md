@@ -202,7 +202,7 @@ The OFFSET input and knob value are added to establish the offset that is added 
 
 By default, the SCALE operation occurs before the OFFSET operation. A context menu option lets you choose to peform the OFFSET before SCALE. A small light glows yellow next to the operation that is performed first.
 
-The SCALE and OFFSET inputs support polyphony. However, only channels that correspond to what appears on the IN input will be used, extra channels will be ignored.
+The SCALE and OFFSET inputs support polyphony. However, only channels that correspond to what appears on the IN input will be used, extra channels will be ignored. Each SCALE or OFFSET channel will be applied to all relevant recursive steps for the corresponding IN input.
 
 The unlabeled Modulation Mode knob determines when the SCALE and OFFSET operations take place. There are 4 values:
 - **1Pre** = Once before the first Send only
