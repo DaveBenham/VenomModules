@@ -65,7 +65,7 @@ Bernoulli Switch is fully polyphonic. There are two modes available from the con
 
 - **All inputs**
 
-  The number of coin flips is the maximum channel count found across all four inputs - TRIG, PROG, A, and B. Monophonic inputs are replicated to match the maximum channel count. Polyphonic channels with missing channels treat the missing channel as 0V.
+  The number of coin flips is the maximum channel count found across all four inputs - TRIG, PROB, A, and B. Monophonic inputs are replicated to match the maximum channel count. Polyphonic channels with missing channels treat the missing channel as 0V.
   
   Polphonic inputs in A and/or B can always be scrambled across A and B outputs.
 
