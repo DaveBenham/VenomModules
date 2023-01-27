@@ -169,6 +169,8 @@ Selects the number of times to clone or replicate each input channel. Possible v
 ### POLY input
 Each channel from the polyphonic input is replicated based on the Clone count as long as the total replicated channel count does not exceed 16. Channels that cannot be replicated the full amount are ignored.
 
+No input is treated as monophonic constant 0V.
+
 For each channel appearing at the input, the corresponding LED above glows yellow if the channel could be successfully replicated, and red if it could not be replicated. LEDs beyond the input channel count remain off (black).
 
 ### POLY output
