@@ -699,6 +699,7 @@ struct RhythmExplorerWidget : ModuleWidget {
           draw(args);
         }
       }
+      Widget::drawLayer(args, layer);
     }
   };
 
