@@ -94,8 +94,8 @@ struct Recurse : Module {
     for (int c=0; c<outChannels; c++) {
       float rtn = inputs[IN_INPUT].getVoltage(c);
       if (mod) {
-        scale = inputs[SCALE_INPUT].getNormalVoltage(1.0f, c) * scaleParam;
-        offset = inputs[OFFSET_INPUT].getNormalVoltage(0.0f, c) + offsetParam;
+        scale = inputs[SCALE_INPUT].getNormalPolyVoltage(1.0f, c) * scaleParam;
+        offset = inputs[OFFSET_INPUT].getNormalPolyVoltage(0.0f, c) + offsetParam;
         if (timing == PRE_START_1)
           rtn = order==0 ? rtn * scale + offset : (rtn + offset) * scale;
       }

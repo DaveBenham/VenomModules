@@ -35,6 +35,8 @@ struct PolyClone : Module {
     configOutput(POLY_OUTPUT, "Poly");
     configBypass(POLY_INPUT, POLY_OUTPUT);
     lightDivider.setDivision(44);
+    lights[CHANNEL_LIGHTS].setBrightness(1);
+    lights[CHANNEL_LIGHTS+1].setBrightness(0);
   }
 
   void process(const ProcessArgs& args) override {
@@ -43,7 +45,7 @@ struct PolyClone : Module {
     int maxCh = 16/clones;
 
     // Get number of channels
-    int ch = inputs[POLY_INPUT].getChannels();
+    int ch = std::max({1,inputs[POLY_INPUT].getChannels()});
     int goodCh = ch > maxCh ? maxCh : ch;
 
     int c=0;
@@ -55,7 +57,7 @@ struct PolyClone : Module {
     outputs[POLY_OUTPUT].setChannels(goodCh * clones);
 
     if (lightDivider.process()) {
-      for (int i=0; i<16; i++) {
+      for (int i=1; i<16; i++) {
         lights[CHANNEL_LIGHTS+i*2].setBrightness(i<goodCh);
         lights[CHANNEL_LIGHTS+i*2+1].setBrightness(i>=goodCh && i<ch);
       }

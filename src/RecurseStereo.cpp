@@ -108,10 +108,10 @@ struct RecurseStereo : Module {
     for (int c=0; c<outChannels; c++) {
       rtnL = inputs[IN_L_INPUT].getVoltage(c);
       if(right)
-        rtnR = inputs[IN_R_INPUT].getNormalVoltage(rtnL, c);
+        rtnR = inputs[IN_R_INPUT].getNormalPolyVoltage(rtnL, c);
       if (mod) {
-        scale = inputs[SCALE_INPUT].getNormalVoltage(1.0f, c) * scaleParam;
-        offset = inputs[OFFSET_INPUT].getNormalVoltage(0.0f, c) + offsetParam;
+        scale = inputs[SCALE_INPUT].getNormalPolyVoltage(1.0f, c) * scaleParam;
+        offset = inputs[OFFSET_INPUT].getNormalPolyVoltage(0.0f, c) + offsetParam;
         if (timing == PRE_START_1){
           rtnL = order==0 ? rtnL * scale + offset : (rtnL + offset) * scale;
           if (right)
