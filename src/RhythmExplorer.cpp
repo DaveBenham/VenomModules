@@ -699,7 +699,7 @@ struct RhythmExplorerWidget : ModuleWidget {
           draw(args);
         }
       }
-      Widget::drawLayer(args, layer);
+      app::SvgSwitch::drawLayer(args, layer);
     }
   };
 
