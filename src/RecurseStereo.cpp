@@ -184,20 +184,22 @@ struct RecurseStereo : Module {
 
 };
 
-struct CountDisplay : DigitalDisplay18 {
-  RecurseStereo* module;
-  void step() override {
-    if (module) {
-      text = string::f("%d", module->recurCount);
-      fgColor = module->recurCountErr ? SCHEME_RED : SCHEME_YELLOW;
-    } else {
-      text = "16";
-      fgColor = SCHEME_YELLOW;
-    }
-  }
-};
 
 struct RecurseStereoWidget : ModuleWidget {
+
+  struct CountDisplay : DigitalDisplay18 {
+    void step() override {
+      if (module) {
+        RecurseStereo* mod = dynamic_cast<RecurseStereo*>(module);
+        text = string::f("%d", mod->recurCount);
+        fgColor = mod->recurCountErr ? SCHEME_RED : SCHEME_YELLOW;
+      } else {
+        text = "16";
+        fgColor = SCHEME_YELLOW;
+      }
+    }
+  };
+
   RecurseStereoWidget(RecurseStereo* module) {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));

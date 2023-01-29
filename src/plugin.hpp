@@ -46,6 +46,7 @@ struct CKSSNarrow : app::SvgSwitch {
 };
 
 struct DigitalDisplay : Widget {
+  Module* module;
   std::string fontPath;
   std::string bgText;
   std::string text;
@@ -80,7 +81,7 @@ struct DigitalDisplay : Widget {
   }
 
   void drawLayer(const DrawArgs& args, int layer) override {
-    if (layer == 1) {
+    if (layer == 1 && (!module || (module && !module->isBypassed()))) {
       prepareFont(args);
 
       // Foreground text
@@ -88,6 +89,9 @@ struct DigitalDisplay : Widget {
       nvgText(args.vg, textPos.x, textPos.y, text.c_str(), NULL);
     }
     Widget::drawLayer(args, layer);
+  }
+  
+  void step() override {
   }
 };
 

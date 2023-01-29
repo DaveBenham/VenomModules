@@ -123,7 +123,6 @@ struct Recurse : Module {
       lights[SCALE_LIGHT].setBrightness(order==0);
       lights[OFFSET_LIGHT].setBrightness(order==1);
     }
-
   }
 
 
@@ -143,20 +142,23 @@ struct Recurse : Module {
 
 };
 
-struct CountDisplay : DigitalDisplay18 {
-  Recurse* module;
-  void step() override {
-    if (module) {
-      text = string::f("%d", module->recurCount);
-      fgColor = module->recurCountErr ? SCHEME_RED : SCHEME_YELLOW;
-    } else {
-      text = "16";
-      fgColor = SCHEME_YELLOW;
-    }
-  }
-};
 
 struct RecurseWidget : ModuleWidget {
+
+  struct CountDisplay : DigitalDisplay18 {
+    void step() override {
+      fgColor = SCHEME_RED;
+      if (module) {
+        Recurse* mod = dynamic_cast<Recurse*>(module);
+        text = string::f("%d", mod->recurCount);
+        fgColor = mod->recurCountErr ? SCHEME_RED : SCHEME_YELLOW;
+      } else {
+        text = "16";
+        fgColor = SCHEME_YELLOW;
+      }
+    }
+  };
+
   RecurseWidget(Recurse* module) {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));

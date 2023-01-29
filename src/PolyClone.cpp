@@ -75,20 +75,22 @@ struct PolyClone : Module {
   }
 };
 
-struct CountDisplay : DigitalDisplay18 {
-  PolyClone* module;
-  void step() override {
-    if (module) {
-      text = string::f("%d", module->clones);
-      fgColor = SCHEME_YELLOW;
-    } else {
-      text = "16";
-      fgColor = SCHEME_YELLOW;
-    }
-  }
-};
 
 struct PolyCloneWidget : ModuleWidget {
+
+  struct PCCountDisplay : DigitalDisplay18 {
+    void step() override {
+      if (module) {
+        PolyClone* mod = dynamic_cast<PolyClone*>(module);
+        text = string::f("%d", mod->clones);
+        fgColor = SCHEME_YELLOW;
+      } else {
+        text = "16";
+        fgColor = SCHEME_YELLOW;
+      }
+    }
+  };
+
   PolyCloneWidget(PolyClone* module) {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
@@ -97,7 +99,7 @@ struct PolyCloneWidget : ModuleWidget {
     float y = RACK_GRID_WIDTH * 5.5f + 3;
     float dy = RACK_GRID_WIDTH * 2.f;
 
-    CountDisplay* countDisplay = createWidget<CountDisplay>(Vec(x-12, y-23));
+    PCCountDisplay* countDisplay = createWidget<PCCountDisplay>(Vec(x-12, y-23));
     countDisplay->module = module;
     addChild(countDisplay);
 

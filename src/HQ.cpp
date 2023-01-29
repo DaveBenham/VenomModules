@@ -225,24 +225,26 @@ struct HQ : Module {
 
 };
 
-struct PartialDisplay : DigitalDisplay188 {
-  HQ* module;
-  void step() override {
-    if (module) {
-      if (module->monitorVal == HQ::MONITOR_OFF) {
-        text = "";
-      } else {
-        text = string::f("%d", abs(module->monitorVal)+1);
-        fgColor = module->monitorVal < 0 ? SCHEME_RED : SCHEME_YELLOW;
-      }
-    } else {
-      text = "1";
-      fgColor = SCHEME_YELLOW;
-    }
-  }
-};
 
 struct HQWidget : ModuleWidget {
+
+  struct PartialDisplay : DigitalDisplay188 {
+    void step() override {
+      if (module) {
+        HQ* mod = dynamic_cast<HQ*>(module);
+        if (mod->monitorVal == HQ::MONITOR_OFF) {
+          text = "";
+        } else {
+          text = string::f("%d", abs(mod->monitorVal)+1);
+          fgColor = mod->monitorVal < 0 ? SCHEME_RED : SCHEME_YELLOW;
+        }
+      } else {
+        text = "1";
+        fgColor = SCHEME_YELLOW;
+      }
+    }
+  };
+
   HQWidget(HQ* module) {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
