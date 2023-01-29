@@ -354,7 +354,7 @@ This bipolar CV input modulates the division density at a rate of 10% per volt. 
 
 #### MODE CV input
 
-The division mode CV input overrides the value set by the button or global CV. The CV actually sets the column's mode button to match so you get a visual indicator of the active mode.
+The division mode CV input overrides the value set by the button. The CV actually sets the column's mode button to match so you get a visual indicator of the active mode.
 
 The mode values are as follows:
 - 0V = ALL
