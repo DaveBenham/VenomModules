@@ -130,21 +130,23 @@ The output will be constrained to the selected series.
 
 ### Partial knob
 Selects a single integral partial number. By default the range is from 1 (fundamental) to 16 (4 octaves above the fundamental). The context menu allows selection of any one of the following ranges:
-- 1 - 16 (default
-- 1 - 32
-- 1 - 64
-- 1 - 128
-- -1 - 16
-- -1 - 32
-- -1 - 64
-- -1 - 128
-- -16 - 16
-- -32 - 32
-- -64 - 64
-- -128 - 128
+- 1 to 16 (default)
+- 1 to 32
+- 1 to 64
+- 1 to 128
+- -16 to 1
+- -32 to 1
+- -64 to 1
+- -128 to 1
+- -16 to 16
+- -32 to 32
+- -64 to 64
+- -128 to 128
+
+Negative values refer to subharmonics. There is no 0 partial, and both -1 and 1 refer to the same fundamental root. So both 0 and -1 are skipped within the sequence of allowable values. 
 
 ### CV knob and input
-The bipolar CV input modulates the selected partial, adding or subtracting 1 partial for every 0.1 volt. The CV input is attenuated and/or inverted by the CV knob. The resultant partial is clamped to within the currently active Partial range.
+The bipolar CV input modulates the selected partial, adding or subtracting 1 partial for every 0.1 volt. The CV input is attenuated and/or inverted by the CV knob. The resultant partial is clamped to within the currently active Partial range. Keep in mind that 0 and -1 are skipped when computing the end result, so a knob value of -2 + 0.1 volt modulation yields 1, not -1.
 
 The Partial knob, CV knob, and CV input are all ignored if the IN input is patched (although the CV input can still modify the number of output channels).
 
