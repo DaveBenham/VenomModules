@@ -256,13 +256,13 @@ Random Rhythm uses a pseudo Random Number Generator (RNG) to establish a sequenc
 
 Each division has its own density slider ranging from 0 to 100%, and each division also gets its own sequence of "random" numbers. Assuming all divisions are set to All mode, then when the slider value is greater than the current random number for that division, then the high gate will be issued for that beat. If the density is at 100%, then all beats will be played. If at 0%, then no beats will be played. The values in between do not specify the precise density for any given pattern, but rather specify the average frequency across all possible patterns.
 
-### CLOCK Input
-The Rhythm Explorer will not run properly until a 24 ppqn (pulses per quarter note) clock is patched into the CLOCK input.
-
 ### Triggers and Gates
 All trigger and gate inputs have a transition to high threshold of 2 volts and transition to low threshold of 0.1 volts.
 
 Trigger and gate high outputs are 10 volts, and low outputs 0 volts.
+
+### CLOCK Input
+The Rhythm Explorer will not run properly until a 24 ppqn (pulses per quarter note) clock is patched into the CLOCK input.
 
 ### RUN
 If the RUN input is not patched, then every press of the RUN button will toggle the run state on or off. The RUN button will be brightly lit while running, and off (actually very dimly lit) when not running.
