@@ -130,21 +130,23 @@ The output will be constrained to the selected series.
 
 ### Partial knob
 Selects a single integral partial number. By default the range is from 1 (fundamental) to 16 (4 octaves above the fundamental). The context menu allows selection of any one of the following ranges:
-- 1 - 16 (default
-- 1 - 32
-- 1 - 64
-- 1 - 128
-- -1 - 16
-- -1 - 32
-- -1 - 64
-- -1 - 128
-- -16 - 16
-- -32 - 32
-- -64 - 64
-- -128 - 128
+- 1 to 16 (default)
+- 1 to 32
+- 1 to 64
+- 1 to 128
+- -16 to 1
+- -32 to 1
+- -64 to 1
+- -128 to 1
+- -16 to 16
+- -32 to 32
+- -64 to 64
+- -128 to 128
+
+Negative values refer to subharmonics. There is no 0 partial, and both -1 and 1 refer to the same fundamental root. So both 0 and -1 are skipped within the sequence of allowable values. 
 
 ### CV knob and input
-The bipolar CV input modulates the selected partial, adding or subtracting 1 partial for every 0.1 volt. The CV input is attenuated and/or inverted by the CV knob. The resultant partial is clamped to within the currently active Partial range.
+The bipolar CV input modulates the selected partial, adding or subtracting 1 partial for every 0.1 volt. The CV input is attenuated and/or inverted by the CV knob. The resultant partial is clamped to within the currently active Partial range. Keep in mind that 0 and -1 are skipped when computing the end result, so a knob value of -2 + 0.1 volt modulation yields 1, not -1.
 
 The Partial knob, CV knob, and CV input are all ignored if the IN input is patched (although the CV input can still modify the number of output channels).
 
@@ -255,6 +257,11 @@ Rhythm Explorer looks complicated, but it is very simple to quickly begin creati
 Random Rhythm uses a pseudo Random Number Generator (RNG) to establish a sequence of seemingly random numbers. However, the "random" sequence is dictated by a seed number - every time the RNG is reseeded with the same number, it generates the exact same sequence. With the initial setup, the reseed occurs after each set of 4 quarter notes, thus establishing a pattern. When the DICE button is pressed, a new seed number is generated, so the pattern will change.
 
 Each division has its own density slider ranging from 0 to 100%, and each division also gets its own sequence of "random" numbers. Assuming all divisions are set to All mode, then when the slider value is greater than the current random number for that division, then the high gate will be issued for that beat. If the density is at 100%, then all beats will be played. If at 0%, then no beats will be played. The values in between do not specify the precise density for any given pattern, but rather specify the average frequency across all possible patterns.
+
+### Triggers and Gates
+All trigger and gate inputs have a transition to high threshold of 2 volts and transition to low threshold of 0.1 volts.
+
+Trigger and gate high outputs are 10 volts, and low outputs 0 volts.
 
 ### CLOCK Input
 The Rhythm Explorer will not run properly until a 24 ppqn (pulses per quarter note) clock is patched into the CLOCK input.
