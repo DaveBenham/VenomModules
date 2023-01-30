@@ -51,6 +51,7 @@ struct HQ : Module {
   int monitorVal = 0;
   enum monitorEnum {MONITOR_OFF=999};
   int range = 0;
+  int oldRange = -1;
   int ranges[12][2] = {
     {0,15}, {0,31}, {0,63}, {0,127},
     {-15,0}, {-31,0}, {-63,0}, {-127,0},
@@ -127,6 +128,10 @@ struct HQ : Module {
   }
 
   void process(const ProcessArgs& args) override {
+    if (oldRange != range) {
+      paramQuantities[PARTIAL_PARAM]->defaultValue = range < 4 ? 0.f : range < 8 ? 1.f : 0.5f;
+      oldRange = range;
+    }
     int channels = std::max({ 1,
       inputs[CV_INPUT].getChannels(),
       inputs[ROOT_INPUT].getChannels(),
@@ -266,18 +271,18 @@ struct HQWidget : ModuleWidget {
     menu->addChild(new MenuSeparator);
 
     std::vector<std::string> rangeLabels;
-    rangeLabels.push_back("1 - 16");
-    rangeLabels.push_back("1 - 32");
-    rangeLabels.push_back("1 - 64");
-    rangeLabels.push_back("1 - 128");
-    rangeLabels.push_back("-16 - 1");
-    rangeLabels.push_back("-32 - 1");
-    rangeLabels.push_back("-64 - 1");
-    rangeLabels.push_back("-128 - 1");
-    rangeLabels.push_back("-16 - 16");
-    rangeLabels.push_back("-32 - 32");
-    rangeLabels.push_back("-64 - 64");
-    rangeLabels.push_back("-128 - 128");
+    rangeLabels.push_back("1 to 16");
+    rangeLabels.push_back("1 to 32");
+    rangeLabels.push_back("1 to 64");
+    rangeLabels.push_back("1 to 128");
+    rangeLabels.push_back("-16 to 1");
+    rangeLabels.push_back("-32 to 1");
+    rangeLabels.push_back("-64 to 1");
+    rangeLabels.push_back("-128 to 1");
+    rangeLabels.push_back("-16 to 16");
+    rangeLabels.push_back("-32 to 32");
+    rangeLabels.push_back("-64 to 64");
+    rangeLabels.push_back("-128 to 128");
     menu->addChild(createIndexSubmenuItem("Partial Range", rangeLabels,
       [=]() {return module->range;},
       [=](int i) {
