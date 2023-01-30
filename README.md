@@ -259,6 +259,11 @@ Each division has its own density slider ranging from 0 to 100%, and each divisi
 ### CLOCK Input
 The Rhythm Explorer will not run properly until a 24 ppqn (pulses per quarter note) clock is patched into the CLOCK input.
 
+### Triggers and Gates
+All trigger and gate inputs have a transition to high threshold of 2 volts and transition to low threshold of 0.1 volts.
+
+Trigger and gate high outputs are 10 volts, and low outputs 0 volts.
+
 ### RUN
 If the RUN input is not patched, then every press of the RUN button will toggle the run state on or off. The RUN button will be brightly lit while running, and off (actually very dimly lit) when not running.
 
