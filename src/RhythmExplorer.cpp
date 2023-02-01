@@ -131,10 +131,6 @@ struct RhythmExplorer : Module {
   //Persistant State
   float internalSeed;
   bool runGateActive;
-  bool patOffActive;
-  bool lockActive;
-  bool channelMuteActive[SLIDER_COUNT];
-  bool polyMuteActive;
 
   #include "ThemeModVars.hpp"
 
@@ -152,11 +148,8 @@ struct RhythmExplorer : Module {
   bool newSeedTrigHigh;
   bool runGateBtnHigh;
   bool runGateTrigHigh;
-  bool patOffBtnHigh;
-  bool lockBtnHigh;
+  bool lockActive;
   bool initBtnHigh;
-  bool channelMuteHigh[SLIDER_COUNT];
-  bool polyMuteHigh;
   bool densityLightOn[SLIDER_COUNT];
   dsp::ClockDivider lightDivider;
   dsp::PulseGenerator trigGenerator;
@@ -200,7 +193,7 @@ struct RhythmExplorer : Module {
     configButton(RUN_GATE_PARAM, "Run Gate");
     configInput(RUN_GATE_INPUT,"Run Gate");
     
-    configButton(PATOFF_PARAM, "Pattern Off");
+    configSwitch(PATOFF_PARAM, 0.f, 1.f, 0.f, "Pattern Status", {"On", "Off"});
 
     configOutput(GATE_OR_OUTPUT,"OR Trigger");
     configOutput(GATE_XOR_ODD_OUTPUT,"XOR Odd Parity Trigger");
@@ -223,7 +216,7 @@ struct RhythmExplorer : Module {
       configInput(DENSITY_CHANNEL_INPUT + si, "Density CV " + si_s);
       if (si>0)
         configInput(MODE_CHANNEL_INPUT + si, "Mode CV " + si_s);
-      configButton(MUTE_CHANNEL_PARAM + si, "Mute " + si_s);
+      configSwitch(MUTE_CHANNEL_PARAM + si, 0.f, 1.f, 0.f, "Mute " + si_s, {"Unmuted", "Muted"});
       if (si==0)
         configSwitch<FixedSwitchQuantity>(MODE_CHANNEL_PARAM + si, 0, 0, 0, "Mode " + si_s, {"All"});
       else
@@ -231,14 +224,14 @@ struct RhythmExplorer : Module {
     }
     configSwitch<FixedSwitchQuantity>(POLAR_PARAM, 0, 1, 0, "Density Polarity", {"Uniploar", "Bipolar"});
     configSwitch<GlobalModeQuantity>(MODE_POLY_PARAM, 0, 2 , 0, "Global Mode", POLY_MODE_LABELS);
-    configButton(MUTE_POLY_PARAM, "Global Mute");
+    configSwitch(MUTE_POLY_PARAM, 0.f, 1.f, 0.f, "Global Mute", {"Unmuted", "Muted"});
     configInput(MODE_POLY_INPUT, "Global Mode CV");
     configInput(DENSITY_POLY_INPUT,"Density Poly CV");
     configOutput(CLOCK_POLY_OUTPUT, "Clock Poly");
     configOutput(GATE_POLY_OUTPUT, "Gate Poly");
     configOutput(RESET_TRIGGER_OUTPUT, "Reset Trigger");
     configOutput(RUN_GATE_OUTPUT, "Run Gate");
-    configButton(LOCK_PARAM, "Lock Divisions, Modes, and Polarity");
+    configSwitch(LOCK_PARAM, 0.f, 1.f, 0.f, "Divisions, Modes, and Polarity Status", {"Unlocked", "Locked"});
     configButton(INIT_DENSITY_PARAM, "Initialize Densities");
 
     lightDivider.setDivision(32);
@@ -266,10 +259,6 @@ struct RhythmExplorer : Module {
     rng = {};
     resetEvent = false;
     runGateActive = false;
-    patOffActive = false;
-    lockActive = false;
-    patOffBtnHigh = false;
-    lockBtnHigh = false;
     initBtnHigh = false;
     clockHigh = false;
     resetTrigHigh = false;
@@ -280,12 +269,8 @@ struct RhythmExplorer : Module {
     runGateTrigHigh = false;
     isUni = true;
     for (int i=0; i<SLIDER_COUNT; i++){
-      channelMuteHigh[i] = false;
-      channelMuteActive[i] = false;
       densityLightOn[i] = false;
     }
-    polyMuteHigh = false;
-    polyMuteActive = false;
     getSeed();
     reseedRng();
     updateLights();
@@ -297,17 +282,6 @@ struct RhythmExplorer : Module {
 
     json_object_set_new(rootJ, "internalSeed", json_real(internalSeed));
     json_object_set_new(rootJ, "runGateActive", json_boolean(runGateActive));
-    json_object_set_new(rootJ, "patOffActive", json_boolean(patOffActive));
-    json_object_set_new(rootJ, "lockActive", json_boolean(lockActive));
-    json_object_set_new(rootJ, "channelMuteActive0", json_boolean(channelMuteActive[0]));
-    json_object_set_new(rootJ, "channelMuteActive1", json_boolean(channelMuteActive[1]));
-    json_object_set_new(rootJ, "channelMuteActive2", json_boolean(channelMuteActive[2]));
-    json_object_set_new(rootJ, "channelMuteActive3", json_boolean(channelMuteActive[3]));
-    json_object_set_new(rootJ, "channelMuteActive4", json_boolean(channelMuteActive[4]));
-    json_object_set_new(rootJ, "channelMuteActive5", json_boolean(channelMuteActive[5]));
-    json_object_set_new(rootJ, "channelMuteActive6", json_boolean(channelMuteActive[6]));
-    json_object_set_new(rootJ, "channelMuteActive7", json_boolean(channelMuteActive[7]));
-    json_object_set_new(rootJ, "polyMuteActive", json_boolean(polyMuteActive));
     #include "ThemeToJson.hpp"
 
     return rootJ;
@@ -317,30 +291,17 @@ struct RhythmExplorer : Module {
 
     internalSeed = json_real_value(json_object_get(rootJ, "internalSeed"));
     runGateActive = json_is_true(json_object_get(rootJ, "runGateActive"));
-    patOffActive = json_is_true(json_object_get(rootJ, "patOffActive"));
-    lockActive = json_is_true(json_object_get(rootJ, "lockActive"));
-    channelMuteActive[0] = json_is_true(json_object_get(rootJ, "channelMuteActive0"));
-    channelMuteActive[1] = json_is_true(json_object_get(rootJ, "channelMuteActive1"));
-    channelMuteActive[2] = json_is_true(json_object_get(rootJ, "channelMuteActive2"));
-    channelMuteActive[3] = json_is_true(json_object_get(rootJ, "channelMuteActive3"));
-    channelMuteActive[4] = json_is_true(json_object_get(rootJ, "channelMuteActive4"));
-    channelMuteActive[5] = json_is_true(json_object_get(rootJ, "channelMuteActive5"));
-    channelMuteActive[6] = json_is_true(json_object_get(rootJ, "channelMuteActive6"));
-    channelMuteActive[7] = json_is_true(json_object_get(rootJ, "channelMuteActive7"));
-    polyMuteActive = json_is_true(json_object_get(rootJ, "polyMuteActive"));
     #include "ThemeFromJson.hpp"
 
     reseedRng();
-    updateLights();
-    setLockStatus();
   }
 
   void updateLights(){
     lights[RUN_GATE_LIGHT].setBrightness(runGateActive ? 1.f : LIGHT_OFF);
     for (int i=0; i<SLIDER_COUNT; i++)
-      lights[MUTE_CHANNEL_LIGHT + i].setBrightness(channelMuteActive[i] ? 1.f : LIGHT_OFF);
-    lights[MUTE_POLY_LIGHT].setBrightness(polyMuteActive ? 1.f : LIGHT_OFF);
-    lights[PATOFF_LIGHT].setBrightness(patOffActive ? 1.f : LIGHT_OFF);
+      lights[MUTE_CHANNEL_LIGHT + i].setBrightness(params[MUTE_CHANNEL_PARAM + i].getValue()>0.f ? 1.f : LIGHT_OFF);
+    lights[MUTE_POLY_LIGHT].setBrightness(params[MUTE_POLY_PARAM].getValue()>0.f ? 1.f : LIGHT_OFF);
+    lights[PATOFF_LIGHT].setBrightness((params[PATOFF_PARAM].getValue()>0.f) ? 1.f : LIGHT_OFF);
     lights[LOCK_LIGHT].setBrightness(lockActive ? 1.f : LIGHT_OFF);
   }
 
@@ -351,7 +312,7 @@ struct RhythmExplorer : Module {
   }
 
   void reseedRng(){
-    if (internalSeed > 0.f && !patOffActive) {
+    if (internalSeed > 0.f && params[PATOFF_PARAM].getValue() <= 0.f) {
       float seed1 = internalSeed / 10.f;
       float seed2 = std::fmod(internalSeed,1.f);
       uint64_t s1 = seed1 * MAX_UNIT64;
@@ -363,6 +324,7 @@ struct RhythmExplorer : Module {
   void setLockStatus(){
     ParamQuantity* q;
     float val;
+    lockActive = params[LOCK_PARAM].getValue() > 0.f;
     for (int i=0; i<SLIDER_COUNT; i++){
       if ((q = getParamQuantity(RATE_PARAM + i))){
         val = q->getValue();
@@ -429,16 +391,11 @@ struct RhythmExplorer : Module {
     }
 
     // Pattern Off
-    if(buttonTrigger(patOffBtnHigh,params[PATOFF_PARAM].getValue())){
-      patOffActive = !patOffActive;
-    }
-    lights[PATOFF_LIGHT].setBrightnessSmooth(patOffActive ? 1.f : LIGHT_OFF, args.sampleTime);
+    lights[PATOFF_LIGHT].setBrightnessSmooth((params[PATOFF_PARAM].getValue()>0.f) ? 1.f : LIGHT_OFF, args.sampleTime);
 
     // Lock
-    if(buttonTrigger(lockBtnHigh,params[LOCK_PARAM].getValue())){
-      lockActive = !lockActive;
+    if ((params[LOCK_PARAM].getValue()>0.f) != lockActive)
       setLockStatus();
-    }
     lights[LOCK_LIGHT].setBrightnessSmooth(lockActive ? 1.f : LIGHT_OFF, args.sampleTime);
 
     // Init Density
@@ -455,18 +412,12 @@ struct RhythmExplorer : Module {
     // Mutes - fully handled,  Modes - handled for button lable display only, LOCK may prevent true display
     for (int i=0; i<SLIDER_COUNT; i++) {
       if(i>0 && inputs[MODE_CHANNEL_INPUT + i].isConnected())
-        params[MODE_CHANNEL_PARAM + i].setValue(rack::math::clamp(static_cast <int>(inputs[MODE_CHANNEL_INPUT + i].getVoltage()), 0, 3));
-      if(buttonTrigger(channelMuteHigh[i],params[MUTE_CHANNEL_PARAM + i].getValue())) {
-        channelMuteActive[i] = !channelMuteActive[i];
-        lights[MUTE_CHANNEL_LIGHT + i].setBrightness(channelMuteActive[i] ? 1.f : LIGHT_OFF);
-      }
+        params[MODE_CHANNEL_PARAM + i].setValue(rack::math::clamp(static_cast<int>(inputs[MODE_CHANNEL_INPUT + i].getVoltage()), 0, 3));
+      lights[MUTE_CHANNEL_LIGHT + i].setBrightness(params[MUTE_CHANNEL_PARAM + i].getValue()>0.f ? 1.f : LIGHT_OFF);
     }
     if(inputs[MODE_POLY_INPUT].isConnected())
-      params[MODE_POLY_PARAM].setValue(rack::math::clamp(static_cast <int>(inputs[MODE_POLY_INPUT].getVoltage()), 0, 2));
-    if(buttonTrigger(polyMuteHigh,params[MUTE_POLY_PARAM].getValue())) {
-      polyMuteActive = !polyMuteActive;
-      lights[MUTE_POLY_LIGHT].setBrightness(polyMuteActive ? 1.f : LIGHT_OFF);
-    }
+      params[MODE_POLY_PARAM].setValue(rack::math::clamp(static_cast<int>(inputs[MODE_POLY_INPUT].getVoltage()), 0, 2));
+    lights[MUTE_POLY_LIGHT].setBrightness(params[MUTE_POLY_PARAM].getValue()>0.f ? 1.f : LIGHT_OFF);
 
     //Clock Logic and event timing
     bool newBar = false;
@@ -607,14 +558,14 @@ struct RhythmExplorer : Module {
             channelMode = globalMode;
 
           if (thresholdMet) {
-            if ( !channelMuteActive[si] && !polyMuteActive && (channelMode == ALL_MODE || (channelMode == LINEAR_MODE && !linearChannelShadow) || (channelMode == OFFBEAT_MODE && !offbeatShadow))){
+            if ( !params[MUTE_CHANNEL_PARAM + si].getValue() && !params[MUTE_POLY_PARAM].getValue() && (channelMode == ALL_MODE || (channelMode == LINEAR_MODE && !linearChannelShadow) || (channelMode == OFFBEAT_MODE && !offbeatShadow))){
               linearChannelShadow = true;
               outputs[GATE_OUTPUT + si].setVoltage(10.f);
               outputs[GATE_POLY_OUTPUT].setVoltage(10.f, si);
               lights[DENSITY_LIGHT + si].setBrightness(1.f);
               densityLightOn[si] = true;
             }
-            if (!channelMuteActive[si] && !polyMuteActive && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
+            if (!params[MUTE_CHANNEL_PARAM + si].getValue() && !params[MUTE_POLY_PARAM].getValue() && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
               linearGlobalShadow = true;
               outGateCount++;
             }
@@ -753,7 +704,7 @@ struct RhythmExplorerWidget : ModuleWidget {
     
     x = xStart + dx/2.f;
     y = yStart + dy * 7.6f;
-    addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::PATOFF_PARAM, RhythmExplorer::PATOFF_LIGHT));
+    addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::PATOFF_PARAM, RhythmExplorer::PATOFF_LIGHT));
 
     x = xStart + dx * 2.5f;
     y = yStart + dy * 3.5f;
@@ -788,7 +739,7 @@ struct RhythmExplorerWidget : ModuleWidget {
       y += dy * 1.8f;
       addParam(createParamCentered<ModeSwitch>(Vec(x,y), module, RhythmExplorer::MODE_CHANNEL_PARAM + si));
       y += dy;
-      addParam(createLightParamCentered<VCVLightBezel<WhiteLight>>(Vec(x, y), module, RhythmExplorer::MUTE_CHANNEL_PARAM + si, RhythmExplorer::MUTE_CHANNEL_LIGHT + si));
+      addParam(createLightParamCentered<VCVLightBezelLatch<MediumSimpleLight<WhiteLight>>>(Vec(x, y), module, RhythmExplorer::MUTE_CHANNEL_PARAM + si, RhythmExplorer::MUTE_CHANNEL_LIGHT + si));
       y += dy;
       addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::DENSITY_CHANNEL_INPUT + si));
       y += dy;
@@ -804,7 +755,7 @@ struct RhythmExplorerWidget : ModuleWidget {
     y = yStart + dy * 3.6f;
     addParam(createParamCentered<ModeSwitch>(Vec(x,y), module, RhythmExplorer::MODE_POLY_PARAM));
     y += dy;
-    addParam(createLightParamCentered<VCVLightBezel<WhiteLight>>(Vec(x, y), module, RhythmExplorer::MUTE_POLY_PARAM, RhythmExplorer::MUTE_POLY_LIGHT));
+    addParam(createLightParamCentered<VCVLightBezelLatch<MediumSimpleLight<WhiteLight>>>(Vec(x, y), module, RhythmExplorer::MUTE_POLY_PARAM, RhythmExplorer::MUTE_POLY_LIGHT));
     y += dy;
     addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::DENSITY_POLY_INPUT));
     y += dy;
@@ -815,7 +766,7 @@ struct RhythmExplorerWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_POLY_OUTPUT));
     x += dx * 1.5f;
     y = yStart;
-    addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::LOCK_PARAM, RhythmExplorer::LOCK_LIGHT));
+    addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::LOCK_PARAM, RhythmExplorer::LOCK_LIGHT));
     y += dy * 1.82f;
     addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::INIT_DENSITY_PARAM, RhythmExplorer::INIT_DENSITY_LIGHT));
 
