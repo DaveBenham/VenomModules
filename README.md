@@ -1,5 +1,5 @@
-# VenomModules
-Venom VCV Rack Modules created by Dave Benham (Dave Venom)
+# Venom Modules
+Venom Modules for VCV Rack version 2 are copyright 2022 Dave Benham and licensed under GNU General Public License version 3.
 
 Binaries for Beta version 4 are available at https://github.com/DaveBenham/VenomModules/releases/tag/2.0.beta4-619667f
 
