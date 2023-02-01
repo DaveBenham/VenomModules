@@ -1,3 +1,6 @@
+// Venom Modules (c) 2022 Dave Benham
+// Licensed under GNU GPLv3
+
 #include "plugin.hpp"
 #include "ThemeStrings.hpp"
 

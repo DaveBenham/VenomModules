@@ -1,3 +1,10 @@
+// Venom Modules (c) 2022 Dave Benham
+// Licensed under GNU GPLv3
+
+// This is a derivative of the VCV Fundamental CVMIX module, only
+// modifying how knobs are scaled when inputs are patched, as well
+// as modifying the front panel and adding support for themes.
+
 #include "plugin.hpp"
 #include "ThemeStrings.hpp"
 

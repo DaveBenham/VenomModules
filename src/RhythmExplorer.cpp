@@ -1,3 +1,6 @@
+// Venom Modules (c) 2022 Dave Benham
+// Licensed under GNU GPLv3
+
 // Thanks to Andrew Hanson for the initial prototype code
 // that I was able to flesh out into this final form
 

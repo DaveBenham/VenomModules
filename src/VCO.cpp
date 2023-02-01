@@ -1,3 +1,10 @@
+// Venom Modules (c) 2022 Dave Benham
+// Licensed under GNU GPLv3
+
+// This module is a derivative of the 21kHz Palm Loop oscillator
+// The underlying algorithms are preserved, but much of the code has been
+// significantly refactored, and new functionallity added.
+
 #include "plugin.hpp"
 #include "dsp/math.hpp"
 #include <array>

@@ -1,15 +1,15 @@
 {
   "slug": "VenomModules",
-  "name": "VenomModules",
-  "version": "2.0.beta4",
+  "name": "Venom Modules",
+  "version": "2.0.beta5",
   "license": "GPL-3.0-or-later",
-  "brand": "VenomModules",
+  "brand": "",
   "author": "David Benham",
-  "authorEmail": "",
+  "authorEmail": "david.benham42@gmail.com",
   "authorUrl": "",
   "pluginUrl": "https://github.com/DaveBenham/VenomModules",
-  "manualUrl": "https://github.com/DaveBenham/VenomModules",
-  "sourceUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md",
+  "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md",
+  "sourceUrl": "https://github.com/DaveBenham/VenomModules",
   "donateUrl": "",
   "changelogUrl": "https://github.com/DaveBenham/VenomModules/blob/main/changelog.md",
   "modules": [
@@ -19,13 +19,13 @@
       "description": "Randomly route two inputs to two outputs, with built in scaling and offset capabilities",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bernoulli-switch",
       "tags": [
+        "Attenuator",
+        "Controller",
+        "Logic",
         "Polyphonic",
-        "Utility",
         "Random",
         "Switch",
-        "Attenuator",
-        "Logic",
-        "Controller"
+        "Utility"
       ]
     },
     {
@@ -45,10 +45,10 @@
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#cvmix",
       "hidden": true,
       "tags": [
-        "Mixer",
         "Attenuator",
-        "Utility",
-        "Polyphonic"
+        "Mixer",
+        "Polyphonic",
+        "Utility"
       ]
     },
     {
@@ -77,9 +77,10 @@
       "description": "Recursively process an input via Send/Return, with built in scaling and offset cababilities",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#recurse",
       "tags": [
+        "Effect",
         "Polyphonic",
-        "Utility",
-        "Ring modulator"
+        "Ring modulator",
+        "Utility"
       ]
     },
     {
@@ -88,9 +89,10 @@
       "description": "Recursively process mono or stereo input via Send/Return, with built in scaling and offset cababilities",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#recurse-stereo",
       "tags": [
+        "Effect",
         "Polyphonic",
-        "Utility",
-        "Ring modulator"
+        "Ring modulator",
+        "Utility"
       ]
     },
     {
@@ -99,9 +101,9 @@
       "description": "Random rhythm generator, trigger sequencer and clock divider",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#rhythm-explorer",
       "tags": [
-        "Sequencer",
         "Clock modulator",
-        "Random"
+        "Random",
+        "Sequencer"
       ]
     },
     {
@@ -120,12 +122,12 @@
       "description": "Windowed comparator and rectifier",
       "manualURL": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#wincomp",
       "tags": [
+        "Distortion",
+        "Limiter",
         "Logic",
         "Polyphonic",
         "Utility",
-        "Waveshaper",
-        "Distortion",
-        "Limiter"
+        "Waveshaper"
       ]
     }
   ]

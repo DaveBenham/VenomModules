@@ -1,3 +1,6 @@
+// Venom Modules (c) 2022 Dave Benham
+// Licensed under GNU GPLv3
+
   void step() override {
     MODULE_NAME* module = (MODULE_NAME*)this->module;
     if (module){
