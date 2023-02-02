@@ -313,7 +313,7 @@ Both BAR and PHRASE can be modulated via bipolar CV at the inputs below the knob
 
 ### BAR START and PHRASE START
 
-The BAR START outpout issues a high gate lasting one 24 ppqn clock pulse at the start of every bar. Likewise the PHRASE START output issues a gate at the start of each phrase.
+The BAR START output issues a high gate lasting one 24 ppqn clock pulse at the start of every bar. Likewise the PHRASE START output issues a gate at the start of each phrase.
 
 The phrase start pulse is also sent to channel 9, and the bar start pulse to channel 10 of the GLOBAL polyphonic clock output.
 
