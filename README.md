@@ -1,8 +1,6 @@
 # Venom Modules
 Venom Modules for VCV Rack version 2 are copyright 2022 Dave Benham and licensed under GNU General Public License version 3.
 
-Binaries for Beta version 4 are available at https://github.com/DaveBenham/VenomModules/releases/tag/2.0.beta4-619667f
-
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[POLY<br />CLONE](#poly-clone)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[WINCOMP](#wincomp)|
@@ -15,7 +13,7 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 ## Hidden Unreleased Modules
 There are two additional hidden modules that are not yet ready to be released. But you can enable them by editing the  
-\<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden modules within that file, and change the "hidden" value to false. But bear in mind that these modules may never be released, and may disappear entirely from a future release. Or if they are released, they may not be backwardly compatible with the hidden versions.  
+\<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden modules within that file, and change the "hidden" value to false. But bear in mind that these modules may never be released, and may disappear entirely from a future release. Or if they are released, they may not be backwardly compatible with the current hidden versions.  
 
 |[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
 |---|---|
