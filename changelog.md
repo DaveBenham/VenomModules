@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.0.0 (2023-??-??)
+## 2.0.0 (2023-02-01)
 Initial release
 - Bernoulli Switch
 - Clone Merge
