@@ -12,7 +12,7 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 |![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|
 
 ## Hidden Unreleased Module
-There one additional hidden module that is not yet ready to be released. But you can enable it by editing the  
+There is one additional hidden module that is not yet ready to be released. But you can enable it by editing the  
 \<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden module within the file, and change the "hidden" value to false. But bear in mind that this module may never be released, and may disappear entirely from a future release. Or if it is released, it may not be backward compatible with the current hidden version.  
 
 |[VCO](#vco)<br />Incomplete|
