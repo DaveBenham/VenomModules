@@ -11,13 +11,13 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 |----|
 |![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|
 
-## Hidden Unreleased Modules
-There are two additional hidden modules that are not yet ready to be released. But you can enable them by editing the  
-\<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden modules within that file, and change the "hidden" value to false. But bear in mind that these modules may never be released, and may disappear entirely from a future release. Or if they are released, they may not be backwardly compatible with the current hidden versions.  
+## Hidden Unreleased Module
+There one additional hidden module that is not yet ready to be released. But you can enable it by editing the  
+\<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden module within the file, and change the "hidden" value to false. But bear in mind that this module may never be released, and may disappear entirely from a future release. Or if it is released, it may not be backward compatible with the current hidden version.  
 
-|[CVMIX](#cvmix)<br />Tentative|[VCO](#vco)<br />Incomplete|
-|---|---|
-|![CVMIX module image](./doc/CVMIX.PNG)|![VCO module image](./doc/VenomVCO.png)|
+|[VCO](#vco)<br />Incomplete|
+|---|
+|![VCO module image](./doc/VenomVCO.png)|
 
 ## Themes
 The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
@@ -93,19 +93,6 @@ All of the replicated inputs are merged into the single polyphonic output. The p
 ### Bypass
 
 If Clone Merge is bypassed then the output is constant monophonic 0V.
-
-## CVMIX
-### Tentative
-![CVMIX module image](./doc/CVMIX.PNG)  
-CVMIX is one of two hidden modules that may never be released. Never-the-less, you may try it out by following the instructions at the [Hidden Unreleased Modules](#hidden-unreleased-modules) section.
-
-CVMIX is simply a copy of the VCV Fundamental CV MIX module, except the knobs change scaling as follows:
-- unpatched = +/- 10V
-- patched = +/- 100%
-
-Also the faceplate has been changed to make the functionality a bit clearer
-
-I have requested these changes as enhancements to the Fundamental CV MIX module via Rack support. My version will only be released if Andrew declines to make the knob scaling enhancement.
 
 ## Harmonic Quantizer
 ![Harmonic Quantizer module image](./doc/HQ.PNG)  
