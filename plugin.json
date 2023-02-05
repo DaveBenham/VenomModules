@@ -39,19 +39,6 @@
       ]
     },
     {
-      "slug": "CVMix",
-      "name": "CVMIX",
-      "description": "Mixes 3 CV signals with attenuverters",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#cvmix",
-      "hidden": true,
-      "tags": [
-        "Attenuator",
-        "Mixer",
-        "Polyphonic",
-        "Utility"
-      ]
-    },
-    {
       "slug": "HQ",
       "name": "HQ - Harmonic Quantizer",
       "description": "Computes a selected harmonic or subharmonic partial relative to a root V/Oct, or quantizes input V/Oct to the nearest partial relative to the root",

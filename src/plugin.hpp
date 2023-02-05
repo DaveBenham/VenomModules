@@ -13,7 +13,6 @@ extern Plugin* pluginInstance;
 // Declare each Model, defined in each module source file
 extern Model* modelBernoulliSwitch;
 extern Model* modelCloneMerge;
-extern Model* modelCVMix;
 extern Model* modelHQ;
 extern Model* modelPolyClone;
 extern Model* modelRecurse;
