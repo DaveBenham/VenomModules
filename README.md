@@ -486,7 +486,7 @@ All outputs are monophonic 0V if the module is bypassed.
 ## VCO
 ### Incomplete - Work in progress
 ![VCO module image](./doc/VenomVCO.png)  
-A VCO derived from 21kHz Palm Loop code. VCO is one of two hidden modules that may never be released. Never-the-less, you may try it out by following the instructions at the [Hidden Unreleased Modules](#hidden-unreleased-modules) section.
+A VCO derived from 21kHz Palm Loop code. VCO is one of two hidden modules that may never be released. Never-the-less, you may try it out by following the instructions at the [Hidden Unreleased Module](#hidden-unreleased-module) section.
 
 The Palm Loop is the only existing VCO I have found that can do true through zero linear FM (not phase modulation), with the negative frequencies properly reflected, and decent anti-aliasing, even with negative frequencies, all with low CPU usage. It uses an unusual (in VCV world anyway) polyBlamp method for antialiasing the triangle wave. Bogaudio and VCV VCOs can also do through zero linear FM with 0Hz carrier, except the negative frequencies are flawed - the negative frequency antialiasing is broken for both, and the Bogaudio saw becomes unipolar at negative frequencies.
 
