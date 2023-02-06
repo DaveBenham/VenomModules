@@ -1,5 +1,5 @@
 {
-  "plugin": "VenomModules",
+  "plugin": "Venom",
   "model": "RhythmExplorer",
   "version": "2.0.0",
   "params": [
@@ -96,19 +96,19 @@
       "id": 22
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 23
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 24
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 25
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 26
     },
     {
@@ -177,18 +177,8 @@
     }
   ],
   "data": {
-    "internalSeed": 3.931847095489502,
+    "internalSeed": 0.42587873339653015,
     "runGateActive": false,
-    "patOffActive": false,
-    "lockActive": false,
-    "channelMuteActive0": false,
-    "channelMuteActive1": false,
-    "channelMuteActive2": false,
-    "channelMuteActive3": false,
-    "channelMuteActive4": true,
-    "channelMuteActive5": true,
-    "channelMuteActive6": true,
-    "channelMuteActive7": true,
-    "polyMuteActive": false
+    "currentTheme": 0
   }
 }
