@@ -362,7 +362,7 @@ Each division outputs an appropriately divided clock division for that division.
 
 #### GATE output
 
-When the random number for a given beat is within the threshold of the density value, a gate is sent to the GATE output with length of one 24 ppqn clock pulse. Each division gate is also sent to one channel in the GLOBAL GATE poly output.
+For each issued beat, a gate is sent to the GATE output with length of one 24 ppqn clock pulse. Each division gate is also sent to one channel in the GLOBAL GATE poly output.
 
 ### GLOBAL Column
 
