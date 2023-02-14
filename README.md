@@ -218,7 +218,7 @@ The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND w
 
 ## RECURSE STEREO
 ![Recurse Stereo module image](./doc/RecurseStereo.PNG)  
-Recurse Stereo is identical to [Recurse](#recurse) except the Input/Send inputs and Output/Return outputs are doubled to support left and right channels of a stereo pair.
+Recurse Stereo is identical to [Recurse](#recurse) except the Input/Return inputs and Output/Send outputs are doubled to support left and right channels of a stereo pair.
 
 The number of input polyphonic channels is strictly controlled by the Left Input. Any extra channels in the Right Input are ignored.
 
