@@ -75,6 +75,8 @@ The yellow lights only monitor a single channel - by default they monitor channe
 ### Bypass Behavior
 If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. However, the A input is not normalled to the TRIG input while bypassed.
 
+[Return to Table Of Contents](#venom)
+
 ## CLONE MERGE
 ![Clone Merge module image](./doc/CloneMerge.png)  
 Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursion count.
@@ -93,6 +95,8 @@ All of the replicated inputs are merged into the single polyphonic output. The p
 ### Bypass
 
 If Clone Merge is bypassed then the output is constant monophonic 0V.
+
+[Return to Table Of Contents](#venom)
 
 ## Harmonic Quantizer
 ![Harmonic Quantizer module image](./doc/HQ.PNG)  
@@ -148,6 +152,8 @@ The final computed partial is converted into a delta V/Oct and added to the ROOT
 
 The IN input is passed unchanged to the OUT output when the Harmonic Quantizer is bypassed.
 
+[Return to Table Of Contents](#venom)
+
 ## POLY CLONE
 ![Poly Clone module image](./doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
@@ -169,6 +175,7 @@ All of the replicated channels are merged into the single polyphonic output. The
 
 If Clone Merge is bypassed then the input is passed unchanged to the output.
 
+[Return to Table Of Contents](#venom)
 
 ## RECURSE
 ![RECURSE module image](./doc/Recurse.PNG)  
@@ -216,6 +223,8 @@ Since the Return is normalled to the Send, it is possible to generate a polyphon
 
 The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND will be monophonic 0V.
 
+[Return to Table Of Contents](#venom)
+
 ## RECURSE STEREO
 ![Recurse Stereo module image](./doc/RecurseStereo.PNG)  
 Recurse Stereo is identical to [Recurse](#recurse) except the Input/Return inputs and Output/Send outputs are doubled to support left and right channels of a stereo pair.
@@ -229,6 +238,8 @@ In addition, The Left Return is normalled to the Left Send, and the Right Return
 The Recursion Count, Scale, Offset, and Modulation Timing settings are applied to both Left and Right identically.
 
 Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. Bypassed left and right send are monophonic 0V.
+
+[Return to Table Of Contents](#venom)
 
 
 ## Rhythm Explorer
@@ -431,6 +442,8 @@ There is a Vermona randomRHYTHM preset available that configures the Rhythm Expl
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.
 
+[Return to Table Of Contents](#venom)
+
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
 A windowed comparator inspired by the VCV Fundamental COMPARE module, based on specs originally proposed at 
@@ -515,4 +528,5 @@ Assuming I can resolve the aliasing problems, I would like to add the following 
 - I may also add a mixer with inversion capabilities to simplify creation of complex waveforms.
 
 The last two options could be build in, added through an expander, or possibly another module.
-                                                                                                        
+
+[Return to Table Of Contents](#venom)                                                                                                       
