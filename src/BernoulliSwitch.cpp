@@ -5,6 +5,7 @@
 #include "ThemeStrings.hpp"
 
 #define LIGHT_OFF 0.02f
+#define FADE_RATE 400.f
 
 #define MODULE_NAME BernoulliSwitch
 static const std::string moduleName = "BernoulliSwitch";
@@ -49,10 +50,12 @@ struct BernoulliSwitch : Module {
 
   dsp::SchmittTrigger trig[PORT_MAX_CHANNELS];
   bool swap[PORT_MAX_CHANNELS];
+  dsp::SlewLimiter fade[PORT_MAX_CHANNELS];
   int oldChannels = 0;
   int lightChannel = 0;
   bool lightOff = false;
   bool inputPolyControl = false;
+  bool deClick = false;
 
   #include "ThemeModVars.hpp"
 
@@ -77,6 +80,8 @@ struct BernoulliSwitch : Module {
     configBypass(B_INPUT, B_OUTPUT);
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
+    for (int i=0; i<PORT_MAX_CHANNELS; i++)
+      fade[i].rise = fade[i].fall = FADE_RATE;
   }
 
   void onReset() override {
@@ -109,10 +114,12 @@ struct BernoulliSwitch : Module {
       std::max({ 1,
         inputs[TRIG_INPUT].getChannels(), inputs[PROB_INPUT].getChannels()
       });
+
     if (channels > oldChannels) {
       for (int c=oldChannels; c<channels; c++){
         trig[c].reset();
         swap[c] = false;
+        fade[c].out = 0.f;
       }
       oldChannels = channels;
     }
@@ -155,14 +162,24 @@ struct BernoulliSwitch : Module {
         }
       }
       lights[TRIG_LIGHT].setBrightness(manual ? 1.f : LIGHT_OFF);
+      float *swapGain = &fade[c].out;
+      if (deClick)
+        fade[c].process(args.sampleTime, swap[c]);
+      else
+        fade[c].out = swap[c];
       if (channels == 1 && !inputPolyControl) {
-        for (int i=0; i<aChannels; i++)
-          outputs[swap[c] ? B_OUTPUT : A_OUTPUT].setVoltage(inputs[A_INPUT].getNormalPolyVoltage(trigIn, i) * scaleA + offA, i);
-        for (int i=0; i<bChannels; i++)
-          outputs[swap[c] ? A_OUTPUT : B_OUTPUT].setVoltage(inputs[B_INPUT].getPolyVoltage(i) * scaleB + offB, i);
+        float xChannels = aChannels > bChannels ? aChannels : bChannels;
+        for (int i=0; i<xChannels; i++) {
+          float aIn = i<aChannels ? inputs[A_INPUT].getNormalPolyVoltage(trigIn, i) * scaleA + offA : 0.f;
+          float bIn = i<bChannels ? inputs[B_INPUT].getPolyVoltage(i) * scaleB + offB : 0.f;
+          outputs[A_OUTPUT].setVoltage((1.f-*swapGain)*aIn + *swapGain*bIn, i);
+          outputs[B_OUTPUT].setVoltage((1.f-*swapGain)*bIn + *swapGain*aIn, i);
+        }
       } else {
-        outputs[swap[c] ? B_OUTPUT : A_OUTPUT].setVoltage(inputs[A_INPUT].getNormalPolyVoltage(trigIn, c) * scaleA + offA, c);
-        outputs[swap[c] ? A_OUTPUT : B_OUTPUT].setVoltage(inputs[B_INPUT].getPolyVoltage(c) * scaleB + offB, c);
+        float aIn = inputs[A_INPUT].getNormalPolyVoltage(trigIn, c) * scaleA + offA;
+        float bIn = inputs[B_INPUT].getPolyVoltage(c) * scaleB + offB;
+        outputs[A_OUTPUT].setVoltage((1.f-*swapGain)*aIn + *swapGain*bIn, c);
+        outputs[B_OUTPUT].setVoltage((1.f-*swapGain)*bIn + *swapGain*aIn, c);
       }
     }
     outputs[A_OUTPUT].setChannels( (channels==1 && !inputPolyControl) ? (swap[0] ? bChannels : aChannels) : channels);
@@ -174,6 +191,7 @@ struct BernoulliSwitch : Module {
     json_t* rootJ = json_object();
     json_object_set_new(rootJ, "monitorChannel", json_integer(lightChannel));
     json_object_set_new(rootJ, "inputPolyControl", json_boolean(inputPolyControl));
+    json_object_set_new(rootJ, "deClick", json_boolean(deClick));
     #include "ThemeToJson.hpp"
     return rootJ;
   }
@@ -184,6 +202,8 @@ struct BernoulliSwitch : Module {
       lightChannel = json_integer_value(val);
     if ((val = json_object_get(rootJ, "inputPolyControl")))
       inputPolyControl = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "deClick")))
+      deClick = json_boolean_value(val);
     #include "ThemeFromJson.hpp"
   }
 
@@ -236,6 +256,7 @@ struct BernoulliSwitchWidget : ModuleWidget {
         module->lights[BernoulliSwitch::SWAP_LIGHT].setBrightness(i > module->oldChannels ? false : module->swap[i]);
       }
     ));
+    menu->addChild(createBoolPtrMenuItem("Crossfade Switches", "", &module->deClick));
     #include "ThemeMenu.hpp"
   }
 
