@@ -40,6 +40,7 @@ struct BernoulliSwitch : Module {
     NO_SWAP_LIGHT,
     SWAP_LIGHT,
     TRIG_LIGHT,
+    DE_CLICK_LIGHT,
     LIGHTS_LEN
   };
   enum ProbMode {
@@ -133,6 +134,7 @@ struct BernoulliSwitch : Module {
       lights[SWAP_LIGHT].setBrightness(swap[lightChannel]);
       lightOff = false;
     }
+    lights[DE_CLICK_LIGHT].setBrightness(deClick);
     for (int c=0; c<channels; c++){
       float prob = inputs[PROB_INPUT].getPolyVoltage(c)/10.f + probOff;
       float trigIn = inputs[TRIG_INPUT].getPolyVoltage(c) + manual;
@@ -233,6 +235,8 @@ struct BernoulliSwitchWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, BernoulliSwitch::B_OUTPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, BernoulliSwitch::TRIG_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(18.134, 116.0)), module, BernoulliSwitch::PROB_INPUT));
+    
+    addChild(createLightCentered<SmallSimpleLight<GreenLight>>(mm2px(Vec(12.7155, 98.35)), module, BernoulliSwitch::DE_CLICK_LIGHT));
   }
 
   void appendContextMenu(Menu* menu) override {
@@ -256,7 +260,7 @@ struct BernoulliSwitchWidget : ModuleWidget {
         module->lights[BernoulliSwitch::SWAP_LIGHT].setBrightness(i > module->oldChannels ? false : module->swap[i]);
       }
     ));
-    menu->addChild(createBoolPtrMenuItem("Crossfade Switches", "", &module->deClick));
+    menu->addChild(createBoolPtrMenuItem("Anti-Pop Switching", "", &module->deClick));
     #include "ThemeMenu.hpp"
   }
 
