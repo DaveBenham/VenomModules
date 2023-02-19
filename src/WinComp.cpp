@@ -53,16 +53,16 @@ struct WinComp : Module {
   
   float gateTypes[6][2] = {{0.f,1.f},{-1.f,1.f},{0.f,5.f},{-5.f,5.f},{0.f,10.f},{-10.f,10.f}};
   int gateType = 4;
-
-  bool absMin = false;
-  bool absMax = false;
-  bool absClamp = false;
-  bool absOver = false;
-
-  bool invMin = false;
-  bool invMax = false;
-  bool invClamp = false;
-  bool invOver = false;
+  
+  enum ModPorts {
+    MIN_PORT,
+    MAX_PORT,
+    CLAMP_PORT,
+    OVER_PORT
+  };
+  
+  bool absPort[5] = {false,false,false,false,false};
+  bool invPort[5] = {false,false,false,false,false};
 
   bool absMinOld = false;
   bool absMaxOld = false;
@@ -122,12 +122,12 @@ struct WinComp : Module {
       float val;
 
       val = std::min(a, b);
-      if (absMin) val = std::fabs(val);
-      if (invMin) val = -val;
+      if (absPort[MIN_PORT]) val = std::fabs(val);
+      if (invPort[MIN_PORT]) val = -val;
       outputs[MIN_OUTPUT].setVoltage(val, c);
       val = std::max(a, b);
-      if (absMax) val = std::fabs(val);
-      if (invMax) val = -val;
+      if (absPort[MAX_PORT]) val = std::fabs(val);
+      if (invPort[MAX_PORT]) val = -val;
       outputs[MAX_OUTPUT].setVoltage(val, c);
 
       float clamp = a;
@@ -140,12 +140,12 @@ struct WinComp : Module {
         clamp = bMin;
         over = true;
       }
-      val = absClamp ? std::fabs(clamp) : clamp;
-      if (invClamp) val = -val;
+      val = absPort[CLAMP_PORT] ? std::fabs(clamp) : clamp;
+      if (invPort[CLAMP_PORT]) val = -val;
       outputs[CLAMP_OUTPUT].setVoltage(val, c);
       val = a - clamp;
-      if (absOver) val = std::fabs(val);
-      if (invOver) val = -val;
+      if (absPort[OVER_PORT]) val = std::fabs(val);
+      if (invPort[OVER_PORT]) val = -val;
       outputs[OVER_OUTPUT].setVoltage(val, c);
 
       float low = gateTypes[gateType][0];
@@ -184,40 +184,40 @@ struct WinComp : Module {
 
     if (lightDivider.process()) {
       float lightTime = args.sampleTime * lightDivider.getDivision();
-      if (absMin != absMinOld) {
-        absMinOld = absMin;
-        lights[MIN_ABS_LIGHT].setBrightness(absMin);
+      if (absPort[MIN_PORT] != absMinOld) {
+        absMinOld = absPort[MIN_PORT];
+        lights[MIN_ABS_LIGHT].setBrightness(absPort[MIN_PORT]);
       }
-      if (invMin != invMinOld) {
-        invMinOld = invMin;
-        lights[MIN_INV_LIGHT].setBrightness(invMin);
-      }
-
-      if (absMax != absMaxOld) {
-        absMaxOld = absMax;
-        lights[MAX_ABS_LIGHT].setBrightness(absMax);
-      }
-      if (invMax != invMaxOld) {
-        invMaxOld = invMax;
-        lights[MAX_INV_LIGHT].setBrightness(invMax);
+      if (invPort[MIN_PORT] != invMinOld) {
+        invMinOld = invPort[MIN_PORT];
+        lights[MIN_INV_LIGHT].setBrightness(invPort[MIN_PORT]);
       }
 
-      if (absClamp != absClampOld) {
-        absClampOld = absClamp;
-        lights[CLAMP_ABS_LIGHT].setBrightness(absClamp);
+      if (absPort[MAX_PORT] != absMaxOld) {
+        absMaxOld = absPort[MAX_PORT];
+        lights[MAX_ABS_LIGHT].setBrightness(absPort[MAX_PORT]);
       }
-      if (invClamp != invClampOld) {
-        invClampOld = invClamp;
-        lights[CLAMP_INV_LIGHT].setBrightness(invClamp);
+      if (invPort[MAX_PORT] != invMaxOld) {
+        invMaxOld = invPort[MAX_PORT];
+        lights[MAX_INV_LIGHT].setBrightness(invPort[MAX_PORT]);
       }
 
-      if (absOver != absOverOld) {
-        absOverOld = absOver;
-        lights[OVER_ABS_LIGHT].setBrightness(absOver);
+      if (absPort[CLAMP_PORT] != absClampOld) {
+        absClampOld = absPort[CLAMP_PORT];
+        lights[CLAMP_ABS_LIGHT].setBrightness(absPort[CLAMP_PORT]);
       }
-      if (invOver != invOverOld) {
-        invOverOld = invOver;
-        lights[OVER_INV_LIGHT].setBrightness(invOver);
+      if (invPort[CLAMP_OUTPUT] != invClampOld) {
+        invClampOld = invPort[CLAMP_PORT];
+        lights[CLAMP_INV_LIGHT].setBrightness(invPort[CLAMP_PORT]);
+      }
+
+      if (absPort[OVER_PORT] != absOverOld) {
+        absOverOld = absPort[OVER_PORT];
+        lights[OVER_ABS_LIGHT].setBrightness(absPort[OVER_PORT]);
+      }
+      if (invPort[OVER_PORT] != invOverOld) {
+        invOverOld = invPort[OVER_PORT];
+        lights[OVER_INV_LIGHT].setBrightness(invPort[OVER_PORT]);
       }
 
       lights[EQ_LIGHT + 0].setBrightnessSmooth(anyEq && channels <= 1, lightTime);
@@ -242,14 +242,14 @@ struct WinComp : Module {
 
   json_t* dataToJson() override {
     json_t* rootJ = json_object();
-    json_object_set_new(rootJ, "absMin", json_boolean(absMin));
-    json_object_set_new(rootJ, "absMax", json_boolean(absMax));
-    json_object_set_new(rootJ, "absClamp", json_boolean(absClamp));
-    json_object_set_new(rootJ, "absOver", json_boolean(absOver));
-    json_object_set_new(rootJ, "invMin", json_boolean(invMin));
-    json_object_set_new(rootJ, "invMax", json_boolean(invMax));
-    json_object_set_new(rootJ, "invClamp", json_boolean(invClamp));
-    json_object_set_new(rootJ, "invOver", json_boolean(invOver));
+    json_object_set_new(rootJ, "absMin", json_boolean(absPort[MIN_PORT]));
+    json_object_set_new(rootJ, "absMax", json_boolean(absPort[MAX_PORT]));
+    json_object_set_new(rootJ, "absClamp", json_boolean(absPort[CLAMP_PORT]));
+    json_object_set_new(rootJ, "absOver", json_boolean(absPort[OVER_PORT]));
+    json_object_set_new(rootJ, "invMin", json_boolean(invPort[MIN_PORT]));
+    json_object_set_new(rootJ, "invMax", json_boolean(invPort[MAX_PORT]));
+    json_object_set_new(rootJ, "invClamp", json_boolean(invPort[CLAMP_PORT]));
+    json_object_set_new(rootJ, "invOver", json_boolean(invPort[OVER_PORT]));
     json_object_set_new(rootJ, "gateType", json_integer(gateType));
     #include "ThemeToJson.hpp"
     return rootJ;
@@ -258,28 +258,28 @@ struct WinComp : Module {
   void dataFromJson(json_t* rootJ) override {
     json_t* val = json_object_get(rootJ, "absMin");
     if (val)
-      absMin = json_boolean_value(val);
+      absPort[MIN_PORT] = json_boolean_value(val);
     val = json_object_get(rootJ, "absMax");
     if (val)
-      absMax = json_boolean_value(val);
+      absPort[MAX_PORT] = json_boolean_value(val);
     val = json_object_get(rootJ, "absClamp");
     if (val)
-      absClamp = json_boolean_value(val);
+      absPort[CLAMP_PORT] = json_boolean_value(val);
     val = json_object_get(rootJ, "absOver");
     if (val)
-      absOver = json_boolean_value(val);
+      absPort[OVER_PORT] = json_boolean_value(val);
     val = json_object_get(rootJ, "invMin");
     if (val)
-      invMin = json_boolean_value(val);
+      invPort[MIN_PORT] = json_boolean_value(val);
     val = json_object_get(rootJ, "invMax");
     if (val)
-      invMax = json_boolean_value(val);
+      invPort[MAX_PORT] = json_boolean_value(val);
     val = json_object_get(rootJ, "invClamp");
     if (val)
-      invClamp = json_boolean_value(val);
+      invPort[CLAMP_PORT] = json_boolean_value(val);
     val = json_object_get(rootJ, "invOver");
     if (val)
-      invOver = json_boolean_value(val);
+      invPort[OVER_PORT] = json_boolean_value(val);
     val = json_object_get(rootJ, "gateType");
     if (val)
       gateType = json_integer_value(val);
@@ -290,6 +290,25 @@ struct WinComp : Module {
 
 
 struct WinCompWidget : ModuleWidget {
+
+  struct AbsInvPort : PJ301MPort {
+    int modId;
+    void appendContextMenu(Menu* menu) override {
+      WinComp* module = dynamic_cast<WinComp*>(this->module);
+      assert(module);
+      menu->addChild(new MenuSeparator);
+      menu->addChild(createBoolPtrMenuItem("Absolute value", "", &module->absPort[modId]));
+      menu->addChild(createBoolPtrMenuItem("Invert", "", &module->invPort[modId]));
+    }
+  };
+  
+  template <class TAbsInvWidget>
+  TAbsInvWidget* createAbsInvOutputCentered(math::Vec pos, engine::Module* module, int outputId, int modIdArg) {
+    TAbsInvWidget* o = createOutputCentered<TAbsInvWidget>(pos, module, outputId);
+    o->modId = modIdArg;
+    return o;
+  }
+
   WinCompWidget(WinComp* module) {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
@@ -301,10 +320,10 @@ struct WinCompWidget : ModuleWidget {
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 43.87)), module, WinComp::TOL_INPUT));
     addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 43.87)), module, WinComp::TOL_PARAM));
 
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.299, 58.3)), module, WinComp::MIN_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.136, 58.3)), module, WinComp::MAX_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 72.75)), module, WinComp::CLAMP_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 72.75)), module, WinComp::OVER_OUTPUT));
+    addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(7.299, 58.3)), module, WinComp::MIN_OUTPUT, WinComp::MIN_PORT));
+    addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(18.136, 58.3)), module, WinComp::MAX_OUTPUT, WinComp::MAX_PORT));
+    addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(7.297, 72.75)), module, WinComp::CLAMP_OUTPUT, WinComp::CLAMP_PORT));
+    addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(18.134, 72.75)), module, WinComp::OVER_OUTPUT, WinComp::OVER_PORT));
 
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 87.10)), module, WinComp::EQ_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 87.10)), module, WinComp::NEQ_OUTPUT));
@@ -312,6 +331,7 @@ struct WinCompWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, WinComp::GREQ_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, WinComp::LS_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 116.0)), module, WinComp::GR_OUTPUT));
+
 
     addChild(createLightCentered<SmallLight<GrnLight<>>>(mm2px(Vec( 3.547, 54.58+7.46)), module, WinComp::MIN_ABS_LIGHT));
     addChild(createLightCentered<SmallLight<RdLight<>>>(mm2px(Vec(11.047, 54.58+7.46)), module, WinComp::MIN_INV_LIGHT));
@@ -345,14 +365,14 @@ struct WinCompWidget : ModuleWidget {
       [=](int i) {module->gateType = i;}
     ));
     menu->addChild(new MenuSeparator);
-    menu->addChild(createBoolPtrMenuItem("Minimum absolute value", "", &module->absMin));
-    menu->addChild(createBoolPtrMenuItem("Minimum invert", "", &module->invMin));
-    menu->addChild(createBoolPtrMenuItem("Maximum absolute value", "", &module->absMax));
-    menu->addChild(createBoolPtrMenuItem("Maximum invert", "", &module->invMax));
-    menu->addChild(createBoolPtrMenuItem("Clamp absolute value", "", &module->absClamp));
-    menu->addChild(createBoolPtrMenuItem("Clamp invert", "", &module->invClamp));
-    menu->addChild(createBoolPtrMenuItem("Overflow absolute value", "", &module->absOver));
-    menu->addChild(createBoolPtrMenuItem("Overflow invert", "", &module->invOver));
+    menu->addChild(createBoolPtrMenuItem("Minimum absolute value", "", &module->absPort[WinComp::MIN_PORT]));
+    menu->addChild(createBoolPtrMenuItem("Minimum invert", "", &module->invPort[WinComp::MIN_PORT]));
+    menu->addChild(createBoolPtrMenuItem("Maximum absolute value", "", &module->absPort[WinComp::MAX_PORT]));
+    menu->addChild(createBoolPtrMenuItem("Maximum invert", "", &module->invPort[WinComp::MAX_PORT]));
+    menu->addChild(createBoolPtrMenuItem("Clamp absolute value", "", &module->absPort[WinComp::CLAMP_PORT]));
+    menu->addChild(createBoolPtrMenuItem("Clamp invert", "", &module->invPort[WinComp::CLAMP_PORT]));
+    menu->addChild(createBoolPtrMenuItem("Overflow absolute value", "", &module->absPort[WinComp::OVER_PORT]));
+    menu->addChild(createBoolPtrMenuItem("Overflow invert", "", &module->invPort[WinComp::OVER_PORT]));
     #include "ThemeMenu.hpp"
   }
 
