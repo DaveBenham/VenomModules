@@ -145,7 +145,8 @@ struct RhythmExplorer : Module {
   int currentCycle;
   int currentBar;
   rack::random::Xoroshiro128Plus rng;
-  bool resetEvent;
+  bool resetArmed;
+  bool seedArmed = false;
   bool clockHigh;
   bool resetTrigHigh;
   bool resetBtnHigh;
@@ -156,6 +157,8 @@ struct RhythmExplorer : Module {
   bool lockActive;
   bool initBtnHigh;
   bool densityLightOn[SLIDER_COUNT];
+  bool newBar;
+  bool newPhrase;
   dsp::ClockDivider lightDivider;
   dsp::PulseGenerator trigGenerator;
 
@@ -240,7 +243,7 @@ struct RhythmExplorer : Module {
     configButton(INIT_DENSITY_PARAM, "Initialize Densities");
 
     lightDivider.setDivision(32);
-
+    getSeed();
     initialize();
   }
 
@@ -262,8 +265,10 @@ struct RhythmExplorer : Module {
     currentCycle = 0;
     currentBar = 0;
     rng = {};
-    resetEvent = false;
+    resetArmed = false;
     runGateActive = false;
+    newBar = true;
+    newPhrase = true;
     initBtnHigh = false;
     clockHigh = false;
     resetTrigHigh = false;
@@ -276,7 +281,6 @@ struct RhythmExplorer : Module {
     for (int i=0; i<SLIDER_COUNT; i++){
       densityLightOn[i] = false;
     }
-    getSeed();
     reseedRng();
     updateLights();
     setLockStatus();
@@ -296,11 +300,13 @@ struct RhythmExplorer : Module {
   void dataFromJson(json_t *rootJ) override {
 
     json_t* val = json_object_get(rootJ, "internalSeed");
-    if (val)
+    if (val) {
       internalSeed = json_real_value(val);
+      seedArmed = false;
+    }
     val = json_object_get(rootJ, "runGateActive");
     if (val)
-      runGateActive = json_is_true(val);
+      runGateActive = resetArmed = json_is_true(val);
     val = json_object_get(rootJ, "resetTiming");
     if (val)
       resetTiming = json_integer_value(val);
@@ -322,6 +328,7 @@ struct RhythmExplorer : Module {
     internalSeed = inputs[SEED_INPUT].isConnected() ? rack::math::clamp(inputs[SEED_INPUT].getVoltage(), 0.f, 10.f) : rack::math::clamp(rack::random::uniform() * 10.f, 1e-19f, 10.f);
     if (internalSeed < 1e-19f)
       internalSeed = 0.f;
+    seedArmed = true;
   }
 
   void reseedRng(){
@@ -433,9 +440,6 @@ struct RhythmExplorer : Module {
     lights[MUTE_POLY_LIGHT].setBrightness(params[MUTE_POLY_PARAM].getValue()>0.f ? 1.f : LIGHT_OFF);
 
     //Clock Logic and event timing
-    bool newBar = false;
-    bool newPhrase = false;
-
     bool oldClockHigh = clockHigh;
     bool clockEvent = schmittTrigger(clockHigh,inputs[CLOCK_INPUT].getVoltage());
     if (oldClockHigh && !clockHigh) { // clear triggers && lights
@@ -454,41 +458,44 @@ struct RhythmExplorer : Module {
         densityLightOn[i] = false;
       }
     }
-
+    
+    bool runStart = false;
     if (inputs[RUN_GATE_INPUT].isConnected()) {
       schmittTrigger(runGateTrigHigh,inputs[RUN_GATE_INPUT].getVoltage());
       buttonTrigger(runGateBtnHigh,params[RUN_GATE_PARAM].getValue());
       if ((runGateTrigHigh ^ runGateBtnHigh) != runGateActive){
         runGateActive = !runGateActive;
-        if (runGateActive)
-          resetEvent = true;
+        runStart = runGateActive;
       }
     }
     else {
       if(buttonTrigger(runGateBtnHigh,params[RUN_GATE_PARAM].getValue())){
         runGateActive = !runGateActive;
-        if (runGateActive)
-          resetEvent = true;
+        runStart = runGateActive;
       }
+    }
+    if(runStart) {
+      newBar = true;
+      newPhrase = true;
+      resetArmed = true;
     }
     lights[RUN_GATE_LIGHT].setBrightnessSmooth(runGateActive ? 1.f : LIGHT_OFF, args.sampleTime);
     outputs[RUN_GATE_OUTPUT].setVoltage(runGateActive ? 10.f : 0.f);
 
-    if(schmittTrigger(resetTrigHigh,inputs[RESET_TRIGGER_INPUT].getVoltage()) && trigGenerator.remaining <= 0) resetEvent = true;
-    if(buttonTrigger(resetBtnHigh,params[RESET_BUTTON_PARAM].getValue()) && trigGenerator.remaining <= 0) resetEvent = true;
-    lights[RESET_LIGHT].setBrightnessSmooth(resetTrigHigh || resetBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
+    if(schmittTrigger(resetTrigHigh,inputs[RESET_TRIGGER_INPUT].getVoltage()) && trigGenerator.remaining <= 0) resetArmed = true;
+    if(buttonTrigger(resetBtnHigh,params[RESET_BUTTON_PARAM].getValue()) && trigGenerator.remaining <= 0) resetArmed = true;
+    lights[RESET_LIGHT].setBrightnessSmooth(resetArmed ? 1.f : LIGHT_OFF, args.sampleTime);
 
     bool newSeedEvent = false;
     if(schmittTrigger(newSeedTrigHigh,inputs[NEW_SEED_TRIGGER_INPUT].getVoltage())) newSeedEvent = true;
     if(buttonTrigger(newSeedBtnHigh,params[NEW_SEED_BUTTON_PARAM].getValue())) newSeedEvent = true;
-    lights[NEW_SEED_LIGHT].setBrightnessSmooth(newSeedTrigHigh || newSeedBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
-
-    outputs[GATE_POLY_OUTPUT].setChannels(8);
-    outputs[CLOCK_POLY_OUTPUT].setChannels(10);
-
     if(newSeedEvent){
       getSeed();
     }
+    lights[NEW_SEED_LIGHT].setBrightnessSmooth(seedArmed ? 1.f : LIGHT_OFF, args.sampleTime);
+
+    outputs[GATE_POLY_OUTPUT].setChannels(8);
+    outputs[CLOCK_POLY_OUTPUT].setChannels(10);
 
     int maxPhrase = rack::math::clamp(params[BAR_COUNT_PARAM].getValue() + inputs[BAR_COUNT_INPUT].getVoltage()*3.f/2.f, 1.f, 16.f);
     int maxBar = rack::math::clamp(params[BAR_LENGTH_PARAM].getValue() + inputs[BAR_LENGTH_INPUT].getVoltage()*3.f/2.f, 1.f, 16.f);
@@ -496,38 +503,48 @@ struct RhythmExplorer : Module {
     //Supress clock events if not running
     if(clockEvent && runGateActive){
 
-      if(resetEvent){
-        currentPulse = 0;
-        currentCycle = 0;
-        currentBar = 0;
+      currentPulse++;
+      int resetDelay = resetTiming > 1 ? GATE_LENGTH[resetTiming-2] : 9999;
+      if(resetArmed && (
+          resetTiming == 0 ||
+          currentPulse % resetDelay == 0
+        )
+      ){
         newBar = true;
         newPhrase = true;
-        // Reset always delayed until start of clock cycle
-        trigGenerator.trigger();
-        resetEvent = false;
       }
       else {
-        if (++currentPulse % 24 == 0)
+        if (currentPulse % 24 == 0)
           currentCycle++;
         if (currentCycle >= maxBar){
           newBar = true;
-          currentCycle = 0;
           currentBar++;
         }
         if (currentBar >= maxPhrase){
-          currentPulse = 0;
-          currentBar = 0;
           newPhrase = true;
         }
       }
       if (newBar) {
+        if (resetArmed && resetTiming == 1) {
+          newPhrase = true;
+        }
+        currentCycle = 0;
         outputs[START_OF_BAR_OUTPUT].setVoltage(10.f);
         outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, 9);
+        newBar = false;
       }
       if (newPhrase) {
+        currentPulse = 0;
+        currentBar = 0;
         outputs[START_OF_PHRASE_OUTPUT].setVoltage(10.f);
         outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, 8);
         reseedRng();
+        seedArmed = false;
+        if(resetArmed){
+          trigGenerator.trigger();
+          resetArmed = false;
+        }
+        newPhrase = false;
       }
 
       bool linearChannelShadow = false;
