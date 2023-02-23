@@ -135,6 +135,7 @@ struct RhythmExplorer : Module {
   //Persistant State
   float internalSeed;
   bool runGateActive;
+  int resetTiming = 0;
 
   #include "ThemeModVars.hpp"
 
@@ -189,7 +190,7 @@ struct RhythmExplorer : Module {
     configInput(RESET_TRIGGER_INPUT,"Reset Trigger");
     configInput(SEED_INPUT,"Seed");
     configInput(RNG_OVERRIDE_INPUT,"Random Override");
-    configOutput(SEED_OUTPUT,"Seed Output");
+    configOutput(SEED_OUTPUT,"Seed");
 
     configButton(NEW_SEED_BUTTON_PARAM, "Dice Trigger");
     configButton(RESET_BUTTON_PARAM,"Reset Trigger");
@@ -286,6 +287,7 @@ struct RhythmExplorer : Module {
 
     json_object_set_new(rootJ, "internalSeed", json_real(internalSeed));
     json_object_set_new(rootJ, "runGateActive", json_boolean(runGateActive));
+    json_object_set_new(rootJ, "resetTiming", json_integer(resetTiming));
     #include "ThemeToJson.hpp"
 
     return rootJ;
@@ -293,8 +295,15 @@ struct RhythmExplorer : Module {
 
   void dataFromJson(json_t *rootJ) override {
 
-    internalSeed = json_real_value(json_object_get(rootJ, "internalSeed"));
-    runGateActive = json_is_true(json_object_get(rootJ, "runGateActive"));
+    json_t* val = json_object_get(rootJ, "internalSeed");
+    if (val)
+      internalSeed = json_real_value(val);
+    val = json_object_get(rootJ, "runGateActive");
+    if (val)
+      runGateActive = json_is_true(val);
+    val = json_object_get(rootJ, "resetTiming");
+    if (val)
+      resetTiming = json_integer_value(val);
     #include "ThemeFromJson.hpp"
 
     reseedRng();
@@ -823,6 +832,26 @@ struct RhythmExplorerWidget : ModuleWidget {
   void appendContextMenu(Menu* menu) override {
     RhythmExplorer* module = dynamic_cast<RhythmExplorer*>(this->module);
     assert(module);
+
+    menu->addChild(new MenuSeparator);
+    std::vector<std::string> resetLabels;
+    resetLabels.push_back("Clock (24 ppqn)");
+    resetLabels.push_back("Bar");
+    resetLabels.push_back("1/2");
+    resetLabels.push_back("1/4");
+    resetLabels.push_back("1/8");
+    resetLabels.push_back("1/16");
+    resetLabels.push_back("1/32");
+    resetLabels.push_back("1/2 Triplet");
+    resetLabels.push_back("1/4 Triplet");
+    resetLabels.push_back("1/8 Triplet");
+    resetLabels.push_back("1/16 Triplet");
+    resetLabels.push_back("1/32 Triplet");
+    menu->addChild(createIndexSubmenuItem("Reset timing", resetLabels,
+      [=]() {return module->resetTiming;},
+      [=](int i) {module->resetTiming = i;}
+    ));
+
     #include "ThemeMenu.hpp"
   }
 
