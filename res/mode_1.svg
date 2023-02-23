@@ -28,8 +28,8 @@
    fit-margin-top="0"
    id="base"
    inkscape:current-layer="svg7595"
-   inkscape:cx="8.9714173"
-   inkscape:cy="13.921165"
+   inkscape:cx="8.9714169"
+   inkscape:cy="13.921164"
    inkscape:document-units="mm"
    inkscape:pageopacity="0.0"
    inkscape:pageshadow="2"
@@ -69,7 +69,7 @@
    height="24"
    x="0"
    y="0"
-   ry="0.99999976" /><g
+   ry="3" /><g
    id="layer1"
    transform="translate(-46.755712,-67.833036)"
    inkscape:groupmode="layer"

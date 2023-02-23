@@ -1,7 +1,7 @@
 {
   "plugin": "Venom",
   "model": "RhythmExplorer",
-  "version": "2.0.0",
+  "version": "2.1.dev",
   "params": [
     {
       "value": 0.0,
@@ -60,15 +60,15 @@
       "id": 13
     },
     {
-      "value": 6.0,
+      "value": 1.0,
       "id": 14
     },
     {
-      "value": 6.0,
+      "value": 2.0,
       "id": 15
     },
     {
-      "value": 6.0,
+      "value": 3.0,
       "id": 16
     },
     {
@@ -96,19 +96,19 @@
       "id": 22
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 23
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 24
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 25
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 26
     },
     {
@@ -136,7 +136,7 @@
       "id": 32
     },
     {
-      "value": 0.0,
+      "value": 5.0,
       "id": 33
     },
     {

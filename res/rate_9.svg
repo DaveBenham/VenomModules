@@ -33,10 +33,10 @@
    inkscape:document-units="mm"
    inkscape:pageopacity="0.0"
    inkscape:pageshadow="2"
-   inkscape:window-height="1057"
+   inkscape:window-height="837"
    inkscape:window-maximized="1"
-   inkscape:window-width="1920"
-   inkscape:window-x="1592"
+   inkscape:window-width="1600"
+   inkscape:window-x="-8"
    inkscape:window-y="-8"
    inkscape:zoom="22.627417"
    pagecolor="#ffffff"
@@ -57,7 +57,7 @@
    height="24"
    x="0"
    y="0"
-   ry="0.99999976" /><g
+   ry="3" /><g
    id="layer1"
    transform="translate(-46.755712,-67.833036)"
    inkscape:groupmode="layer"
@@ -90,8 +90,7 @@
 
 
 <g
-   aria-label="1/32
-T"
+   aria-label="1/32 T"
    id="text147820"
    style="font-size:10.6667px;line-height:0.95;font-family:'Yu Gothic';-inkscape-font-specification:'Yu Gothic, Normal';font-variant-ligatures:none;text-align:center;text-anchor:middle"><path
      d="m 3.7543809,3.6040222 v 7.1875228 h 1.4375045 v 0.56771 H 1.5564573 v -0.56771 H 3.0929205 V 4.3279828 Q 2.415835,4.791526 1.5252072,5.1300687 L 1.4054151,4.5102751 Q 2.2908346,4.2133991 3.2075042,3.6040222 Z"
