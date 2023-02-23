@@ -1,7 +1,7 @@
 # Venom Modules Changelog
 
 ## 2.1.x (2023-xx-xx)
-### Changes
+### Enhancements
 - Bernoulli Switch
   -  Add anti-pop switching option to module context menu
   -  Add presets for all four Mutable Instruments modes
