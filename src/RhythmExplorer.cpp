@@ -34,7 +34,9 @@ static const std::vector<std::string> CHANNEL_MODE_LABELS = {
   "All",
   "Linear",
   "Offbeat",
-  "Global Default"
+  "Global Default",
+  "All - Reset",
+  "All - New"
 };
 
 static const std::vector<std::string> POLY_MODE_LABELS = {
@@ -125,7 +127,9 @@ struct RhythmExplorer : Module {
     ALL_MODE,
     LINEAR_MODE,
     OFFBEAT_MODE,
-    GLOBAL_MODE
+    GLOBAL_MODE,
+    ALL_RESET_MODE,
+    ALL_NEW_MODE
   };
 
   //Persistant State
@@ -220,7 +224,7 @@ struct RhythmExplorer : Module {
       if (si==0)
         configSwitch<FixedSwitchQuantity>(MODE_CHANNEL_PARAM + si, 0, 0, 0, "Mode " + si_s, {"All"});
       else
-        configSwitch<FixedSwitchQuantity>(MODE_CHANNEL_PARAM + si, 0, 3, 0, "Mode " + si_s, CHANNEL_MODE_LABELS);
+        configSwitch<FixedSwitchQuantity>(MODE_CHANNEL_PARAM + si, 0, 5, 0, "Mode " + si_s, CHANNEL_MODE_LABELS);
     }
     configSwitch<FixedSwitchQuantity>(POLAR_PARAM, 0, 1, 0, "Density Polarity", {"Uniploar", "Bipolar"});
     configSwitch<GlobalModeQuantity>(MODE_POLY_PARAM, 0, 2 , 0, "Global Mode", POLY_MODE_LABELS);
@@ -335,7 +339,7 @@ struct RhythmExplorer : Module {
       if (i>0 && (q = getParamQuantity(MODE_CHANNEL_PARAM + i))){
         val = q->getValue();
         q->minValue = lockActive ? val : 0.f;
-        q->maxValue = lockActive ? val : 3.f;
+        q->maxValue = lockActive ? val : 5.f;
         q->defaultValue = lockActive ? val : 0.f;
       }
     }
@@ -520,9 +524,36 @@ struct RhythmExplorer : Module {
       bool linearChannelShadow = false;
       bool linearGlobalShadow = false;
       bool offbeatShadow = false;
-      int outGateCount = 0;
+      int outChannel = 0;
+      int outGateCount[8] = {0,0,0,0,0,0,0,0};
       for(int si = 0; si < SLIDER_COUNT; si++){
         int gateLength = GATE_LENGTH[ static_cast<int>(params[RATE_PARAM + si].getValue()) ];
+        int globalMode = rack::math::clamp(
+          static_cast<int>(
+            inputs[MODE_POLY_INPUT].getNormalPolyVoltage(
+              params[MODE_POLY_PARAM].getValue(),
+              si
+            )
+          ),
+          0,2
+        );
+        int channelMode;
+        if (si == 0)
+          channelMode = ALL_MODE;
+        else if (inputs[MODE_CHANNEL_INPUT + si].isConnected())
+          channelMode = rack::math::clamp( static_cast <int>(inputs[MODE_CHANNEL_INPUT + si].getVoltage()), 0, 5);
+        else
+          channelMode = params[MODE_CHANNEL_PARAM + si].getValue();
+        if (channelMode == GLOBAL_MODE)
+          channelMode = globalMode;
+        if (channelMode > GLOBAL_MODE) {
+          linearChannelShadow = false;
+          linearGlobalShadow = false;
+          offbeatShadow = false;
+          if (channelMode == ALL_NEW_MODE)
+            outChannel++;
+          channelMode = ALL_MODE;
+        }
         if(currentPulse % gateLength == 0){
           outputs[CLOCK_OUTPUT + si].setVoltage(10.f);
           outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, si);
@@ -536,28 +567,8 @@ struct RhythmExplorer : Module {
             ) + inputs[DENSITY_CHANNEL_INPUT + si].getVoltage(),
             0.f, 10.f
           );
-          bool thresholdMet = rndFloat < threshold;
 
-          int globalMode = rack::math::clamp(
-            static_cast<int>(
-              inputs[MODE_POLY_INPUT].getNormalPolyVoltage(
-                params[MODE_POLY_PARAM].getValue(),
-                si
-              )
-            ),
-            0,2
-          );
-          int channelMode;
-          if (si == 0)
-            channelMode = ALL_MODE;
-          else if (inputs[MODE_CHANNEL_INPUT + si].isConnected())
-            channelMode = rack::math::clamp( static_cast <int>(inputs[MODE_CHANNEL_INPUT + si].getVoltage()), 0, 3);
-          else
-            channelMode = params[MODE_CHANNEL_PARAM + si].getValue();
-          if (channelMode == GLOBAL_MODE)
-            channelMode = globalMode;
-
-          if (thresholdMet) {
+          if (rndFloat < threshold) {
             if ( !params[MUTE_CHANNEL_PARAM + si].getValue() && !params[MUTE_POLY_PARAM].getValue() && (channelMode == ALL_MODE || (channelMode == LINEAR_MODE && !linearChannelShadow) || (channelMode == OFFBEAT_MODE && !offbeatShadow))){
               linearChannelShadow = true;
               outputs[GATE_OUTPUT + si].setVoltage(10.f);
@@ -567,16 +578,22 @@ struct RhythmExplorer : Module {
             }
             if (!params[MUTE_CHANNEL_PARAM + si].getValue() && !params[MUTE_POLY_PARAM].getValue() && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
               linearGlobalShadow = true;
-              outGateCount++;
+              outGateCount[outChannel]++;
             }
           }
           offbeatShadow = true;
         }
       }
 
-      outputs[GATE_OR_OUTPUT].setVoltage(outGateCount > 0 ? 10.f : 0.f);
-      outputs[GATE_XOR_ODD_OUTPUT].setVoltage((outGateCount % 2 == 1) ? 10.f : 0.f);
-      outputs[GATE_XOR_ONE_OUTPUT].setVoltage((outGateCount == 1) ? 10.f : 0.f);
+      outChannel++;
+      for (int c=0; c<outChannel; c++){
+        outputs[GATE_OR_OUTPUT].setVoltage(outGateCount[c] > 0 ? 10.f : 0.f, c);
+        outputs[GATE_XOR_ODD_OUTPUT].setVoltage((outGateCount[c] % 2 == 1) ? 10.f : 0.f, c);
+        outputs[GATE_XOR_ONE_OUTPUT].setVoltage((outGateCount[c] == 1) ? 10.f : 0.f, c);
+      }
+      outputs[GATE_OR_OUTPUT].setChannels(outChannel);
+      outputs[GATE_XOR_ODD_OUTPUT].setChannels(outChannel);
+      outputs[GATE_XOR_ONE_OUTPUT].setChannels(outChannel);
 
     }
     outputs[RESET_TRIGGER_OUTPUT].setVoltage(trigGenerator.process(args.sampleTime) ? 10.f : 0.f);
@@ -680,6 +697,8 @@ struct RhythmExplorerWidget : ModuleWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_1.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_2.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_3.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_4.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_5.svg")));
     }
   };
 
