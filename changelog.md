@@ -4,7 +4,7 @@
 ### Enhancements
 - Bernoulli Switch
   -  Add anti-pop switching option to module context menu
-  -  Add presets for all four Mutable Instruments modes
+  -  Add presets to emulate the four possible Mutable Instruments Branches configuration
 - WinComp 
   - Add Absolute Value and Invert port context menu options to each of Min, Max, Clamp, and Over outputs
 - Recurse and Recurse Stereo
