@@ -1,5 +1,6 @@
 # Venom
-Venom modules for VCV Rack version 2 are copyright 2022 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules for VCV Rack version 2 are copyright 2022 Dave Benham and licensed under GNU General Public License version 3.  
+This documentation is for Venom version 2.1
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
@@ -71,6 +72,16 @@ Bernoulli Switch is fully polyphonic. There are two modes available from the con
 A pair of yellow lights indicate the current routing configuration. A yellow light glowing to the left of the PROB knob indicates a no-swap configuration. A glowing yellow light to the right indicates a swap configuration.
 
 The yellow lights only monitor a single channel - by default they monitor channel one. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of coin flip channels, then the yellow lights will remain dark - no monitoring will be done.
+
+### Anti-Pop Switching
+By default Bernoulli Switch is configured for switching gates or CV signals. If your inputs are audio signals, then you may experience unwanted audio pops with each switch. The audio pops may be eliminated by activating the "Anti-Pop Switching" option in the module context menu. The pops are eliminated by employing a slewed cross fade, which is probably not appropriate for CV signals - So only use this option when sending audio signals to the inputs. A small LED between the OUTPUT ports glows green when Anti-Pop Switching is in effect.
+
+### Factory Presets
+The following factory presets are available that emulate the four configurations available to the Mutable Instruments Branches module:
+- Bernoulli Gate - Sends triggering gate to A or B
+- Latched Bernoulli Gate - Sends constant 10V to either A or B
+- Latched Toggled Bernoulli Gate - Toggles constant 10V between A and B
+- Toggled Bernoulli Gate - Toggles triggering gate between A and B
 
 ### Bypass Behavior
 If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. However, the A input is not normalled to the TRIG input while bypassed.
