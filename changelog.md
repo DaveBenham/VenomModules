@@ -8,7 +8,7 @@
 - WinComp 
   - Add Absolute Value and Invert port context menu options to each of Min, Max, Clamp, and Over outputs
 - Recurse and Recurse Stereo
-  - Show all normaled connections on faceplate
+  - Show all normalled connections on faceplate
 - Rhythm Explorer
   - Add "All - Reset" and "All - New" division modes
   - Add Reset Timing context menu option
