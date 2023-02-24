@@ -282,19 +282,37 @@ The RUN output gate will be high when the sequence is running, and low when stop
 
 The sequence is reset to restart at the beginning of the phrase pattern every time the sequencer starts. A 1 ms trigger is also sent to the RESET output.
 
+If you want to pause the sequencer, and then pick up where you left off without resetting, then externally mute the incoming clock instead of stopping the sequencer.
+
+The run state is preserved across sessions, and stored with each patch and preset. If the module is running when inserted or loaded, then it will immediately perform a reset and begin running.
+
 ### RESET
 
-Pressing the RESET button or sending a CV trigger to the RESET input arms the sequencer to perform a reset, and restart the phrase pattern from the beginning. The reset action will wait until the leading edge of the next 24 ppqn clock. For typical tempos, a 24 ppqn clock is fast enough that the reset is perceived as nearly instantaneous.
+Pressing the RESET button or sending a CV trigger to the RESET input arms the sequencer to perform a reset and restart the phrase pattern from the beginning. The RESET button will glow brightly while in an armed state. By default the reset action will wait until the leading edge of the next 24 ppqn clock. For typical tempos, a 24 ppqn clock is fast enough that the reset is perceived as nearly instantaneous. The module context menu has a Reset Timing option where you can specify a different value for when the reset is applied:
+- Clock (24 ppqn)
+- Bar
+- 1/2
+- 1/4
+- 1/8
+- 1/16
+- 1/32
+- 1/2 Triplet
+- 1/4 Triplet
+- 1/8 Triplet
+- 1/16 Triplet
+- 1/32 Triplet
 
 A 1 ms trigger is sent to the RESET output upon every reset action.
 
 ### DICE and SEED
 
-Pressing the DICE button or sending a CV trigger to the DICE input causes the sequencer to sample a new seed value to establish a new pattern. The new seed value will not take effect until the start of the next phrase, whether due to a RESET, or reaching the end of the phrase and cycling back. If you want the DICE to immediately take effect, then send a trigger to both the RESET and DICE inputs.
+Pressing the DICE button or sending a CV trigger to the DICE input causes the sequencer to immediately sample a new seed value to establish a new pattern. The new seed value will not take effect until the start of the next phrase, whether due to a RESET, or reaching the end of the phrase and cycling back. The DICE button glows brightly while waiting for the new seed value to take effect. If you want the DICE to immediately take effect, then send a trigger to both the RESET and DICE inputs.
 
 Typically the seed value is sampled from an internal RNG. Alternatively, you can provide your own unipolar CV seed value at the SEED input. The input is clamped to 0-10V. A sample and hold is used to save the seed value at the time of the dice action.
 
 Wherever the seed value comes from, the sampled value is continuously sent to the SEED output.
+
+The current seed value is preserved across sessions, and is saved with each patch and preset.
 
 ### PAT OFF and 0V Seed
 
@@ -355,8 +373,10 @@ The mode can influence whether a given beat will fire. Pressing the square butto
 - LIN - Linear mode, meaning that the beat will be blocked if one of the divisions to its left is firing at the same time. If all divisions are set to LIN (disregarding the 1st one of course), then there will never be more than one division playing at a time, the definition of linear drumming.
 - OFF - Offbeat mode, meaning that the beat will be blocked if one of the divisions to the left coincides with this division's beat, regardless whether the left division actually fires or not. This is a special case of linear drumming. For example, if division 1 is 1/4 note, and division 2 is 1/8 note with OFF mode, then the 1/8 will never fire with the 1/4 beats - it will fire only on the "and" of each beat.
 - --- Global default, meaning the division will inherit the mode that is specified at the global level.
+- ALL - RESET (dashed square bracket) - Same as ALL, except the linear and offbeat computations are reset such that divisions to the left do not effect linear or offbeat divisions to the right.
+- ALL - NEW (solid square bracket) - Same as ALL - RESET, except an additional channel is added to the OR, XOR ODD, and XOR 1 outputs, and this division and those to the right are assigned to the new channel.
 
-The mode can be overridden by global or division Mode CV.
+The mode can be overridden by division Mode CV.
 
 #### MUTE Button
 
@@ -375,6 +395,8 @@ The mode values are as follows:
 - 1V = LIN (linear)
 - 2V = OFF (offbeat)
 - 3V = --- (global default)
+- 4V = ALL - RESET
+- 5V = ALL - NEW
 
 The CV value is rounded to the nearest integer, and clamped to be within the valid range.
 
@@ -391,7 +413,7 @@ For each issued beat, a gate is sent to the GATE output with length of one 24 pp
 To the right of the 8 division matrix is a global column that can serve multiple purposes
 
 #### GLOBAL MODE Button
-The global mode has the same values as the division mode, except there is no --- (global default) value available.
+The global mode has the same values as the division mode, except there are no --- (global default), ALL - RESET, or ALL - NEW values available.
 
 The global mode serves two purposes:
 - It defines the mode used to compute the OR, XOR ODD, and XOR 1 outputs.
@@ -438,7 +460,7 @@ The Lock button will lock the division values, division and global modes, and th
 
 In addition to the individual division gate outputs, there are three outputs where the individual division gates are combined into one stream of gates.
 
-The OR output simply combines all gates, with simultaneous beats across two divisions results in one beat.
+The OR output simply combines all gates, with simultaneous beats across two divisions resulting in one beat.
 
 The XOR ODD output only allows the beat through if there are an odd number of simultaneous beats. An even number of simultaneous beats effectively cancel each other out.
 
@@ -446,9 +468,11 @@ The XOR 1 output only allows a beat through if there is only one beat across all
 
 In addition, the GLOBAL MODE further defines which beats are allowed through, using the same logic as for the individual gates. Note that if all the global modes are set to linear or offbeat mode, then the OR, XOR ODD, and XOR 1 will all emit identical patterns since by definition, those modes don't allow simultaneous beats.
 
+These outputs are normally monophonic, combining the beats of all 8 divisions. But the outputs become polyphonic if one or more divisions are assigned ALL - NEW mode. The total number of channels equals 1 + the number of ALL - NEW modes.
+
 ### Factory Preset
 
-There is a Vermona randomRHYTHM preset available that configures the Rhythm Explorer to make it easy to get a flavor of what it would be like to actually use the Vermona hardware. It configures the first four divisions for 1/4, 1/8, 1/16, and 1/4T, and disables (mutes) the remainder. It also sets the Global Mode to Offset so the OR output will behave like the Vermona.
+There is a Vermona randomRHYTHM preset available that configures the Rhythm Explorer to make it easy to get a flavor of what it would be like to actually use the Vermona hardware. The Phrase is set to 1 and Bar to 4, like the Vermona 4/4 time. It configures the divisions as 1/4, 1/8, 1/16, 1/4T, 1/4, 1/8, 1/16, 1/4T. All divisions are assigned mode ALL except division 5 is assigned ALL - NEW. It also sets the Global Mode to Offset so the OR output will behave like the Vermona. In this way there are effectively two rhythm generators configured like the Vermona, exept they both share a common clock, dice, and reset. The OR output is polyphonic - an external split module is needed to separate the OR output into separate outputs for each rhythm generator. 
 
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.
