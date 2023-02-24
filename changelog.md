@@ -14,6 +14,7 @@
   - Add Reset Timing context menu option
   - Dice and Reset buttons now remain lit until they take effect
   - Preserve seed between sessions
+  - User presets now preserve seed so entire pattern can be saved
   - Cleanup run start behavior
   - Update Vermona Random Rhythm factory preset
   - Round the square button corners
