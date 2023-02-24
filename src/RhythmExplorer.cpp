@@ -306,7 +306,9 @@ struct RhythmExplorer : Module {
     }
     val = json_object_get(rootJ, "runGateActive");
     if (val)
-      runGateActive = resetArmed = json_is_true(val);
+      runGateActive = json_is_true(val);
+    if (runGateActive)
+      resetArmed = newBar = newPhrase = true;
     val = json_object_get(rootJ, "resetTiming");
     if (val)
       resetTiming = json_integer_value(val);
