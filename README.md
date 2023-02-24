@@ -489,8 +489,8 @@ Each input is summed with the corresponding OFFSET value. The OFFSETS are bipola
 Each gate output has a small light in the lower right corner that glows yellow when the gate is high and the ouput is monophonic.
 The light glows blue if the output is polyphonic and at least one channel is high.
 
-### Context Menu
-The context menu includes an option to specify the low and high gate values. The following options are available
+### Context Menus
+The module context menu includes an option to specify the low and high gate values. The following options are available
 - 0,1
 - +/-1
 - 0,5
@@ -498,14 +498,15 @@ The context menu includes an option to specify the low and high gate values. The
 - 0,10
 - +/-10
 
-The MIN, MAX, CLAMP, and OVER outputs each have independent options to take the absolute value and or invert the output.
-The absolute value operation is performed prior to the inversion, so the output is guaranteed to be <=0V if both absolute value and invert are enabled.
+The MIN, MAX, CLAMP, and OVER outputs each have port context menu options to take the absolute value and or invert the output. The port options are also available via the module context menu. The absolute value operation is performed prior to the inversion, so the output is guaranteed to be <=0V if both absolute value and invert are enabled.
 
 A glowing green light in the lower left corner of the port indicates the output has the absolute value option enabled.
 A glowing red light in the lower right corner indicates the output has the invert option enabled.
 
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.
+
+[Return to Table Of Contents](#venom)
 
 ## VCO
 ### Incomplete - Work in progress
