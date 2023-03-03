@@ -1,6 +1,7 @@
 // Venom Modules (c) 2022 Dave Benham
 // Licensed under GNU GPLv3
 
+#include "OverSampleFilter.hpp"
 #include "plugin.hpp"
 #include "ThemeStrings.hpp"
 
@@ -42,6 +43,7 @@ struct WinComp : Module {
     MAX_INV_LIGHT,
     CLAMP_INV_LIGHT,
     OVER_INV_LIGHT,
+    OVERSAMPLE_LIGHT,
     ENUMS(EQ_LIGHT, 2),
     ENUMS(NEQ_LIGHT, 2),
     ENUMS(LSEQ_LIGHT, 2),
@@ -61,8 +63,12 @@ struct WinComp : Module {
     OVER_PORT
   };
   
-  bool absPort[5] = {false,false,false,false,false};
-  bool invPort[5] = {false,false,false,false,false};
+  bool absPort[4] = {false,false,false,false};
+  bool invPort[4] = {false,false,false,false};
+  
+  int oversample = 1;
+  std::vector<std::string> oversampleLabels = {"Off","x2","x4","x8","x16"};
+  std::vector<int> oversampleValues = {1,2,4,8,16};
 
   bool absMinOld = false;
   bool absMaxOld = false;
@@ -74,9 +80,34 @@ struct WinComp : Module {
   bool invClampOld = false;
   bool invOverOld = false;
 
+  OversampleFilter aUpSample[PORT_MAX_CHANNELS], bUpSample[PORT_MAX_CHANNELS], tolUpSample[PORT_MAX_CHANNELS],
+                   minDownSample[PORT_MAX_CHANNELS], maxDownSample[PORT_MAX_CHANNELS],
+                   clampDownSample[PORT_MAX_CHANNELS], overDownSample[PORT_MAX_CHANNELS],
+                   eqDownSample[PORT_MAX_CHANNELS], neqDownSample[PORT_MAX_CHANNELS],
+                   leqDownSample[PORT_MAX_CHANNELS], geqDownSample[PORT_MAX_CHANNELS],
+                   lsDownSample[PORT_MAX_CHANNELS], grDownSample[PORT_MAX_CHANNELS];
+
   #include "ThemeModVars.hpp"
 
   dsp::ClockDivider lightDivider;
+  
+  void initializeOversample(){
+    for (int c=0; c<PORT_MAX_CHANNELS; c++){
+      aUpSample[c].setOversample(oversample);
+      bUpSample[c].setOversample(oversample);
+      tolUpSample[c].setOversample(oversample);
+      minDownSample[c].setOversample(oversample);
+      maxDownSample[c].setOversample(oversample);
+      clampDownSample[c].setOversample(oversample);
+      overDownSample[c].setOversample(oversample);
+      eqDownSample[c].setOversample(oversample);
+      neqDownSample[c].setOversample(oversample);
+      leqDownSample[c].setOversample(oversample);
+      geqDownSample[c].setOversample(oversample);
+      lsDownSample[c].setOversample(oversample);
+      grDownSample[c].setOversample(oversample);
+    }
+  }
 
   WinComp() {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -97,6 +128,7 @@ struct WinComp : Module {
     configOutput(LS_OUTPUT, "A<B");
     configOutput(GR_OUTPUT, "A>B");
 
+    initializeOversample();
     lightDivider.setDivision(32);
   }
 
@@ -113,62 +145,103 @@ struct WinComp : Module {
     bool anyGr = false;
     bool anyLs = false;
 
+    bool aOS = oversample>1 && inputs[A_INPUT].isConnected();
+    bool bOS = oversample>1 && inputs[B_INPUT].isConnected();
+    bool tolOS = oversample>1 && inputs[TOL_INPUT].isConnected();
+
+    bool compMin = outputs[MIN_OUTPUT].isConnected() || oversample == 0;
+    bool compMax = outputs[MAX_OUTPUT].isConnected() || oversample == 0;
+    bool compClamp = outputs[CLAMP_OUTPUT].isConnected() || oversample == 0;
+    bool compOver = outputs[OVER_OUTPUT].isConnected() || oversample == 0;
+    bool compEq = outputs[EQ_OUTPUT].isConnected() || oversample == 0;
+    bool compNeq = outputs[NEQ_OUTPUT].isConnected() || oversample == 0;
+    bool compLeq = outputs[LSEQ_OUTPUT].isConnected() || oversample == 0;
+    bool compGeq = outputs[GREQ_OUTPUT].isConnected() || oversample == 0;
+    bool compLs = outputs[LS_OUTPUT].isConnected() || oversample == 0;
+    bool compGr = outputs[GR_OUTPUT].isConnected() || oversample == 0;
+
+    float low = gateTypes[gateType][0];
+    float high = gateTypes[gateType][1];
     for (int c = 0; c < channels; c++) {
       float a = inputs[A_INPUT].getPolyVoltage(c) + aOffset;
       float b = inputs[B_INPUT].getPolyVoltage(c) + bOffset;
       float tol = std::fabs(inputs[TOL_INPUT].getPolyVoltage(c) + tolOffset);
-      float bMin = b - tol;
-      float bMax = b + tol;
-      float val;
+      float minVal=0, maxVal=0, clampVal=0, overVal=0,
+            eqVal=0, neqVal=0, leqVal=0, geqVal=0, lsVal=0, grVal=0;
+      for (int i=0; i<oversample; i++){
+        if (aOS) a = aUpSample[c].process(i ? 0.f : a*oversample);
+        if (bOS) b = bUpSample[c].process(i ? 0.f : b*oversample);
+        if (tolOS) tol = tolUpSample[c].process(i ? 0.f : tol*oversample);
 
-      val = std::min(a, b);
-      if (absPort[MIN_PORT]) val = std::fabs(val);
-      if (invPort[MIN_PORT]) val = -val;
-      outputs[MIN_OUTPUT].setVoltage(val, c);
-      val = std::max(a, b);
-      if (absPort[MAX_PORT]) val = std::fabs(val);
-      if (invPort[MAX_PORT]) val = -val;
-      outputs[MAX_OUTPUT].setVoltage(val, c);
+        float bMin = b - tol;
+        float bMax = b + tol;
 
-      float clamp = a;
-      bool over = false;
-      if (a > bMax) {
-        clamp = bMax;
-        over = true;
+        minVal = std::min(a, b);
+        if (absPort[MIN_PORT]) minVal = std::fabs(minVal);
+        if (invPort[MIN_PORT]) minVal = -minVal;
+
+        maxVal = std::max(a, b);
+        if (absPort[MAX_PORT]) maxVal = std::fabs(maxVal);
+        if (invPort[MAX_PORT]) maxVal = -maxVal;
+
+        float clamp = a;
+        bool over = false;
+        if (a > bMax) {
+          clamp = bMax;
+          over = true;
+        }
+        else if (a < bMin) {
+          clamp = bMin;
+          over = true;
+        }
+        clampVal = absPort[CLAMP_PORT] ? std::fabs(clamp) : clamp;
+        if (invPort[CLAMP_PORT]) clampVal = -clampVal;
+        overVal = a - clamp;
+        if (absPort[OVER_PORT]) overVal = std::fabs(overVal);
+        if (invPort[OVER_PORT]) overVal = -overVal;
+
+        eqVal = over ? low : high;
+        anyEq = anyEq || !over;
+        neqVal = over ? high : low;
+        anyNeq = anyNeq || over;
+
+        bool cond = a <= b + tol;
+        leqVal = cond ? high : low;
+        anyLsEq = anyLsEq || cond;
+        cond = a >= b - tol;
+        geqVal = cond ? high : low;
+        anyGrEq = anyGrEq || cond;
+
+        cond = a < b - tol;
+        lsVal = cond ? high : low;
+        anyLs = anyLs || cond;
+        cond = a > b + tol;
+        grVal = cond ? high : low;
+        anyGr = anyGr || cond;
+
+        if (oversample>1) {
+          if (compMin) minVal = minDownSample[c].process(minVal);
+          if (compMax) maxVal = maxDownSample[c].process(maxVal);
+          if (compClamp) clampVal = clampDownSample[c].process(clampVal);
+          if (compOver) overVal = overDownSample[c].process(overVal);
+          if (compEq) eqVal = eqDownSample[c].process(eqVal);
+          if (compNeq) neqVal = neqDownSample[c].process(neqVal);
+          if (compLeq) leqVal = leqDownSample[c].process(leqVal);
+          if (compGeq) geqVal = geqDownSample[c].process(geqVal);
+          if (compLs) lsVal = lsDownSample[c].process(lsVal);
+          if (compGr) grVal = grDownSample[c].process(grVal);
+        }
       }
-      else if (a < bMin) {
-        clamp = bMin;
-        over = true;
-      }
-      val = absPort[CLAMP_PORT] ? std::fabs(clamp) : clamp;
-      if (invPort[CLAMP_PORT]) val = -val;
-      outputs[CLAMP_OUTPUT].setVoltage(val, c);
-      val = a - clamp;
-      if (absPort[OVER_PORT]) val = std::fabs(val);
-      if (invPort[OVER_PORT]) val = -val;
-      outputs[OVER_OUTPUT].setVoltage(val, c);
-
-      float low = gateTypes[gateType][0];
-      float high = gateTypes[gateType][1];
-
-      outputs[EQ_OUTPUT].setVoltage(over ? low : high, c);
-      anyEq = anyEq || !over;
-      outputs[NEQ_OUTPUT].setVoltage(over ? high : low, c);
-      anyNeq = anyNeq || over;
-
-      bool cond = a <= b + tol;
-      outputs[LSEQ_OUTPUT].setVoltage(cond ? high : low, c);
-      anyLsEq = anyLsEq || cond;
-      cond = a >= b - tol;
-      outputs[GREQ_OUTPUT].setVoltage(cond ? high : low, c);
-      anyGrEq = anyGrEq || cond;
-
-      cond = a < b - tol;
-      outputs[LS_OUTPUT].setVoltage(cond ? high : low, c);
-      anyLs = anyLs || cond;
-      cond = a > b + tol;
-      outputs[GR_OUTPUT].setVoltage(cond ? high : low, c);
-      anyGr = anyGr || cond;
+      outputs[MIN_OUTPUT].setVoltage(minVal, c);
+      outputs[MAX_OUTPUT].setVoltage(maxVal, c);
+      outputs[CLAMP_OUTPUT].setVoltage(clampVal, c);
+      outputs[OVER_OUTPUT].setVoltage(overVal, c);
+      outputs[EQ_OUTPUT].setVoltage(eqVal, c);
+      outputs[NEQ_OUTPUT].setVoltage(neqVal, c);
+      outputs[LSEQ_OUTPUT].setVoltage(leqVal, c);
+      outputs[GREQ_OUTPUT].setVoltage(geqVal, c);
+      outputs[LS_OUTPUT].setVoltage(lsVal, c);
+      outputs[GR_OUTPUT].setVoltage(grVal, c);
     }
 
     outputs[MAX_OUTPUT].setChannels(channels);
@@ -184,6 +257,9 @@ struct WinComp : Module {
 
     if (lightDivider.process()) {
       float lightTime = args.sampleTime * lightDivider.getDivision();
+      
+      lights[OVERSAMPLE_LIGHT].setBrightness(oversample>1);
+
       if (absPort[MIN_PORT] != absMinOld) {
         absMinOld = absPort[MIN_PORT];
         lights[MIN_ABS_LIGHT].setBrightness(absPort[MIN_PORT]);
@@ -250,6 +326,7 @@ struct WinComp : Module {
     json_object_set_new(rootJ, "invMax", json_boolean(invPort[MAX_PORT]));
     json_object_set_new(rootJ, "invClamp", json_boolean(invPort[CLAMP_PORT]));
     json_object_set_new(rootJ, "invOver", json_boolean(invPort[OVER_PORT]));
+    json_object_set_new(rootJ, "oversample", json_integer(oversample));
     json_object_set_new(rootJ, "gateType", json_integer(gateType));
     #include "ThemeToJson.hpp"
     return rootJ;
@@ -280,10 +357,15 @@ struct WinComp : Module {
     val = json_object_get(rootJ, "invOver");
     if (val)
       invPort[OVER_PORT] = json_boolean_value(val);
+    val = json_object_get(rootJ, "oversample");
+    if (val)
+      oversample = json_integer_value(val);
     val = json_object_get(rootJ, "gateType");
     if (val)
       gateType = json_integer_value(val);
     #include "ThemeFromJson.hpp"
+
+    initializeOversample();
   }
 
 };
@@ -321,18 +403,19 @@ struct WinCompWidget : ModuleWidget {
     addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 43.87)), module, WinComp::TOL_PARAM));
 
     addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(7.299, 58.3)), module, WinComp::MIN_OUTPUT, WinComp::MIN_PORT));
-    addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(18.136, 58.3)), module, WinComp::MAX_OUTPUT, WinComp::MAX_PORT));
-    addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(7.297, 72.75)), module, WinComp::CLAMP_OUTPUT, WinComp::CLAMP_PORT));
+    addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(18.134, 58.3)), module, WinComp::MAX_OUTPUT, WinComp::MAX_PORT));
+    addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(7.299, 72.75)), module, WinComp::CLAMP_OUTPUT, WinComp::CLAMP_PORT));
     addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(18.134, 72.75)), module, WinComp::OVER_OUTPUT, WinComp::OVER_PORT));
 
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 87.10)), module, WinComp::EQ_OUTPUT));
+    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.299, 87.10)), module, WinComp::EQ_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 87.10)), module, WinComp::NEQ_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 101.55)), module, WinComp::LSEQ_OUTPUT));
+    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.299, 101.55)), module, WinComp::LSEQ_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, WinComp::GREQ_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, WinComp::LS_OUTPUT));
+    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.299, 116.0)), module, WinComp::LS_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 116.0)), module, WinComp::GR_OUTPUT));
 
 
+    addChild(createLightCentered<SmallLight<BluLight<>>>(mm2px(Vec(12.7, 51.5)), module, WinComp::OVERSAMPLE_LIGHT));
     addChild(createLightCentered<SmallLight<GrnLight<>>>(mm2px(Vec( 3.547, 54.58+7.46)), module, WinComp::MIN_ABS_LIGHT));
     addChild(createLightCentered<SmallLight<RdLight<>>>(mm2px(Vec(11.047, 54.58+7.46)), module, WinComp::MIN_INV_LIGHT));
     addChild(createLightCentered<SmallLight<GrnLight<>>>(mm2px(Vec(14.384, 54.58+7.46)), module, WinComp::MAX_ABS_LIGHT));
@@ -363,6 +446,17 @@ struct WinCompWidget : ModuleWidget {
     menu->addChild(createIndexSubmenuItem("Gate voltages", gateLabels,
       [=]() {return module->gateType;},
       [=](int i) {module->gateType = i;}
+    ));
+    menu->addChild(createIndexSubmenuItem("Oversample", module->oversampleLabels,
+      [=]() {
+          std::vector<int> vals = module->oversampleValues;
+          std::vector<int>::iterator itr = std::find(vals.begin(), vals.end(), module->oversample);
+          return std::distance(vals.begin(), itr);
+        },
+      [=](int i) {
+          module->oversample = module->oversampleValues[i];
+          module->initializeOversample();
+        }
     ));
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("Minimum absolute value", "", &module->absPort[WinComp::MIN_PORT]));
