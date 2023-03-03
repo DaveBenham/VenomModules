@@ -41,6 +41,7 @@ struct BernoulliSwitch : Module {
     SWAP_LIGHT,
     TRIG_LIGHT,
     DE_CLICK_LIGHT,
+    POLY_SENSE_ALL_LIGHT,
     LIGHTS_LEN
   };
   enum ProbMode {
@@ -81,6 +82,7 @@ struct BernoulliSwitch : Module {
     configBypass(B_INPUT, B_OUTPUT);
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
+    lights[POLY_SENSE_ALL_LIGHT].setBrightness(false);
     for (int i=0; i<PORT_MAX_CHANNELS; i++)
       fade[i].rise = fade[i].fall = FADE_RATE;
   }
@@ -135,6 +137,7 @@ struct BernoulliSwitch : Module {
       lightOff = false;
     }
     lights[DE_CLICK_LIGHT].setBrightness(deClick);
+    lights[POLY_SENSE_ALL_LIGHT].setBrightness(inputPolyControl);
     for (int c=0; c<channels; c++){
       float prob = inputs[PROB_INPUT].getPolyVoltage(c)/10.f + probOff;
       float trigIn = inputs[TRIG_INPUT].getPolyVoltage(c) + manual;
@@ -235,7 +238,8 @@ struct BernoulliSwitchWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, BernoulliSwitch::B_OUTPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, BernoulliSwitch::TRIG_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(18.134, 116.0)), module, BernoulliSwitch::PROB_INPUT));
-    
+
+    addChild(createLightCentered<SmallSimpleLight<BlueLight>>(mm2px(Vec(12.7155, 83.9)), module, BernoulliSwitch::POLY_SENSE_ALL_LIGHT));
     addChild(createLightCentered<SmallSimpleLight<GreenLight>>(mm2px(Vec(12.7155, 98.35)), module, BernoulliSwitch::DE_CLICK_LIGHT));
   }
 
