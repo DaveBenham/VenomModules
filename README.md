@@ -497,12 +497,20 @@ The tolerance affects all outputs except MIN and MAX.
 
 Each input is summed with the corresponding OFFSET value. The OFFSETS are bipolar +/-10V. The resultant values are unconstrained.
 
-### Outputs
+### Signal Outputs
 
 - **MIN** = Minimum output - the instantaneous minimum of the A and B inputs. TOL does not affect MIN.
 - **MAX** = Maximum output - the instantaneous maximum of the A and B inputs. TOL does not affect MAX.
 - **CLAMP** = A clamped to within B +/- TOL
 - **OVER** = The overflow (positive or negative) from the CLAMP operation, computed as A - CLAMP.
+
+Each of the signal output ports have context menu options to take the absolute value and or invert the output. The absolute value operation is performed prior to the inversion, so the output is guaranteed to be <=0V if both absolute value and invert are enabled.
+
+A glowing green light in the lower left corner of the port indicates the output has the absolute value option enabled.
+A glowing red light in the lower right corner indicates the output has the invert option enabled.
+
+### Gate Outputs
+
 - **A==B** = This gate is high if A is within B +/- TOL. OVER will be 0V when A==B is high. Computed as |A-B| <= |TOL|
 - **A<>B** = This gate is high if A is not within B +/- TOL. OVER will be non-zero when A<>B is high. Computed as |A-B| > |TOL|
 - **A<=B** = This gate is high if A is less than or equal to B +/- TOL. Computed as A < B + |TOL|
@@ -513,8 +521,7 @@ Each input is summed with the corresponding OFFSET value. The OFFSETS are bipola
 Each gate output has a small light in the lower right corner that glows yellow when the gate is high and the ouput is monophonic.
 The light glows blue if the output is polyphonic and at least one channel is high.
 
-### Context Menus
-The module context menu includes an option to specify the low and high gate values. The following options are available
+The gate high and low values are 0V and 10V by default. The module context menu includes an option to specify any of the following alternate values
 - 0,1
 - +/-1
 - 0,5
@@ -522,10 +529,8 @@ The module context menu includes an option to specify the low and high gate valu
 - 0,10
 - +/-10
 
-The MIN, MAX, CLAMP, and OVER outputs each have port context menu options to take the absolute value and or invert the output. The port options are also available via the module context menu. The absolute value operation is performed prior to the inversion, so the output is guaranteed to be <=0V if both absolute value and invert are enabled.
-
-A glowing green light in the lower left corner of the port indicates the output has the absolute value option enabled.
-A glowing red light in the lower right corner indicates the output has the invert option enabled.
+### Oversampling
+By default WINCOMP is configured to output CV values, without any anti-aliasing. But if producing audio output, then the output may have unacceptable aliasing artifacts. The context menu has an option to enable oversampling to greatly reduce aliasing in audio outputs. Oversampling uses significant CPU, so there are multiple options to choose from. The higher the oversample rate, the better the result, but more CPU is used.
 
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.
