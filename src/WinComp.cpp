@@ -436,13 +436,14 @@ struct WinCompWidget : ModuleWidget {
     WinComp* module = dynamic_cast<WinComp*>(this->module);
     assert(module);
     menu->addChild(new MenuSeparator);
-    std::vector<std::string> gateLabels;
-    gateLabels.push_back("0,1");
-    gateLabels.push_back("+/-1");
-    gateLabels.push_back("0,5");
-    gateLabels.push_back("+/-5");
-    gateLabels.push_back("0,10");
-    gateLabels.push_back("+/-10");
+    std::vector<std::string> gateLabels = {
+      "0,1",
+      "+/-1",
+      "0,5",
+      "+/-5",
+      "0,10",
+      "+/-10"
+    };
     menu->addChild(createIndexSubmenuItem("Gate voltages", gateLabels,
       [=]() {return module->gateType;},
       [=](int i) {module->gateType = i;}
@@ -458,15 +459,6 @@ struct WinCompWidget : ModuleWidget {
           module->initializeOversample();
         }
     ));
-    menu->addChild(new MenuSeparator);
-    menu->addChild(createBoolPtrMenuItem("Minimum absolute value", "", &module->absPort[WinComp::MIN_PORT]));
-    menu->addChild(createBoolPtrMenuItem("Minimum invert", "", &module->invPort[WinComp::MIN_PORT]));
-    menu->addChild(createBoolPtrMenuItem("Maximum absolute value", "", &module->absPort[WinComp::MAX_PORT]));
-    menu->addChild(createBoolPtrMenuItem("Maximum invert", "", &module->invPort[WinComp::MAX_PORT]));
-    menu->addChild(createBoolPtrMenuItem("Clamp absolute value", "", &module->absPort[WinComp::CLAMP_PORT]));
-    menu->addChild(createBoolPtrMenuItem("Clamp invert", "", &module->invPort[WinComp::CLAMP_PORT]));
-    menu->addChild(createBoolPtrMenuItem("Overflow absolute value", "", &module->absPort[WinComp::OVER_PORT]));
-    menu->addChild(createBoolPtrMenuItem("Overflow invert", "", &module->invPort[WinComp::OVER_PORT]));
     #include "ThemeMenu.hpp"
   }
 
