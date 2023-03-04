@@ -5,8 +5,9 @@
 - Bernoulli Switch
   -  Add anti-pop switching option to module context menu
   -  Add presets to emulate the four possible Mutable Instruments Branches configurations
-- WinComp 
-  - Add Absolute Value and Invert port context menu options to each of Min, Max, Clamp, and Over outputs
+- WinComp
+  - Add oversampling context menu options
+  - Move Absolute Value and Invert context menu options to individual port context menus
 - Recurse and Recurse Stereo
   - Show all normalled connections on faceplate
 - Rhythm Explorer
