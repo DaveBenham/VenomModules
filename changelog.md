@@ -6,8 +6,8 @@
   -  Add anti-pop switching option to module context menu
   -  Add presets to emulate the four possible Mutable Instruments Branches configurations
 - WinComp
-  - Add oversampling context menu options
-  - Move Absolute Value and Invert context menu options to individual port context menus
+  - Add oversampling module context menu options
+  - Move Absolute Value and Invert module context menu options to individual port context menus
 - Recurse and Recurse Stereo
   - Show all normalled connections on faceplate
 - Rhythm Explorer
