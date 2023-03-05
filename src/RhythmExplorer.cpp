@@ -192,7 +192,7 @@ struct RhythmExplorer : Module {
     configInput(NEW_SEED_TRIGGER_INPUT,"Dice Trigger");
     configInput(RESET_TRIGGER_INPUT,"Reset Trigger");
     configInput(SEED_INPUT,"Seed");
-    configInput(RNG_OVERRIDE_INPUT,"Random Override");
+    configInput(RNG_OVERRIDE_INPUT,"Random Override poly");
     configOutput(SEED_OUTPUT,"Seed");
 
     configButton(NEW_SEED_BUTTON_PARAM, "Dice Trigger");
@@ -200,12 +200,12 @@ struct RhythmExplorer : Module {
 
     configButton(RUN_GATE_PARAM, "Run Gate");
     configInput(RUN_GATE_INPUT,"Run Gate");
-    
+
     configSwitch(PATOFF_PARAM, 0.f, 1.f, 0.f, "Pattern Status", {"On", "Off"});
 
-    configOutput(GATE_OR_OUTPUT,"OR Trigger");
-    configOutput(GATE_XOR_ODD_OUTPUT,"XOR Odd Parity Trigger");
-    configOutput(GATE_XOR_ONE_OUTPUT,"XOR 1 Hot Trigger");
+    configOutput(GATE_OR_OUTPUT,"OR Trigger poly");
+    configOutput(GATE_XOR_ODD_OUTPUT,"XOR Odd Parity Trigger poly");
+    configOutput(GATE_XOR_ONE_OUTPUT,"XOR 1 Hot Trigger poly");
 
     configParam(BAR_COUNT_PARAM, 1, MAX_STEP_LENGTH, 1, "Phrase Bar Count");
     configParam(BAR_LENGTH_PARAM, 1, MAX_STEP_LENGTH, 4, "Bar 1/4 Count");
@@ -233,10 +233,10 @@ struct RhythmExplorer : Module {
     configSwitch<FixedSwitchQuantity>(POLAR_PARAM, 0, 1, 0, "Density Polarity", {"Uniploar", "Bipolar"});
     configSwitch<GlobalModeQuantity>(MODE_POLY_PARAM, 0, 2 , 0, "Global Mode", POLY_MODE_LABELS);
     configSwitch(MUTE_POLY_PARAM, 0.f, 1.f, 0.f, "Global Mute", {"Unmuted", "Muted"});
-    configInput(MODE_POLY_INPUT, "Global Mode CV");
-    configInput(DENSITY_POLY_INPUT,"Density Poly CV");
-    configOutput(CLOCK_POLY_OUTPUT, "Clock Poly");
-    configOutput(GATE_POLY_OUTPUT, "Gate Poly");
+    configInput(MODE_POLY_INPUT, "Global Mode CV poly");
+    configInput(DENSITY_POLY_INPUT,"Density Poly CV poly");
+    configOutput(CLOCK_POLY_OUTPUT, "Clock poly");
+    configOutput(GATE_POLY_OUTPUT, "Gate poly");
     configOutput(RESET_TRIGGER_OUTPUT, "Reset Trigger");
     configOutput(RUN_GATE_OUTPUT, "Run Gate");
     configSwitch(LOCK_PARAM, 0.f, 1.f, 0.f, "Divisions, Modes, and Polarity Status", {"Unlocked", "Locked"});
