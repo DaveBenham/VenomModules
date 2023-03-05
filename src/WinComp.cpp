@@ -80,32 +80,21 @@ struct WinComp : Module {
   bool invClampOld = false;
   bool invOverOld = false;
 
-  OversampleFilter aUpSample[PORT_MAX_CHANNELS], bUpSample[PORT_MAX_CHANNELS], tolUpSample[PORT_MAX_CHANNELS],
-                   minDownSample[PORT_MAX_CHANNELS], maxDownSample[PORT_MAX_CHANNELS],
-                   clampDownSample[PORT_MAX_CHANNELS], overDownSample[PORT_MAX_CHANNELS],
-                   eqDownSample[PORT_MAX_CHANNELS], neqDownSample[PORT_MAX_CHANNELS],
-                   leqDownSample[PORT_MAX_CHANNELS], geqDownSample[PORT_MAX_CHANNELS],
-                   lsDownSample[PORT_MAX_CHANNELS], grDownSample[PORT_MAX_CHANNELS];
+  OversampleFilter_4 upSample[PORT_MAX_CHANNELS],
+                     downSample1[PORT_MAX_CHANNELS],
+                     downSample2[PORT_MAX_CHANNELS],
+                     downSample3[PORT_MAX_CHANNELS];
 
   #include "ThemeModVars.hpp"
 
   dsp::ClockDivider lightDivider;
-  
+
   void initializeOversample(){
     for (int c=0; c<PORT_MAX_CHANNELS; c++){
-      aUpSample[c].setOversample(oversample);
-      bUpSample[c].setOversample(oversample);
-      tolUpSample[c].setOversample(oversample);
-      minDownSample[c].setOversample(oversample);
-      maxDownSample[c].setOversample(oversample);
-      clampDownSample[c].setOversample(oversample);
-      overDownSample[c].setOversample(oversample);
-      eqDownSample[c].setOversample(oversample);
-      neqDownSample[c].setOversample(oversample);
-      leqDownSample[c].setOversample(oversample);
-      geqDownSample[c].setOversample(oversample);
-      lsDownSample[c].setOversample(oversample);
-      grDownSample[c].setOversample(oversample);
+      upSample[c].setOversample(oversample);
+      downSample1[c].setOversample(oversample);
+      downSample2[c].setOversample(oversample);
+      downSample3[c].setOversample(oversample);
     }
   }
 
@@ -145,20 +134,16 @@ struct WinComp : Module {
     bool anyGr = false;
     bool anyLs = false;
 
-    bool aOS = oversample>1 && inputs[A_INPUT].isConnected();
-    bool bOS = oversample>1 && inputs[B_INPUT].isConnected();
-    bool tolOS = oversample>1 && inputs[TOL_INPUT].isConnected();
-
-    bool compMin = outputs[MIN_OUTPUT].isConnected() || oversample == 0;
-    bool compMax = outputs[MAX_OUTPUT].isConnected() || oversample == 0;
-    bool compClamp = outputs[CLAMP_OUTPUT].isConnected() || oversample == 0;
-    bool compOver = outputs[OVER_OUTPUT].isConnected() || oversample == 0;
-    bool compEq = outputs[EQ_OUTPUT].isConnected() || oversample == 0;
-    bool compNeq = outputs[NEQ_OUTPUT].isConnected() || oversample == 0;
-    bool compLeq = outputs[LSEQ_OUTPUT].isConnected() || oversample == 0;
-    bool compGeq = outputs[GREQ_OUTPUT].isConnected() || oversample == 0;
-    bool compLs = outputs[LS_OUTPUT].isConnected() || oversample == 0;
-    bool compGr = outputs[GR_OUTPUT].isConnected() || oversample == 0;
+    bool down1 = outputs[MIN_OUTPUT].isConnected() ||
+                 outputs[MAX_OUTPUT].isConnected() ||
+                 outputs[CLAMP_OUTPUT].isConnected() ||
+                 outputs[OVER_OUTPUT].isConnected();
+    bool down2 = outputs[EQ_OUTPUT].isConnected() ||
+                 outputs[NEQ_OUTPUT].isConnected() ||
+                 outputs[LSEQ_OUTPUT].isConnected() ||
+                 outputs[GREQ_OUTPUT].isConnected();
+    bool down3 = outputs[LS_OUTPUT].isConnected() ||
+                 outputs[GR_OUTPUT].isConnected();
 
     float low = gateTypes[gateType][0];
     float high = gateTypes[gateType][1];
@@ -169,9 +154,17 @@ struct WinComp : Module {
       float minVal=0, maxVal=0, clampVal=0, overVal=0,
             eqVal=0, neqVal=0, leqVal=0, geqVal=0, lsVal=0, grVal=0;
       for (int i=0; i<oversample; i++){
-        if (aOS) a = aUpSample[c].process(i ? 0.f : a*oversample);
-        if (bOS) b = bUpSample[c].process(i ? 0.f : b*oversample);
-        if (tolOS) tol = tolUpSample[c].process(i ? 0.f : tol*oversample);
+        if (oversample>1) {
+          simd::float_4 ups = upSample[c].process( simd::float_4(
+            i ? 0.f : a*oversample,
+            i ? 0.f : b*oversample,
+            i ? 0.f : tol*oversample,
+            0.f
+          ));
+          a = ups.s[0];
+          b = ups.s[1];
+          tol = ups.s[2];
+        }
 
         float bMin = b - tol;
         float bMax = b + tol;
@@ -220,16 +213,25 @@ struct WinComp : Module {
         anyGr = anyGr || cond;
 
         if (oversample>1) {
-          if (compMin) minVal = minDownSample[c].process(minVal);
-          if (compMax) maxVal = maxDownSample[c].process(maxVal);
-          if (compClamp) clampVal = clampDownSample[c].process(clampVal);
-          if (compOver) overVal = overDownSample[c].process(overVal);
-          if (compEq) eqVal = eqDownSample[c].process(eqVal);
-          if (compNeq) neqVal = neqDownSample[c].process(neqVal);
-          if (compLeq) leqVal = leqDownSample[c].process(leqVal);
-          if (compGeq) geqVal = geqDownSample[c].process(geqVal);
-          if (compLs) lsVal = lsDownSample[c].process(lsVal);
-          if (compGr) grVal = grDownSample[c].process(grVal);
+          if (down1) {
+            simd::float_4 downs = downSample1[c].process( simd::float_4(minVal,maxVal,clampVal,overVal));
+            minVal = downs.s[0];
+            maxVal = downs.s[1];
+            clampVal = downs.s[2];
+            overVal = downs.s[3];
+          }
+          if (down2) {
+            simd::float_4 downs = downSample2[c].process( simd::float_4(eqVal,neqVal,leqVal,geqVal));
+            eqVal = downs.s[0];
+            neqVal = downs.s[1];
+            leqVal = downs.s[2];
+            geqVal = downs.s[3];
+          }
+          if (down3) {
+            simd::float_4 downs = downSample3[c].process( simd::float_4(lsVal,grVal,0.f,0.f));
+            lsVal = downs.s[0];
+            grVal = downs.s[1];
+          }
         }
       }
       outputs[MIN_OUTPUT].setVoltage(minVal, c);
