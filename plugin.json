@@ -116,6 +116,20 @@
         "Utility",
         "Waveshaper"
       ]
+    },
+    {
+      "slug": "WinComp2",
+      "name": "WinComp2",
+      "description": "Windowed comparator and rectifier",
+      "manualURL": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#wincomp",
+      "tags": [
+        "Distortion",
+        "Limiter",
+        "Logic",
+        "Polyphonic",
+        "Utility",
+        "Waveshaper"
+      ]
     }
   ]
 }
