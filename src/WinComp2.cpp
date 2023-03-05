@@ -53,7 +53,7 @@ struct WinComp2 : Module {
     LIGHTS_LEN
   };
   
-  float gateTypes[6][2] = {{0.f,1.f},{-1.f,1.f},{0.f,5.f},{-5.f,5.f},{0.f,10.f},{-10.f,10.f}};
+  float gateTypes[6][3] = {{0.f,1.f,0.5f},{-1.f,1.f,0.f},{0.f,5.f,2.5f},{-5.f,5.f,0.f},{0.f,10.f,5.f},{-10.f,10.f,0.f}};
   int gateType = 4;
   
   enum ModPorts {
@@ -90,7 +90,7 @@ struct WinComp2 : Module {
   #include "ThemeModVars.hpp"
 
   dsp::ClockDivider lightDivider;
-  
+
   void initializeOversample(){
     for (int c=0; c<4; c++){
       aUpSample[c].setOversample(oversample);
@@ -160,9 +160,11 @@ struct WinComp2 : Module {
     bool compLs = outputs[LS_OUTPUT].isConnected();
     bool compGr = outputs[GR_OUTPUT].isConnected();
 
+    bool processLights = lightDivider.process();
     using float_4 = simd::float_4;
     float_4 low = gateTypes[gateType][0];
     float_4 high = gateTypes[gateType][1];
+    float mid = gateTypes[gateType][2];
     for (int c = 0; c < channels; c += 4) {
       float_4 a = inputs[A_INPUT].getPolyVoltageSimd<float_4>(c) + aOffset;
       float_4 b = inputs[B_INPUT].getPolyVoltageSimd<float_4>(c) + bOffset;
@@ -202,18 +204,12 @@ struct WinComp2 : Module {
         eqVal = simd::ifelse(aUnderB, low, eqVal);
         neqVal = simd::ifelse(aOverB, high, low);
         neqVal = simd::ifelse(aUnderB, high, neqVal);
-// ?        anyEq = anyEq || AT_LEAST_ONE_eqVal_HIGH(?);
-// ?        anyNeq = anyNeq || AT_LEAST_ONE_neqVal_HIGH(?);
 
         leqVal = simd::ifelse(a <= b + tol, high, low);
         geqVal = simd::ifelse(a >= b - tol, high, low);
-// ?        anyLsEq = anyLsEq || AT_LEAST_ONE_leqVal_HIGH(?);
-// ?        anyGrEq = anyGrEq || AT_LEAST_ONE_geqVal_HIGH(?);
 
         lsVal = simd::ifelse(a < b - tol, high, low);
         grVal = simd::ifelse(a > b - tol, high, low);
-// ?        anyLs = anyLs || AT_LEAST_ONE_lsVal_HIGH(?);
-// ?        anyGr = anyGr || AT_LEAST_ONE_grVal_HIGH(?);
 
         if (oversample>1) {
           if (compMin) minVal = minDownSample[c/4].process(minVal);
@@ -226,6 +222,14 @@ struct WinComp2 : Module {
           if (compGeq) geqVal = geqDownSample[c/4].process(geqVal);
           if (compLs) lsVal = lsDownSample[c/4].process(lsVal);
           if (compGr) grVal = grDownSample[c/4].process(grVal);
+        }
+        if (processLights && i == oversample-1) {
+          anyEq = anyEq || eqVal.s[0]>mid || eqVal.s[1]>mid || eqVal.s[2]>mid || eqVal.s[3]>mid;
+          anyNeq = anyNeq || neqVal.s[0]>mid || neqVal.s[1]>mid || neqVal.s[2]>mid || neqVal.s[3]>mid;
+          anyLsEq = anyLsEq || leqVal.s[0]>mid || leqVal.s[1]>mid || leqVal.s[2]>mid || leqVal.s[3]>mid;
+          anyGrEq = anyGrEq || geqVal.s[0]>mid || geqVal.s[1]>mid || geqVal.s[2]>mid || geqVal.s[3]>mid;
+          anyLs = anyLs || lsVal.s[0]>mid || lsVal.s[1]>mid || lsVal.s[2]>mid || lsVal.s[3]>mid;
+          anyGr = anyGr || grVal.s[0]>mid || grVal.s[1]>mid || grVal.s[2]>mid || grVal.s[3]>mid;
         }
       }
       outputs[MIN_OUTPUT].setVoltageSimd(minVal, c);
@@ -251,7 +255,7 @@ struct WinComp2 : Module {
     outputs[GR_OUTPUT].setChannels(channels);
     outputs[LS_OUTPUT].setChannels(channels);
 
-    if (lightDivider.process()) {
+    if (processLights) {
       float lightTime = args.sampleTime * lightDivider.getDivision();
       
       lights[OVERSAMPLE_LIGHT].setBrightness(oversample>1);
