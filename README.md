@@ -532,7 +532,7 @@ The gate high and low values are 0V and 10V by default. The module context menu 
 ### Oversampling
 By default WINCOMP is configured to output CV values, without any anti-aliasing. But if producing audio output, then the output may have unacceptable aliasing artifacts. The context menu has an option to enable oversampling to greatly reduce aliasing in audio outputs. The oversampling applies to all the outputs, including gate outputs.
 
-Oversampling uses significant CPU, so there are multiple options to choose from. The higher the oversample rate, the better the result, but more CPU is used.
+Oversampling uses significant CPU, so there are multiple options to choose from: x2, x4, x8, and x16. The higher the oversample rate, the better the result, but more CPU is used.
 
 An LED glows blue above the output ports if oversampling is enabled. The LED is black when oversampling is off.
 
