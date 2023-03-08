@@ -58,9 +58,9 @@ Bernoulli Switch is fully polyphonic. There are two modes available from the con
 
   The number of coin flips is the maximum channel count found across the TRIG and PROB inputs. If one of the inputs is monophonic, and the other polyphonic, then the monophonic input is replicated to match the channel count of the polyphonic input. If a polyphonic input is missing channels, then the missing channels are treated as 0V.
 
-  If the coin flip count is 1 (both TRIG and PROB are mono), then polyphonic inputs to A and/or B are treated as a whole - all of the channels on the A input are directed to either the A or B output. The same for the B input. The number of channels need not match across A and B.
+  If the coin flip count is 1 (both TRIG and PROB are mono), then polyphonic inputs to A and/or B are treated as a whole - all of the channels on the A input are directed to either the A or B output. The same for the B input. If either A or B input has fewer channels than the other, then the missing channels are made up with 0V so that A and B always send the same number of channels.
 
-  But if either of TRIG or PROB are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B inputs. This can result in A and B input channels being scrambled across the A and B outputs. Monophonic A and/or B inputs are replicated to match the coin flip channel count. Missing channels in A and/or B are treated as 0V. Extra channels are ignored.
+  But if either of TRIG or PROB are poly, resulting in multiple coin flips, then each coin flip is applied to the appropriate channels in A and B inputs. This can result in A and B input channels being scrambled across the A and B outputs. Monophonic A and/or B inputs are replicated to match the coin flip channel count. Missing channels in A and/or B are treated as 0V. Extra input channels in A or B are ignored.
 
 - **All inputs**
 
@@ -73,8 +73,8 @@ A pair of yellow lights indicate the current routing configuration. A yellow lig
 
 The yellow lights only monitor a single channel - by default they monitor channel one. The context menu has a Monitor Channel option to switch to a different channel. If the monitored channel is Off, or greater than the number of coin flip channels, then the yellow lights will remain dark - no monitoring will be done.
 
-### Anti-Pop Switching
-By default Bernoulli Switch is configured for switching gates or CV signals. If your inputs are audio signals, then you may experience unwanted audio pops with each switch. The audio pops may be eliminated by activating the "Anti-Pop Switching" option in the module context menu. The pops are eliminated by employing a slewed cross fade, which is probably not appropriate for CV signals - So only use this option when sending audio signals to the inputs. A small LED between the OUTPUT ports glows green when Anti-Pop Switching is in effect.
+### Audio Processing
+By default Bernoulli Switch is configured for switching gates or CV signals, but it can also process audio signals. If you switch audio at slow rates you may get unwanted pops. If you switch audio at audio rates then you may get unwanted aliasing. The module context menu has Audio Process options to reduce or eliminate these artifacts: Antipop crossfade for slow switching, and various oversampling options for audio rate switching. A small LED between the OUTPUT ports glows red when Anti-Pop Switching is in effect, and blue when any of the oversampling options is enabled. The LED is off (black) when the Audio Process is set to Off (the default).
 
 ### Factory Presets
 The following factory presets are available that emulate the four configurations available to the Mutable Instruments Branches module:
