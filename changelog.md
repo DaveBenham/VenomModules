@@ -3,8 +3,9 @@
 ## 2.1.x (2023-xx-xx)
 ### Enhancements
 - Bernoulli Switch
-  -  Add anti-pop switching option to module context menu
-  -  Add presets to emulate the four possible Mutable Instruments Branches configurations
+  - The A and B outputs are now guaranteed to produce the same number of channels
+  - Add anti-pop switching and oversampling options to the module context menu to support audio outputs
+  - Add presets to emulate the four possible Mutable Instruments Branches configurations
 - WinComp
   - Add oversampling module context menu options
   - Move Absolute Value and Invert module context menu options to individual port context menus
