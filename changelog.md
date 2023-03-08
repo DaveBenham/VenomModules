@@ -12,13 +12,13 @@
 - Recurse and Recurse Stereo
   - Show all normalled connections on faceplate
 - Rhythm Explorer
-  - Add "All - Reset" and "All - New" division modes
+  - Add "All - Reset" and "All - New" division modes. The "All - New" option enables creation of multiple rhythm generators that share a common clock, as well as shared  reset and dice triggers.
   - Add Reset Timing context menu option
   - Dice and Reset buttons now remain lit until they take effect
   - Preserve seed between sessions
   - User presets now preserve seed so entire pattern can be saved
   - Cleanup run start behavior
-  - Update Vermona Random Rhythm factory preset
+  - Update Vermona Random Rhythm factory preset to support two rhythm generators, like the Vermona.
   - Round the square button corners
 
 ## 2.0.1 (2023-02-12)
