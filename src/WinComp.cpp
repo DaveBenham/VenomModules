@@ -53,7 +53,7 @@ struct WinComp : Module {
     LIGHTS_LEN
   };
   
-  float gateTypes[6][2] = {{0.f,1.f},{-1.f,1.f},{0.f,5.f},{-5.f,5.f},{0.f,10.f},{-10.f,10.f}};
+  float gateTypes[6][3] = {{0.f,1.f,0.5f},{-1.f,1.f,0.f},{0.f,5.f,2.5f},{-5.f,5.f,0.f},{0.f,10.f,5.f},{-10.f,10.f,0.f}};
   int gateType = 4;
   
   enum ModPorts {
@@ -80,21 +80,32 @@ struct WinComp : Module {
   bool invClampOld = false;
   bool invOverOld = false;
 
-  OversampleFilter_4 upSample[PORT_MAX_CHANNELS],
-                     downSample1[PORT_MAX_CHANNELS],
-                     downSample2[PORT_MAX_CHANNELS],
-                     downSample3[PORT_MAX_CHANNELS];
+  OversampleFilter_4 aUpSample[4], bUpSample[4], tolUpSample[4],
+                     minDownSample[4], maxDownSample[4],
+                     clampDownSample[4], overDownSample[4],
+                     eqDownSample[4], neqDownSample[4],
+                     leqDownSample[4], geqDownSample[4],
+                     lsDownSample[4], grDownSample[4];
 
   #include "ThemeModVars.hpp"
 
   dsp::ClockDivider lightDivider;
 
   void initializeOversample(){
-    for (int c=0; c<PORT_MAX_CHANNELS; c++){
-      upSample[c].setOversample(oversample);
-      downSample1[c].setOversample(oversample);
-      downSample2[c].setOversample(oversample);
-      downSample3[c].setOversample(oversample);
+    for (int c=0; c<4; c++){
+      aUpSample[c].setOversample(oversample);
+      bUpSample[c].setOversample(oversample);
+      tolUpSample[c].setOversample(oversample);
+      minDownSample[c].setOversample(oversample);
+      maxDownSample[c].setOversample(oversample);
+      clampDownSample[c].setOversample(oversample);
+      overDownSample[c].setOversample(oversample);
+      eqDownSample[c].setOversample(oversample);
+      neqDownSample[c].setOversample(oversample);
+      leqDownSample[c].setOversample(oversample);
+      geqDownSample[c].setOversample(oversample);
+      lsDownSample[c].setOversample(oversample);
+      grDownSample[c].setOversample(oversample);
     }
   }
 
@@ -134,116 +145,103 @@ struct WinComp : Module {
     bool anyGr = false;
     bool anyLs = false;
 
-    bool down1 = outputs[MIN_OUTPUT].isConnected() ||
-                 outputs[MAX_OUTPUT].isConnected() ||
-                 outputs[CLAMP_OUTPUT].isConnected() ||
-                 outputs[OVER_OUTPUT].isConnected();
-    bool down2 = outputs[EQ_OUTPUT].isConnected() ||
-                 outputs[NEQ_OUTPUT].isConnected() ||
-                 outputs[LSEQ_OUTPUT].isConnected() ||
-                 outputs[GREQ_OUTPUT].isConnected();
-    bool down3 = outputs[LS_OUTPUT].isConnected() ||
-                 outputs[GR_OUTPUT].isConnected();
+    bool aOS = oversample>1 && inputs[A_INPUT].isConnected();
+    bool bOS = oversample>1 && inputs[B_INPUT].isConnected();
+    bool tolOS = oversample>1 && inputs[TOL_INPUT].isConnected();
 
-    float low = gateTypes[gateType][0];
-    float high = gateTypes[gateType][1];
-    for (int c = 0; c < channels; c++) {
-      float a = inputs[A_INPUT].getPolyVoltage(c) + aOffset;
-      float b = inputs[B_INPUT].getPolyVoltage(c) + bOffset;
-      float tol = std::fabs(inputs[TOL_INPUT].getPolyVoltage(c) + tolOffset);
-      float minVal=0, maxVal=0, clampVal=0, overVal=0,
-            eqVal=0, neqVal=0, leqVal=0, geqVal=0, lsVal=0, grVal=0;
+    bool compMin = outputs[MIN_OUTPUT].isConnected();
+    bool compMax = outputs[MAX_OUTPUT].isConnected();
+    bool compClamp = outputs[CLAMP_OUTPUT].isConnected();
+    bool compOver = outputs[OVER_OUTPUT].isConnected();
+    bool compEq = outputs[EQ_OUTPUT].isConnected();
+    bool compNeq = outputs[NEQ_OUTPUT].isConnected();
+    bool compLeq = outputs[LSEQ_OUTPUT].isConnected();
+    bool compGeq = outputs[GREQ_OUTPUT].isConnected();
+    bool compLs = outputs[LS_OUTPUT].isConnected();
+    bool compGr = outputs[GR_OUTPUT].isConnected();
+
+    bool processLights = lightDivider.process();
+    using float_4 = simd::float_4;
+    float_4 low = gateTypes[gateType][0];
+    float_4 high = gateTypes[gateType][1];
+    float mid = gateTypes[gateType][2];
+    for (int c = 0; c < channels; c += 4) {
+      float_4 a = inputs[A_INPUT].getPolyVoltageSimd<float_4>(c) + aOffset;
+      float_4 b = inputs[B_INPUT].getPolyVoltageSimd<float_4>(c) + bOffset;
+      float_4 tol = simd::fabs(inputs[TOL_INPUT].getPolyVoltageSimd<float_4>(c)) + tolOffset;
+      float_4 minVal=float_4::zero(), maxVal=float_4::zero(), clampVal=float_4::zero(), overVal=float_4::zero(),
+            eqVal=float_4::zero(), neqVal=float_4::zero(), leqVal=float_4::zero(), geqVal=float_4::zero(),
+            lsVal=float_4::zero(), grVal=float_4::zero();
       for (int i=0; i<oversample; i++){
-        if (oversample>1) {
-          simd::float_4 ups = upSample[c].process( simd::float_4(
-            i ? 0.f : a*oversample,
-            i ? 0.f : b*oversample,
-            i ? 0.f : tol*oversample,
-            0.f
-          ));
-          a = ups.s[0];
-          b = ups.s[1];
-          tol = ups.s[2];
-        }
+        if (aOS) a = aUpSample[c/4].process(i ? float_4::zero() : a*oversample);
+        if (bOS) b = bUpSample[c/4].process(i ? float_4::zero() : b*oversample);
+        if (tolOS) tol = tolUpSample[c/4].process(i ? float_4::zero() : tol*oversample);
 
-        float bMin = b - tol;
-        float bMax = b + tol;
+        float_4 bMin = b - tol;
+        float_4 bMax = b + tol;
 
-        minVal = std::min(a, b);
-        if (absPort[MIN_PORT]) minVal = std::fabs(minVal);
+        minVal = simd::fmin(a, b);
+        if (absPort[MIN_PORT]) minVal = simd::fabs(minVal);
         if (invPort[MIN_PORT]) minVal = -minVal;
 
-        maxVal = std::max(a, b);
-        if (absPort[MAX_PORT]) maxVal = std::fabs(maxVal);
+        maxVal = simd::fmax(a, b);
+        if (absPort[MAX_PORT]) maxVal = simd::fabs(maxVal);
         if (invPort[MAX_PORT]) maxVal = -maxVal;
 
-        float clamp = a;
-        bool over = false;
-        if (a > bMax) {
-          clamp = bMax;
-          over = true;
-        }
-        else if (a < bMin) {
-          clamp = bMin;
-          over = true;
-        }
-        clampVal = absPort[CLAMP_PORT] ? std::fabs(clamp) : clamp;
+        float_4 clamp = a;
+        float_4 aOverB = a > bMax;
+        float_4 aUnderB = a < bMin;
+        clamp = simd::ifelse(aOverB, bMax, clamp);
+        clamp = simd::ifelse(aUnderB, bMin, clamp);
+        clampVal = absPort[CLAMP_PORT] ? simd::fabs(clamp) : clamp;
         if (invPort[CLAMP_PORT]) clampVal = -clampVal;
+
         overVal = a - clamp;
-        if (absPort[OVER_PORT]) overVal = std::fabs(overVal);
+        if (absPort[OVER_PORT]) overVal = simd::fabs(overVal);
         if (invPort[OVER_PORT]) overVal = -overVal;
 
-        eqVal = over ? low : high;
-        anyEq = anyEq || !over;
-        neqVal = over ? high : low;
-        anyNeq = anyNeq || over;
+        eqVal = simd::ifelse(aOverB, low, high);
+        eqVal = simd::ifelse(aUnderB, low, eqVal);
+        neqVal = simd::ifelse(aOverB, high, low);
+        neqVal = simd::ifelse(aUnderB, high, neqVal);
 
-        bool cond = a <= b + tol;
-        leqVal = cond ? high : low;
-        anyLsEq = anyLsEq || cond;
-        cond = a >= b - tol;
-        geqVal = cond ? high : low;
-        anyGrEq = anyGrEq || cond;
+        leqVal = simd::ifelse(a <= b + tol, high, low);
+        geqVal = simd::ifelse(a >= b - tol, high, low);
 
-        cond = a < b - tol;
-        lsVal = cond ? high : low;
-        anyLs = anyLs || cond;
-        cond = a > b + tol;
-        grVal = cond ? high : low;
-        anyGr = anyGr || cond;
+        lsVal = simd::ifelse(a < b - tol, high, low);
+        grVal = simd::ifelse(a > b - tol, high, low);
 
         if (oversample>1) {
-          if (down1) {
-            simd::float_4 downs = downSample1[c].process( simd::float_4(minVal,maxVal,clampVal,overVal));
-            minVal = downs.s[0];
-            maxVal = downs.s[1];
-            clampVal = downs.s[2];
-            overVal = downs.s[3];
-          }
-          if (down2) {
-            simd::float_4 downs = downSample2[c].process( simd::float_4(eqVal,neqVal,leqVal,geqVal));
-            eqVal = downs.s[0];
-            neqVal = downs.s[1];
-            leqVal = downs.s[2];
-            geqVal = downs.s[3];
-          }
-          if (down3) {
-            simd::float_4 downs = downSample3[c].process( simd::float_4(lsVal,grVal,0.f,0.f));
-            lsVal = downs.s[0];
-            grVal = downs.s[1];
-          }
+          if (compMin) minVal = minDownSample[c/4].process(minVal);
+          if (compMax) maxVal = maxDownSample[c/4].process(maxVal);
+          if (compClamp) clampVal = clampDownSample[c/4].process(clampVal);
+          if (compOver) overVal = overDownSample[c/4].process(overVal);
+          if (compEq) eqVal = eqDownSample[c/4].process(eqVal);
+          if (compNeq) neqVal = neqDownSample[c/4].process(neqVal);
+          if (compLeq) leqVal = leqDownSample[c/4].process(leqVal);
+          if (compGeq) geqVal = geqDownSample[c/4].process(geqVal);
+          if (compLs) lsVal = lsDownSample[c/4].process(lsVal);
+          if (compGr) grVal = grDownSample[c/4].process(grVal);
+        }
+        if (processLights && i == oversample-1) {
+          anyEq = anyEq || eqVal.s[0]>mid || eqVal.s[1]>mid || eqVal.s[2]>mid || eqVal.s[3]>mid;
+          anyNeq = anyNeq || neqVal.s[0]>mid || neqVal.s[1]>mid || neqVal.s[2]>mid || neqVal.s[3]>mid;
+          anyLsEq = anyLsEq || leqVal.s[0]>mid || leqVal.s[1]>mid || leqVal.s[2]>mid || leqVal.s[3]>mid;
+          anyGrEq = anyGrEq || geqVal.s[0]>mid || geqVal.s[1]>mid || geqVal.s[2]>mid || geqVal.s[3]>mid;
+          anyLs = anyLs || lsVal.s[0]>mid || lsVal.s[1]>mid || lsVal.s[2]>mid || lsVal.s[3]>mid;
+          anyGr = anyGr || grVal.s[0]>mid || grVal.s[1]>mid || grVal.s[2]>mid || grVal.s[3]>mid;
         }
       }
-      outputs[MIN_OUTPUT].setVoltage(minVal, c);
-      outputs[MAX_OUTPUT].setVoltage(maxVal, c);
-      outputs[CLAMP_OUTPUT].setVoltage(clampVal, c);
-      outputs[OVER_OUTPUT].setVoltage(overVal, c);
-      outputs[EQ_OUTPUT].setVoltage(eqVal, c);
-      outputs[NEQ_OUTPUT].setVoltage(neqVal, c);
-      outputs[LSEQ_OUTPUT].setVoltage(leqVal, c);
-      outputs[GREQ_OUTPUT].setVoltage(geqVal, c);
-      outputs[LS_OUTPUT].setVoltage(lsVal, c);
-      outputs[GR_OUTPUT].setVoltage(grVal, c);
+      outputs[MIN_OUTPUT].setVoltageSimd(minVal, c);
+      outputs[MAX_OUTPUT].setVoltageSimd(maxVal, c);
+      outputs[CLAMP_OUTPUT].setVoltageSimd(clampVal, c);
+      outputs[OVER_OUTPUT].setVoltageSimd(overVal, c);
+      outputs[EQ_OUTPUT].setVoltageSimd(eqVal, c);
+      outputs[NEQ_OUTPUT].setVoltageSimd(neqVal, c);
+      outputs[LSEQ_OUTPUT].setVoltageSimd(leqVal, c);
+      outputs[GREQ_OUTPUT].setVoltageSimd(geqVal, c);
+      outputs[LS_OUTPUT].setVoltageSimd(lsVal, c);
+      outputs[GR_OUTPUT].setVoltageSimd(grVal, c);
     }
 
     outputs[MAX_OUTPUT].setChannels(channels);
@@ -257,7 +255,7 @@ struct WinComp : Module {
     outputs[GR_OUTPUT].setChannels(channels);
     outputs[LS_OUTPUT].setChannels(channels);
 
-    if (lightDivider.process()) {
+    if (processLights) {
       float lightTime = args.sampleTime * lightDivider.getDivision();
       
       lights[OVERSAMPLE_LIGHT].setBrightness(oversample>1);

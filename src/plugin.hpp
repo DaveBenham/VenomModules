@@ -20,7 +20,6 @@ extern Model* modelRecurseStereo;
 extern Model* modelRhythmExplorer;
 extern Model* modelVCO;
 extern Model* modelWinComp;
-extern Model* modelWinComp2;
 
 ////////////////////////////////
 
@@ -149,6 +148,14 @@ template <typename TBase = GrayModuleLightWidget>
 struct YellowBlueLight : TBase {
   YellowBlueLight() {
     this->addBaseColor(SCHEME_YELLOW);
+    this->addBaseColor(SCHEME_BLUE);
+  }
+};
+
+template <typename TBase = GrayModuleLightWidget>
+struct RedBlueLight : TBase {
+  RedBlueLight() {
+    this->addBaseColor(SCHEME_RED);
     this->addBaseColor(SCHEME_BLUE);
   }
 };
