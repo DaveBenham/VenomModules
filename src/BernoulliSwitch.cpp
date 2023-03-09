@@ -171,11 +171,11 @@ struct BernoulliSwitch : Module {
       float_4 aIn, bIn, swapGain, remainderGain;
       for (int i=0; i<oversample; i++) {
         if (oversample > 1)
-          trigIn = trigUpSample[c].process(i ? float_4::zero() : trigIn * oversample);
+          trigIn = trigUpSample[c/4].process(i ? float_4::zero() : trigIn * oversample);
         for (int j=0; j<4 && c+j<channels; j++) {
           int cj = c + j;
           if(trig[cj].process(invTrig ? -trigIn.s[j] : trigIn.s[j], fall, rise)){
-            bool toss = (prob.s[cj] == 1.0f || random::uniform() < prob.s[cj]);
+            bool toss = (prob.s[j] == 1.0f || random::uniform() < prob.s[j]);
             switch(mode) {
               case TOGGLE_MODE:
                 if (toss) swap[cj] = !swap[cj];
@@ -193,7 +193,7 @@ struct BernoulliSwitch : Module {
             }
           }
           if (mode == GATE_MODE && !swap[cj] && !trig[cj].isHigh()) {
-            swap[c] = true;
+            swap[cj] = true;
             if (i == oversample-1 && cj == lightChannel){
               lights[NO_SWAP_LIGHT].setBrightness(false);
               lights[SWAP_LIGHT].setBrightness(true);
