@@ -1,14 +1,17 @@
+// Venom Modules (c) 2022 Dave Benham
+// Licensed under GNU GPLv3
+
 #pragma once
 #include "rack.hpp"
-#define CUTOFF 0.25f
+#define OVERSAMPLE_CUTOFF 0.25f
 
 class OversampleFilter {
   public:
     void setOversample(int oversample) {
-      float cutoff = CUTOFF / oversample;
-      f[0].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, .51763809, 1);
-      f[1].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.70710678, 1);
-      f[2].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 1.9318517, 1);
+      float cutoff = OVERSAMPLE_CUTOFF / oversample;
+      f[0].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, .51763809f, 1);
+      f[1].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.70710678f, 1);
+      f[2].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 1.9318517f, 1);
     }
 
     float process(float x) {
@@ -25,10 +28,10 @@ class OversampleFilter {
 class OversampleFilter_4 {
   public:
     void setOversample(int oversample) {
-      float cutoff = CUTOFF / oversample;
+      float cutoff = OVERSAMPLE_CUTOFF / oversample;
       f[0].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, .51763809f, 1);
-      f[1].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.70710678, 1);
-      f[2].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 1.9318517, 1);
+      f[1].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.70710678f, 1);
+      f[2].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 1.9318517f, 1);
     }
 
     rack::simd::float_4 process(rack::simd::float_4 x) {
