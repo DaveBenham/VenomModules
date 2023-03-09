@@ -173,35 +173,36 @@ struct BernoulliSwitch : Module {
         if (oversample > 1)
           trigIn = trigUpSample[c].process(i ? float_4::zero() : trigIn * oversample);
         for (int j=0; j<4 && c+j<channels; j++) {
-          if(trig[c+j].process(invTrig ? -trigIn.s[j] : trigIn.s[j], fall, rise)){
-            bool toss = (prob.s[c+j] == 1.0f || random::uniform() < prob.s[c+j]);
+          int cj = c + j;
+          if(trig[cj].process(invTrig ? -trigIn.s[j] : trigIn.s[j], fall, rise)){
+            bool toss = (prob.s[cj] == 1.0f || random::uniform() < prob.s[cj]);
             switch(mode) {
               case TOGGLE_MODE:
-                if (toss) swap[c+j] = !swap[c+j];
+                if (toss) swap[cj] = !swap[cj];
                 break;
               case SWAP_MODE:
-                swap[c+j] = toss;
+                swap[cj] = toss;
                 break;
               case GATE_MODE:
-                swap[c+j] = !toss;
+                swap[cj] = !toss;
                 break;
             }
-            if (i == oversample-1 && c+j == lightChannel) {
-              lights[NO_SWAP_LIGHT].setBrightness(!swap[c+j]);
-              lights[SWAP_LIGHT].setBrightness(swap[c+j]);
+            if (i == oversample-1 && cj == lightChannel) {
+              lights[NO_SWAP_LIGHT].setBrightness(!swap[cj]);
+              lights[SWAP_LIGHT].setBrightness(swap[cj]);
             }
           }
-          if (mode == GATE_MODE && !swap[c+j] && !trig[c+j].isHigh()) {
+          if (mode == GATE_MODE && !swap[cj] && !trig[cj].isHigh()) {
             swap[c] = true;
-            if (i == oversample-1 && c+j == lightChannel){
+            if (i == oversample-1 && cj == lightChannel){
               lights[NO_SWAP_LIGHT].setBrightness(false);
               lights[SWAP_LIGHT].setBrightness(true);
             }
           }
           if (deClick)
-            fade[c+j].process(args.sampleTime, swap[c+j]);
+            fade[cj].process(args.sampleTime, swap[cj]);
           else
-            fade[c+j].out = swap[c+j];
+            fade[cj].out = swap[cj];
         }
 
         int c2End = c+1;
