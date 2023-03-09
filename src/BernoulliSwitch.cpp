@@ -171,9 +171,9 @@ struct BernoulliSwitch : Module {
       float_4 aIn, bIn, swapGain, remainderGain;
       for (int i=0; i<oversample; i++) {
         if (oversample > 1)
-          trigIn = trigUpSample[c].process(i ? float_4::zero() : trigIn0 * oversample);
+          trigIn = trigUpSample[c].process(i ? float_4::zero() : trigIn * oversample);
         for (int j=0; j<4 && c+j<channels; j++) {
-          if(trig[c+j].process(invTrig ? -trigIn[j] : trigIn[j], fall, rise)){
+          if(trig[c+j].process(invTrig ? -trigIn.s[j] : trigIn.s[j], fall, rise)){
             bool toss = (prob.s[c+j] == 1.0f || random::uniform() < prob.s[c+j]);
             switch(mode) {
               case TOGGLE_MODE:
@@ -209,13 +209,11 @@ struct BernoulliSwitch : Module {
           c2End = xChannels = aChannels > bChannels ? aChannels : bChannels;
         for (int c2=c; c2<c2End; c2+=4) {
           int c0 = c2/4;
+          aIn = i ? float_4::zero() : inputs[A_INPUT].getNormalPolyVoltageSimd<float_4>(trigIn0[c/4], c2) * scaleA + offA;
+          bIn = i ? float_4::zero() : inputs[B_INPUT].getPolyVoltageSimd<float_4>(c2) * scaleB + offB;
           if (oversample>1) {
-            aIn = aUpSample[c0].process( i ? float_4::zero() : (inputs[A_INPUT].getNormalPolyVoltageSimd<float_4>(trigIn0[c/4], c2) * scaleA + offA) * oversample);
-            bIn = bUpSample[c0].process(i ? float_4::zero() : (inputs[B_INPUT].getPolyVoltageSimd<float_4>(c2) * scaleB + offB) * oversample);
-          }
-          else {
-            aIn = inputs[A_INPUT].getNormalPolyVoltageSimd<float_4>(trigIn0[c/4], c2) * scaleA + offA;
-            bIn = inputs[B_INPUT].getPolyVoltageSimd<float_4>(c2) * scaleB + offB;
+            aIn = aUpSample[c0].process(aIn * oversample);
+            bIn = bUpSample[c0].process(bIn * oversample);
           }
           swapGain = (channels == 1 && !inputPolyControl ? float_4(fade[0].out) : float_4(fade[c].out, fade[c+1].out, fade[c+2].out, fade[c+3].out));
           remainderGain = 1.f - swapGain;
