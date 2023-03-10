@@ -291,27 +291,25 @@ struct BernoulliSwitchWidget : ModuleWidget {
     BernoulliSwitch* module = dynamic_cast<BernoulliSwitch*>(this->module);
     assert(module);
     menu->addChild(new MenuSeparator);
-    std::vector<std::string> lightChannelLabels;
-    for (int i=1; i<=16; i++)
-      lightChannelLabels.push_back(std::to_string(i));
-    lightChannelLabels.push_back("Off");
+    menu->addChild(createIndexPtrSubmenuItem(
+      "Audio process",
+      {"Off","Antipop crossfade","oversample x2","oversample x4","oversample x8","oversample x16"},
+      &module->audioProc
+    ));
     menu->addChild(createIndexPtrSubmenuItem(
       "Polyphony control",
       {"Trig and Prob only", "All inputs"},
       &module->inputPolyControl
     ));
-    menu->addChild(createIndexSubmenuItem("Monitor channel", lightChannelLabels,
+    menu->addChild(createIndexSubmenuItem(
+      "Monitor channel",
+      {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","Off"},
       [=]() {return module->lightChannel;},
       [=](int i) {
         module->lightChannel = i;
         module->lights[BernoulliSwitch::NO_SWAP_LIGHT].setBrightness(i > module->oldChannels ? false : !module->swap[i]);
         module->lights[BernoulliSwitch::SWAP_LIGHT].setBrightness(i > module->oldChannels ? false : module->swap[i]);
       }
-    ));
-    menu->addChild(createIndexPtrSubmenuItem(
-      "Audio process",
-      {"Off","Antipop crossfade","oversample x2","oversample x4","oversample x8","oversample x16"},
-      &module->audioProc
     ));
     #include "ThemeMenu.hpp"
   }
