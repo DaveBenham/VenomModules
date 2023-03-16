@@ -1,7 +1,7 @@
 // Venom Modules (c) 2022 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "OverSampleFilter.hpp"
+#include "OversampleFilter.hpp"
 #include "plugin.hpp"
 #include "ThemeStrings.hpp"
 
