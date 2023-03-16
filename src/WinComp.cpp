@@ -209,7 +209,7 @@ struct WinComp : Module {
         geqVal = simd::ifelse(a >= b - tol, high, low);
 
         lsVal = simd::ifelse(a < b - tol, high, low);
-        grVal = simd::ifelse(a > b - tol, high, low);
+        grVal = simd::ifelse(a > b + tol, high, low);
 
         if (oversample>1) {
           if (compMin) minVal = minDownSample[c/4].process(minVal);
