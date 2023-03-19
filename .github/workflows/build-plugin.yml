@@ -21,13 +21,14 @@ jobs:
         with:
           path: plugin.json
           key: ${{ github.sha }}-${{ github.run_id }}
-      - run: |
+      - name: Run modify version
+        # only modify plugin version if no tag was created
+        if: "! startsWith(github.ref, 'refs/tags/v')"
+        run: |
           gitrev=`git rev-parse --short HEAD`
           pluginversion=`jq -r '.version' plugin.json`
           echo "Set plugin version from $pluginversion to $pluginversion-$gitrev"
           cat <<< `jq --arg VERSION "$pluginversion-$gitrev" '.version=$VERSION' plugin.json` > plugin.json
-        # only modify plugin version if no tag was created
-        if: "! startsWith(github.ref, 'refs/tags/v')"
 
   build:
     name: ${{ matrix.platform }}
