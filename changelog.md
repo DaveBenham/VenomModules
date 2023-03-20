@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.1.0 (2023-03-16)
+## 2.1.4 (2023-03-20)
 ### Enhancements
 - Bernoulli Switch
   - Add anti-pop switching and oversampling options to the module context menu to better support audio output
