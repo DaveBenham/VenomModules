@@ -70,6 +70,8 @@ Bernoulli Switch is fully polyphonic. There are two modes available from the con
   
   Polphonic inputs in A and/or B can always be scrambled across A and B outputs.
 
+A small LED between the INPUT ports glows yellow when polyphony detection is configured for "All inputs". The LED is off (black) when configured for "TRIG and PROB only".
+
 ### Active Route Monitoring
 A pair of yellow lights indicate the current routing configuration. A yellow light glowing to the left of the PROB knob indicates a no-swap configuration. A glowing yellow light to the right indicates a swap configuration.
 
