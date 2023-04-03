@@ -45,6 +45,7 @@ void init(Plugin* p) {
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelCloneMerge);
   p->addModel(modelHQ);
+  p->addModel(modelMix4);
   p->addModel(modelPolyClone);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);

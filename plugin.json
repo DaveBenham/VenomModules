@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.1.4",
+  "version": "2.2.dev",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -46,6 +46,18 @@
       "tags": [
         "Polyphonic",
         "Quantizer"
+      ]
+    },
+    {
+      "slug": "Mix4",
+      "name": "Mix 4",
+      "description": "Compact audio or CV mixer, attenuator, inverter, amplifier, and/or offset",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-4",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
       ]
     },
     {
