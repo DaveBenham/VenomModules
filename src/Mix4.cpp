@@ -80,7 +80,7 @@ struct Mix4 : Module {
         q->unit = mode <= 1 ? " dB" : !connected[i] ? " V" : mode == 2 ? "%" : "x";
         q->displayBase = mode <= 1 ? -10.f : 0.f;
         q->displayMultiplier = mode <= 1 ? 20.f : (mode == 2 && connected[i]) ? 100.f : (mode == 3 && connected[i]) ? 2.f : 10.f;
-        q->displayOffset = mode <= 1 ? 0.f : (mode == 1 && connected[i]) ? -100.f : (mode == 3 && connected[i]) ? -2.f : -10.f;
+        q->displayOffset = mode <= 1 ? 0.f : (mode == 2 && connected[i]) ? -100.f : (mode == 3 && connected[i]) ? -2.f : -10.f;
       }
       q = paramQuantities[MIX_LEVEL_PARAM];
       q->unit = mode <= 1 ? " dB" : mode == 2 ? "%" : "x";
