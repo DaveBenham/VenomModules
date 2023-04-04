@@ -67,8 +67,8 @@ struct WinComp : Module {
   bool invPort[4] = {false,false,false,false};
   
   int oversample = 1;
-  std::vector<std::string> oversampleLabels = {"Off","x2","x4","x8","x16"};
-  std::vector<int> oversampleValues = {1,2,4,8,16};
+  std::vector<std::string> oversampleLabels = {"Off","x2","x4","x8","x16","x32"};
+  std::vector<int> oversampleValues = {1,2,4,8,16,32};
 
   bool absMinOld = false;
   bool absMaxOld = false;
