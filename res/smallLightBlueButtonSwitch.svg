@@ -8,7 +8,7 @@
    version="1.1"
    id="svg82808"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
-   sodipodi:docname="smallPurpleButtonSwitch.svg"
+   sodipodi:docname="smalLightlBlueButtonSwitch.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,13 +24,13 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="45.254834"
-     inkscape:cx="7.2920387"
-     inkscape:cy="6.1208931"
-     inkscape:window-width="1487"
-     inkscape:window-height="860"
-     inkscape:window-x="2085"
-     inkscape:window-y="109"
-     inkscape:window-maximized="0"
+     inkscape:cx="7.2809901"
+     inkscape:cy="6.1319416"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     inkscape:window-x="1592"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      inkscape:showpageshadow="false" />
   <defs
@@ -40,13 +40,13 @@
      inkscape:groupmode="layer"
      id="layer1">
     <circle
-       style="fill:#922294;fill-opacity:1;stroke:#353535;stroke-width:0.110226;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#4d8296;fill-opacity:1;stroke:#353535;stroke-width:0.110226;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path82978"
        cx="1.5"
        cy="1.5000001"
        r="1.4448868" />
     <ellipse
-       style="fill:#f720f4;fill-opacity:1;stroke:#6e186e;stroke-width:0.0588783;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#4dc1f0;fill-opacity:1;stroke:#354b58;stroke-width:0.0588783;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path82978-4"
        cx="1.5"
        cy="1.5000001"
