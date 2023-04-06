@@ -34,7 +34,7 @@ struct Mix4 : Module {
   float normal = 0.f;
   float scale = 1.f;
   float offset = 0.f;
-  float oversample = 4.f;
+  int oversample = 4;
   OversampleFilter_4 outUpSample[4], outDownSample[4];
 
   #include "ThemeModVars.hpp"
@@ -172,11 +172,11 @@ struct Mix4 : Module {
       if (clip == 1)
         out = clamp(out, -10.f, 10.f);
       if (clip == 2)
-        out = 10.f * tanh_rational5(out/9.5f);
+        out = softClip(out);
       if (clip == 3){
         for (int i=0; i<oversample; i++){
           out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
-          out = 10.f * tanh_rational5(out/9.5f);
+          out = softClip(out);
           out = outDownSample[c/4].process(out);
         }
       }

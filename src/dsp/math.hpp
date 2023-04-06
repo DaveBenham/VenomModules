@@ -1,27 +1,27 @@
 #include <array>
 
-// Fifth-order rational approximation to tanh
-inline float tanh_rational5(float x) {
-  if (x <= -3.0f) {
-    return -1.0f;
-  }
-  if (x >= 3.0f) {
-    return 1.0f;
-  }
-  float x2 = x * x;
-  return x * (27.0f + x2) / (27.0f + 9.0f * x2);
-}
 
-// Fifth-order rational approximation to tanh (simd)
 template <typename T>
 T tanh_rational5(T x) {
-  T overmask = (x >= static_cast<T>(3.0));
-  T undermask = (x <= static_cast<T>(-3.0));
   T x2 = x * x;
-  x = x * (static_cast<T>(27.0) + x2) / (static_cast<T>(27.0) + static_cast<T>(9.0) * x2);
-  return rack::simd::ifelse(overmask, static_cast<T>(1.0), rack::simd::ifelse(undermask, static_cast<T>(-1.0), x));
+  return simd::ifelse(
+    simd::fabs(x) >= static_cast<T>(3.f),
+    simd::sgn(x),
+    x * (static_cast<T>(27.f) + x2) / (static_cast<T>(27.f) + static_cast<T>(9.f) * x2)
+  );
 }
 
+template <typename T>
+T softClip(T x, float drive = 0) {
+  x /= (9.5f - drive * 9.f);
+  T x2 = x * x;
+  x = simd::ifelse(
+    simd::fabs(x) >= static_cast<T>(3.f),
+    simd::sgn(x),
+    x * (static_cast<T>(27.f) + x2) / (static_cast<T>(27.f) + static_cast<T>(9.f) * x2)
+  );
+  return x * static_cast<T>(10.f);
+}
 
 using std::array;
 
