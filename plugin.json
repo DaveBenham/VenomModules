@@ -61,6 +61,18 @@
       ]
     },
     {
+      "slug": "Mix4Stereo",
+      "name": "Mix 4 Stereo",
+      "description": "Stereo compact audio or CV mixer, attenuator, inverter, amplifier, and/or offset",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-4",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "PolyClone",
       "name": "Poly Clone",
       "description": "Clone each channel of a polyphonic input and merge the results into a single polyphonic output",

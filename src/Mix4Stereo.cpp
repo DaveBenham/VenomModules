@@ -6,10 +6,10 @@
 #include "OversampleFilter.hpp"
 #include "ThemeStrings.hpp"
 
-#define MODULE_NAME Mix4
-static const std::string moduleName = "Mix4";
+#define MODULE_NAME Mix4Stereo
+static const std::string moduleName = "Mix4Stereo";
 
-struct Mix4 : Module {
+struct Mix4Stereo : Module {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 4),
     MIX_LEVEL_PARAM,
@@ -18,11 +18,13 @@ struct Mix4 : Module {
     PARAMS_LEN
   };
   enum InputId {
-    ENUMS(INPUTS, 4),
+    ENUMS(LEFT_INPUTS, 4),
+    ENUMS(RIGHT_INPUTS, 4),
     INPUTS_LEN
   };
   enum OutputId {
-    MIX_OUTPUT,
+    LEFT_OUTPUT,
+    RIGHT_OUTPUT,
     OUTPUTS_LEN
   };
   enum LightId {
@@ -35,7 +37,7 @@ struct Mix4 : Module {
   float scale = 1.f;
   float offset = 0.f;
   int oversample = 4;
-  OversampleFilter_4 outUpSample[4], outDownSample[4];
+  OversampleFilter_4 leftUpSample[4], leftDownSample[4], rightUpSample[4], rightDownSample[4];
 
   #include "ThemeModVars.hpp"
 
@@ -89,7 +91,7 @@ struct Mix4 : Module {
   ParamLock paramLocks[PARAMS_LEN];
   bool paramLocksInitialized = false;
 
-  Mix4() {
+  Mix4Stereo() {
     struct FixedSwitchQuantity : SwitchQuantity {
       std::string getDisplayValueString() override {
         return labels[getValue()];
@@ -98,19 +100,23 @@ struct Mix4 : Module {
     config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < 4; i++){
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);
-      configInput(INPUTS+i, string::f("Channel %d", i + 1));
+      configInput(LEFT_INPUTS+i, string::f("Left channel %d", i + 1));
+      configInput(RIGHT_INPUTS+i, string::f("Right channel %d", i + 1));
     }
     configParam(MIX_LEVEL_PARAM, 0.f, 2.f, 1.f, "Mix level", " dB", -10.f, 20.f);
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {"Unipolar audio dB", "Unipolar audio dB poly sum", "Bipolar CV%", "Bipolar CV x2", "Bipolar CV x10"});
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
-    configOutput(MIX_OUTPUT, "Mix");
+    configOutput(LEFT_OUTPUT, "Left Mix");
+    configOutput(RIGHT_OUTPUT, "Right Mix");
     initOversample();
   }
 
   void initOversample(){
     for (int i=0; i<4; i++){
-      outUpSample[i].setOversample(oversample);
-      outDownSample[i].setOversample(oversample);
+      leftUpSample[i].setOversample(oversample);
+      leftDownSample[i].setOversample(oversample);
+      rightUpSample[i].setOversample(oversample);
+      rightDownSample[i].setOversample(oversample);
     }
   }
 
@@ -128,15 +134,15 @@ struct Mix4 : Module {
       }
     }
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||
-        connected[0] != inputs[INPUTS + 0].isConnected() ||
-        connected[1] != inputs[INPUTS + 1].isConnected() ||
-        connected[2] != inputs[INPUTS + 2].isConnected() ||
-        connected[3] != inputs[INPUTS + 3].isConnected()
+        connected[0] != (inputs[LEFT_INPUTS + 0].isConnected() || inputs[RIGHT_INPUTS + 0].isConnected()) ||
+        connected[1] != (inputs[LEFT_INPUTS + 1].isConnected() || inputs[RIGHT_INPUTS + 1].isConnected()) ||
+        connected[2] != (inputs[LEFT_INPUTS + 2].isConnected() || inputs[RIGHT_INPUTS + 2].isConnected()) ||
+        connected[3] != (inputs[LEFT_INPUTS + 3].isConnected() || inputs[RIGHT_INPUTS + 3].isConnected())
     ){
       mode = static_cast<int>(params[MODE_PARAM].getValue());
       ParamQuantity* q;
       for (int i=0; i<4; i++) {
-        connected[i] = inputs[INPUTS + i].isConnected();
+        connected[i] = inputs[LEFT_INPUTS + i].isConnected() || inputs[RIGHT_INPUTS + i].isConnected();
         q = paramQuantities[LEVEL_PARAMS + i];
         q->unit = mode <= 1 ? " dB" : !connected[i] ? " V" : mode == 2 ? "%" : "x";
         q->displayBase = mode <= 1 ? -10.f : 0.f;
@@ -155,34 +161,64 @@ struct Mix4 : Module {
     }
     int clip = static_cast<int>(params[CLIP_PARAM].getValue());
 
-    int channels = mode == 1 ? 1 : std::max({1, inputs[INPUTS].getChannels(), inputs[INPUTS+1].getChannels(), inputs[INPUTS+2].getChannels(), inputs[INPUTS+3].getChannels()});
-    simd::float_4 out;
+    int channels = mode == 1 ? 1 : std::max({1,
+      inputs[LEFT_INPUTS].getChannels(), inputs[LEFT_INPUTS+1].getChannels(), inputs[LEFT_INPUTS+2].getChannels(), inputs[LEFT_INPUTS+3].getChannels(),
+      inputs[RIGHT_INPUTS].getChannels(), inputs[RIGHT_INPUTS+1].getChannels(), inputs[RIGHT_INPUTS+2].getChannels(), inputs[RIGHT_INPUTS+3].getChannels()
+    });
+    simd::float_4 leftOut, rightOut, left;
+    float channelScale, constant;
     for (int c=0; c<channels; c+=4){
-      out = mode == 1 ?
-            inputs[INPUTS+0].getVoltageSum() * (params[LEVEL_PARAMS+0].getValue()+offset)*scale
-          + inputs[INPUTS+1].getVoltageSum() * (params[LEVEL_PARAMS+1].getValue()+offset)*scale
-          + inputs[INPUTS+2].getVoltageSum() * (params[LEVEL_PARAMS+2].getValue()+offset)*scale
-          + inputs[INPUTS+3].getVoltageSum() * (params[LEVEL_PARAMS+3].getValue()+offset)*scale
-        :
-            inputs[INPUTS+0].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+0].getValue()+offset)*scale
-          + inputs[INPUTS+1].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+1].getValue()+offset)*scale
-          + inputs[INPUTS+2].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+2].getValue()+offset)*scale
-          + inputs[INPUTS+3].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+3].getValue()+offset)*scale;
-      out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
-      if (clip == 1)
-        out = clamp(out, -10.f, 10.f);
-      if (clip == 2)
-        out = softClip(out);
-      if (clip == 3){
-        for (int i=0; i<oversample; i++){
-          out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
-          out = softClip(out);
-          out = outDownSample[c/4].process(out);
+      leftOut = simd::float_4::zero();
+      rightOut = simd::float_4::zero();
+      if (mode == 1){
+        for (int i=0; i<4; i++){
+          channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
+          left = inputs[LEFT_INPUTS+i].getVoltageSum() * channelScale;
+          leftOut += left;
+          rightOut += inputs[RIGHT_INPUTS+i].isConnected() ?
+                      inputs[RIGHT_INPUTS+i].getVoltageSum() * channelScale : left;
         }
       }
-      outputs[MIX_OUTPUT].setVoltageSimd(out, c);
+      else {
+        for (int i=0; i<4; i++){
+          channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
+          if (connected[i]){
+            left = inputs[LEFT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c);
+            leftOut += left * channelScale;
+            rightOut += inputs[RIGHT_INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(left, c) * channelScale;
+          }
+          else {
+            constant = normal * channelScale;
+            leftOut += constant;
+            rightOut += constant;
+          }
+        }
+      }
+      leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+      rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+      if (clip == 1){
+        leftOut = clamp(leftOut, -10.f, 10.f);
+        rightOut = clamp(rightOut, -10.f, 10.f);
+      }
+      if (clip == 2){
+        leftOut = softClip(leftOut);
+        rightOut = softClip(rightOut);
+      }
+      if (clip == 3){
+        for (int i=0; i<oversample; i++){
+          leftOut = leftUpSample[c/4].process(i ? simd::float_4::zero() : leftOut*oversample);
+          leftOut = softClip(leftOut);
+          leftOut = leftDownSample[c/4].process(leftOut);
+          rightOut = rightUpSample[c/4].process(i ? simd::float_4::zero() : rightOut*oversample);
+          rightOut = softClip(rightOut);
+          rightOut = rightDownSample[c/4].process(rightOut);
+        }
+      }
+      outputs[LEFT_OUTPUT].setVoltageSimd(leftOut, c);
+      outputs[RIGHT_OUTPUT].setVoltageSimd(rightOut, c);
     }
-    outputs[MIX_OUTPUT].setChannels(channels);
+    outputs[LEFT_OUTPUT].setChannels(channels);
+    outputs[RIGHT_OUTPUT].setChannels(channels);
   }
 
   json_t* dataToJson() override {
@@ -206,7 +242,7 @@ struct Mix4 : Module {
   }
 };
 
-struct Mix4Widget : ModuleWidget {
+struct Mix4StereoWidget : ModuleWidget {
 
   struct GlowingSvgSwitch : app::SvgSwitch {
     void drawLayer(const DrawArgs& args, int layer) override {
@@ -220,7 +256,7 @@ struct Mix4Widget : ModuleWidget {
 
     void appendContextMenu(Menu* menu) override {
       if (module)
-        dynamic_cast<Mix4*>(this->module)->appendMenu(menu, this->paramId);
+        dynamic_cast<Mix4Stereo*>(this->module)->appendMenu(menu, this->paramId);
     }
   };
 
@@ -248,38 +284,44 @@ struct Mix4Widget : ModuleWidget {
   struct RoundSmallBlackKnobCustom : RoundSmallBlackKnob {
     void appendContextMenu(Menu* menu) override {
       if (module)
-        dynamic_cast<Mix4*>(this->module)->appendMenu(menu, this->paramId);
+        dynamic_cast<Mix4Stereo*>(this->module)->appendMenu(menu, this->paramId);
     }
   };
 
   struct RoundBlackKnobCustom : RoundBlackKnob {
     void appendContextMenu(Menu* menu) override {
       if (module)
-        dynamic_cast<Mix4*>(this->module)->appendMenu(menu, this->paramId);
+        dynamic_cast<Mix4Stereo*>(this->module)->appendMenu(menu, this->paramId);
     }
   };
 
-  Mix4Widget(Mix4* module) {
+  Mix4StereoWidget(Mix4Stereo* module) {
     setModule(module);
     setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
 
-    addParam(createParamCentered<RoundSmallBlackKnobCustom>(Vec(22.337, 34.295), module, Mix4::LEVEL_PARAMS+0));
-    addParam(createParamCentered<RoundSmallBlackKnobCustom>(Vec(22.337, 66.535), module, Mix4::LEVEL_PARAMS+1));
-    addParam(createParamCentered<RoundSmallBlackKnobCustom>(Vec(22.337, 98.775), module, Mix4::LEVEL_PARAMS+2));
-    addParam(createParamCentered<RoundSmallBlackKnobCustom>(Vec(22.337,131.014), module, Mix4::LEVEL_PARAMS+3));
-    addParam(createParamCentered<RoundBlackKnobCustom>(Vec(22.337,168.254), module, Mix4::MIX_LEVEL_PARAM));
-    addParam(createParamCentered<ModeSwitch>(Vec(37.491,50.415), module, Mix4::MODE_PARAM));
-    addParam(createParamCentered<ClipSwitch>(Vec(37.491,82.655), module, Mix4::CLIP_PARAM));
+    addParam(createParamCentered<RoundSmallBlackKnobCustom>(Vec(37.5, 34.295), module, Mix4Stereo::LEVEL_PARAMS+0));
+    addParam(createParamCentered<RoundSmallBlackKnobCustom>(Vec(37.5, 66.535), module, Mix4Stereo::LEVEL_PARAMS+1));
+    addParam(createParamCentered<RoundSmallBlackKnobCustom>(Vec(37.5, 98.775), module, Mix4Stereo::LEVEL_PARAMS+2));
+    addParam(createParamCentered<RoundSmallBlackKnobCustom>(Vec(37.5,131.014), module, Mix4Stereo::LEVEL_PARAMS+3));
+    addParam(createParamCentered<RoundBlackKnobCustom>(Vec(37.5,168.254), module, Mix4Stereo::MIX_LEVEL_PARAM));
+    addParam(createParamCentered<ModeSwitch>(Vec(62.443,50.415), module, Mix4Stereo::MODE_PARAM));
+    addParam(createParamCentered<ClipSwitch>(Vec(62.443,82.655), module, Mix4Stereo::CLIP_PARAM));
 
-    addInput(createInputCentered<PJ301MPort>(Vec(22.337,201.993), module, Mix4::INPUTS+0));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.337,235.233), module, Mix4::INPUTS+1));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.337,268.473), module, Mix4::INPUTS+2));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.337,301.712), module, Mix4::INPUTS+3));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.337,340.434), module, Mix4::MIX_OUTPUT));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.812,201.993), module, Mix4Stereo::LEFT_INPUTS+0));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.812,235.233), module, Mix4Stereo::LEFT_INPUTS+1));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.812,268.473), module, Mix4Stereo::LEFT_INPUTS+2));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.812,301.712), module, Mix4Stereo::LEFT_INPUTS+3));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(21.812,340.434), module, Mix4Stereo::LEFT_OUTPUT));
+
+    addInput(createInputCentered<PJ301MPort>(Vec(53.189,201.993), module, Mix4Stereo::RIGHT_INPUTS+0));
+    addInput(createInputCentered<PJ301MPort>(Vec(53.189,235.233), module, Mix4Stereo::RIGHT_INPUTS+1));
+    addInput(createInputCentered<PJ301MPort>(Vec(53.189,268.473), module, Mix4Stereo::RIGHT_INPUTS+2));
+    addInput(createInputCentered<PJ301MPort>(Vec(53.189,301.712), module, Mix4Stereo::RIGHT_INPUTS+3));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(53.189,340.434), module, Mix4Stereo::RIGHT_OUTPUT));
   }
 
   void appendContextMenu(Menu* menu) override {
-    Mix4* module = dynamic_cast<Mix4*>(this->module);
+    Mix4Stereo* module = dynamic_cast<Mix4Stereo*>(this->module);
     assert(module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createMenuItem("Lock all parameters", "",
@@ -298,4 +340,4 @@ struct Mix4Widget : ModuleWidget {
   #include "ThemeStep.hpp"
 };
 
-Model* modelMix4 = createModel<Mix4, Mix4Widget>("Mix4");
+Model* modelMix4Stereo = createModel<Mix4Stereo, Mix4StereoWidget>("Mix4Stereo");

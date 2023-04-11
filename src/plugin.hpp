@@ -15,6 +15,7 @@ extern Model* modelBernoulliSwitch;
 extern Model* modelCloneMerge;
 extern Model* modelHQ;
 extern Model* modelMix4;
+extern Model* modelMix4Stereo;
 extern Model* modelPolyClone;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;

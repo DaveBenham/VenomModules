@@ -46,6 +46,7 @@ void init(Plugin* p) {
   p->addModel(modelCloneMerge);
   p->addModel(modelHQ);
   p->addModel(modelMix4);
+  p->addModel(modelMix4Stereo);
   p->addModel(modelPolyClone);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);
