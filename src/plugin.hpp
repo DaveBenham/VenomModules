@@ -30,16 +30,16 @@ void setDefaultTheme(int theme);
 
 template <typename TBase>
 struct RotarySwitch : TBase {
-	RotarySwitch() {
-		this->snap = true;
-		this->smooth = false;
-	}
+  RotarySwitch() {
+    this->snap = true;
+    this->smooth = false;
+  }
 
-	// handle the manually entered values
-	void onChange(const event::Change &e) override {
-		SvgKnob::onChange(e);
-		this->getParamQuantity()->setValue(roundf(this->getParamQuantity()->getValue()));
-	}
+  // handle the manually entered values
+  void onChange(const event::Change &e) override {
+    SvgKnob::onChange(e);
+    this->getParamQuantity()->setValue(roundf(this->getParamQuantity()->getValue()));
+  }
 };
 
 struct CKSSNarrow : app::SvgSwitch {
