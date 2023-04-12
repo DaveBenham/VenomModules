@@ -87,7 +87,7 @@ struct Mix4 : Module {
   }
 
   ParamLock paramLocks[PARAMS_LEN];
-  bool paramLocksInitialized = false;
+  bool paramInitRequired = false;
 
   Mix4() {
     struct FixedSwitchQuantity : SwitchQuantity {
@@ -121,8 +121,8 @@ struct Mix4 : Module {
   }
 
   void process(const ProcessArgs& args) override {
-    if (!paramLocksInitialized){
-      paramLocksInitialized = true;
+    if (paramInitRequired){
+      paramInitRequired = false;
       for (int i=0; i<PARAMS_LEN; i++){
         setLock(paramLocks[i].initLocked, i);
       }
@@ -208,6 +208,8 @@ struct Mix4 : Module {
 
 struct Mix4Widget : ModuleWidget {
 
+  bool initialDraw = false;
+
   struct GlowingSvgSwitch : app::SvgSwitch {
     void drawLayer(const DrawArgs& args, int layer) override {
       if (layer==1) {
@@ -276,6 +278,14 @@ struct Mix4Widget : ModuleWidget {
     addInput(createInputCentered<PJ301MPort>(Vec(22.337,268.473), module, Mix4::INPUTS+2));
     addInput(createInputCentered<PJ301MPort>(Vec(22.337,301.712), module, Mix4::INPUTS+3));
     addOutput(createOutputCentered<PJ301MPort>(Vec(22.337,340.434), module, Mix4::MIX_OUTPUT));
+  }
+
+  void draw(const DrawArgs & args) override {
+    ModuleWidget::draw(args);
+    if (!initialDraw && module){
+      dynamic_cast<Mix4*>(this->module)->paramInitRequired = true;
+      initialDraw = true;
+    }
   }
 
   void appendContextMenu(Menu* menu) override {

@@ -89,7 +89,7 @@ struct Mix4Stereo : Module {
   }
 
   ParamLock paramLocks[PARAMS_LEN];
-  bool paramLocksInitialized = false;
+  bool paramInitRequired = false;
 
   Mix4Stereo() {
     struct FixedSwitchQuantity : SwitchQuantity {
@@ -127,8 +127,8 @@ struct Mix4Stereo : Module {
   }
 
   void process(const ProcessArgs& args) override {
-    if (!paramLocksInitialized){
-      paramLocksInitialized = true;
+    if (paramInitRequired){
+      paramInitRequired = false;
       for (int i=0; i<PARAMS_LEN; i++){
         setLock(paramLocks[i].initLocked, i);
       }
@@ -243,6 +243,8 @@ struct Mix4Stereo : Module {
 };
 
 struct Mix4StereoWidget : ModuleWidget {
+  
+  bool initialDraw = false;
 
   struct GlowingSvgSwitch : app::SvgSwitch {
     void drawLayer(const DrawArgs& args, int layer) override {
@@ -318,6 +320,14 @@ struct Mix4StereoWidget : ModuleWidget {
     addInput(createInputCentered<PJ301MPort>(Vec(53.189,268.473), module, Mix4Stereo::RIGHT_INPUTS+2));
     addInput(createInputCentered<PJ301MPort>(Vec(53.189,301.712), module, Mix4Stereo::RIGHT_INPUTS+3));
     addOutput(createOutputCentered<PJ301MPort>(Vec(53.189,340.434), module, Mix4Stereo::RIGHT_OUTPUT));
+  }
+  
+  void draw(const DrawArgs & args) override {
+    ModuleWidget::draw(args);
+    if (!initialDraw && module) {
+      dynamic_cast<Mix4Stereo*>(this->module)->paramInitRequired = true;
+      initialDraw = true;
+    }
   }
 
   void appendContextMenu(Menu* menu) override {
