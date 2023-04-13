@@ -5,7 +5,6 @@
 // that I was able to flesh out into this final form
 
 #include "plugin.hpp"
-#include "ThemeStrings.hpp"
 
 #define SLIDER_COUNT 8
 #define MAX_STEP_LENGTH 16
@@ -15,7 +14,6 @@
 #define LIGHT_FADE 5e-6f
 
 #define MODULE_NAME RhythmExplorer
-static const std::string moduleName = "RhythmExplorer";
 
 static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/2",
@@ -58,7 +56,7 @@ static const int GATE_LENGTH [10] = {
   2
 };
 
-struct RhythmExplorer : Module {
+struct RhythmExplorer : VenomModule {
   enum ParamId {
     ENUMS(DENSITY_PARAM, SLIDER_COUNT),
     NEW_SEED_BUTTON_PARAM,
@@ -137,8 +135,6 @@ struct RhythmExplorer : Module {
   bool runGateActive;
   int resetTiming = 0;
 
-  #include "ThemeModVars.hpp"
-
   //Non Persistant State
   bool isUni;
   int currentPulse;
@@ -186,7 +182,7 @@ struct RhythmExplorer : Module {
       }
     };
 
-    config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
     configInput(CLOCK_INPUT,"24PPQN Clock");
     configInput(NEW_SEED_TRIGGER_INPUT,"Dice Trigger");
@@ -287,18 +283,15 @@ struct RhythmExplorer : Module {
   }
 
   json_t *dataToJson() override{
-    json_t *rootJ = json_object();
-
+    json_t *rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "internalSeed", json_real(internalSeed));
     json_object_set_new(rootJ, "runGateActive", json_boolean(runGateActive));
     json_object_set_new(rootJ, "resetTiming", json_integer(resetTiming));
-    #include "ThemeToJson.hpp"
-
     return rootJ;
   }
 
   void dataFromJson(json_t *rootJ) override {
-
+    VenomModule::dataFromJson(rootJ);
     json_t* val = json_object_get(rootJ, "internalSeed");
     if (val) {
       internalSeed = json_real_value(val);
@@ -312,8 +305,6 @@ struct RhythmExplorer : Module {
     val = json_object_get(rootJ, "resetTiming");
     if (val)
       resetTiming = json_integer_value(val);
-    #include "ThemeFromJson.hpp"
-
     reseedRng();
   }
 
@@ -385,7 +376,7 @@ struct RhythmExplorer : Module {
     }
     return false;
   }
-  
+
   inline bool buttonTrigger(bool & state, float input){
     if(!state && input >= 1.0f){
       state = true;
@@ -398,7 +389,7 @@ struct RhythmExplorer : Module {
   }
 
   void process(const ProcessArgs& args) override {
-    
+
     // Density polarity
     if ((params[POLAR_PARAM].getValue()==0) != isUni){
       isUni = !isUni;
@@ -689,22 +680,10 @@ struct LightButton : TBase {
 
 using VCVBezelLightBigWhite = LightButton<VCVBezelBig, VCVBezelLightBig<WhiteLight>>;
 
-struct RhythmExplorerWidget : ModuleWidget {
-
-  struct GlowingSvgSwitch : app::SvgSwitch {
-    void drawLayer(const DrawArgs& args, int layer) override {
-      if (layer==1) {
-        if (module && !module->isBypassed()) {
-          draw(args);
-        }
-      }
-      app::SvgSwitch::drawLayer(args, layer);
-    }
-  };
+struct RhythmExplorerWidget : VenomWidget {
 
   struct DivSwitch : GlowingSvgSwitch {
     DivSwitch() {
-      shadow->opacity = 0.0;
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_0.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_1.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_2.svg")));
@@ -720,7 +699,6 @@ struct RhythmExplorerWidget : ModuleWidget {
 
   struct ModeSwitch : GlowingSvgSwitch {
     ModeSwitch() {
-      shadow->opacity = 0.0;
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_0.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_1.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/mode_2.svg")));
@@ -732,7 +710,7 @@ struct RhythmExplorerWidget : ModuleWidget {
 
   RhythmExplorerWidget(RhythmExplorer* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
+    setVenomPanel("RhythmExplorer");
 
     float dx = RACK_GRID_WIDTH * 2.f;
     float dy = RACK_GRID_WIDTH * 2.f;
@@ -871,10 +849,9 @@ struct RhythmExplorerWidget : ModuleWidget {
       [=](int i) {module->resetTiming = i;}
     ));
 
-    #include "ThemeMenu.hpp"
+    VenomWidget::appendContextMenu(menu);
   }
 
-  #include "ThemeStep.hpp"
 };
 
 

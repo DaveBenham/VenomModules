@@ -3,12 +3,10 @@
 
 #include "OversampleFilter.hpp"
 #include "plugin.hpp"
-#include "ThemeStrings.hpp"
 
 #define MODULE_NAME WinComp
-static const std::string moduleName = "WinComp";
 
-struct WinComp : Module {
+struct WinComp : VenomModule {
   enum ParamId {
     A_PARAM,
     B_PARAM,
@@ -87,8 +85,6 @@ struct WinComp : Module {
                      leqDownSample[4], geqDownSample[4],
                      lsDownSample[4], grDownSample[4];
 
-  #include "ThemeModVars.hpp"
-
   dsp::ClockDivider lightDivider;
 
   void initializeOversample(){
@@ -110,7 +106,7 @@ struct WinComp : Module {
   }
 
   WinComp() {
-    config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(A_PARAM, -10.f, 10.f, 0.f, "A offset", " V");
     configParam(B_PARAM, -10.f, 10.f, 0.f, "B offset", " V");
     configParam(TOL_PARAM, -10.f, 10.f, 0.f, "Tolerance", " V");
@@ -133,6 +129,7 @@ struct WinComp : Module {
   }
 
   void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
     int channels = std::max({1, inputs[A_INPUT].getChannels(), inputs[B_INPUT].getChannels(), inputs[TOL_INPUT].getChannels()});
     float aOffset = params[A_PARAM].getValue();
     float bOffset = params[B_PARAM].getValue();
@@ -317,7 +314,7 @@ struct WinComp : Module {
   }
 
   json_t* dataToJson() override {
-    json_t* rootJ = json_object();
+    json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "absMin", json_boolean(absPort[MIN_PORT]));
     json_object_set_new(rootJ, "absMax", json_boolean(absPort[MAX_PORT]));
     json_object_set_new(rootJ, "absClamp", json_boolean(absPort[CLAMP_PORT]));
@@ -328,11 +325,11 @@ struct WinComp : Module {
     json_object_set_new(rootJ, "invOver", json_boolean(invPort[OVER_PORT]));
     json_object_set_new(rootJ, "oversample", json_integer(oversample));
     json_object_set_new(rootJ, "gateType", json_integer(gateType));
-    #include "ThemeToJson.hpp"
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
     json_t* val = json_object_get(rootJ, "absMin");
     if (val)
       absPort[MIN_PORT] = json_boolean_value(val);
@@ -363,7 +360,6 @@ struct WinComp : Module {
     val = json_object_get(rootJ, "gateType");
     if (val)
       gateType = json_integer_value(val);
-    #include "ThemeFromJson.hpp"
 
     initializeOversample();
   }
@@ -371,7 +367,7 @@ struct WinComp : Module {
 };
 
 
-struct WinCompWidget : ModuleWidget {
+struct WinCompWidget : VenomWidget {
 
   struct AbsInvPort : PJ301MPort {
     int modId;
@@ -393,14 +389,14 @@ struct WinCompWidget : ModuleWidget {
 
   WinCompWidget(WinComp* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
+    setVenomPanel("WinComp");
 
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 15.93)), module, WinComp::A_INPUT));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 15.93)), module, WinComp::A_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 15.93)), module, WinComp::A_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 30.05)), module, WinComp::B_INPUT));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 30.05)), module, WinComp::B_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 30.05)), module, WinComp::B_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 43.87)), module, WinComp::TOL_INPUT));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 43.87)), module, WinComp::TOL_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 43.87)), module, WinComp::TOL_PARAM));
 
     addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(7.299, 58.3)), module, WinComp::MIN_OUTPUT, WinComp::MIN_PORT));
     addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(18.134, 58.3)), module, WinComp::MAX_OUTPUT, WinComp::MAX_PORT));
@@ -459,11 +455,9 @@ struct WinCompWidget : ModuleWidget {
           module->initializeOversample();
         }
     ));
-    #include "ThemeMenu.hpp"
+    VenomWidget::appendContextMenu(menu);
   }
 
-  #include "ThemeStep.hpp"
 };
-
 
 Model* modelWinComp = createModel<WinComp, WinCompWidget>("WinComp");

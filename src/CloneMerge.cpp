@@ -2,12 +2,10 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "ThemeStrings.hpp"
 
 #define MODULE_NAME CloneMerge
-static const std::string moduleName = "CloneMerge";
 
-struct CloneMerge : Module {
+struct CloneMerge : VenomModule {
   enum ParamId {
     CLONE_PARAM,
     PARAMS_LEN
@@ -25,12 +23,10 @@ struct CloneMerge : Module {
     LIGHTS_LEN
   };
 
-  #include "ThemeModVars.hpp"
-
   dsp::ClockDivider lightDivider;
 
   CloneMerge() {
-    config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(CLONE_PARAM, 1.f, 16.f, 1.f, "Clone count");
     for (int i=0; i < 8; i++)
       configInput(MONO_INPUTS+i, string::f("Mono %d", i + 1));
@@ -39,6 +35,7 @@ struct CloneMerge : Module {
   }
 
   void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
 
     int clones = static_cast<int>(params[CLONE_PARAM].getValue());
     int maxIns = 16/clones;
@@ -69,27 +66,18 @@ struct CloneMerge : Module {
     }
   }
 
-  json_t* dataToJson() override {
-    json_t* rootJ = json_object();
-    #include "ThemeToJson.hpp"
-    return rootJ;
-  }
-
-  void dataFromJson(json_t* rootJ) override {
-    #include "ThemeFromJson.hpp"
-  }
 };
 
-struct CloneMergeWidget : ModuleWidget {
+struct CloneMergeWidget : VenomWidget {
   CloneMergeWidget(CloneMerge* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
+    setVenomPanel("CloneMerge");
 
     float x = 22.5f;
     float y = RACK_GRID_WIDTH * 3.55f;
     float dy = RACK_GRID_WIDTH * 2.f;
 
-    addParam(createParamCentered<RotarySwitch<RoundSmallBlackKnob>>(Vec(x,y), module, CloneMerge::CLONE_PARAM));
+    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(x,y), module, CloneMerge::CLONE_PARAM));
 
     y+=dy*1.25f;
     for (int i=0; i<8; i++, y+=dy) {
@@ -100,13 +88,6 @@ struct CloneMergeWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, CloneMerge::POLY_OUTPUT));
   }
 
-  void appendContextMenu(Menu* menu) override {
-    CloneMerge* module = dynamic_cast<CloneMerge*>(this->module);
-    assert(module);
-    #include "ThemeMenu.hpp"
-  }
-
-  #include "ThemeStep.hpp"
 };
 
 Model* modelCloneMerge = createModel<CloneMerge, CloneMergeWidget>("CloneMerge");

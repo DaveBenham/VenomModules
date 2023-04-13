@@ -2,17 +2,14 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "ThemeStrings.hpp"
 #include "OversampleFilter.hpp"
 
 #define LIGHT_OFF 0.02f
 #define FADE_RATE 400.f
 
 #define MODULE_NAME BernoulliSwitch
-static const std::string moduleName = "BernoulliSwitch";
 
-
-struct BernoulliSwitch : Module {
+struct BernoulliSwitch : VenomModule {
   enum ParamId {
     PROB_PARAM,
     TRIG_PARAM,
@@ -63,15 +60,13 @@ struct BernoulliSwitch : Module {
   int oldAudioProc = -1;
   bool deClick = false;
   int oversample = 0;
-  
+
   OversampleFilter_4 aUpSample[4], bUpSample[4],
                      aDownSample[4], bDownSample[4],
                      trigUpSample[4];
 
-  #include "ThemeModVars.hpp"
-
   BernoulliSwitch() {
-    config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(PROB_PARAM, 0.f, 1.f, 0.5f, "Probability", "%", 0.f, 100.f, 0.f);
     configButton(TRIG_PARAM, "Manual 10V Trigger");
     configSwitch(MODE_PARAM, 0, 2, 1, "Probability Mode", {"Toggle", "Swap", "Gate"});
@@ -103,6 +98,7 @@ struct BernoulliSwitch : Module {
   }
 
   void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
     using float_4 = simd::float_4;
     float_4 aOut[4], bOut[4];
     float scaleA = params[SCALE_A_PARAM].getValue(),
@@ -237,15 +233,15 @@ struct BernoulliSwitch : Module {
 
 
   json_t* dataToJson() override {
-    json_t* rootJ = json_object();
+    json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "monitorChannel", json_integer(lightChannel));
     json_object_set_new(rootJ, "inputPolyControl", json_boolean(inputPolyControl));
     json_object_set_new(rootJ, "audioProc", json_integer(audioProc));
-    #include "ThemeToJson.hpp"
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
     json_t* val;
     if ((val = json_object_get(rootJ, "monitorChannel")))
       lightChannel = json_integer_value(val);
@@ -253,28 +249,27 @@ struct BernoulliSwitch : Module {
       inputPolyControl = json_boolean_value(val);
     if ((val = json_object_get(rootJ, "audioProc")))
       audioProc = json_integer_value(val);
-    #include "ThemeFromJson.hpp"
   }
 
 };
 
-struct BernoulliSwitchWidget : ModuleWidget {
+struct BernoulliSwitchWidget : VenomWidget {
   BernoulliSwitchWidget(BernoulliSwitch* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
+    setVenomPanel("BernoulliSwitch");
 
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(5.0, 18.75)), module, BernoulliSwitch::NO_SWAP_LIGHT));
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(20.431, 18.75)), module, BernoulliSwitch::SWAP_LIGHT));
 
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(12.7155, 18.75)), module, BernoulliSwitch::PROB_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(12.7155, 18.75)), module, BernoulliSwitch::PROB_PARAM));
     addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(6.5, 31.5)), module, BernoulliSwitch::TRIG_PARAM, BernoulliSwitch::TRIG_LIGHT));
-    addParam(createParam<CKSSThree>(mm2px(Vec(17.5, 25.0)), module, BernoulliSwitch::MODE_PARAM));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(7.297, 43.87)), module, BernoulliSwitch::RISE_PARAM));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 43.87)), module, BernoulliSwitch::FALL_PARAM));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(7.297, 58.3)), module, BernoulliSwitch::OFFSET_A_PARAM));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.136, 58.3)), module, BernoulliSwitch::OFFSET_B_PARAM));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(7.297, 72.75)), module, BernoulliSwitch::SCALE_A_PARAM));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.136, 72.75)), module, BernoulliSwitch::SCALE_B_PARAM));
+    addParam(createLockableParam<CKSSThreeLockable>(mm2px(Vec(17.5, 25.0)), module, BernoulliSwitch::MODE_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.297, 43.87)), module, BernoulliSwitch::RISE_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 43.87)), module, BernoulliSwitch::FALL_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.297, 58.3)), module, BernoulliSwitch::OFFSET_A_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 58.3)), module, BernoulliSwitch::OFFSET_B_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.297, 72.75)), module, BernoulliSwitch::SCALE_A_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 72.75)), module, BernoulliSwitch::SCALE_B_PARAM));
 
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 87.10)), module, BernoulliSwitch::A_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(18.134, 87.10)), module, BernoulliSwitch::B_INPUT));
@@ -311,10 +306,9 @@ struct BernoulliSwitchWidget : ModuleWidget {
         module->lights[BernoulliSwitch::SWAP_LIGHT].setBrightness(i > module->oldChannels ? false : module->swap[i]);
       }
     ));
-    #include "ThemeMenu.hpp"
+    VenomWidget::appendContextMenu(menu);
   }
 
-  #include "ThemeStep.hpp"
 };
 
 Model* modelBernoulliSwitch = createModel<BernoulliSwitch, BernoulliSwitchWidget>("BernoulliSwitch");

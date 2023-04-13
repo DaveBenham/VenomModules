@@ -2,12 +2,10 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "ThemeStrings.hpp"
 
 #define MODULE_NAME PolyClone
-static const std::string moduleName = "PolyClone";
 
-struct PolyClone : Module {
+struct PolyClone : VenomModule {
   enum ParamId {
     CLONE_PARAM,
     PARAMS_LEN
@@ -24,15 +22,13 @@ struct PolyClone : Module {
     ENUMS(CHANNEL_LIGHTS, 32),
     LIGHTS_LEN
   };
-  
-  int clones = 1;
 
-  #include "ThemeModVars.hpp"
+  int clones = 1;
 
   dsp::ClockDivider lightDivider;
 
   PolyClone() {
-    config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(CLONE_PARAM, 1.f, 16.f, 1.f, "Clone count");
     configInput(POLY_INPUT, "Poly");
     configOutput(POLY_OUTPUT, "Poly");
@@ -43,6 +39,7 @@ struct PolyClone : Module {
   }
 
   void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
 
     clones = static_cast<int>(params[CLONE_PARAM].getValue());
     int maxCh = 16/clones;
@@ -67,19 +64,10 @@ struct PolyClone : Module {
     }
   }
 
-  json_t* dataToJson() override {
-    json_t* rootJ = json_object();
-    #include "ThemeToJson.hpp"
-    return rootJ;
-  }
-
-  void dataFromJson(json_t* rootJ) override {
-    #include "ThemeFromJson.hpp"
-  }
 };
 
 
-struct PolyCloneWidget : ModuleWidget {
+struct PolyCloneWidget : VenomWidget {
 
   struct PCCountDisplay : DigitalDisplay18 {
     void step() override {
@@ -96,7 +84,7 @@ struct PolyCloneWidget : ModuleWidget {
 
   PolyCloneWidget(PolyClone* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
+    setVenomPanel("PolyClone");
 
     float x = 22.5f;
     float y = RACK_GRID_WIDTH * 5.5f + 3;
@@ -107,7 +95,7 @@ struct PolyCloneWidget : ModuleWidget {
     addChild(countDisplay);
 
     y+=dy*1.f;
-    addParam(createParamCentered<RotarySwitch<RoundBlackKnob>>(Vec(x,y), module, PolyClone::CLONE_PARAM));
+    addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(x,y), module, PolyClone::CLONE_PARAM));
 
     y += dy*4.75f;
     int ly = y-2;
@@ -123,13 +111,6 @@ struct PolyCloneWidget : ModuleWidget {
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, PolyClone::POLY_OUTPUT));
   }
 
-  void appendContextMenu(Menu* menu) override {
-    PolyClone* module = dynamic_cast<PolyClone*>(this->module);
-    assert(module);
-    #include "ThemeMenu.hpp"
-  }
-
-  #include "ThemeStep.hpp"
 };
 
 Model* modelPolyClone = createModel<PolyClone, PolyCloneWidget>("PolyClone");

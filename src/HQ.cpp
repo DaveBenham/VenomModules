@@ -3,12 +3,10 @@
 
 #include "plugin.hpp"
 #include <float.h>
-#include "ThemeStrings.hpp"
 
 #define MODULE_NAME HQ
-static const std::string moduleName = "HQ";
 
-struct HQ : Module {
+struct HQ : VenomModule {
   enum ParamId {
     PARTIAL_PARAM,
     SERIES_PARAM,
@@ -76,8 +74,6 @@ struct HQ : Module {
     {-8,16}, {-16,32}, {-32,64}, {-64,128}
   };
 
-  #include "ThemeModVars.hpp"
-
   int partialParamGetValue() {
     float val = params[PARTIAL_PARAM].getValue();
     int rtn;
@@ -119,7 +115,7 @@ struct HQ : Module {
   };
 
   HQ() {
-    config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch(SERIES_PARAM, 0, 2, 0, "Harmonic Series", {"All", "Odd", "Even"});
     configParam<PartialQuantity>(PARTIAL_PARAM, 0.f, 1.f, 0.f, "Partial", "");
     configParam(CV_PARAM, -1.f, 1.f, 0.f, "CV", "%", 0.f, 100.f, 0.f);
@@ -131,6 +127,7 @@ struct HQ : Module {
   }
 
   void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
     if (oldRange != range) {
       paramQuantities[PARTIAL_PARAM]->defaultValue = range < 4 ? 0.f : range < 8 ? 1.f : 0.5f;
       oldRange = range;
@@ -218,23 +215,22 @@ struct HQ : Module {
   }
 
   json_t* dataToJson() override {
-    json_t* rootJ = json_object();
+    json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "range", json_integer(range));
-    #include "ThemeToJson.hpp"
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
     json_t* val = json_object_get(rootJ, "range");
     if (val)
       range = json_integer_value(val);
-    #include "ThemeFromJson.hpp"
   }
 
 };
 
 
-struct HQWidget : ModuleWidget {
+struct HQWidget : VenomWidget {
 
   struct PartialDisplay : DigitalDisplay188 {
     void step() override {
@@ -255,13 +251,13 @@ struct HQWidget : ModuleWidget {
 
   HQWidget(HQ* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
+    setVenomPanel("HQ");
     PartialDisplay* partialDisplay = createWidget<PartialDisplay>(mm2px(Vec(1.75, 14.0)));
     partialDisplay->module = module;
     addChild(partialDisplay);
-    addParam(createParam<CKSSThreeHorizontal>(mm2px(Vec(2.9, 25.5)), module, HQ::SERIES_PARAM));
-    addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(7.62, 42.9)), module, HQ::PARTIAL_PARAM));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(7.62, 58)), module, HQ::CV_PARAM));
+    addParam(createLockableParam<CKSSThreeHorizontalLockable>(mm2px(Vec(2.9, 25.5)), module, HQ::SERIES_PARAM));
+    addParam(createLockableParamCentered<RoundBlackKnobLockable>(mm2px(Vec(7.62, 42.9)), module, HQ::PARTIAL_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.62, 58)), module, HQ::CV_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 68)), module, HQ::CV_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 83)), module, HQ::ROOT_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 98)), module, HQ::IN_INPUT));
@@ -301,10 +297,9 @@ struct HQWidget : ModuleWidget {
       [=]() {return module->monitor;},
       [=](int i) {module->monitor = i;}
     ));
-    #include "ThemeMenu.hpp"
+    VenomWidget::appendContextMenu(menu);
   }
 
-  #include "ThemeStep.hpp"
 };
 
 Model* modelHQ = createModel<HQ, HQWidget>("HQ");

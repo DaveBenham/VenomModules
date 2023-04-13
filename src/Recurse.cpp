@@ -2,12 +2,10 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "ThemeStrings.hpp"
 
 #define MODULE_NAME Recurse
-static const std::string moduleName = "Recurse";
 
-struct Recurse : Module {
+struct Recurse : VenomModule {
   enum ParamId {
     COUNT_PARAM,
     SCALE_PARAM,
@@ -39,8 +37,6 @@ struct Recurse : Module {
   int order = 0;
   int oldOrder = -1;
   
-  #include "ThemeModVars.hpp"
-
   enum ModTiming {
     PRE_START_1,
     PRE_START_N,
@@ -62,7 +58,7 @@ struct Recurse : Module {
         };
       }
     };
-    config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(COUNT_PARAM, 1.f, 16.f, 1.f, "Recursion Count", "");
     configParam(SCALE_PARAM, -10.f, 10.f, 1.f, "Scale", "");
     configParam(OFFSET_PARAM, -10.f, 10.f, 0.f, "Offset", " V");
@@ -82,6 +78,7 @@ struct Recurse : Module {
   }
 
   void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
     recurCount = static_cast<int>(params[COUNT_PARAM].getValue());
     int inChannels = std::max({1, inputs[IN_INPUT].getChannels()});
     recurCountErr = (inChannels > 16 / recurCount);
@@ -130,23 +127,22 @@ struct Recurse : Module {
 
 
   json_t* dataToJson() override {
-    json_t* rootJ = json_object();
+    json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "orderOp", json_integer(order));
-    #include "ThemeToJson.hpp"
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
     json_t* val = json_object_get(rootJ, "orderOp");
     if (val)
       order = json_integer_value(val);
-    #include "ThemeFromJson.hpp"
   }
 
 };
 
 
-struct RecurseWidget : ModuleWidget {
+struct RecurseWidget : VenomWidget {
 
   struct CountDisplay : DigitalDisplay18 {
     void step() override {
@@ -164,16 +160,16 @@ struct RecurseWidget : ModuleWidget {
 
   RecurseWidget(Recurse* module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
+    setVenomPanel("Recurse");
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 39.8)));
     countDisplay->module = module;
     addChild(countDisplay);
-    addParam(createParamCentered<RoundSmallBlackKnobSnap>(mm2px(Vec(18.134, 43.87)), module, Recurse::COUNT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobSnapLockable>(mm2px(Vec(18.134, 43.87)), module, Recurse::COUNT_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 58.3)), module, Recurse::SCALE_INPUT));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.136, 58.3)), module, Recurse::SCALE_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 58.3)), module, Recurse::SCALE_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 72.75)), module, Recurse::OFFSET_INPUT));
-    addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(18.134, 72.75)), module, Recurse::OFFSET_PARAM));
-    addParam(createParamCentered<RoundSmallBlackKnobSnap>(mm2px(Vec(12.7155, 84.50)), module, Recurse::TIMING_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 72.75)), module, Recurse::OFFSET_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobSnapLockable>(mm2px(Vec(12.7155, 84.50)), module, Recurse::TIMING_PARAM));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 101.55)), module, Recurse::SEND_OUTPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, Recurse::RETURN_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, Recurse::IN_INPUT));
@@ -194,10 +190,8 @@ struct RecurseWidget : ModuleWidget {
       [=]() {return module->order;},
       [=](int i) {module->order = i;}
     ));
-    #include "ThemeMenu.hpp"
+    VenomWidget::appendContextMenu(menu);
   }
-
-  #include "ThemeStep.hpp"
 
 };
 

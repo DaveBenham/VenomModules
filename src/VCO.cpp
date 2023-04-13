@@ -8,14 +8,12 @@
 #include "plugin.hpp"
 #include "dsp/math.hpp"
 #include <array>
-#include "ThemeStrings.hpp"
 
 #define MODULE_NAME VCO
-static const std::string moduleName = "VCO";
 
 using std::array;
 
-struct VCO : Module {
+struct VCO : VenomModule {
   enum ParamIds {
     OCT_PARAM,
     PITCH_PARAM,
@@ -73,8 +71,6 @@ struct VCO : Module {
 
   float log2sampleFreq = 15.4284f;
 
-  #include "ThemeModVars.hpp"
-
   dsp::SchmittTrigger resetTrigger;
 
   VCO() {
@@ -88,8 +84,7 @@ struct VCO : Module {
           return std::to_string(val);
       }
     };
-    config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-//    configParam<OctaveQuantity>(OCT_PARAM, 3, 13, 8, "Octave", "", 0.f, 1.f, -4.f);
+    venomConfig(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
     configParam<OctaveQuantity>(OCT_PARAM, 3, 13, 8, "Octave", "");
     configParam(PITCH_PARAM, -5, 5, 0, "V/Oct", " Volt");
     configParam(PW_PARAM, 0.01, 0.99, 0.5, "Pulse Width", "%", 0.f, 100.f, 0.f);
@@ -108,15 +103,6 @@ struct VCO : Module {
   void process(const ProcessArgs &args) override;
   void onSampleRateChange() override;
 
-  json_t* dataToJson() override {
-    json_t* rootJ = json_object();
-    #include "ThemeToJson.hpp"
-    return rootJ;
-  }
-
-  void dataFromJson(json_t* rootJ) override {
-    #include "ThemeFromJson.hpp"
-  }
 };
 
 
@@ -131,11 +117,11 @@ void VCO::onSampleRateChange() {
 // which gets overwritten in the following step.
 
 void VCO::process(const ProcessArgs &args) {
+  VenomModule::process(args);
 
   float incr = 0.0f;
   float pw = params[PW_PARAM].getValue();
   if (inputs[PWM_INPUT].isConnected()){
-//    pw = clamp(pw + inputs[PWM_INPUT].getVoltage() / 10.0f, 0.01f, 0.99f);
     pw = clamp(pw + inputs[PWM_INPUT].getVoltage() / 10.0f);
   }
   for (int i = 0; i <= 2; ++i) {
@@ -267,18 +253,18 @@ void VCO::process(const ProcessArgs &args) {
 }
 
 
-struct VCOWidget : ModuleWidget {
+struct VCOWidget : VenomWidget {
   VCOWidget(VCO *module) {
     setModule(module);
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(moduleName, module ? module->currentThemeStr() : themes[getDefaultTheme()]))));
+    setVenomPanel("VCO");
 
-    addParam(createParam<RoundBigBlackKnobSnap>(Vec(38, 40), module, VCO::OCT_PARAM));
+    addParam(createLockableParam<RoundBigBlackKnobSnapLockable>(Vec(38, 40), module, VCO::OCT_PARAM));
 
-    addParam(createParam<RoundLargeBlackKnob>(Vec(14.0, 110.0), module, VCO::PITCH_PARAM));
-    addParam(createParam<RoundLargeBlackKnob>(Vec(70, 110), module, VCO::PW_PARAM));
+    addParam(createLockableParam<RoundLargeBlackKnobLockable>(Vec(14.0, 110.0), module, VCO::PITCH_PARAM));
+    addParam(createLockableParam<RoundLargeBlackKnobLockable>(Vec(70, 110), module, VCO::PW_PARAM));
 
-    addParam(createParam<RoundLargeBlackKnob>(Vec(14, 166), module, VCO::EXP_FM_PARAM));
-    addParam(createParam<RoundLargeBlackKnob>(Vec(70, 166), module, VCO::LIN_FM_PARAM));
+    addParam(createLockableParam<RoundLargeBlackKnobLockable>(Vec(14, 166), module, VCO::EXP_FM_PARAM));
+    addParam(createLockableParam<RoundLargeBlackKnobLockable>(Vec(70, 166), module, VCO::LIN_FM_PARAM));
 
     addInput(createInput<PJ301MPort>(Vec(11, 234), module, VCO::EXP_FM_INPUT));
     addInput(createInput<PJ301MPort>(Vec(48, 234), module, VCO::V_OCT_INPUT));
@@ -291,16 +277,7 @@ struct VCOWidget : ModuleWidget {
     addOutput(createOutput<PJ301MPort>(Vec(11, 318), module, VCO::SQR_OUTPUT));
     addOutput(createOutput<PJ301MPort>(Vec(48, 318), module, VCO::TRI_OUTPUT));
     addOutput(createOutput<PJ301MPort>(Vec(85, 318), module, VCO::SIN_OUTPUT));
-
   }
-
-  void appendContextMenu(Menu* menu) override {
-    VCO* module = dynamic_cast<VCO*>(this->module);
-    assert(module);
-    #include "ThemeMenu.hpp"
-  }
-
-  #include "ThemeStep.hpp"
 
 };
 
