@@ -187,7 +187,35 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 [Return to Table Of Contents](#venom)
 
 ## MIX 4
-![Mix 4 module image](./doc/Mix4.png)
+![Mix 4 module image](./doc/Mix4.png)  
+Compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping.
+
+### Level knobs and inputs 1 - 4
+These knobs control the level of each of the input channels before they are summed to create the Mix. The exact behavior depends on the setting of the Mode button.
+Each input level knob may produce constant CV if the corresponding input is unpatched, depending on the mode.
+
+### MIX level knob and output
+The MIX knob controls the level of the final mix after summing the 4 modified inputs. The behavior depends on the setting of the Mode button. The final result may be clipped, depending on the clip setting, before being sent to the MIX output.
+
+### Polyphony
+The number of output polyphonic channels is normally determined by the maximum number of channels found across all four inputs. Monophonic inputs are replicated to match the number of output channels. But polyphonic inputs with fewer channels send 0V for any missing channels.
+
+The one exception is when using the "Unipolar audio dB poly sum" mode, in which case all polyphonic channels are summed to a monophonic output.
+
+### M (Level Mode) button
+The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to the most typical application, but all modes can be applied to either audio or CV.
+- **Unipolar audio dB** (pink - default): Each knob ranges from -inf dB (0V) to +6.0206 dB (x2 amplification), with the default of 0 dB (unity) at noon. Unpatched inputs contribute constant 0V.
+- **Unipolar audio dB poly sum** (purple): Same as Unipolar audio dB, except polyphonic inputs are summed to a single monophonic signal before being attenuated or amplified by the input level knob.
+- **Bipolar CV%** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
+- **Bipolar CV x2** (light blue): Each input level knob ranges from -2x to 2x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0x (or 0V) at noon. The Mix knob always ranges from -2x to 2x, with a default of 1x (unity).
+- **Bipolar CV x10** (dark blue): Each input level knob ranges from -10x to 10x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
+
+### C (Clip) button
+The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio based on typical usage, but each option can be used for audio or CV.
+- **Off** (dark gray)
+- **Hard CV clipping** (white)
+- **Soft audio clipping** (yellow)
+- **Soft oversampled CV audio clipping** (orange)
 
 [Return to Table Of Contents](#venom)
 
