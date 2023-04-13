@@ -186,6 +186,17 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 [Return to Table Of Contents](#venom)
 
+## MIX 4
+![Mix 4 module image](./doc/Mix4.png)
+
+[Return to Table Of Contents](#venom)
+
+
+## MIX 4 STEREO
+![Mix 4 Stereo module image](./doc/Mix4Stereo.png)
+
+[Return to Table Of Contents](#venom)
+
 ## POLY CLONE
 ![Poly Clone module image](./doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
