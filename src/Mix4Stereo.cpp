@@ -185,20 +185,6 @@ struct Mix4StereoWidget : VenomWidget {
     }
   };
 
-  struct RoundSmallBlackKnobCustom : RoundSmallBlackKnob {
-    void appendContextMenu(Menu* menu) override {
-      if (module)
-        dynamic_cast<Mix4Stereo*>(this->module)->appendParamMenu(menu, this->paramId);
-    }
-  };
-
-  struct RoundBlackKnobCustom : RoundBlackKnob {
-    void appendContextMenu(Menu* menu) override {
-      if (module)
-        dynamic_cast<Mix4Stereo*>(this->module)->appendParamMenu(menu, this->paramId);
-    }
-  };
-
   Mix4StereoWidget(Mix4Stereo* module) {
     setModule(module);
     setVenomPanel("Mix4Stereo");

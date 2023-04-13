@@ -262,7 +262,7 @@ struct BernoulliSwitchWidget : VenomWidget {
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(20.431, 18.75)), module, BernoulliSwitch::SWAP_LIGHT));
 
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(12.7155, 18.75)), module, BernoulliSwitch::PROB_PARAM));
-    addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(6.5, 31.5)), module, BernoulliSwitch::TRIG_PARAM, BernoulliSwitch::TRIG_LIGHT));
+    addParam(createLockableLightParamCentered<VCVLightButtonLockable<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(6.5, 31.5)), module, BernoulliSwitch::TRIG_PARAM, BernoulliSwitch::TRIG_LIGHT));
     addParam(createLockableParam<CKSSThreeLockable>(mm2px(Vec(17.5, 25.0)), module, BernoulliSwitch::MODE_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.297, 43.87)), module, BernoulliSwitch::RISE_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 43.87)), module, BernoulliSwitch::FALL_PARAM));

@@ -338,6 +338,16 @@ TWidget* createLockableParamCentered(math::Vec pos, engine::Module* module, int 
   return createParamCentered<TWidget>(pos, module, paramId);
 }
 
+template <class TWidget>
+TWidget* createLockableLightParamCentered(math::Vec pos, engine::Module* module, int paramId, int firstLightId){
+  if (module){
+    VenomModule* mod = dynamic_cast<VenomModule*>(module);
+    mod->lockableParams = true;
+    mod->paramExtensions[paramId].lockable = true;
+  }
+  return createLightParamCentered<TWidget>(pos, module, paramId, firstLightId);
+}
+
 template <typename TBase = GrayModuleLightWidget>
 struct YlwLight : TBase {
   YlwLight() {
@@ -488,3 +498,25 @@ struct CKSSThreeHorizontalLockable : CKSSThreeHorizontal {
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
+
+template <typename TLight>
+struct VCVLightButtonLockable : VCVButton {
+  app::ModuleLightWidget* light;
+
+  VCVLightButtonLockable() {
+    light = new TLight;
+    // Move center of light to center of box
+    light->box.pos = box.size.div(2).minus(light->box.size.div(2));
+    addChild(light);
+  }
+
+  app::ModuleLightWidget* getLight() {
+    return light;
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    if (module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
