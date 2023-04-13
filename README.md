@@ -6,13 +6,13 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[POLY<br />CLONE](#poly-clone)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[WINCOMP](#wincomp)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[RECURSE](#recurse)|
 |----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Clone Merge module image](./doc/CloneMerge.png)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![Poly Clone module image](./doc/PolyClone.png)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
+|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Clone Merge module image](./doc/CloneMerge.png)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![Mix 4 module image](./doc/Mix4.png)|![Mix 4 Stereo module image](./doc/Mix4Stereo.png)|![Poly Clone module image](./doc/PolyClone.png)|![RECURSE module image](./doc/Recurse.PNG)|
 
-|[RHYTHM EXPLORER](#rhythm-explorer)|
-|----|
-|![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|
+|[RECURSE<br />STEREO](#recurse-stereo)|[RHYTHM EXPLORER](#rhythm-explorer)|[WINCOMP](#wincomp)|
+|----|----|----|
+|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
 
 ## Hidden Unreleased Module
 There is one additional hidden module that is not yet ready to be released. But you can enable it by editing the  
@@ -28,6 +28,20 @@ The context menu of every module includes options to set the default theme for t
 |Ivory|Coal|Earth|Danger|
 |---|---|---|---|
 |![Ivory theme image](./doc/Ivory.png)|![Coal theme image](./doc/Coal.png)|![Earth theme image](./doc/Earth.png)|![Danger theme image](./doc/Danger.png)|
+
+## Parameter Locks
+Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu option to lock the paramenter. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.
+
+The display name includes "(locked)" when hovering over a locked parameter.
+
+The parameter value cannot be changed by any means while the parameter is locked. All of the normal means of changing a parameter value are blocked:
+- The parameter cannot be dragged or pushed
+- Context menu value keyins are ignored
+- Double click and context menu initialization are ignored
+- Preset changes are ignored
+- Randomization requests are ignored
+
+Parameter lock settings are saved with the patch and restored upon patch load. Parameter lock settings are also preserved when duplicating a module.
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
@@ -86,6 +100,9 @@ The following factory presets are available that emulate the four configurations
 - Latched Bernoulli Gate - Sends constant 10V to either A or B
 - Latched Toggled Bernoulli Gate - Toggles constant 10V between A and B
 - Toggled Bernoulli Gate - Toggles triggering gate between A and B
+
+### Parameter Locking
+All parameters may be locked
 
 ### Bypass Behavior
 If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. However, the A input is not normalled to the TRIG input while bypassed.
