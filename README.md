@@ -14,14 +14,6 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 |----|----|----|
 |![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
 
-## Hidden Unreleased Module
-There is one additional hidden module that is not yet ready to be released. But you can enable it by editing the  
-\<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden module within the file, and change the "hidden" value to false. But bear in mind that this module may never be released, and may disappear entirely from a future release. Or if it is released, it may not be backward compatible with the current hidden version.  
-
-|[VCO](#vco)<br />Incomplete|
-|---|
-|![VCO module image](./doc/VenomVCO.png)|
-
 ## Themes
 The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
 
@@ -188,14 +180,14 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 ## MIX 4
 ![Mix 4 module image](./doc/Mix4.png)  
-A compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping.
+A compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping and/or DC offset removal.
 
 ### Level knobs and inputs 1 - 4
 These knobs control the level of each of the input channels before they are summed to create the Mix. The exact behavior depends on the setting of the Mode button.
 Each input level knob may produce constant CV if the corresponding input is unpatched, depending on the mode.
 
 ### MIX level knob and output
-The MIX knob controls the level of the final mix after summing the 4 modified inputs. The behavior depends on the setting of the Mode button. The final result may be clipped, depending on the clip setting, before being sent to the MIX output.
+The MIX knob controls the level of the final mix after summing the 4 modified inputs. The behavior depends on the setting of the Mode button. The final result may be clipped and/or have DC offset removed, depending on the clip and DC offset settings, before being sent to the MIX output.
 
 ### Polyphony
 The number of output polyphonic channels is normally determined by the maximum number of channels found across all four inputs. Monophonic inputs are replicated to match the number of output channels. But polyphonic inputs with fewer channels send 0V for any missing channels.
@@ -209,6 +201,15 @@ The color coded mode button determines how the 4 channel and the mix knobs behav
 - **Bipolar CV%** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
 - **Bipolar CV x2** (light blue): Each input level knob ranges from -2x to 2x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0x (or 0V) at noon. The Mix knob always ranges from -2x to 2x, with a default of 1x (unity).
 - **Bipolar CV x10** (dark blue): Each input level knob ranges from -10x to 10x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
+
+### D (DC Block) button
+The color coded DC block button determines when (or if) a high pass filter with 10Hz cutoff is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
+- **Off** (dark gray): DC offset is not removed.
+- **Before clipping** (yellow): DC offset is removed prior to any clipping. Note that subsequent clipping may re-introduce some DC offset.
+- **Before and after clipping** (green): DC offset is removed both before and after any clipping. Note that only one DC offset removal is performed if clipping is not applied.
+- **After clipping** (light blue): DC offset is removed after any clipping.
+
+The last three DC offset options give identical results when no clipping is applied.
 
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio according to typical usage, but each option can be used for audio or CV.
@@ -226,7 +227,7 @@ The MIX output is monophonic 0V if MIX 4 is bypassed.
 
 ## MIX 4 STEREO
 ![Mix 4 Stereo module image](./doc/Mix4Stereo.png)  
-A stereo compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping.
+A stereo compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping and/or DC offset removal.
 
 Mix 4 Stereo is identical to Mix 4 except each of the inputs and outputs is doubled to support left and right channels. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
 
@@ -616,38 +617,3 @@ An LED glows blue above the output ports if oversampling is enabled. The LED is 
 All outputs are monophonic 0V if the module is bypassed.
 
 [Return to Table Of Contents](#venom)
-
-## VCO
-### Incomplete - Work in progress
-![VCO module image](./doc/VenomVCO.png)  
-A VCO derived from 21kHz Palm Loop code. VCO is one of two hidden modules that may never be released. Never-the-less, you may try it out by following the instructions at the [Hidden Unreleased Module](#hidden-unreleased-module) section.
-
-The Palm Loop is the only existing VCO I have found that can do true through zero linear FM (not phase modulation), with the negative frequencies properly reflected, and decent anti-aliasing, even with negative frequencies, all with low CPU usage. It uses an unusual (in VCV world anyway) polyBlamp method for antialiasing the triangle wave. Bogaudio and VCV VCOs can also do through zero linear FM with 0Hz carrier, except the negative frequencies are flawed - the negative frequency antialiasing is broken for both, and the Bogaudio saw becomes unipolar at negative frequencies.
-
-The limitations I find for Palm Loop are:
-- Sine and Square (and sine sub) are 1 octave down from the saw and sine. This is a result of how the signals are computed - the saw functions as a phasor to drive the other wave forms 1 octave down.
-- The subs are not properly reset
-- No pulse width modulation
-
-I have adapted the code with the following improvements:
-- All wave forms are at the same octave.
-- Added pulse width modulation, with an attempt to eliminate DC offset
-- Added a -1 octave which runs at 0Hz so the VCO can be used conveniently as a 0 Hz carrier for linear FM. In this mode, the Pitch knob and V/Oct input serve to bias the 0 Hz carrier, giving motion to the FM
-- Modified the phase relationships between the waveforms to better suit some of my patching needs.
-- Not an improvement - but I swapped in stock components for the 21kHz knobs and ports. I still need to work on the faceplate layout. For example, I need to add a PWM attenuverter.
-
-Current Bugs:
-- Triangle antialising works just fine until it reaches ~1/4 the Nyquist frequency, at which point all hell breaks loose. I've tested at multiple sample rates, and there is definitely something going on with the math, but I do not understand the polyBLAMP, so I don't know how to fix it. The breakdowns occur at:
-  - 48 kHz at around 6,040 Hz
-  - 96 kHz at around 12,080 Hz
-  - 192 kHz at around 24,160 Hz
-- Square wave antialiasing works just fine as long as PW is at 50%. But the moment PW deviates the antialiasing goes to hell, which I think also introduces DC offset. I am pretty sure the DC offset problem will be eliminated if I can figure out the anti-aliasing problem. Again, I don't understand the math, so I don't know how to fix it.
-
-Assuming I can resolve the aliasing problems, I would like to add the following features:
-- polyphony - I will need to start using simd to maintain decent performance
-- If possible, I would like to add independent phase control for each waveform
-- I may also add a mixer with inversion capabilities to simplify creation of complex waveforms.
-
-The last two options could be build in, added through an expander, or possibly another module.
-
-[Return to Table Of Contents](#venom)                                                                                                       
