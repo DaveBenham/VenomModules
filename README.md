@@ -188,14 +188,14 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 ## MIX 4
 ![Mix 4 module image](./doc/Mix4.png)  
-A compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping.
+A compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping and/or DC offset removal.
 
 ### Level knobs and inputs 1 - 4
 These knobs control the level of each of the input channels before they are summed to create the Mix. The exact behavior depends on the setting of the Mode button.
 Each input level knob may produce constant CV if the corresponding input is unpatched, depending on the mode.
 
 ### MIX level knob and output
-The MIX knob controls the level of the final mix after summing the 4 modified inputs. The behavior depends on the setting of the Mode button. The final result may be clipped, depending on the clip setting, before being sent to the MIX output.
+The MIX knob controls the level of the final mix after summing the 4 modified inputs. The behavior depends on the setting of the Mode button. The final result may be clipped and/or have DC offset removed, depending on the clip and DC offset settings, before being sent to the MIX output.
 
 ### Polyphony
 The number of output polyphonic channels is normally determined by the maximum number of channels found across all four inputs. Monophonic inputs are replicated to match the number of output channels. But polyphonic inputs with fewer channels send 0V for any missing channels.
@@ -209,6 +209,15 @@ The color coded mode button determines how the 4 channel and the mix knobs behav
 - **Bipolar CV%** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
 - **Bipolar CV x2** (light blue): Each input level knob ranges from -2x to 2x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0x (or 0V) at noon. The Mix knob always ranges from -2x to 2x, with a default of 1x (unity).
 - **Bipolar CV x10** (dark blue): Each input level knob ranges from -10x to 10x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
+
+### D (DC Block) button
+The color coded DC block button determines when (or if) a high pass filter with 10Hz cutoff is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
+- **Off** (dark gray): DC offset is not removed.
+- **Before clipping** (yellow): DC offset is removed prior to any clipping. Note that subsequent clipping may re-introduce some DC offset.
+- **Before and after clipping** (green): DC offset is removed both before and after any clipping. Note that only one DC offset removal is performed if clipping is not applied.
+- **After clipping** (light blue): DC offset is removed after any clipping.
+
+The last three DC offset options give identical results when no clipping is applied.
 
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio according to typical usage, but each option can be used for audio or CV.
@@ -226,7 +235,7 @@ The MIX output is monophonic 0V if MIX 4 is bypassed.
 
 ## MIX 4 STEREO
 ![Mix 4 Stereo module image](./doc/Mix4Stereo.png)  
-A stereo compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping.
+A stereo compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping and/or DC offset removal.
 
 Mix 4 Stereo is identical to Mix 4 except each of the inputs and outputs is doubled to support left and right channels. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
 
