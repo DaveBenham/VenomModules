@@ -1,0 +1,10 @@
+Ivory = ede7dc
+Coal  = 252525
+Red   = ff0000
+Earth Brown = 423932
+Earth Tan   = d2ac95
+White       = f2f2f2
+Black       = 000000
+
+Normal Label: arial bold, 6 pt
+Small Label: arial normal, 4 pt

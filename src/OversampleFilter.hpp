@@ -44,3 +44,20 @@ class OversampleFilter_4 {
   private:
     rack::dsp::TBiquadFilter<rack::simd::float_4> f[3];
 };
+
+class DCBlockFilter_4 {
+  public:
+    void init(float sampleRate){
+      f.setCutoffFreq(10.f/sampleRate);
+    }
+    void reset(){
+      f.reset();
+    }
+    rack::simd::float_4 process(rack::simd::float_4 val){
+      f.process(val);
+      return f.highpass();
+    }
+
+  private:
+    rack::dsp::TRCFilter <rack::simd::float_4>f;
+};

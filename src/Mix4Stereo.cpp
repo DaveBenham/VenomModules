@@ -13,6 +13,7 @@ struct Mix4Stereo : VenomModule {
     MIX_LEVEL_PARAM,
     MODE_PARAM,
     CLIP_PARAM,
+    DCBLOCK_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -36,6 +37,8 @@ struct Mix4Stereo : VenomModule {
   float offset = 0.f;
   int oversample = 4;
   OversampleFilter_4 leftUpSample[4], leftDownSample[4], rightUpSample[4], rightDownSample[4];
+  DCBlockFilter_4 leftDcBlockBeforeFilter[4], rightDcBlockBeforeFilter[4],
+                  leftDcBlockAfterFilter[4],  rightDcBlockAfterFilter[4];
 
   Mix4Stereo() {
     struct FixedSwitchQuantity : SwitchQuantity {
@@ -51,10 +54,12 @@ struct Mix4Stereo : VenomModule {
     }
     configParam(MIX_LEVEL_PARAM, 0.f, 2.f, 1.f, "Mix level", " dB", -10.f, 20.f);
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {"Unipolar audio dB", "Unipolar audio dB poly sum", "Bipolar CV%", "Bipolar CV x2", "Bipolar CV x10"});
+    configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
     configOutput(LEFT_OUTPUT, "Left Mix");
     configOutput(RIGHT_OUTPUT, "Right Mix");
     initOversample();
+    initDCBlock();
   }
 
   void initOversample(){
@@ -66,10 +71,24 @@ struct Mix4Stereo : VenomModule {
     }
   }
 
+    void initDCBlock(){
+    float sampleTime = settings::sampleRate;
+    for (int i=0; i<4; i++){
+      leftDcBlockBeforeFilter[i].init(sampleTime);
+      rightDcBlockBeforeFilter[i].init(sampleTime);
+      leftDcBlockAfterFilter[i].init(sampleTime);
+      rightDcBlockAfterFilter[i].init(sampleTime);
+    }
+  }
+
   void onReset(const ResetEvent& e) override {
     mode = -1;
     initOversample();
     Module::onReset(e);
+  }
+
+  void onSampleRateChange(const SampleRateChangeEvent& e) override {
+    initDCBlock();
   }
 
   void process(const ProcessArgs& args) override {
@@ -101,6 +120,7 @@ struct Mix4Stereo : VenomModule {
       offset = mode <= 1 ? 0.f : -1.f;
     }
     int clip = static_cast<int>(params[CLIP_PARAM].getValue());
+    int dcBlock = static_cast<int>(params[DCBLOCK_PARAM].getValue());
 
     int channels = mode == 1 ? 1 : std::max({1,
       inputs[LEFT_INPUTS].getChannels(), inputs[LEFT_INPUTS+1].getChannels(), inputs[LEFT_INPUTS+2].getChannels(), inputs[LEFT_INPUTS+3].getChannels(),
@@ -137,6 +157,10 @@ struct Mix4Stereo : VenomModule {
       }
       leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
       rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+      if (dcBlock && dcBlock <= 2){
+        leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
+        rightOut = rightDcBlockBeforeFilter[c/4].process(rightOut);
+      }
       if (clip == 1){
         leftOut = clamp(leftOut, -10.f, 10.f);
         rightOut = clamp(rightOut, -10.f, 10.f);
@@ -154,6 +178,10 @@ struct Mix4Stereo : VenomModule {
           rightOut = softClip(rightOut);
           rightOut = rightDownSample[c/4].process(rightOut);
         }
+      }
+      if (dcBlock == 3 || (dcBlock == 2 && clip)){
+        leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
+        rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }
       outputs[LEFT_OUTPUT].setVoltageSimd(leftOut, c);
       outputs[RIGHT_OUTPUT].setVoltageSimd(rightOut, c);
@@ -185,6 +213,15 @@ struct Mix4StereoWidget : VenomWidget {
     }
   };
 
+  struct DCBlockSwitch : GlowingSvgSwitchLockable {
+    DCBlockSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+    }
+  };
+
   Mix4StereoWidget(Mix4Stereo* module) {
     setModule(module);
     setVenomPanel("Mix4Stereo");
@@ -195,7 +232,8 @@ struct Mix4StereoWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(37.5,131.014), module, Mix4Stereo::LEVEL_PARAMS+3));
     addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(37.5,168.254), module, Mix4Stereo::MIX_LEVEL_PARAM));
     addParam(createLockableParamCentered<ModeSwitch>(Vec(62.443,50.415), module, Mix4Stereo::MODE_PARAM));
-    addParam(createLockableParamCentered<ClipSwitch>(Vec(62.443,82.655), module, Mix4Stereo::CLIP_PARAM));
+    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(62.443,82.655), module, Mix4Stereo::DCBLOCK_PARAM));
+    addParam(createLockableParamCentered<ClipSwitch>(Vec(62.443,114.895), module, Mix4Stereo::CLIP_PARAM));
 
     addInput(createInputCentered<PJ301MPort>(Vec(21.812,201.993), module, Mix4Stereo::LEFT_INPUTS+0));
     addInput(createInputCentered<PJ301MPort>(Vec(21.812,235.233), module, Mix4Stereo::LEFT_INPUTS+1));
