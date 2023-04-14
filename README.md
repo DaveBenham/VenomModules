@@ -188,7 +188,7 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 ## MIX 4
 ![Mix 4 module image](./doc/Mix4.png)  
-Compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping.
+A compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping.
 
 ### Level knobs and inputs 1 - 4
 These knobs control the level of each of the input channels before they are summed to create the Mix. The exact behavior depends on the setting of the Mode button.
@@ -211,19 +211,35 @@ The color coded mode button determines how the 4 channel and the mix knobs behav
 - **Bipolar CV x10** (dark blue): Each input level knob ranges from -10x to 10x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
 
 ### C (Clip) button
-The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio based on typical usage, but each option can be used for audio or CV.
+The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio according to typical usage, but each option can be used for audio or CV.
 - **Off** (dark gray): The final mix is left untouched, with no limit to the output voltage.
 - **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
 - **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V with saturation using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
 - **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V with saturation using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces or eliminates any audible audio aliasing that would otherwise occur.
 
+### Bypass
+
+The MIX output is monophonic 0V if MIX 4 is bypassed.
+
 [Return to Table Of Contents](#venom)
 
 
 ## MIX 4 STEREO
-![Mix 4 Stereo module image](./doc/Mix4Stereo.png)
+![Mix 4 Stereo module image](./doc/Mix4Stereo.png)  
+A stereo compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping.
+
+Mix 4 Stereo is identical to Mix 4 except each of the inputs and outputs is doubled to support left and right channels. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
+
+Each right input is normaled to the corresponding left input. When in CV mode, each input level knob produces constant CV only if both the left and right input are unpatched.
+
+The number of polyphonic output channels is determined by the maximum polyphonic channel count found across all inputs. The output channel count always matches for the left and right Mix outputs.
+
+When Mix 4 Stereo is bypassed, both the left and right Mix outputs are monophonic constant CV.
+
+All other behaviors are the same as for Mix 4.
 
 [Return to Table Of Contents](#venom)
+
 
 ## POLY CLONE
 ![Poly Clone module image](./doc/PolyClone.png)  
