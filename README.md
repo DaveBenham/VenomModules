@@ -14,14 +14,6 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 |----|----|----|
 |![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
 
-## Hidden Unreleased Module
-There is one additional hidden module that is not yet ready to be released. But you can enable it by editing the  
-\<Rack user folder\>/Plugins/VenomModules/plugin.json file. Find the hidden module within the file, and change the "hidden" value to false. But bear in mind that this module may never be released, and may disappear entirely from a future release. Or if it is released, it may not be backward compatible with the current hidden version.  
-
-|[VCO](#vco)<br />Incomplete|
-|---|
-|![VCO module image](./doc/VenomVCO.png)|
-
 ## Themes
 The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
 
@@ -625,38 +617,3 @@ An LED glows blue above the output ports if oversampling is enabled. The LED is 
 All outputs are monophonic 0V if the module is bypassed.
 
 [Return to Table Of Contents](#venom)
-
-## VCO
-### Incomplete - Work in progress
-![VCO module image](./doc/VenomVCO.png)  
-A VCO derived from 21kHz Palm Loop code. VCO is one of two hidden modules that may never be released. Never-the-less, you may try it out by following the instructions at the [Hidden Unreleased Module](#hidden-unreleased-module) section.
-
-The Palm Loop is the only existing VCO I have found that can do true through zero linear FM (not phase modulation), with the negative frequencies properly reflected, and decent anti-aliasing, even with negative frequencies, all with low CPU usage. It uses an unusual (in VCV world anyway) polyBlamp method for antialiasing the triangle wave. Bogaudio and VCV VCOs can also do through zero linear FM with 0Hz carrier, except the negative frequencies are flawed - the negative frequency antialiasing is broken for both, and the Bogaudio saw becomes unipolar at negative frequencies.
-
-The limitations I find for Palm Loop are:
-- Sine and Square (and sine sub) are 1 octave down from the saw and sine. This is a result of how the signals are computed - the saw functions as a phasor to drive the other wave forms 1 octave down.
-- The subs are not properly reset
-- No pulse width modulation
-
-I have adapted the code with the following improvements:
-- All wave forms are at the same octave.
-- Added pulse width modulation, with an attempt to eliminate DC offset
-- Added a -1 octave which runs at 0Hz so the VCO can be used conveniently as a 0 Hz carrier for linear FM. In this mode, the Pitch knob and V/Oct input serve to bias the 0 Hz carrier, giving motion to the FM
-- Modified the phase relationships between the waveforms to better suit some of my patching needs.
-- Not an improvement - but I swapped in stock components for the 21kHz knobs and ports. I still need to work on the faceplate layout. For example, I need to add a PWM attenuverter.
-
-Current Bugs:
-- Triangle antialising works just fine until it reaches ~1/4 the Nyquist frequency, at which point all hell breaks loose. I've tested at multiple sample rates, and there is definitely something going on with the math, but I do not understand the polyBLAMP, so I don't know how to fix it. The breakdowns occur at:
-  - 48 kHz at around 6,040 Hz
-  - 96 kHz at around 12,080 Hz
-  - 192 kHz at around 24,160 Hz
-- Square wave antialiasing works just fine as long as PW is at 50%. But the moment PW deviates the antialiasing goes to hell, which I think also introduces DC offset. I am pretty sure the DC offset problem will be eliminated if I can figure out the anti-aliasing problem. Again, I don't understand the math, so I don't know how to fix it.
-
-Assuming I can resolve the aliasing problems, I would like to add the following features:
-- polyphony - I will need to start using simd to maintain decent performance
-- If possible, I would like to add independent phase control for each waveform
-- I may also add a mixer with inversion capabilities to simplify creation of complex waveforms.
-
-The last two options could be build in, added through an expander, or possibly another module.
-
-[Return to Table Of Contents](#venom)                                                                                                       
