@@ -1,5 +1,5 @@
 // Venom Modules (c) 2022 Dave Benham
-// Licensed under GNU GPLv3
+// Licensed under GNU GPLv3 
 
 #pragma once
 #include <rack.hpp>
