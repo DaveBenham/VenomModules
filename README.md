@@ -212,10 +212,10 @@ The color coded mode button determines how the 4 channel and the mix knobs behav
 
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio based on typical usage, but each option can be used for audio or CV.
-- **Off** (dark gray)
-- **Hard CV clipping** (white)
-- **Soft audio clipping** (yellow)
-- **Soft oversampled CV audio clipping** (orange)
+- **Off** (dark gray): The final mix is left untouched, with no limit to the output voltage.
+- **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
+- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V with saturation using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
+- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V with saturation using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces or eliminates any audible audio aliasing that would otherwise occur.
 
 [Return to Table Of Contents](#venom)
 
