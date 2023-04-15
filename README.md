@@ -93,8 +93,8 @@ The following factory presets are available that emulate the four configurations
 - Latched Toggled Bernoulli Gate - Toggles constant 10V between A and B
 - Toggled Bernoulli Gate - Toggles triggering gate between A and B
 
-### Parameter Locking
-All parameters may be locked
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locking](parameter-locking) are available via standard Venom context menus.
 
 ### Bypass Behavior
 If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. However, the A input is not normalled to the TRIG input while bypassed.
@@ -115,6 +115,9 @@ An LED glows yellow for each input that is successfully replicated. The LED glow
 
 ### POLY output
 All of the replicated inputs are merged into the single polyphonic output. The poly output starts with all clones from input 1, followed by clones from input 2, etc.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locking](parameter-locking) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -172,6 +175,9 @@ If this port is patched, then the V/Oct input is quantized to the nearest harmon
 ### OUT output
 The final computed partial is converted into a delta V/Oct and added to the ROOT to establish the final output V/Oct value.
 
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locking](parameter-locking) are available via standard Venom context menus.
+
 ### Bypass
 
 The IN input is passed unchanged to the OUT output when the Harmonic Quantizer is bypassed.
@@ -218,6 +224,9 @@ The color coded clip button determines how (or if) the final output is clipped. 
 - **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V with saturation using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
 - **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V with saturation using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces or eliminates any audible audio aliasing that would otherwise occur.
 
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locking](parameter-locking) are available via standard Venom context menus.
+
 ### Bypass
 
 The MIX output is monophonic 0V if MIX 4 is bypassed.
@@ -258,6 +267,9 @@ For each channel appearing at the input, the corresponding LED above glows yello
 
 ### POLY output
 All of the replicated channels are merged into the single polyphonic output. The poly output starts with all clones from input channel 1, followed by clones from input channel 2, etc.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locking](parameter-locking) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -307,7 +319,10 @@ The unlabeled Modulation Mode knob determines when the SCALE and OFFSET operatio
 
 Since the Return is normalled to the Send, it is possible to generate a polyphonic series of constant voltages using only the RECURSE module. For example, leave all inputs and the Return unpatched, set the Recursion Count to 16, the Scale to 1, the Offset to 1V, and the Mode to nPre. The SEND output will have 16 channels of integral values from 1 to 16. Change the Mode to nPost and the values will range from 0 to 15.
 
-#### Bypass
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locking](parameter-locking) are available via standard Venom context menus.
+
+### Bypass
 
 The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND will be monophonic 0V.
 
@@ -551,6 +566,9 @@ These outputs are normally monophonic, combining the beats of all 8 divisions. B
 
 There is a Vermona randomRHYTHM preset available that configures the Rhythm Explorer to make it easy to get a flavor of what it would be like to actually use the Vermona hardware. The Phrase is set to 1 and Bar to 4, like the Vermona 4/4 time. It configures the divisions as 1/4, 1/8, 1/16, 1/4T, 1/4, 1/8, 1/16, 1/4T. All divisions are assigned mode ALL except division 5 is assigned ALL - NEW. It also sets the Global Mode to Offset so the OR output will behave like the Vermona. In this way there are effectively two rhythm generators configured like the Vermona, exept they both share a common clock, dice, and reset. The OR output is polyphonic - an external split module is needed to separate the OR output into separate outputs for each rhythm generator. 
 
+### Standard Venom Context Menus
+[Venom Themes](#themes) are available via standard Venom context menus. But Rhythm Explorer has its own design for limited parameter locking, so the standard parameter locking menus are not available.
+
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.
 
@@ -612,6 +630,9 @@ By default WINCOMP is configured to output CV values, without any anti-aliasing.
 Oversampling uses significant CPU, so there are multiple options to choose from: x2, x4, x8, and x16. The higher the oversample rate, the better the result, but more CPU is used.
 
 An LED glows blue above the output ports if oversampling is enabled. The LED is black when oversampling is off.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locking](parameter-locking) are available via standard Venom context menus.
 
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.
