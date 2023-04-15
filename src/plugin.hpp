@@ -1,5 +1,5 @@
 // Venom Modules (c) 2022 Dave Benham
-// Licensed under GNU GPLv3 
+// Licensed under GNU GPLv3
 
 #pragma once
 #include <rack.hpp>
@@ -19,7 +19,6 @@ extern Model* modelPolyClone;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
 extern Model* modelRhythmExplorer;
-extern Model* modelVCO;
 extern Model* modelWinComp;
 
 ////////////////////////////////
