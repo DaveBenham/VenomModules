@@ -1,5 +1,18 @@
 # Venom Modules Changelog
 
+## 2.2.0 (2023-??-??)
+### New Modules
+- Mix 4
+- Mix 4 Stereo
+
+### Enhancements
+- Every Venom plugin parameter (knob, switch, button, etc.) has been given a context menu option to lock or unlock the parameter.
+- Every Venom plugin module has been given module context menu options to lock or unlock all parameters of that module instance.
+- The new parameter lock/unlock options do not apply to Rhythm Explorer as it already had its own parameter locking implementation.
+
+### Discontinued
+- Removed the hidden VCO that will never be released. When/if I do release a VCO, it will be entirely different code.
+
 ## 2.1.4 (2023-03-20)
 ### Enhancements
 - Bernoulli Switch
