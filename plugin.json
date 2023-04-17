@@ -118,6 +118,18 @@
       ]
     },
     {
+      "slug": "VCAMix4",
+      "name": "VCA Mix 4",
+      "description": "Compact audio or CV VCA, mixer, attenuator, inverter, amplifier, and/or offset",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-4",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "WinComp",
       "name": "WinComp",
       "description": "Windowed comparator and rectifier",

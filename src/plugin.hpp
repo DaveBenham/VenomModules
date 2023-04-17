@@ -19,6 +19,7 @@ extern Model* modelPolyClone;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
 extern Model* modelRhythmExplorer;
+extern Model* modelVCAMix4;
 extern Model* modelWinComp;
 
 ////////////////////////////////

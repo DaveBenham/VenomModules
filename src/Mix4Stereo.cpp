@@ -53,9 +53,9 @@ struct Mix4Stereo : VenomModule {
       configInput(RIGHT_INPUTS+i, string::f("Right channel %d", i + 1));
     }
     configParam(MIX_LEVEL_PARAM, 0.f, 2.f, 1.f, "Mix level", " dB", -10.f, 20.f);
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {"Unipolar audio dB", "Unipolar audio dB poly sum", "Bipolar CV%", "Bipolar CV x2", "Bipolar CV x10"});
-    configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
-    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {"Unipolar dB (x2)", "Unipolar dB (x2) poly sum", "Bipolar %", "Bipolar x2", "Bipolar x10"});
+    configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
     configOutput(LEFT_OUTPUT, "Left Mix");
     configOutput(RIGHT_OUTPUT, "Right Mix");
     initOversample();

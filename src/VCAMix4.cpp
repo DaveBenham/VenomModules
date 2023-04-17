@@ -3,24 +3,31 @@
 
 #include "plugin.hpp"
 #include "dsp/math.hpp"
+#include <cfloat>
 #include "OversampleFilter.hpp"
 
-#define MODULE_NAME Mix4
+#define MODULE_NAME VCAMix4
 
-struct Mix4 : VenomModule {
+struct VCAMix4 : VenomModule {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 4),
     MIX_LEVEL_PARAM,
     MODE_PARAM,
     CLIP_PARAM,
     DCBLOCK_PARAM,
+    VCAMODE_PARAM,
+    EXCLUDE_PARAM,
     PARAMS_LEN
   };
   enum InputId {
+    ENUMS(CV_INPUTS, 4),
+    MIX_CV_INPUT,
     ENUMS(INPUTS, 4),
+    CHAIN_INPUT,
     INPUTS_LEN
   };
   enum OutputId {
+    ENUMS(OUTPUTS, 4),
     MIX_OUTPUT,
     OUTPUTS_LEN
   };
@@ -37,7 +44,7 @@ struct Mix4 : VenomModule {
   OversampleFilter_4 outUpSample[4], outDownSample[4];
   DCBlockFilter_4 dcBlockBeforeFilter[4], dcBlockAfterFilter[4];
 
-  Mix4() {
+  VCAMix4() {
     struct FixedSwitchQuantity : SwitchQuantity {
       std::string getDisplayValueString() override {
         return labels[getValue()];
@@ -45,13 +52,19 @@ struct Mix4 : VenomModule {
     };
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < 4; i++){
+      configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);
       configInput(INPUTS+i, string::f("Channel %d", i + 1));
+      configOutput(OUTPUTS+i, string::f("Channel %d", i + 1));
     }
+    configInput(MIX_CV_INPUT, "Mix CV");
     configParam(MIX_LEVEL_PARAM, 0.f, 2.f, 1.f, "Mix level", " dB", -10.f, 20.f);
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {"Unipolar dB (x2)", "Unipolar dB (x2) poly sum", "Bipolar %", "Bipolar x2", "Bipolar x10"});
+    configSwitch<FixedSwitchQuantity>(VCAMODE_PARAM, 0.f, 1.f, 0.f, "VCA Mode", {"Unipolar - CV clamped 0-10V", "Bipolar - CV unclamped"});
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
+    configSwitch<FixedSwitchQuantity>(EXCLUDE_PARAM, 0.f, 1.f, 0.f, "Exclude Patched Outs from Mix", {"Off", "On"});
+    configInput(CHAIN_INPUT, "Chain");
     configOutput(MIX_OUTPUT, "Mix");
     initOversample();
     initDCBlock();
@@ -112,21 +125,30 @@ struct Mix4 : VenomModule {
     }
     int clip = static_cast<int>(params[CLIP_PARAM].getValue());
     int dcBlock = static_cast<int>(params[DCBLOCK_PARAM].getValue());
+    int vcaMode = static_cast<int>(params[VCAMODE_PARAM].getValue());
+    bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
 
-    int channels = mode == 1 ? 1 : std::max({1, inputs[INPUTS].getChannels(), inputs[INPUTS+1].getChannels(), inputs[INPUTS+2].getChannels(), inputs[INPUTS+3].getChannels()});
-    simd::float_4 out;
+    int inChannels[4];
+    for (int i=0; i<4; i++)
+      inChannels[i] = mode == 1 ? 1 : std::max({1, inputs[CV_INPUTS+i].getChannels(), inputs[INPUTS+i].getChannels()});
+    int channels = std::max({inChannels[0], inChannels[1], inChannels[2], inChannels[3], inputs[MIX_CV_INPUT].getChannels()});
+    simd::float_4 in, out, cv;
     for (int c=0; c<channels; c+=4){
-      out = mode == 1 ?
-            inputs[INPUTS+0].getVoltageSum() * (params[LEVEL_PARAMS+0].getValue()+offset)*scale
-          + inputs[INPUTS+1].getVoltageSum() * (params[LEVEL_PARAMS+1].getValue()+offset)*scale
-          + inputs[INPUTS+2].getVoltageSum() * (params[LEVEL_PARAMS+2].getValue()+offset)*scale
-          + inputs[INPUTS+3].getVoltageSum() * (params[LEVEL_PARAMS+3].getValue()+offset)*scale
-        :
-            inputs[INPUTS+0].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+0].getValue()+offset)*scale
-          + inputs[INPUTS+1].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+1].getValue()+offset)*scale
-          + inputs[INPUTS+2].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+2].getValue()+offset)*scale
-          + inputs[INPUTS+3].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+3].getValue()+offset)*scale;
-      out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+      out = simd::float_4::zero();
+      for (int i=0; i<4; i++){
+        cv = inputs[CV_INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
+        if (vcaMode == 0)
+          cv = simd::clamp(cv, 0.f, 1.f);
+        in = mode == 1 ? inputs[INPUTS+i].getVoltageSum() : inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c);
+        in *= (params[LEVEL_PARAMS+i].getValue()+offset)*scale*cv;
+        outputs[OUTPUTS+i].setVoltageSimd(in, c);
+        if (!exclude || !outputs[OUTPUTS+i].isConnected())
+          out += in;
+      }
+      cv = inputs[MIX_CV_INPUT].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
+      if (vcaMode == 0)
+        cv = simd::clamp(cv, 0.f, 1.f);
+      out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
       if (dcBlock && dcBlock <= 2)
         out = dcBlockBeforeFilter[c/4].process(out);
       if (clip == 1)
@@ -144,12 +166,14 @@ struct Mix4 : VenomModule {
         out = dcBlockAfterFilter[c/4].process(out);
       outputs[MIX_OUTPUT].setVoltageSimd(out, c);
     }
+    for (int i=0; i<4; i++)
+      outputs[OUTPUTS+i].setChannels(inChannels[i]);
     outputs[MIX_OUTPUT].setChannels(channels);
   }
 
 };
 
-struct Mix4Widget : VenomWidget {
+struct VCAMix4Widget : VenomWidget {
 
   struct ModeSwitch : GlowingSvgSwitchLockable {
     ModeSwitch() {
@@ -179,26 +203,55 @@ struct Mix4Widget : VenomWidget {
     }
   };
 
-  Mix4Widget(Mix4* module) {
+  struct VCAModeSwitch : GlowingSvgSwitchLockable {
+    VCAModeSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
+    }
+  };
+
+  struct ExcludeSwitch : GlowingSvgSwitchLockable {
+    ExcludeSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
+    }
+  };
+
+  VCAMix4Widget(VCAMix4* module) {
     setModule(module);
-    setVenomPanel("Mix4");
+    setVenomPanel("VCAMix4");
 
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.337, 34.295), module, Mix4::LEVEL_PARAMS+0));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.337, 66.535), module, Mix4::LEVEL_PARAMS+1));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.337, 98.775), module, Mix4::LEVEL_PARAMS+2));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.337,131.014), module, Mix4::LEVEL_PARAMS+3));
-    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(22.337,168.254), module, Mix4::MIX_LEVEL_PARAM));
-    addParam(createLockableParamCentered<ModeSwitch>(Vec(37.491,50.415), module, Mix4::MODE_PARAM));
-    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(37.491,82.655), module, Mix4::DCBLOCK_PARAM));
-    addParam(createLockableParamCentered<ClipSwitch>(Vec(37.491,114.895), module, Mix4::CLIP_PARAM));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329, 42.295), module, VCAMix4::CV_INPUTS+0));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329, 73.035), module, VCAMix4::CV_INPUTS+1));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329,103.775), module, VCAMix4::CV_INPUTS+2));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329,134.515), module, VCAMix4::CV_INPUTS+3));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329,168.254), module, VCAMix4::MIX_CV_INPUT));
 
-    addInput(createInputCentered<PJ301MPort>(Vec(22.337,201.993), module, Mix4::INPUTS+0));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.337,235.233), module, Mix4::INPUTS+1));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.337,268.473), module, Mix4::INPUTS+2));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.337,301.712), module, Mix4::INPUTS+3));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.337,340.434), module, Mix4::MIX_OUTPUT));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.671, 42.295), module, VCAMix4::LEVEL_PARAMS+0));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.671, 73.035), module, VCAMix4::LEVEL_PARAMS+1));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.671, 103.775), module, VCAMix4::LEVEL_PARAMS+2));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.671, 134.515), module, VCAMix4::LEVEL_PARAMS+3));
+    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(53.671,168.254), module, VCAMix4::MIX_LEVEL_PARAM));
+
+    addParam(createLockableParamCentered<ModeSwitch>(Vec(67.9055,57.6655), module, VCAMix4::MODE_PARAM));
+    addParam(createLockableParamCentered<VCAModeSwitch>(Vec(67.9055,88.4045), module, VCAMix4::VCAMODE_PARAM));
+    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(67.9055,119.1445), module, VCAMix4::DCBLOCK_PARAM));
+    addParam(createLockableParamCentered<ClipSwitch>(Vec(67.9055,149.8845), module, VCAMix4::CLIP_PARAM));
+    addParam(createLockableParamCentered<ExcludeSwitch>(Vec(7.2725,357.2475), module, VCAMix4::EXCLUDE_PARAM));
+
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329,209.400), module, VCAMix4::INPUTS+0));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329,241.320), module, VCAMix4::INPUTS+1));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329,273.240), module, VCAMix4::INPUTS+2));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329,305.160), module, VCAMix4::INPUTS+3));
+    addInput(createInputCentered<PJ301MPort>(Vec(21.329,340.434), module, VCAMix4::CHAIN_INPUT));
+
+    addOutput(createOutputCentered<PJ301MPort>(Vec(53.671,209.400), module, VCAMix4::OUTPUTS+0));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(53.671,241.320), module, VCAMix4::OUTPUTS+1));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(53.671,273.240), module, VCAMix4::OUTPUTS+2));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(53.671,305.160), module, VCAMix4::OUTPUTS+3));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(53.671,340.434), module, VCAMix4::MIX_OUTPUT));
   }
 
 };
 
-Model* modelMix4 = createModel<Mix4, Mix4Widget>("Mix4");
+Model* modelVCAMix4 = createModel<VCAMix4, VCAMix4Widget>("VCAMix4");

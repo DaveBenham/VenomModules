@@ -48,16 +48,25 @@ class OversampleFilter_4 {
 class DCBlockFilter_4 {
   public:
     void init(float sampleRate){
-      f.setCutoffFreq(10.f/sampleRate);
+      f[0].setCutoffFreq(10.f/sampleRate);
+      f[1].setCutoffFreq(10.f/sampleRate);
+      f[2].setCutoffFreq(10.f/sampleRate);
+      f[3].setCutoffFreq(10.f/sampleRate);
     }
     void reset(){
-      f.reset();
+      f[0].reset();
+      f[1].reset();
+      f[2].reset();
+      f[3].reset();
     }
     rack::simd::float_4 process(rack::simd::float_4 val){
-      f.process(val);
-      return f.highpass();
+      f[0].process(val);
+      f[1].process(f[0].highpass());
+      f[2].process(f[1].highpass());
+      f[3].process(f[2].highpass());
+      return f[3].highpass();
     }
 
   private:
-    rack::dsp::TRCFilter <rack::simd::float_4>f;
+    rack::dsp::TRCFilter <rack::simd::float_4>f[4];
 };
