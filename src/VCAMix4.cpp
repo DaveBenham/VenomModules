@@ -2,9 +2,9 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "dsp/math.hpp"
+#include "math.hpp"
 #include <cfloat>
-#include "OversampleFilter.hpp"
+#include "Filter.hpp"
 
 #define MODULE_NAME VCAMix4
 
@@ -59,8 +59,12 @@ struct VCAMix4 : VenomModule {
     }
     configInput(MIX_CV_INPUT, "Mix CV");
     configParam(MIX_LEVEL_PARAM, 0.f, 2.f, 1.f, "Mix level", " dB", -10.f, 20.f);
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {"Unipolar dB (x2)", "Unipolar dB (x2) poly sum", "Bipolar %", "Bipolar x2", "Bipolar x10"});
-    configSwitch<FixedSwitchQuantity>(VCAMODE_PARAM, 0.f, 1.f, 0.f, "VCA Mode", {"Unipolar - CV clamped 0-10V", "Bipolar - CV unclamped"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {
+      "Unipolar dB (audio x2)", "Unipolar poly sum dB (audio x2)", "Bipolar % (CV)", "Bipolar x2 (CV)", "Bipolar x10 (CV)"
+    });
+    configSwitch<FixedSwitchQuantity>(VCAMODE_PARAM, 0.f, 2.f, 0.f, "VCA Mode", {
+      "Unipolar linear - CV clamped 0-10V", "Unipolar exponential - CV clamped 0-10V", "Bipolar linear - CV unclamped"
+    });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
     configSwitch<FixedSwitchQuantity>(EXCLUDE_PARAM, 0.f, 1.f, 0.f, "Exclude Patched Outs from Mix", {"Off", "On"});
@@ -131,14 +135,16 @@ struct VCAMix4 : VenomModule {
     int inChannels[4];
     for (int i=0; i<4; i++)
       inChannels[i] = mode == 1 ? 1 : std::max({1, inputs[CV_INPUTS+i].getChannels(), inputs[INPUTS+i].getChannels()});
-    int channels = std::max({inChannels[0], inChannels[1], inChannels[2], inChannels[3], inputs[MIX_CV_INPUT].getChannels()});
+    int channels = std::max({inChannels[0], inChannels[1], inChannels[2], inChannels[3], inputs[MIX_CV_INPUT].getChannels(), inputs[CHAIN_INPUT].getChannels()});
     simd::float_4 in, out, cv;
     for (int c=0; c<channels; c+=4){
-      out = simd::float_4::zero();
+      out = inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       for (int i=0; i<4; i++){
         cv = inputs[CV_INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
-        if (vcaMode == 0)
+        if (vcaMode <= 1)
           cv = simd::clamp(cv, 0.f, 1.f);
+        if (vcaMode == 1)
+          cv = simd::pow(cv, 4);
         in = mode == 1 ? inputs[INPUTS+i].getVoltageSum() : inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c);
         in *= (params[LEVEL_PARAMS+i].getValue()+offset)*scale*cv;
         outputs[OUTPUTS+i].setVoltageSimd(in, c);
@@ -146,8 +152,10 @@ struct VCAMix4 : VenomModule {
           out += in;
       }
       cv = inputs[MIX_CV_INPUT].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
-      if (vcaMode == 0)
+      if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
+      if (vcaMode == 1)
+        cv = simd::pow(cv, 4);
       out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
       if (dcBlock && dcBlock <= 2)
         out = dcBlockBeforeFilter[c/4].process(out);
@@ -205,8 +213,9 @@ struct VCAMix4Widget : VenomWidget {
 
   struct VCAModeSwitch : GlowingSvgSwitchLockable {
     VCAModeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
     }
   };
 

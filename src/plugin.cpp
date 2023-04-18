@@ -52,6 +52,7 @@ void init(Plugin* p) {
   p->addModel(modelRecurseStereo);
   p->addModel(modelRhythmExplorer);
   p->addModel(modelVCAMix4);
+  p->addModel(modelVCAMix4Stereo);
   p->addModel(modelWinComp);
 
   // Any other plugin initialization may go here.

@@ -20,6 +20,7 @@ extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
 extern Model* modelRhythmExplorer;
 extern Model* modelVCAMix4;
+extern Model* modelVCAMix4Stereo;
 extern Model* modelWinComp;
 
 ////////////////////////////////

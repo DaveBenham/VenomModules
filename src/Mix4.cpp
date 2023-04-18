@@ -2,8 +2,8 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "dsp/math.hpp"
-#include "OversampleFilter.hpp"
+#include "math.hpp"
+#include "Filter.hpp"
 
 #define MODULE_NAME Mix4
 
@@ -49,7 +49,9 @@ struct Mix4 : VenomModule {
       configInput(INPUTS+i, string::f("Channel %d", i + 1));
     }
     configParam(MIX_LEVEL_PARAM, 0.f, 2.f, 1.f, "Mix level", " dB", -10.f, 20.f);
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {"Unipolar dB (x2)", "Unipolar dB (x2) poly sum", "Bipolar %", "Bipolar x2", "Bipolar x10"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {
+      "Unipolar dB (audio x2)", "Unipolar poly sum dB (audio x2)", "Bipolar % (CV)", "Bipolar x2 (CV)", "Bipolar x10 (CV)"
+    });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
     configOutput(MIX_OUTPUT, "Mix");

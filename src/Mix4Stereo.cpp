@@ -2,8 +2,8 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "dsp/math.hpp"
-#include "OversampleFilter.hpp"
+#include "math.hpp"
+#include "Filter.hpp"
 
 #define MODULE_NAME Mix4Stereo
 
@@ -53,7 +53,9 @@ struct Mix4Stereo : VenomModule {
       configInput(RIGHT_INPUTS+i, string::f("Right channel %d", i + 1));
     }
     configParam(MIX_LEVEL_PARAM, 0.f, 2.f, 1.f, "Mix level", " dB", -10.f, 20.f);
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {"Unipolar dB (x2)", "Unipolar dB (x2) poly sum", "Bipolar %", "Bipolar x2", "Bipolar x10"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {
+      "Unipolar dB (audio x2)", "Unipolar poly sum dB (audio x2)", "Bipolar % (CV)", "Bipolar x2 (CV)", "Bipolar x10 (CV)"
+    });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
     configOutput(LEFT_OUTPUT, "Left Mix");
@@ -94,10 +96,10 @@ struct Mix4Stereo : VenomModule {
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||
-        connected[0] != (inputs[LEFT_INPUTS + 0].isConnected() || inputs[RIGHT_INPUTS + 0].isConnected()) ||
-        connected[1] != (inputs[LEFT_INPUTS + 1].isConnected() || inputs[RIGHT_INPUTS + 1].isConnected()) ||
-        connected[2] != (inputs[LEFT_INPUTS + 2].isConnected() || inputs[RIGHT_INPUTS + 2].isConnected()) ||
-        connected[3] != (inputs[LEFT_INPUTS + 3].isConnected() || inputs[RIGHT_INPUTS + 3].isConnected())
+      connected[0] != (inputs[LEFT_INPUTS + 0].isConnected() || inputs[RIGHT_INPUTS + 0].isConnected()) ||
+      connected[1] != (inputs[LEFT_INPUTS + 1].isConnected() || inputs[RIGHT_INPUTS + 1].isConnected()) ||
+      connected[2] != (inputs[LEFT_INPUTS + 2].isConnected() || inputs[RIGHT_INPUTS + 2].isConnected()) ||
+      connected[3] != (inputs[LEFT_INPUTS + 3].isConnected() || inputs[RIGHT_INPUTS + 3].isConnected())
     ){
       mode = static_cast<int>(params[MODE_PARAM].getValue());
       ParamQuantity* q;

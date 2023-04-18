@@ -1,7 +1,7 @@
 // Venom Modules (c) 2022 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "OversampleFilter.hpp"
+#include "Filter.hpp"
 #include "plugin.hpp"
 
 #define MODULE_NAME WinComp

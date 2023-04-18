@@ -2,7 +2,7 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "OversampleFilter.hpp"
+#include "Filter.hpp"
 
 #define LIGHT_OFF 0.02f
 #define FADE_RATE 400.f
