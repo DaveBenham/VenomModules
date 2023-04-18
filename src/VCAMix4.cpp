@@ -140,7 +140,7 @@ struct VCAMix4 : VenomModule {
     for (int c=0; c<channels; c+=4){
       out = inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       for (int i=0; i<4; i++){
-        cv = inputs[CV_INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
+        cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
         if (vcaMode <= 1)
           cv = simd::clamp(cv, 0.f, 1.f);
         if (vcaMode == 1 || vcaMode == 3)
@@ -151,7 +151,7 @@ struct VCAMix4 : VenomModule {
         if (!exclude || !outputs[OUTPUTS+i].isConnected())
           out += in;
       }
-      cv = inputs[MIX_CV_INPUT].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
+      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
       if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
       if (vcaMode == 1 || vcaMode == 3)

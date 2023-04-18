@@ -163,7 +163,7 @@ struct VCAMix4Stereo : VenomModule {
       rightOut = inputs[RIGHT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       if (mode == 1){
         for (int i=0; i<4; i++){
-          cv = inputs[CV_INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
+          cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
           if (vcaMode <= 1)
             cv = simd::clamp(cv, 0.f, 1.f);
           if (vcaMode == 1 || vcaMode == 3)
@@ -182,7 +182,7 @@ struct VCAMix4Stereo : VenomModule {
       }
       else {
         for (int i=0; i<4; i++){
-          cv = inputs[CV_INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
+          cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
           if (vcaMode <= 1)
             cv = simd::clamp(cv, 0.f, 1.f);
           if (vcaMode == 1 || vcaMode == 3)
@@ -210,7 +210,7 @@ struct VCAMix4Stereo : VenomModule {
           }
         }
       }
-      cv = inputs[MIX_CV_INPUT].getNormalPolyVoltageSimd<simd::float_4>(10.f, c) / 10.f;
+      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
       if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
       if (vcaMode == 1 || vcaMode == 3)
