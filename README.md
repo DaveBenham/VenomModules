@@ -8,11 +8,11 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|
 |----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Clone Merge module image](./doc/CloneMerge.png)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![Mix 4 module image](./doc/Mix4.png)|![Mix 4 Stereo module image](./doc/Mix4Stereo.png)|![Poly Clone module image](./doc/PolyClone.png)|![RECURSE module image](./doc/Recurse.png)|![RECURSE STEREO module image](./doc/RecurseStereo.png)|
+|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Clone Merge module image](./doc/CloneMerge.png)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![Mix 4 module image](./doc/Mix4.png)|![Mix 4 Stereo module image](./doc/Mix4Stereo.png)|![Poly Clone module image](./doc/PolyClone.png)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|
 
 |[RHYTHM EXPLORER](#rhythm-explorer)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
 |----|----|----|----|
-|![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|![VCA MIX 4 module image](./doc/VCAMix4.PNG)|![VCA Mix 4 Stereo module image](./doc/VCAMix4Stereo.PNG)|![WINCOMP module image](./doc/WinComp.PNG)|
+|![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|![VCA MIX 4 module image](./doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](./doc/VCAMix4Stereo.png)|![WINCOMP module image](./doc/WinComp.PNG)|
 
 ## Themes
 The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
