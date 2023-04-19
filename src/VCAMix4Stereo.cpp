@@ -46,7 +46,8 @@ struct VCAMix4Stereo : VenomModule {
   float offset = 0.f;
   int oversample = 4;
   OversampleFilter_4 leftUpSample[4], leftDownSample[4], 
-                     rightUpSample[4], rightDownSample[4];
+                     rightUpSample[4], rightDownSample[4],
+                     leftVcaBandlimit[3][5][4], rightVcaBandlimit[3][5][4];
   DCBlockFilter_4 leftDcBlockBeforeFilter[4], leftDcBlockAfterFilter[4], 
                   rightDcBlockBeforeFilter[4], rightDcBlockAfterFilter[4];
 
@@ -70,8 +71,10 @@ struct VCAMix4Stereo : VenomModule {
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {
       "Unipolar dB (audio x2)", "Unipolar poly sum dB (audio x2)", "Bipolar % (CV)", "Bipolar x2 (CV)", "Bipolar x10 (CV)"
     });
-    configSwitch<FixedSwitchQuantity>(VCAMODE_PARAM, 0.f, 3.f, 0.f, "VCA Mode", {
-      "Unipolar linear - CV clamped 0-10V", "Unipolar exponential - CV clamped 0-10V", "Bipolar linear - CV unclamped", "Bipolar exponential - CV unclamped"
+    configSwitch<FixedSwitchQuantity>(VCAMODE_PARAM, 0.f, 5.f, 0.f, "VCA Mode", {
+      "Unipolar linear - CV clamped 0-10V", "Unipolar exponential - CV clamped 0-10V",
+      "Bipolar linear - CV unclamped", "Bipolar exponential - CV unclamped",
+      "Bipolar linear band limited - CV unclamped", "Bipolar exponential band limited - CV unclamped"
     });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
@@ -90,6 +93,14 @@ struct VCAMix4Stereo : VenomModule {
       leftDownSample[i].setOversample(oversample);
       rightUpSample[i].setOversample(oversample);
       rightDownSample[i].setOversample(oversample);
+      for (int j=0; j<5; j++){
+        leftVcaBandlimit[0][j][i].setOversample(1);
+        leftVcaBandlimit[1][j][i].setOversample(1);
+        leftVcaBandlimit[2][j][i].setOversample(1);
+        rightVcaBandlimit[0][j][i].setOversample(1);
+        rightVcaBandlimit[1][j][i].setOversample(1);
+        rightVcaBandlimit[2][j][i].setOversample(1);
+      }
     }
   }
 
@@ -164,17 +175,30 @@ struct VCAMix4Stereo : VenomModule {
       if (mode == 1){
         for (int i=0; i<4; i++){
           cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
+          out = inputs[LEFT_INPUTS+i].getVoltageSum();
+          channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
           if (vcaMode <= 1)
             cv = simd::clamp(cv, 0.f, 1.f);
-          if (vcaMode == 1 || vcaMode == 3)
+          if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
             cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
-          channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
-          out = inputs[LEFT_INPUTS+i].getVoltageSum() * channelScale * cv;
+          if (vcaMode >= 4) {
+            cv = leftVcaBandlimit[0][i][c/4].process(cv);
+            out = leftVcaBandlimit[1][i][c/4].process(out);
+          }
+          out *= channelScale * cv;
+          if (vcaMode == 5)
+            out = leftVcaBandlimit[2][i][c/4].process(out);
           outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
           if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
             leftOut += out;
-          if (inputs[RIGHT_INPUTS+i].isConnected())
-            out = inputs[RIGHT_INPUTS+i].getVoltageSum() * channelScale * cv;
+          if(inputs[RIGHT_INPUTS+i].isConnected()){
+            out = inputs[RIGHT_INPUTS+i].getVoltageSum();
+            if (vcaMode >= 4)
+              out = rightVcaBandlimit[1][i][c/4].process(out);
+            out *= channelScale * cv;
+            if (vcaMode == 5)
+              out = rightVcaBandlimit[2][i][c/4].process(out);
+          }
           outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
           if (!exclude || !outputs[RIGHT_OUTPUTS+i].isConnected())
             rightOut += out;
@@ -185,22 +209,38 @@ struct VCAMix4Stereo : VenomModule {
           cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
           if (vcaMode <= 1)
             cv = simd::clamp(cv, 0.f, 1.f);
-          if (vcaMode == 1 || vcaMode == 3)
+          if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
             cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
           channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
           if (connected[i]){
-            out = inputs[LEFT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) * channelScale * cv;
+            out = inputs[LEFT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c);
+            if (vcaMode >= 4){
+              cv = leftVcaBandlimit[0][i][c/4].process(cv);
+              out = leftVcaBandlimit[1][i][c/4].process(out);
+            }
+            out *= channelScale * cv;
+            if (vcaMode == 5)
+              out = leftVcaBandlimit[2][i][c/4].process(out);
             outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
             if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
               leftOut += out;
-            if (inputs[RIGHT_INPUTS+i].isConnected())
-              out = inputs[RIGHT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) * channelScale * cv;
+            if (inputs[RIGHT_INPUTS+i].isConnected()){
+              out = inputs[RIGHT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c);
+              out *= channelScale * cv;
+              if (vcaMode >= 4)
+                out = rightVcaBandlimit[1][i][c/4].process(out);
+              out *= channelScale * cv;
+              if (vcaMode == 5)
+                out = rightVcaBandlimit[2][i][c/4].process(out);
+            }
             outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
             if (!exclude || !outputs[RIGHT_OUTPUTS+i].isConnected())
               rightOut += out;
           }
           else {
             out = normal * channelScale;
+            if (vcaMode >= 4)
+              out = leftVcaBandlimit[2][i][c/4].process(cv);
             outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
             outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
             if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
@@ -292,6 +332,8 @@ struct VCAMix4StereoWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
     }
   };
 
