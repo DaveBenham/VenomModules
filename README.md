@@ -186,7 +186,7 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 ## MIX 4
 ![Mix 4 module image](./doc/Mix4.png)  
-A compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping and/or DC offset removal.
+A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. It includes options for hard or soft clipping, as well as DC offset removal.
 
 ### Level knobs and inputs 1 - 4
 These knobs control the level of each of the input channels before they are summed to create the Mix. The exact behavior depends on the setting of the Mode button.
@@ -202,11 +202,11 @@ The one exception is when using the "Unipolar audio dB poly sum" mode, in which 
 
 ### M (Level Mode) button
 The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to the most typical application, but all modes can be applied to either audio or CV.
-- **Unipolar audio dB** (pink - default): Each knob ranges from -inf dB (0V) to +6.0206 dB (x2 amplification), with the default of 0 dB (unity) at noon. Unpatched inputs contribute constant 0V.
-- **Unipolar audio dB poly sum** (purple): Same as Unipolar audio dB, except polyphonic inputs are summed to a single monophonic signal before being attenuated or amplified by the input level knob.
-- **Bipolar CV%** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
-- **Bipolar CV x2** (light blue): Each input level knob ranges from -2x to 2x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0x (or 0V) at noon. The Mix knob always ranges from -2x to 2x, with a default of 1x (unity).
-- **Bipolar CV x10** (dark blue): Each input level knob ranges from -10x to 10x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
+- **Unipolar dB (audio x2)** (pink - default): Each knob ranges from -inf dB (0V) to +6.0206 dB (x2 amplification), with the default of 0 dB (unity) at noon. Unpatched inputs contribute constant 0V.
+- **Unipolar poly sum dB (audio x2)** (purple): Same as Unipolar audio dB, except polyphonic inputs are summed to a single monophonic signal before being attenuated or amplified by the input level knob.
+- **Bipolar % (CV)** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
+- **Bipolar x2 (CV)** (light blue): Each input level knob ranges from -2x to 2x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0x (or 0V) at noon. The Mix knob always ranges from -2x to 2x, with a default of 1x (unity).
+- **Bipolar x10 (CV)** (dark blue): Each input level knob ranges from -10x to 10x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
 
 ### D (DC Block) button
 The color coded DC block button determines when (or if) a high pass filter with 10Hz cutoff is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
@@ -236,7 +236,7 @@ The MIX output is monophonic 0V if MIX 4 is bypassed.
 
 ## MIX 4 STEREO
 ![Mix 4 Stereo module image](./doc/Mix4Stereo.png)  
-A stereo compact polyphonic audio or CV mixer, attenuator, inverter, amplifier, and/or offset with optional hard or soft (saturation) clipping and/or DC offset removal.
+A stereo compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. It includes options for hard or soft clipping, as well as DC offset removal.
 
 Mix 4 Stereo is identical to Mix 4 except each of the inputs and outputs is doubled to support left and right channels. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
 
@@ -575,12 +575,94 @@ All outputs are monophonic 0V when the module is bypassed.
 [Return to Table Of Contents](#venom)
 
 ## VCA MIX 4
-![VCA Mix 4 module image](./doc/VCAMix4.png)
+![VCA Mix 4 module image](./doc/VCAMix4.png)  
+A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
+
+### General Operation
+There are four numbered inputs, each of which can be attenuated, inverted, and/or amplified by a level knob and CV input. Each modulated input can then be output to a dedicated numbered channel outupt and/or the modulated inputs can be summed to create a mix. There is also a 5th chain input, without modulation, that can be added to the mix. The mix can also be attenuated, inverted, and/or amplified by a mix level knob and CV input. Finally there are options to hard or soft clip the mix and/or remove DC offset, before sending the final mix to the Mix output. Oversampling is available for soft clipping to control any aliasing that might be introduced. The VCAs can be configured to have a linear or exponential response, and they can be unipolar or bipolar. Audio rate CV is supported so the VCA MIX 4 can do amplitude or ring modulation.
+
+### Level Knobs 1 - 4
+These knobs control the base level of each of the input channels. The exact behavior of the knobs depends on the setting of the Mode button. Each base level may be modulated by the corresponding CV input.
+
+### CV inputs 1 - 4
+Each level knob has a corresponding CV input that is normalled to 10V. The CV attenuates the knob base level (or possibly amplifies and/or inverts, depending on VCA mode), with 0V representing off, and 10V representing unity. The exact behavior of the CV depends on the VCA mode.
+
+### Mix Level knob
+This knob controls the base level of the final mix. The exact behavior depends on the setting of the Level Mode button. The mix base level may be modulated by the mix CV input.
+
+### Mix CV input
+The mix CV input is normalled to 10V, and attenuates the mix level (or possibly amplifies and/or inverts, depending on VCA mode). 0v represents off, and 10V is unity. The exact behavior of the CV depends on the VCA mode.
+
+### MIX level knob and output
+The MIX knob controls the base level of the final mix after summing the 4 modified inputs and the chain input. The behavior depends on the setting of the Mode button. The final result may be clipped and/or have DC offset removed, depending on the clip and DC offset settings, before being sent to the MIX output.
+
+### Inputs 1 - 4
+These are the inputs that are modulated by the Level knobs 1 - 4 and CV inputs 1 - 4. Each input may be normalled to a constant voltage, depending on the Level Mode, so the channel can function as a constant CV source, or an offset for the mix.
+
+### CHAIN input
+The chain input allows multiple VCA MIX 4 to be connected in series, without consuming any of the numbered inputs. The chain input is normalled to 0V, and is added to the mix prior to the Mix level modulation.
+
+### Outputs 1 - 4
+Each of the modulated inputs is sent to its corresponding numbered output, so the channel can function as a simple VCA, amplitude modulator, ring modulator, or constant CV source. Any patched output may be removed from the final mix, depending on the setting of the Exclude button.
+
+### MIX output
+The final mix is output here.
+
+### Polyphony
+The number of output polyphonic channels for each of the four channels is normally set independently as the maximum number of channels found across each CV and channel input pair. The number of output polyphonic channels for the final mix is normally the maximum channel count found across all inputs - the four channel inputs, the four CV inputs, and the chain input. Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
+
+There is one major exception when the Level Mode is set to poly sum. In this mode, polyphonic signals at the channel inputs and chain input are summed into a monophonic signal before any modulation. CV inputs are monophonic - polyphonic CV channels 2 and above are ignored in this mode.
+
+### M (Level Mode) button
+The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to the most typical application, but all modes can be applied to either audio or CV.
+- **Unipolar dB (audio x2)** (pink - default): Each knob ranges from -inf dB (0V) to +6.0206 dB (x2 amplification), with the default of 0 dB (unity) at noon. Unpatched channel inputs are normalled to 0V.
+- **Unipolar poly sum dB (audio x2)** (purple): Same as Unipolar audio dB, except polyphonic inputs are summed to a single monophonic signal before being attenuated or amplified by the input level knob. Unpatched channel inputs are normalled to 0V.
+- **Bipolar % (CV)** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpatched channel inputs are normalled to 10V. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
+- **Bipolar x2 (CV)** (light blue): Each input level knob ranges from -2x to 2x if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpatched channel inputs are normalled to 5V. Each input level knob defaults to 0x (or 0V) at noon. The Mix knob always ranges from -2x to 2x, with a default of 1x (unity).
+- **Bipolar x10 (CV)** (dark blue): Each input level knob ranges from -10x to 10x if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpateched channel inputs are normalled to 1V. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
+
+### V (VCA Mode) button
+The color coded VCA mode button determines how CV inputs are interpreted. The button cycles through 6 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to the most typical application, but all modes can be applied to either audio or CV.
+- **Unipolar linear - CV clamped 1-10V** (pink - default):
+- **Unipolar exponential - CV clamped 1-10V** (purple):
+- **Bipolar linear - CV unclamped** (light blue):
+- **Bipolar exponential - CV unclamped** (dark blue):
+- **Bipolar linear band limited - CV unclamped** (yellow):
+- **Bipolar exponential band limited - CV unclamped** (green):
+
+### D (DC Block) button
+The color coded DC block button determines when (or if) a high pass filter with 10Hz cutoff is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
+- **Off** (dark gray - default): DC offset is not removed.
+- **Before clipping** (yellow): DC offset is removed prior to any clipping. Note that subsequent clipping may re-introduce some DC offset.
+- **Before and after clipping** (green): DC offset is removed both before and after any clipping. Note that only one DC offset removal is performed if clipping is not applied.
+- **After clipping** (light blue): DC offset is removed after any clipping.
+
+The last three DC offset options give identical results when no clipping is applied.
+
+### C (Clip) button
+The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio according to typical usage, but each option can be used for audio or CV.
+- **Off** (dark gray - default): The final mix is left untouched, with no limit to the output voltage.
+- **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
+- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V with saturation using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
+- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V with saturation using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces or eliminates any audible audio aliasing that would otherwise occur.
+
+### X (eXclude) button
+The color coded exclude button determines if patched channel outputs are included in the final mix.
+- **Off** (dark gray - default): patched output channels are included in the final mix
+- **On** (red): pateched output channels are excluded from the final mix
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+
+### Bypass
+
+The numbered channel outputs are normalled to their corresponding input when the module is bypassed. The Mix output is monophonic 0V when VCA Mix 4 is bypassed.
 
 [Return to Table Of Contents](#venom)
 
 ## VCA MIX 4 STEREO
-![VCA Mix 4 module image](./doc/VCAMix4Stereo.png)
+![VCA Mix 4 module image](./doc/VCAMix4Stereo.png)  
+A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal.
 
 [Return to Table Of Contents](#venom)
 
