@@ -587,26 +587,22 @@ These knobs control the base level of each of the input channels. The exact beha
 ### CV inputs 1 - 4
 Each level knob has a corresponding polyphonic CV input that is normalled to 10V. The CV attenuates the knob base level (or possibly amplifies and/or inverts, depending on VCA mode), with 0V representing off, and 10V representing unity. The exact behavior of the CV depends on the VCA mode.
 
-### Mix Level knob
-This knob controls the base level of the final mix. The exact behavior depends on the setting of the Level Mode button. The mix base level may be modulated by the mix CV input.
-
-### Mix CV input
-The polyphonic mix CV input is normalled to 10V, and attenuates the mix level (or possibly amplifies and/or inverts, depending on VCA mode). 0v represents off, and 10V is unity. The exact behavior of the CV depends on the VCA mode.
-
-### MIX level knob and output
-The MIX knob controls the base level of the final mix after summing the 4 modified inputs and the chain input. The behavior depends on the setting of the Mode button. The final result may be clipped and/or have DC offset removed, depending on the clip and DC offset settings, before being sent to the MIX output.
-
-### Inputs 1 - 4
-These are the polyphonic inputs that are modulated by the Level knobs 1 - 4 and CV inputs 1 - 4. Each input may be normalled to a constant voltage, depending on the Level Mode, so the channel can function as a constant CV source, or an offset for the mix.
+### Outputs 1 - 4
+Each of the modulated inputs is sent to its corresponding numbered output, so the channel can function as a simple VCA, amplitude modulator, ring modulator, or constant CV source. Any patched output may be removed from the final mix, depending on the setting of the Exclude button.
 
 ### CHAIN input
 The polyphonic chain input allows multiple VCA MIX 4 to be connected in series, without consuming any of the numbered inputs. The chain input is normalled to 0V, and is added to the mix prior to the Mix level modulation.
 
-### Outputs 1 - 4
-Each of the modulated inputs is sent to its corresponding numbered output, so the channel can function as a simple VCA, amplitude modulator, ring modulator, or constant CV source. Any patched output may be removed from the final mix, depending on the setting of the Exclude button.
+### Mix Level knob
+This knob controls the base level of the final mix. The incoming mix consists of the sum of the numbered channel outputs and the Chain input. The exact behavior of the Mix Level knob depends on the setting of the Level Mode button. The mix base level may be modulated by the mix CV input.
+
+Patched channel outputs may be excluded from the mix, depending on the setting of the Exclude button.
+
+### Mix CV input
+The polyphonic mix CV input is normalled to 10V, and it attenuates the mix level (or possibly amplifies and/or inverts, depending on VCA mode). 0v represents off, and 10V is unity. The exact behavior of the CV depends on the VCA mode.
 
 ### MIX output
-The final mix is output here.
+The final mix is output here. The final mix output may be clipped and/or have DC offset removed, depending on the settings of the Clip and DC buttons.
 
 ### Polyphony
 The number of output polyphonic channels for each of the four channels is normally set independently to the maximum number of channels found across each CV and channel input pair. The number of output polyphonic channels for the final mix is normally the maximum channel count found across all inputs - the four channel inputs, the four CV inputs, and the chain input. Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
