@@ -8,11 +8,11 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|
 |----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)|![Clone Merge module image](./doc/CloneMerge.png)|![Harmonic Quantizer module image](./doc/HQ.PNG)|![Mix 4 module image](./doc/Mix4.png)|![Mix 4 Stereo module image](./doc/Mix4Stereo.png)|![Poly Clone module image](./doc/PolyClone.png)|![RECURSE module image](./doc/Recurse.PNG)|![RECURSE STEREO module image](./doc/RecurseStereo.PNG)|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|
 
 |[RHYTHM EXPLORER](#rhythm-explorer)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
 |----|----|----|----|
-|![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|![VCA MIX 4 module image](./doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](./doc/VCAMix4Stereo.png)|![WINCOMP module image](./doc/WinComp.PNG)|
+|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![WINCOMP module image](doc/WinComp.PNG)|
 
 
 ## Themes
@@ -20,7 +20,7 @@ The context menu of every module includes options to set the default theme for t
 
 |Ivory|Coal|Earth|Danger|
 |---|---|---|---|
-|![Ivory theme image](./doc/Ivory.png)|![Coal theme image](./doc/Coal.png)|![Earth theme image](./doc/Earth.png)|![Danger theme image](./doc/Danger.png)|
+|![Ivory theme image](doc/Ivory.png)|![Coal theme image](doc/Coal.png)|![Earth theme image](doc/Earth.png)|![Danger theme image](doc/Danger.png)|
 
 
 ## Parameter Locks
@@ -39,7 +39,7 @@ Parameter lock settings are saved with the patch and restored upon patch load. P
 
 
 ## BERNOULLI SWITCH
-![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
+![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)  
 The Bernoulli Switch randomly routes two inputs to two outputs.
 
 ### General Operation
@@ -106,7 +106,7 @@ If Bernoulli Switch is bypassed then the A input is passed unchanged to the A ou
 
 
 ## CLONE MERGE
-![Clone Merge module image](./doc/CloneMerge.png)  
+![Clone Merge module image](doc/CloneMerge.png)  
 Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursion count.
 
 ### CLONE knob
@@ -131,7 +131,7 @@ If Clone Merge is bypassed then the output is constant monophonic 0V.
 
 
 ## Harmonic Quantizer
-![Harmonic Quantizer module image](./doc/HQ.PNG)  
+![Harmonic Quantizer module image](doc/HQ.PNG)  
 Computes a selected harmonic or subharmonic partial relative to a fundamental root V/Oct, or quantizes an input V/Oct to the nearest partial relative to the root.
 
 This module is fully polyphonic. The number of output channels is the maximum channel count found across all three inputs. Any monophonic input is replicated to match the output channel count. A polyphonic input with fewer channels uses 0V for any missing channels.
@@ -191,32 +191,40 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 
 ## MIX 4
-![Mix 4 module image](./doc/Mix4.png)  
-A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. It includes options for hard or soft clipping, as well as DC offset removal.
+![Mix 4 module image](doc/Mix4.png)  
+A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
 
-### Level knobs and inputs 1 - 4
-These knobs control the level of each of the input channels before they are summed to create the Mix. The exact behavior depends on the setting of the Mode button.
-Each input level knob may produce constant CV if the corresponding input is unpatched, depending on the mode.
+### General Operation
+There are four numbered inputs, each of which can be attenuated, inverted, and/or amplified by a level knob. The level knobs can be configured to different scales. The modulated inputs are then summed to create a mix that can also be attenuated, inverted, and/or amplified by a mix level knob. Finally there are options to hard or soft clip the mix and/or remove DC offset, before sending the final mix to the Mix output. Oversampling is available for soft clipping to control any aliasing that might otherwise be introduced.
 
-### MIX level knob and output
-The MIX knob controls the level of the final mix after summing the 4 modified inputs. The behavior depends on the setting of the Mode button. The final result may be clipped and/or have DC offset removed, depending on the clip and DC offset settings, before being sent to the MIX output.
+### LEVEL Knobs 1 - 4
+These knobs control the attenuation, inversion, or amplification of the input channels. The exact behavior of the knobs depends on the setting of the Mode button.
+
+### IN Channel Inputs 1 - 4
+The channel inputs that are modulated by the Level knob. Each input may be effectively normalled to a constant CV value, depending on the current Level Mode.
+
+### Mix Level knob
+This knob controls the attenuation, inversion, or amplification of the final mix, consisting of the sum of the modulated channel inputs. The exact behavior of the Mix Level knob depends on the setting of the Level Mode button.
+
+### MIX output
+The final mix is output here. The final mix output may be clipped and/or have DC offset removed, depending on the settings of the Clip and DC buttons.
 
 ### Polyphony
-The number of output polyphonic channels is normally determined by the maximum number of channels found across all four inputs. Monophonic inputs are replicated to match the number of output channels. But polyphonic inputs with fewer channels send 0V for any missing channels.
+The number of output polyphonic channels for the final mix is normally the maximum channel count found across all four channel inputs. Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
 
-The one exception is when using the "Unipolar audio dB poly sum" mode, in which case all polyphonic channels are summed to a monophonic output.
+There is one major exception when the Level Mode is set to poly sum. In this mode, polyphonic input signals are summed to a monophonic signal before any modulation.
 
 ### M (Level Mode) button
-The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to the most typical application, but all modes can be applied to either audio or CV.
-- **Unipolar dB (audio x2)** (pink - default): Each knob ranges from -inf dB (0V) to +6.0206 dB (x2 amplification), with the default of 0 dB (unity) at noon. Unpatched inputs contribute constant 0V.
-- **Unipolar poly sum dB (audio x2)** (purple): Same as Unipolar audio dB, except polyphonic inputs are summed to a single monophonic signal before being attenuated or amplified by the input level knob.
-- **Bipolar % (CV)** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
-- **Bipolar x2 (CV)** (light blue): Each input level knob ranges from -2x to 2x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0x (or 0V) at noon. The Mix knob always ranges from -2x to 2x, with a default of 1x (unity).
-- **Bipolar x10 (CV)** (dark blue): Each input level knob ranges from -10x to 10x if the input is patched, or -10V to 10V constant CV when unpatched. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
+The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to typical usage, but all modes can be applied to both audio and CV.
+- **Unipolar dB (audio x2)** (pink - default): Each knob ranges from -inf dB (0V) to +6.0206 dB (x2 amplification), with the default of 0 dB (unity) at noon. Unpatched channel inputs are normalled to 0V.
+- **Unipolar poly sum dB (audio x2)** (purple): Same as Unipolar audio dB, except polyphonic inputs are summed to a single monophonic signal before being attenuated or amplified by the input level knob. Unpatched channel inputs are normalled to 0V.
+- **Bipolar % (CV)** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpatched channel inputs are normalled to 10V. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
+- **Bipolar x2 (CV)** (light blue): Each input level knob ranges from -2x to 2x if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpatched channel inputs are normalled to 5V. Each input level knob defaults to 0x (or 0V) at noon. The Mix knob always ranges from -2x to 2x, with a default of 1x (unity).
+- **Bipolar x10 (CV)** (dark blue): Each input level knob ranges from -10x to 10x if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpateched channel inputs are normalled to 1V. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
 
 ### D (DC Block) button
 The color coded DC block button determines when (or if) a high pass filter with 10Hz cutoff is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
-- **Off** (dark gray): DC offset is not removed.
+- **Off** (dark gray - default): DC offset is not removed.
 - **Before clipping** (yellow): DC offset is removed prior to any clipping. Note that subsequent clipping may re-introduce some DC offset.
 - **Before and after clipping** (green): DC offset is removed both before and after any clipping. Note that only one DC offset removal is performed if clipping is not applied.
 - **After clipping** (light blue): DC offset is removed after any clipping.
@@ -224,11 +232,11 @@ The color coded DC block button determines when (or if) a high pass filter with 
 The last three DC offset options give identical results when no clipping is applied.
 
 ### C (Clip) button
-The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio according to typical usage, but each option can be used for audio or CV.
-- **Off** (dark gray): The final mix is left untouched, with no limit to the output voltage.
+The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled for CV or audio according to typical usage, but each option can be used for both audio and CV.
+- **Off** (dark gray - default): The final mix is left untouched, with no limit to the output voltage.
 - **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
-- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V with saturation using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
-- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V with saturation using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces or eliminates any audible audio aliasing that would otherwise occur.
+- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V, with saturation, using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
+- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
@@ -241,10 +249,10 @@ The MIX output is monophonic 0V if MIX 4 is bypassed.
 
 
 ## MIX 4 STEREO
-![Mix 4 Stereo module image](./doc/Mix4Stereo.png)  
-A stereo compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. It includes options for hard or soft clipping, as well as DC offset removal.
+![Mix 4 Stereo module image](doc/Mix4Stereo.png)  
+A stereo compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
 
-Mix 4 Stereo is identical to Mix 4 except each of the inputs and outputs is doubled to support left and right channels. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
+Mix 4 Stereo is identical to Mix 4 except each of the inputs and outputs is doubled to support left and right channels so as to support stereo signals. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
 
 Each right input is normaled to the corresponding left input. When in CV mode, each input level knob produces constant CV only if both the left and right input are unpatched.
 
@@ -258,7 +266,7 @@ All other behaviors are the same as for Mix 4.
 
 
 ## POLY CLONE
-![Poly Clone module image](./doc/PolyClone.png)  
+![Poly Clone module image](doc/PolyClone.png)
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
 ### CLONE knob
@@ -285,7 +293,7 @@ If Clone Merge is bypassed then the input is passed unchanged to the output.
 
 
 ## RECURSE
-![RECURSE module image](./doc/Recurse.PNG)  
+![RECURSE module image](doc/Recurse.PNG)  
 Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes to less than 16 for each input channel. There are no limits placed on any of the input or output voltages.
 
 ### Recursion Count knob and display
@@ -337,7 +345,7 @@ The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND w
 
 
 ## RECURSE STEREO
-![Recurse Stereo module image](./doc/RecurseStereo.PNG)  
+![Recurse Stereo module image](doc/RecurseStereo.PNG)  
 Recurse Stereo is identical to [Recurse](#recurse) except the Input/Return inputs and Output/Send outputs are doubled to support left and right channels of a stereo pair.
 
 The number of input polyphonic channels is strictly controlled by the Left Input. Any extra channels in the Right Input are ignored.
@@ -354,7 +362,7 @@ Both left and right inputs are passed unchanged to the outputs when RECURSE STER
 
 
 ## Rhythm Explorer
-![Rhythm Explorer module image](./doc/RhythmExplorer.PNG)  
+![Rhythm Explorer module image](doc/RhythmExplorer.PNG)  
 Rhythm Explorer is a trigger sequencer that randomly generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
 
 ### Basic Operation
@@ -584,7 +592,7 @@ All outputs are monophonic 0V when the module is bypassed.
 
 
 ## VCA MIX 4
-![VCA Mix 4 module image](./doc/VCAMix4.png)  
+![VCA Mix 4 module image](doc/VCAMix4.png)
 A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
 
 ### General Operation
@@ -670,7 +678,7 @@ The numbered channel inputs are passed unchanged to their corresponding outputs 
 
 
 ## VCA MIX 4 STEREO
-![VCA Mix 4 module image](./doc/VCAMix4Stereo.png)  
+![VCA Mix 4 module image](doc/VCAMix4Stereo.png)  
 A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal.
 
 VCA Mix 4 Stereo is a stereo version of the VCA MIX 4, sharing the same features, but with the following differences:
@@ -686,7 +694,7 @@ All other behaviors are the same as for Mix 4.
 
 
 ## WINCOMP
-![WINCOMP module image](./doc/WinComp.PNG)  
+![WINCOMP module image](doc/WinComp.PNG)
 A windowed comparator inspired by the VCV Fundamental COMPARE module, based on specs originally proposed at 
 https://community.vcvrack.com/t/vcv-compare-gates-logic-and-process/17828/17?u=davevenom.
 
