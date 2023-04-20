@@ -340,7 +340,7 @@ In addition, The Left Return is normalled to the Left Send, and the Right Return
 
 The Recursion Count, Scale, Offset, and Modulation Timing settings are applied to both Left and Right identically.
 
-Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. Bypassed left and right send are monophonic 0V.
+Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. The right input remains normalled to the left input while bypassed. Bypassed left and right send are monophonic 0V.
 
 [Return to Table Of Contents](#venom)
 
@@ -585,22 +585,22 @@ There are four numbered inputs, each of which can be attenuated, inverted, and/o
 These knobs control the base level of each of the input channels. The exact behavior of the knobs depends on the setting of the Mode button. Each base level may be modulated by the corresponding CV input.
 
 ### CV inputs 1 - 4
-Each level knob has a corresponding CV input that is normalled to 10V. The CV attenuates the knob base level (or possibly amplifies and/or inverts, depending on VCA mode), with 0V representing off, and 10V representing unity. The exact behavior of the CV depends on the VCA mode.
+Each level knob has a corresponding polyphonic CV input that is normalled to 10V. The CV attenuates the knob base level (or possibly amplifies and/or inverts, depending on VCA mode), with 0V representing off, and 10V representing unity. The exact behavior of the CV depends on the VCA mode.
 
 ### Mix Level knob
 This knob controls the base level of the final mix. The exact behavior depends on the setting of the Level Mode button. The mix base level may be modulated by the mix CV input.
 
 ### Mix CV input
-The mix CV input is normalled to 10V, and attenuates the mix level (or possibly amplifies and/or inverts, depending on VCA mode). 0v represents off, and 10V is unity. The exact behavior of the CV depends on the VCA mode.
+The polyphonic mix CV input is normalled to 10V, and attenuates the mix level (or possibly amplifies and/or inverts, depending on VCA mode). 0v represents off, and 10V is unity. The exact behavior of the CV depends on the VCA mode.
 
 ### MIX level knob and output
 The MIX knob controls the base level of the final mix after summing the 4 modified inputs and the chain input. The behavior depends on the setting of the Mode button. The final result may be clipped and/or have DC offset removed, depending on the clip and DC offset settings, before being sent to the MIX output.
 
 ### Inputs 1 - 4
-These are the inputs that are modulated by the Level knobs 1 - 4 and CV inputs 1 - 4. Each input may be normalled to a constant voltage, depending on the Level Mode, so the channel can function as a constant CV source, or an offset for the mix.
+These are the polyphonic inputs that are modulated by the Level knobs 1 - 4 and CV inputs 1 - 4. Each input may be normalled to a constant voltage, depending on the Level Mode, so the channel can function as a constant CV source, or an offset for the mix.
 
 ### CHAIN input
-The chain input allows multiple VCA MIX 4 to be connected in series, without consuming any of the numbered inputs. The chain input is normalled to 0V, and is added to the mix prior to the Mix level modulation.
+The polyphonic chain input allows multiple VCA MIX 4 to be connected in series, without consuming any of the numbered inputs. The chain input is normalled to 0V, and is added to the mix prior to the Mix level modulation.
 
 ### Outputs 1 - 4
 Each of the modulated inputs is sent to its corresponding numbered output, so the channel can function as a simple VCA, amplitude modulator, ring modulator, or constant CV source. Any patched output may be removed from the final mix, depending on the setting of the Exclude button.
@@ -609,12 +609,12 @@ Each of the modulated inputs is sent to its corresponding numbered output, so th
 The final mix is output here.
 
 ### Polyphony
-The number of output polyphonic channels for each of the four channels is normally set independently as the maximum number of channels found across each CV and channel input pair. The number of output polyphonic channels for the final mix is normally the maximum channel count found across all inputs - the four channel inputs, the four CV inputs, and the chain input. Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
+The number of output polyphonic channels for each of the four channels is normally set independently to the maximum number of channels found across each CV and channel input pair. The number of output polyphonic channels for the final mix is normally the maximum channel count found across all inputs - the four channel inputs, the four CV inputs, and the chain input. Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
 
-There is one major exception when the Level Mode is set to poly sum. In this mode, polyphonic signals at the channel inputs and chain input are summed into a monophonic signal before any modulation. CV inputs are monophonic - polyphonic CV channels 2 and above are ignored in this mode.
+There is one major exception when the Level Mode is set to poly sum. In this mode, polyphonic signals at the channel inputs and chain input are summed into a monophonic signal before any modulation. CV inputs are monophonic in this mode, meaning polyphonic CV channels 2 and above will be ignored.
 
 ### M (Level Mode) button
-The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to the most typical application, but all modes can be applied to either audio or CV.
+The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to typical usage, but all modes can be applied to both audio and CV.
 - **Unipolar dB (audio x2)** (pink - default): Each knob ranges from -inf dB (0V) to +6.0206 dB (x2 amplification), with the default of 0 dB (unity) at noon. Unpatched channel inputs are normalled to 0V.
 - **Unipolar poly sum dB (audio x2)** (purple): Same as Unipolar audio dB, except polyphonic inputs are summed to a single monophonic signal before being attenuated or amplified by the input level knob. Unpatched channel inputs are normalled to 0V.
 - **Bipolar % (CV)** (green): Each input level knob ranges from -100% (inversion) to 100% (unity) if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpatched channel inputs are normalled to 10V. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -100% to 100%, with a default of 100%.
@@ -622,13 +622,13 @@ The color coded mode button determines how the 4 channel and the mix knobs behav
 - **Bipolar x10 (CV)** (dark blue): Each input level knob ranges from -10x to 10x if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpateched channel inputs are normalled to 1V. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
 
 ### V (VCA Mode) button
-The color coded VCA mode button determines how CV inputs are interpreted. The button cycles through 6 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to the most typical application, but all modes can be applied to either audio or CV.
-- **Unipolar linear - CV clamped 1-10V** (pink - default):
-- **Unipolar exponential - CV clamped 1-10V** (purple):
-- **Bipolar linear - CV unclamped** (light blue):
-- **Bipolar exponential - CV unclamped** (dark blue):
-- **Bipolar linear band limited - CV unclamped** (yellow):
-- **Bipolar exponential band limited - CV unclamped** (green):
+The color coded VCA mode button determines how CV inputs are interpreted. The button cycles through 6 possible modes. The button context menu allows direct selection of any mode.
+- **Unipolar linear - CV clamped 1-10V** (pink - default): A "normal" VCA with linear response. The base level can only be attenuated, and negative CV values are treated as 0V.
+- **Unipolar exponential - CV clamped 1-10V** (purple): A "normal" VCA with exponential response. The base level can only be attenuated, and negative CV values are treated as 0V.
+- **Bipolar linear - CV unclamped** (light blue): A VCA with linear response that is capable of ring modulation. Negative CV values invert the base level, and the base level is amplified by CV with magnitude greater than 10V. High frequency inputs can introduce aliasing.
+- **Bipolar exponential - CV unclamped** (dark blue): A VCA with exponential response that is capable of ring modulation. Negative CV values invert the base level, and the base level is amplified by CV with magnitude greater than 10V. High frequency inputs can introduce aliasing.
+- **Bipolar linear band limited - CV unclamped** (yellow): A VCA with linear response that is capable of ring modulation. Negative CV values invert the base level, and the base level is amplified by CV with magnitude greater than 10V. The channel input and CV input are band limited in an attempt to minimize audio aliasing when performing ring modulation or amplitude modulation.
+- **Bipolar exponential band limited - CV unclamped** (green): A VCA with exponential response that is capable of ring modulation. Negative CV values invert the base level, and the base level is amplified by CV with magnitude greater than 10V. The channel input and CV input are band limited by a low pass filter in an attempt to minimize audio aliasing when performing ring modulation or amplitude modulation. However, the exponential response introduces significantly more high frequency content, so the low pass filter does not help very much.
 
 ### D (DC Block) button
 The color coded DC block button determines when (or if) a high pass filter with 10Hz cutoff is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
@@ -640,23 +640,23 @@ The color coded DC block button determines when (or if) a high pass filter with 
 The last three DC offset options give identical results when no clipping is applied.
 
 ### C (Clip) button
-The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled as CV or audio according to typical usage, but each option can be used for audio or CV.
+The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled for CV or audio according to typical usage, but each option can be used for both audio and CV.
 - **Off** (dark gray - default): The final mix is left untouched, with no limit to the output voltage.
 - **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
-- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V with saturation using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
-- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V with saturation using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces or eliminates any audible audio aliasing that would otherwise occur.
+- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V, with saturation, using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
+- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
 
 ### X (eXclude) button
 The color coded exclude button determines if patched channel outputs are included in the final mix.
 - **Off** (dark gray - default): patched output channels are included in the final mix
-- **On** (red): pateched output channels are excluded from the final mix
+- **On** (red): patched output channels are excluded from the final mix
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
 
 ### Bypass
 
-The numbered channel outputs are normalled to their corresponding input when the module is bypassed. The Mix output is monophonic 0V when VCA Mix 4 is bypassed.
+The numbered channel inputs are passed unchanged to their corresponding outputs when VCA Mix 4 is bypassed. The Mix output is monophonic 0V when bypassed.
 
 [Return to Table Of Contents](#venom)
 
