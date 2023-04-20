@@ -340,7 +340,7 @@ In addition, The Left Return is normalled to the Left Send, and the Right Return
 
 The Recursion Count, Scale, Offset, and Modulation Timing settings are applied to both Left and Right identically.
 
-Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. Bypassed left and right send are monophonic 0V.
+Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. The right input remains normalled to the left input while bypassed. Bypassed left and right send are monophonic 0V.
 
 [Return to Table Of Contents](#venom)
 
