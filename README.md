@@ -14,12 +14,14 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 |----|----|----|----|
 |![Rhthm Explorer module image](./doc/RhythmExplorer.PNG)|![VCA MIX 4 module image](./doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](./doc/VCAMix4Stereo.png)|![WINCOMP module image](./doc/WinComp.PNG)|
 
+
 ## Themes
 The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
 
 |Ivory|Coal|Earth|Danger|
 |---|---|---|---|
 |![Ivory theme image](./doc/Ivory.png)|![Coal theme image](./doc/Coal.png)|![Earth theme image](./doc/Earth.png)|![Danger theme image](./doc/Danger.png)|
+
 
 ## Parameter Locks
 Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu option to lock the paramenter. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.
@@ -34,6 +36,7 @@ The parameter value cannot be changed by any means while the parameter is locked
 - Randomization requests are ignored
 
 Parameter lock settings are saved with the patch and restored upon patch load. Parameter lock settings are also preserved when duplicating a module.
+
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](./doc/BernoulliSwitch.PNG)  
@@ -101,6 +104,7 @@ If Bernoulli Switch is bypassed then the A input is passed unchanged to the A ou
 
 [Return to Table Of Contents](#venom)
 
+
 ## CLONE MERGE
 ![Clone Merge module image](./doc/CloneMerge.png)  
 Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursion count.
@@ -124,6 +128,7 @@ All of the replicated inputs are merged into the single polyphonic output. The p
 If Clone Merge is bypassed then the output is constant monophonic 0V.
 
 [Return to Table Of Contents](#venom)
+
 
 ## Harmonic Quantizer
 ![Harmonic Quantizer module image](./doc/HQ.PNG)  
@@ -183,6 +188,7 @@ The final computed partial is converted into a delta V/Oct and added to the ROOT
 The IN input is passed unchanged to the OUT output when the Harmonic Quantizer is bypassed.
 
 [Return to Table Of Contents](#venom)
+
 
 ## MIX 4
 ![Mix 4 module image](./doc/Mix4.png)  
@@ -277,6 +283,7 @@ If Clone Merge is bypassed then the input is passed unchanged to the output.
 
 [Return to Table Of Contents](#venom)
 
+
 ## RECURSE
 ![RECURSE module image](./doc/Recurse.PNG)  
 Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes to less than 16 for each input channel. There are no limits placed on any of the input or output voltages.
@@ -327,6 +334,7 @@ Since the Return is normalled to the Send, it is possible to generate a polyphon
 The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND will be monophonic 0V.
 
 [Return to Table Of Contents](#venom)
+
 
 ## RECURSE STEREO
 ![Recurse Stereo module image](./doc/RecurseStereo.PNG)  
@@ -574,6 +582,7 @@ All outputs are monophonic 0V when the module is bypassed.
 
 [Return to Table Of Contents](#venom)
 
+
 ## VCA MIX 4
 ![VCA Mix 4 module image](./doc/VCAMix4.png)  
 A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
@@ -659,6 +668,7 @@ The numbered channel inputs are passed unchanged to their corresponding outputs 
 
 [Return to Table Of Contents](#venom)
 
+
 ## VCA MIX 4 STEREO
 ![VCA Mix 4 module image](./doc/VCAMix4Stereo.png)  
 A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal.
@@ -673,6 +683,7 @@ VCA Mix 4 Stereo is a stereo version of the VCA MIX 4, sharing the same features
 All other behaviors are the same as for Mix 4.
 
 [Return to Table Of Contents](#venom)
+
 
 ## WINCOMP
 ![WINCOMP module image](./doc/WinComp.PNG)  
