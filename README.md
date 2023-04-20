@@ -649,7 +649,7 @@ The color coded clip button determines how (or if) the final output is clipped. 
 ### X (eXclude) button
 The color coded exclude button determines if patched channel outputs are included in the final mix.
 - **Off** (dark gray - default): patched output channels are included in the final mix
-- **On** (red): pateched output channels are excluded from the final mix
+- **On** (red): patched output channels are excluded from the final mix
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
