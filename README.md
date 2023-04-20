@@ -663,6 +663,15 @@ The numbered channel inputs are passed unchanged to their corresponding outputs 
 ![VCA Mix 4 module image](./doc/VCAMix4Stereo.png)  
 A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal.
 
+VCA Mix 4 Stereo is a stereo version of the VCA MIX 4, sharing the same features, but with the following differences:
+- Each of the channel inputs and outputs, as well as the Chain input and Mix output are doubled to support left and right channels. Each stereo pair is controlled by its own single Level knob and CV input.
+- Each right input is normaled to the corresponding left input. When using the bipolar Level mode, each input level knob produces constant CV only if both the left and right inputs are unpatched.
+- The output channel count for each numbered channel is the maximum polyphony found across the left, right, and CV input.
+- The output channel count for the Mix output is the maximum polyphony found across all left and right channel and Chain inputs, plus all the CV inputs.
+- When bypassed, each channel's left input is sent unchanged to the left output, and right input to the right output. The right inputs are still normaled to the left inputs when bypassed. The Mix outputs remain monophonic 0V when bypassed.
+
+All other behaviors are the same as for Mix 4.
+
 [Return to Table Of Contents](#venom)
 
 ## WINCOMP
