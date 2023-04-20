@@ -4,10 +4,15 @@
 ### New Modules
 - Mix 4
 - Mix 4 Stereo
+- VCA Mix 4
+- VCA Mix 4 Stereo
+
+### Behavior Changes
+- Recurse Stereo: The right input now remains normalled to the left input when bypassed, which in turn can affect the bypassed right output.
 
 ### Enhancements
-- Every Venom plugin parameter (knob, switch, button, etc.) has been given a context menu option to lock or unlock the parameter.
-- Every Venom plugin module has been given module context menu options to lock or unlock all parameters of that module instance.
+- Each Venom plugin parameter (knob, switch, button, etc.) has been given context menu options to lock or unlock the parameter.
+- Each Venom plugin module has been given module context menu options to lock or unlock all parameters of that module instance.
 - The new parameter lock/unlock options do not apply to Rhythm Explorer as it already had its own parameter locking implementation.
 
 ### Discontinued
