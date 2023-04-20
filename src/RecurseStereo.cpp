@@ -77,7 +77,12 @@ struct RecurseStereo : VenomModule {
     configOutput(OUT_L_OUTPUT, "Left Signal");
     configOutput(OUT_R_OUTPUT, "Left Signal");
     configBypass(IN_L_INPUT, OUT_L_OUTPUT);
-    configBypass(IN_R_INPUT, OUT_R_OUTPUT);
+    configBypass(inputs[IN_R_INPUT].isConnected() ? IN_R_INPUT : IN_L_INPUT, OUT_R_OUTPUT);
+  }
+
+  void onPortChange(const PortChangeEvent& e) override {
+    if (e.type == Port::INPUT && e.portId == IN_R_INPUT)
+      bypassRoutes[1].inputId = e.connecting ? IN_R_INPUT : IN_L_INPUT;
   }
 
   void onReset() override {

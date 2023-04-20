@@ -20,12 +20,12 @@ struct VCAMix4Stereo : VenomModule {
     PARAMS_LEN
   };
   enum InputId {
-    ENUMS(CV_INPUTS, 4),
-    MIX_CV_INPUT,
     ENUMS(LEFT_INPUTS, 4),
     ENUMS(RIGHT_INPUTS, 4),
     LEFT_CHAIN_INPUT,
     RIGHT_CHAIN_INPUT,
+    ENUMS(CV_INPUTS, 4),
+    MIX_CV_INPUT,
     INPUTS_LEN
   };
   enum OutputId {
@@ -83,6 +83,12 @@ struct VCAMix4Stereo : VenomModule {
     configInput(RIGHT_CHAIN_INPUT, "Right chain");
     configOutput(LEFT_MIX_OUTPUT, "Left mix");
     configOutput(LEFT_MIX_OUTPUT, "Right mix");
+    for (int i=0; i<4; i++){
+      configBypass(LEFT_INPUTS+i, LEFT_OUTPUTS+i);
+    }
+    for (int i=0; i<4; i++){
+      configBypass(inputs[RIGHT_INPUTS+i].isConnected() ? RIGHT_INPUTS+i : LEFT_INPUTS+i, RIGHT_OUTPUTS+i);
+    }
     initOversample();
     initDCBlock();
   }
@@ -122,6 +128,11 @@ struct VCAMix4Stereo : VenomModule {
 
   void onSampleRateChange(const SampleRateChangeEvent& e) override {
     initDCBlock();
+  }
+  
+  void onPortChange(const PortChangeEvent& e) override {
+    if (e.type == Port::INPUT && e.portId >= RIGHT_INPUTS && e.portId < RIGHT_INPUTS+4)
+      bypassRoutes[e.portId].inputId = e.connecting ? e.portId : e.portId - 4;
   }
 
   void process(const ProcessArgs& args) override {

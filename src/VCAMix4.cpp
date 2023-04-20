@@ -72,6 +72,8 @@ struct VCAMix4 : VenomModule {
     configSwitch<FixedSwitchQuantity>(EXCLUDE_PARAM, 0.f, 1.f, 0.f, "Exclude Patched Outs from Mix", {"Off", "On"});
     configInput(CHAIN_INPUT, "Chain");
     configOutput(MIX_OUTPUT, "Mix");
+    for (int i=0; i<4; i++)
+      configBypass(INPUTS+i, OUTPUTS+i);
     initOversample();
     initDCBlock();
   }
