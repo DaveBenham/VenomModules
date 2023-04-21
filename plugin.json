@@ -121,7 +121,7 @@
       "slug": "VCAMix4",
       "name": "VCA Mix 4",
       "description": "Compact audio or CV VCA, mixer, attenuator, inverter, amplifier, and/or offset",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-4",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vca-mix-4",
       "tags": [
         "Attenuator",
         "Mixer",
@@ -135,7 +135,7 @@
       "slug": "VCAMix4Stereo",
       "name": "VCA Mix 4 Stereo",
       "description": "Stereo compact audio or CV VCA, mixer, attenuator, inverter, amplifier, and/or offset",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-4-stereo",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vca-mix-4-stereo",
       "tags": [
         "Attenuator",
         "Mixer",
