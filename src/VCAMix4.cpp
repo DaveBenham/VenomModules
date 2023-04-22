@@ -41,7 +41,7 @@ struct VCAMix4 : VenomModule {
   float scale = 1.f;
   float offset = 0.f;
   int oversample = 4;
-  OversampleFilter_4 outUpSample[4], outDownSample[4], vcaBandlimit[3][5][4];
+  OversampleFilter_4 outUpSample[4], outDownSample[4], vcaBandlimit[2][5][4];
   DCBlockFilter_4 dcBlockBeforeFilter[4], dcBlockAfterFilter[4];
 
   VCAMix4() {
@@ -85,7 +85,6 @@ struct VCAMix4 : VenomModule {
       for (int j=0; j<5; j++){
         vcaBandlimit[0][j][i].setOversample(1);
         vcaBandlimit[1][j][i].setOversample(1);
-        vcaBandlimit[2][j][i].setOversample(1);
       }
     }
   }
@@ -160,8 +159,6 @@ struct VCAMix4 : VenomModule {
           in = vcaBandlimit[1][i][c/4].process(in);
         }
         in *= (params[LEVEL_PARAMS+i].getValue()+offset)*scale*cv;
-        if (vcaMode == 5)
-          in = vcaBandlimit[2][i][c/4].process(in);
         outputs[OUTPUTS+i].setVoltageSimd(in, c);
         if (!exclude || !outputs[OUTPUTS+i].isConnected())
           out += in;
@@ -176,8 +173,6 @@ struct VCAMix4 : VenomModule {
         out = vcaBandlimit[1][4][c/4].process(out);
       }
       out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
-      if (vcaMode == 5)
-        out = vcaBandlimit[2][4][c/4].process(out);
       if (dcBlock && dcBlock <= 2)
         out = dcBlockBeforeFilter[c/4].process(out);
       if (clip == 1)

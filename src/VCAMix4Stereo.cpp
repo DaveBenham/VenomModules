@@ -47,7 +47,7 @@ struct VCAMix4Stereo : VenomModule {
   int oversample = 4;
   OversampleFilter_4 leftUpSample[4], leftDownSample[4], 
                      rightUpSample[4], rightDownSample[4],
-                     leftVcaBandlimit[3][5][4], rightVcaBandlimit[3][5][4];
+                     leftVcaBandlimit[2][5][4], rightVcaBandlimit[2][5][4];
   DCBlockFilter_4 leftDcBlockBeforeFilter[4], leftDcBlockAfterFilter[4], 
                   rightDcBlockBeforeFilter[4], rightDcBlockAfterFilter[4];
 
@@ -102,10 +102,8 @@ struct VCAMix4Stereo : VenomModule {
       for (int j=0; j<5; j++){
         leftVcaBandlimit[0][j][i].setOversample(1);
         leftVcaBandlimit[1][j][i].setOversample(1);
-        leftVcaBandlimit[2][j][i].setOversample(1);
         rightVcaBandlimit[0][j][i].setOversample(1);
         rightVcaBandlimit[1][j][i].setOversample(1);
-        rightVcaBandlimit[2][j][i].setOversample(1);
       }
     }
   }
@@ -197,8 +195,6 @@ struct VCAMix4Stereo : VenomModule {
             out = leftVcaBandlimit[1][i][c/4].process(out);
           }
           out *= channelScale * cv;
-          if (vcaMode == 5)
-            out = leftVcaBandlimit[2][i][c/4].process(out);
           outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
           if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
             leftOut += out;
@@ -207,8 +203,6 @@ struct VCAMix4Stereo : VenomModule {
             if (vcaMode >= 4)
               out = rightVcaBandlimit[1][i][c/4].process(out);
             out *= channelScale * cv;
-            if (vcaMode == 5)
-              out = rightVcaBandlimit[2][i][c/4].process(out);
           }
           outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
           if (!exclude || !outputs[RIGHT_OUTPUTS+i].isConnected())
@@ -230,8 +224,6 @@ struct VCAMix4Stereo : VenomModule {
               out = leftVcaBandlimit[1][i][c/4].process(out);
             }
             out *= channelScale * cv;
-            if (vcaMode == 5)
-              out = leftVcaBandlimit[2][i][c/4].process(out);
             outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
             if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
               leftOut += out;
@@ -241,8 +233,6 @@ struct VCAMix4Stereo : VenomModule {
               if (vcaMode >= 4)
                 out = rightVcaBandlimit[1][i][c/4].process(out);
               out *= channelScale * cv;
-              if (vcaMode == 5)
-                out = rightVcaBandlimit[2][i][c/4].process(out);
             }
             outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
             if (!exclude || !outputs[RIGHT_OUTPUTS+i].isConnected())
@@ -251,7 +241,7 @@ struct VCAMix4Stereo : VenomModule {
           else {
             out = normal * channelScale;
             if (vcaMode >= 4)
-              out = leftVcaBandlimit[2][i][c/4].process(cv);
+              out = leftVcaBandlimit[0][i][c/4].process(cv);
             outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
             outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
             if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
