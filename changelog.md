@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.2.0 (2023-??-??)
+## 2.2.0 (2023-04-24)
 ### New Modules
 - Mix 4
 - Mix 4 Stereo
