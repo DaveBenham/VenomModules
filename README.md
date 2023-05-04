@@ -265,7 +265,7 @@ All other behaviors are the same as for Mix 4.
 
 
 ## POLY CLONE
-![Poly Clone module image](doc/PolyClone.png)
+![Poly Clone module image](doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
 ### CLONE knob
@@ -591,7 +591,7 @@ All outputs are monophonic 0V when the module is bypassed.
 
 
 ## VCA MIX 4
-![VCA Mix 4 module image](doc/VCAMix4.png)
+![VCA Mix 4 module image](doc/VCAMix4.png)  
 A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
 
 ### General Operation
@@ -624,9 +624,13 @@ The polyphonic chain input allows multiple VCA MIX 4 to be connected in series, 
 The final mix is output here. The final mix output may be clipped and/or have DC offset removed, depending on the settings of the Clip and DC buttons.
 
 ### Polyphony
-The number of output polyphonic channels for each of the four channels is normally set independently to the maximum number of channels found across each CV and channel input pair. The number of output polyphonic channels for the final mix is normally the maximum channel count found across all inputs - the four channel inputs, the four CV inputs, and the chain input. Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
+The polyphonic channel count for each of the four numbered channel outputs is normally set to the maximum number of channels found across each CV and channel input pair. The count is set independently for each numbered channel output.
 
-There is one major exception when the Level Mode is set to poly sum. In this mode, polyphonic signals at the channel inputs and chain input are summed into a monophonic signal before any modulation. CV inputs are monophonic in this mode, meaning polyphonic CV channels 2 and above will be ignored.
+The final mix polyphonic channel count is normally the maximum channel count across the numbered outputs that are not excluded, as well as the chain and mix CV inputs.
+
+Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
+
+There is one major exception when the Level Mode is set to poly sum, causing all outputs to be monophonic. In this mode, polyphonic signals at the numbered inputs and chain input are summed into a monophonic signal before any modulation. CV inputs are monophonic in this mode, meaning polyphonic CV channels 2 and above will be ignored.
 
 ### M (Level Mode) button
 The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to typical usage, but all modes can be applied to both audio and CV.
@@ -662,7 +666,7 @@ The color coded clip button determines how (or if) the final output is clipped. 
 - **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
 
 ### X (eXclude) button
-The color coded exclude button determines if patched channel outputs are included in the final mix.
+The color coded exclude button determines if patched channel outputs are excluded or included in the final mix.
 - **Off** (dark gray - default): patched output channels are included in the final mix
 - **On** (red): patched output channels are excluded from the final mix
 
@@ -683,8 +687,8 @@ A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or 
 VCA Mix 4 Stereo is a stereo version of the VCA MIX 4, sharing the same features, but with the following differences:
 - Each of the channel inputs and outputs, as well as the Chain input and Mix output are doubled to support left and right channels. Each stereo pair is controlled by its own single Level knob and CV input.
 - Each right input is normaled to the corresponding left input. When using the bipolar Level mode, each input level knob produces constant CV only if both the left and right inputs are unpatched.
-- The output channel count for each numbered channel is the maximum polyphony found across the left, right, and CV input.
-- The output channel count for the Mix output is the maximum polyphony found across all left and right channel and Chain inputs, plus all the CV inputs.
+- The output channel count for each numbered channel is the maximum polyphony found across the corresponding left, right, and CV inputs.
+- The output channel count for the Mix output is the maximum polyphony found across the chain and Mix CV inputs, as well as each numbered channel output that is not excluded from the mix.
 - When bypassed, each channel's left input is sent unchanged to the left output, and right input to the right output. The right inputs are still normaled to the left inputs when bypassed. The Mix outputs remain monophonic 0V when bypassed.
 
 All other behaviors are the same as for Mix 4.
@@ -693,7 +697,7 @@ All other behaviors are the same as for Mix 4.
 
 
 ## WINCOMP
-![WINCOMP module image](doc/WinComp.PNG)
+![WINCOMP module image](doc/WinComp.PNG)  
 A windowed comparator inspired by the VCV Fundamental COMPARE module, based on specs originally proposed at 
 https://community.vcvrack.com/t/vcv-compare-gates-logic-and-process/17828/17?u=davevenom.
 
