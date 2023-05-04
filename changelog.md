@@ -1,5 +1,12 @@
 # Venom Modules Changelog
 
+## 2.?.? (2023-??-??)
+### Bug Fixes
+- HQ
+  - The selected channel for monitoring is now saved with the patch
+- VCA Mix 4, VCA Mix 4 Stereo
+  - Excluded patched channel outputs no longer contribute to the polyphony count in the Mix output
+
 ## 2.2.0 (2023-04-24)
 ### New Modules
 - Mix 4
