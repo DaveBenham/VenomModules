@@ -107,6 +107,9 @@ struct VCAMix4 : VenomModule {
     initDCBlock();
   }
 
+  void onPortChange(const PortChangeEvent& e) override {
+  }
+
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||
@@ -141,9 +144,12 @@ struct VCAMix4 : VenomModule {
     bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
 
     int inChannels[4];
-    for (int i=0; i<4; i++)
+    int channels = std::max({1, inputs[CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    for (int i=0; i<4; i++) {
       inChannels[i] = mode == 1 ? 1 : std::max({1, inputs[CV_INPUTS+i].getChannels(), inputs[INPUTS+i].getChannels()});
-    int channels = std::max({inChannels[0], inChannels[1], inChannels[2], inChannels[3], inputs[MIX_CV_INPUT].getChannels(), inputs[CHAIN_INPUT].getChannels()});
+      if (inChannels[i] > channels && (!exclude || !outputs[OUTPUTS+i].isConnected()))
+        channels = inChannels[i];
+    }
     simd::float_4 in, out, cv;
     for (int c=0; c<channels; c+=4){
       out = inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);

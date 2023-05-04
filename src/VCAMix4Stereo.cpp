@@ -167,15 +167,15 @@ struct VCAMix4Stereo : VenomModule {
     bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
 
     int inChannels[4];
-    for (int i=0; i<4; i++)
+    int channels = std::max({1, inputs[LEFT_CHAIN_INPUT].getChannels(), inputs[RIGHT_CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    for (int i=0; i<4; i++){
       inChannels[i] = mode == 1 ? 1 : std::max({
-        1, inputs[CV_INPUTS+i].getChannels(), 
+        1, inputs[CV_INPUTS+i].getChannels(),
         inputs[LEFT_INPUTS+i].getChannels(), inputs[RIGHT_INPUTS+i].getChannels()
       });
-    int channels = std::max({
-      inChannels[0], inChannels[1], inChannels[2], inChannels[3],
-      inputs[MIX_CV_INPUT].getChannels(), inputs[LEFT_CHAIN_INPUT].getChannels(), inputs[RIGHT_CHAIN_INPUT].getChannels()
-    });
+      if (inChannels[i] > channels && (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected())))
+        channels = inChannels[i];
+    }
     simd::float_4 leftOut, rightOut, out, cv;
     float channelScale;
     for (int c=0; c<channels; c+=4){
@@ -244,10 +244,10 @@ struct VCAMix4Stereo : VenomModule {
               out = leftVcaBandlimit[0][i][c/4].process(cv);
             outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
             outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
-            if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
+            if (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected())){
               leftOut += out;
-            if (!exclude || !outputs[RIGHT_OUTPUTS+i].isConnected())
               rightOut += out;
+            }
           }
         }
       }
