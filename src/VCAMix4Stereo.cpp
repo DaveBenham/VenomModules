@@ -52,11 +52,6 @@ struct VCAMix4Stereo : VenomModule {
                   rightDcBlockBeforeFilter[4], rightDcBlockAfterFilter[4];
 
   VCAMix4Stereo() {
-    struct FixedSwitchQuantity : SwitchQuantity {
-      std::string getDisplayValueString() override {
-        return labels[getValue()];
-      }
-    };
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < 4; i++){
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));

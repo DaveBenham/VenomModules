@@ -38,11 +38,6 @@ struct Mix4 : VenomModule {
   DCBlockFilter_4 dcBlockBeforeFilter[4], dcBlockAfterFilter[4];
 
   Mix4() {
-    struct FixedSwitchQuantity : SwitchQuantity {
-      std::string getDisplayValueString() override {
-        return labels[getValue()];
-      }
-    };
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < 4; i++){
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);

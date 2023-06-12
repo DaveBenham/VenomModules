@@ -16,6 +16,7 @@ extern Model* modelHQ;
 extern Model* modelMix4;
 extern Model* modelMix4Stereo;
 extern Model* modelPolyClone;
+extern Model* modelPolyUnison;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
 extern Model* modelRhythmExplorer;
@@ -225,6 +226,12 @@ struct VenomWidget : ModuleWidget {
       }
     }
     Widget::step();
+  }
+};
+
+struct FixedSwitchQuantity : SwitchQuantity {
+  std::string getDisplayValueString() override {
+    return labels[getValue()];
   }
 };
 

@@ -45,11 +45,6 @@ struct VCAMix4 : VenomModule {
   DCBlockFilter_4 dcBlockBeforeFilter[4], dcBlockAfterFilter[4];
 
   VCAMix4() {
-    struct FixedSwitchQuantity : SwitchQuantity {
-      std::string getDisplayValueString() override {
-        return labels[getValue()];
-      }
-    };
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < 4; i++){
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));

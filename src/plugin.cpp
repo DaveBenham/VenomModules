@@ -48,6 +48,7 @@ void init(Plugin* p) {
   p->addModel(modelMix4);
   p->addModel(modelMix4Stereo);
   p->addModel(modelPolyClone);
+  p->addModel(modelPolyUnison);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);
   p->addModel(modelRhythmExplorer);

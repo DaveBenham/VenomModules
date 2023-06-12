@@ -160,11 +160,6 @@ struct RhythmExplorer : VenomModule {
 
   RhythmExplorer() {
 
-    struct FixedSwitchQuantity : SwitchQuantity {
-      std::string getDisplayValueString() override {
-        return labels[getValue()];
-      }
-    };
     struct GlobalModeQuantity : SwitchQuantity {
       std::string getDisplayValueString() override {
         RhythmExplorer* module = reinterpret_cast<RhythmExplorer*>(this->module);
