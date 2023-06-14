@@ -85,7 +85,7 @@
     {
       "slug": "PolyUnison",
       "name": "Poly Unison",
-      "description": "Clone each channel of a polyphonic input with detune and merge the results into a single polyphonic output",
+      "description": "Replicate each channel of a polyphonic input with a variable detune spread, and merge the results into a single polyphonic output",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-unison",
       "tags": [
         "Polyphonic",

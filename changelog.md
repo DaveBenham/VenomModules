@@ -1,6 +1,9 @@
 # Venom Modules Changelog
 
 ## 2.?.? (2023-??-??)
+### New Modules
+- Poly Unison
+
 ### Bug Fixes
 - HQ
   - The selected channel for monitoring is now saved with the patch
