@@ -11,7 +11,6 @@ struct Recurse : VenomModule {
     SCALE_PARAM,
     OFFSET_PARAM,
     TIMING_PARAM,
-    ORDER_PARAM,
     PARAMS_LEN
   };
   enum InputId {

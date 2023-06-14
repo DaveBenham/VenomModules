@@ -10,7 +10,6 @@ struct RecurseStereo : VenomModule {
     SCALE_PARAM,
     OFFSET_PARAM,
     TIMING_PARAM,
-    ORDER_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -75,7 +74,7 @@ struct RecurseStereo : VenomModule {
     configOutput(SEND_L_OUTPUT, "Left Send");
     configOutput(SEND_R_OUTPUT, "Right Send");
     configOutput(OUT_L_OUTPUT, "Left Signal");
-    configOutput(OUT_R_OUTPUT, "Left Signal");
+    configOutput(OUT_R_OUTPUT, "Right Signal");
     configBypass(IN_L_INPUT, OUT_L_OUTPUT);
     configBypass(inputs[IN_R_INPUT].isConnected() ? IN_R_INPUT : IN_L_INPUT, OUT_R_OUTPUT);
   }

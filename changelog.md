@@ -4,11 +4,19 @@
 ### New Modules
 - Poly Unison
 
+### Behavior Change
+- Bernoulli Switch: The B input now remains normalled to the A input when bypassed, which in turn can affect the bypassed B output.
+
 ### Bug Fixes
 - HQ
   - The selected channel for monitoring is now saved with the patch
-- VCA Mix 4, VCA Mix 4 Stereo
+- Recurse Stereo
+  - Fixed Right Signal output label  
+- VCA Mix 4
   - Excluded patched channel outputs no longer contribute to the polyphony count in the Mix output
+- VCA Mix 4 Stereo
+  - Excluded patched channel outputs no longer contribute to the polyphony count in the Mix output
+  - Fixed Right Mix output label
 
 ## 2.2.0 (2023-04-24)
 ### New Modules
@@ -17,7 +25,7 @@
 - VCA Mix 4
 - VCA Mix 4 Stereo
 
-### Behavior Changes
+### Behavior Change
 - Recurse Stereo: The right input now remains normalled to the left input when bypassed, which in turn can affect the bypassed right output.
 
 ### Enhancements

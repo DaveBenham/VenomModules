@@ -99,7 +99,7 @@ The following factory presets are available that emulate the four configurations
 [Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
 
 ### Bypass Behavior
-If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. However, the A input is not normalled to the TRIG input while bypassed.
+If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. The B input is still normalled to the A input while bypassed.
 
 [Return to Table Of Contents](#venom)
 

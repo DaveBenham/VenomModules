@@ -77,7 +77,7 @@ struct VCAMix4Stereo : VenomModule {
     configInput(LEFT_CHAIN_INPUT, "Left chain");
     configInput(RIGHT_CHAIN_INPUT, "Right chain");
     configOutput(LEFT_MIX_OUTPUT, "Left mix");
-    configOutput(LEFT_MIX_OUTPUT, "Right mix");
+    configOutput(RIGHT_MIX_OUTPUT, "Right mix");
     for (int i=0; i<4; i++){
       configBypass(LEFT_INPUTS+i, LEFT_OUTPUTS+i);
     }
