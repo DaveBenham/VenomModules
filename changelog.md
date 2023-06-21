@@ -3,6 +3,7 @@
 ## 2.?.? (2023-??-??)
 ### New Modules
 - Poly Unison
+- Reformation
 
 ### Behavior Change
 - Bernoulli Switch: The B input now remains normalled to the A input when bypassed, which in turn can affect the bypassed B output.

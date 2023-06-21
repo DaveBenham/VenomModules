@@ -51,6 +51,7 @@ void init(Plugin* p) {
   p->addModel(modelPolyUnison);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);
+  p->addModel(modelReformation);
   p->addModel(modelRhythmExplorer);
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);

@@ -19,6 +19,7 @@ extern Model* modelPolyClone;
 extern Model* modelPolyUnison;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
+extern Model* modelReformation;
 extern Model* modelRhythmExplorer;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
@@ -405,6 +406,18 @@ struct YellowRedLight : TBase {
     this->addBaseColor(SCHEME_YELLOW);
     this->addBaseColor(SCHEME_RED);
   }
+};
+
+struct VCVSliderLockable : VCVSlider {
+  void appendContextMenu(Menu* menu) override {
+    if (module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+template <typename TLightBase = RedLight>
+struct VCVLightSliderLockable : LightSlider<VCVSliderLockable, VCVSliderLight<TLightBase>> {
+  VCVLightSliderLockable() {}
 };
 
 struct GlowingSvgSwitch : app::SvgSwitch {

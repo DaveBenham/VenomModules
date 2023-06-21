@@ -118,6 +118,20 @@
       ]
     },
     {
+      "slug": "Reformation",
+      "name": "Reformation",
+      "description": "Transform CV or audio by mapping way point voltages to new values",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#reformation",
+      "tags": [
+        "Distortion",
+        "Effect",
+        "Polyphonic",
+        "Utility",
+        "Voltage-controlled amplifier",
+        "Waveshaper"
+      ]
+    },
+    {
       "slug": "RhythmExplorer",
       "name": "Rhythm Explorer",
       "description": "Random rhythm generator, trigger sequencer and clock divider",
