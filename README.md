@@ -9,9 +9,9 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 |----|----|----|----|----|----|----|----|----|
 |![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|
 
-|[RHYTHM EXPLORER](#rhythm-explorer)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
-|----|----|----|----|
-|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![WINCOMP module image](doc/WinComp.PNG)|
+|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
+|----|----|----|----|----|
+|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![WINCOMP module image](doc/WinComp.PNG)|
 
 
 ## Themes
@@ -404,6 +404,20 @@ In addition, The Left Return is normalled to the Left Send, and the Right Return
 The Recursion Count, Scale, Offset, and Modulation Timing settings are applied to both Left and Right identically.
 
 Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. The right input remains normalled to the left input while bypassed. Bypassed left and right send are monophonic 0V.
+
+[Return to Table Of Contents](#venom)
+
+
+## REFORMATION
+![Reformation module image](doc/Reformation.PNG)  
+Transform CV or audio by mapping way point voltages to new values
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+
+### Bypass
+
+The Input is passed unchanged to the Output when REFORMATION is bypassed.
 
 [Return to Table Of Contents](#venom)
 
