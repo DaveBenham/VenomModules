@@ -7,7 +7,7 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|
 |----|----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|
 
 |[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
 |----|----|----|----|----|
@@ -292,7 +292,7 @@ If Clone Merge is bypassed then the input is passed unchanged to the output.
 
 
 ## POLY UNISON
-![Poly Unison module image](doc/PolyUnison.png)  
+![Poly Unison module image](doc/PolyUnison.PNG)  
 Replicate each channel of a polyphonic input with a variable detune spread, and merge the results into a single polyphonic output.
 
 ### COUNT (Unison Count) knob
