@@ -414,7 +414,7 @@ Transform CV or audio by mapping way point voltages to new values.
 
 ### General Operation
 
-Reformation transforms incoming CV or audio by remapping 5 voltage way points (min, 1/4, 1/2, 3/4, max) to new values, and performing linear interpolation of intermediate values. The input may be configured to handle unipolar or bipolar signals, and the output can be independently offset to unipolar or bipolar. Each way point mapping is controlled by a combination of a slider and two attenuverted CV inputs. The resultant signal can be overdriven with hard or soft clipping at 20V peak to peak, and then attenuated back down to the desired level. CV inputs are avaiable for both the drive and final level. Oversampling is available to control aliasing that would otherwise be introduced by the transformation and/or clipping.
+Reformation transforms incoming CV or audio by remapping 5 voltage way points (min, 1/4, 1/2, 3/4, max) to new values, and performing linear interpolation of intermediate values. The input may be configured to handle unipolar or bipolar signals, and the output can be independently offset to unipolar or bipolar. Each way point mapping is controlled by a combination of a slider and two attenuverted CV inputs. The resultant signal can be overdriven with hard or soft clipping at 20V peak to peak, and then attenuated back down to the desired level. CV inputs are available for both the drive and final level. Oversampling is available to control aliasing that would otherwise be introduced by the transformation and/or clipping.
 
 Reformation is fully polyphonic, and all modulation can be driven at audio rates.
 
@@ -433,18 +433,18 @@ Each slider defaults to the way point input voltage (no change), which is marked
 
 ### Way Point CV1 and CV2
 
-Below each slider is a pair of bipolar CV inputs, each with its own attenuverter to control the depth of modulation. The attenuverted CV inputs are summed with the slider values to establish the effective mapping for each way point. The summed value is not constrained, so it is possible to modulate a signal outside the standard unipolar or bipolar voltage ranges.
+Below each slider is a pair of bipolar CV inputs, each with its own attenuverter. The attenuverted CV inputs are summed with the slider values to establish the effective mapping for each way point. The summed value is not constrained, so it is possible to modulate a signal outside the standard unipolar or bipolar voltage ranges.
 
 ### Input Polarity
 
-The color coded IN button establishes the expected polarity and range of the input:
+The color coded IN button establishes the expected polarity of the input:
 
 - Green (default) = Unipolar
 - Red = Bipolar
 
 ### Output Polarity
 
-The color coded OUT button establishes the polarity of the final output. The transformed signal is offset by 0V or +5V or -5V to achieve the correct output polarity, depending on the chosen input.
+The color coded OUT button establishes the polarity of the final output. The transformed signal is offset as needed to achieve the correct output polarity.
 
 - Green (default) = Unipolar
 - Red = Bipolar
@@ -453,7 +453,9 @@ Note that unipolar output is not guaranteed to be >= 0V unless one of the clippi
 
 ### Drive
 
-The drive amplifies the resultant signal prior to any clipping. The drive range is from 1 (no amplification) to 10 (multiply by 10), with the default at 2. The drive value is the sum of the knob value and the Drive input, clamped to a range from 1 to 10. Note that unipolar inputs are offset -5V to become bipolar, prior to applying the drive.
+The drive amplifies the resultant signal prior to any clipping. The drive range is from 1 (no amplification) to 10 (multiply by 10), with the default at 2. The drive value is the sum of the knob value and the Drive input, clamped to a range from 1 to 10.
+
+Note that unipolar inputs are offset -5V to become bipolar, prior to applying the drive.
 
 ### Clipping
 
@@ -465,7 +467,7 @@ The color coded CLIP button specifies the type of clipping that is applied.
 
 ### Level
 
-The level knob and level CV input function as a typical voltage controlled attenuator that is applied after the drive and clipping. The effective attenuation is the product of the Level knob (ranging from 0 to 1) and the Level input divided by 10V. The attenuation is then clamped to a value between 0 and 1. The default level is 0.5. So in the absence of any clipping, the default drive of 2 coupled with the level of 0.5 results in no change.
+The level knob and level CV input function as a typical voltage controlled attenuator that is applied after the drive and clipping. The effective attenuation is the product of the Level knob (ranging from 0 to 1) and the Level input divided by 10V. The attenuation is then clamped to a value between 0 and 1. The default level is 0.5. So in the absence of any clipping, the default drive of 2 coupled with the default level of 0.5 results in no change.
 
 ### Output
 
@@ -481,7 +483,7 @@ The color coded OVER button specifies the amount of oversampling that is done to
 
 Oversampling is relatively CPU intensive, and should only be applied when needed. Control voltage and low to medium frequency audio typically do not need oversampling. But the quality of moderately high frequency output can be improved by oversampling.
 
-Note that oversampling cannot remove aliasing that may be present in any inputs driven at audio rates. To get the best possible results, make sure that all audio signals at the IN, CV, DRIVE, or LEVEL inputs is clean.
+Note that oversampling cannot remove aliasing that may be present in inputs driven at audio rates. To get the best possible results, make sure that all audio signals at the IN, CV, DRIVE, or LEVEL inputs is clean.
 
 ### Polyphony
 
