@@ -143,6 +143,17 @@
       ]
     },
     {
+      "slug": "ShapedVCA",
+      "name": "Shaped VCA",
+      "description": "Stereo VCA with a variable response curve",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#shaped-vca",
+      "tags": [
+        "Attenuator",
+        "Polyphonic",
+        "Voltage-controlled amplifier"
+      ]
+    },
+    {
       "slug": "VCAMix4",
       "name": "VCA Mix 4",
       "description": "Compact audio or CV VCA, mixer, attenuator, inverter, amplifier, and/or offset",
