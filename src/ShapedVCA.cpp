@@ -39,6 +39,13 @@ struct ShapedVCA : VenomModule {
     configInput(RIGHT_INPUT, "Right");
     configOutput(LEFT_OUTPUT, "Left");
     configOutput(RIGHT_OUTPUT, "Right");
+    configBypass(LEFT_INPUT, LEFT_OUTPUT);
+    configBypass(inputs[RIGHT_INPUT].isConnected() ? RIGHT_INPUT : LEFT_INPUT, RIGHT_OUTPUT);
+  }
+
+  void onPortChange(const PortChangeEvent& e) override {
+    if (e.type == Port::INPUT && e.portId == RIGHT_INPUT)
+      bypassRoutes[1].inputId = e.connecting ? RIGHT_INPUT : LEFT_INPUT;
   }
 
   void process(const ProcessArgs& args) override {
