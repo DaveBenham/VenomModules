@@ -4,11 +4,8 @@
 #include "plugin.hpp"
 #include "math.hpp"
 #include <cfloat>
-#include "Filter.hpp"
 
 #define MODULE_NAME ShapedVCA
-#define HARD_CLIP 1
-#define SOFT_CLIP 2
 
 struct ShapedVCA : VenomModule {
   enum ParamId {
@@ -37,34 +34,23 @@ struct ShapedVCA : VenomModule {
   enum LightId {
     LIGHTS_LEN
   };
-  
-  int range = -1; // force initialization
-  float levelOffset, levelOffsetVals[6] = {0.f, 0.f, 0.f, -1.f, -2.f, -10.f};
-  float levelScale, levelScaleVals[6] = {1.f, 2.f, 10.f, 2.f, 4.f, 20.f};
-  float levelDefaultVals[6] = {1.f, 0.5f, 0.1f, 1.f, 0.75f, 0.55f};
-  float offsetVals[3] = {0.f, -5.f, 5.f};
-  float oldOversample = -1; // force initialization
-  int oversample, overVals[5] = {1, 4, 8, 16, 32};
-  OversampleFilter_4 levelUpSample[4], curveUpSample[4], 
-                     leftUpSample[4], rightUpSample[4], 
-                     leftDownSample[4], rightDownSample[4];
 
   ShapedVCA() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch(RANGE_PARAM, 0.f, 5.f, 0.f, "Level Range", {"0-1", "0-2", "0-10", "+/- 1", "+/- 2", "+/- 10"});
     configSwitch(MODE_PARAM, 0.f, 1.f, 0.f, "VCA Mode", {"Unipolar clipped CV (2 quadrant)", "Bipolar unclipped CV (4 quadrant)"});
     configSwitch(CLIP_PARAM, 0.f, 2.f, 0.f, "Output Clipping", {"Off", "Hard clip", "Soft clip"});
-    configSwitch(OVER_PARAM, 0.f, 4.f, 0.f, "Oversample", {"Off", "x4", "x8", "x16", "x32"});
-    configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level", "x", 0.f, 1.f, 0.f);
+    configSwitch(OVER_PARAM, 0.f, 2.f, 0.f, "Oversample", {"Off", "x4", "x8"});
+    configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level");
     configInput(LEVEL_INPUT, "Level CV");
-    configParam(BIAS_PARAM, 0.f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
+    configParam(BIAS_PARAM, 0.f, 5.f, 0.f, "Level CV bias", " V");
     configParam(CURVE_PARAM, -1.f, 1.f, 0.f, "Response curve");
     configInput(CURVE_INPUT, "Response curve");
     configInput(LEFT_INPUT, "Left");
     configInput(RIGHT_INPUT, "Right");
     configOutput(LEFT_OUTPUT, "Left");
     configOutput(RIGHT_OUTPUT, "Right");
-    configSwitch(OFFSET_PARAM, 0.f, 2.f, 0.f, "Output offset", {"None", "-5 V", "+5 V"});
+    configSwitch(OFFSET_PARAM, 0.f, 1.f, 0.f, "Output offset", {"None", "-5 V"});
     configBypass(LEFT_INPUT, LEFT_OUTPUT);
     configBypass(inputs[RIGHT_INPUT].isConnected() ? RIGHT_INPUT : LEFT_INPUT, RIGHT_OUTPUT);
   }
@@ -76,85 +62,21 @@ struct ShapedVCA : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-
-    // get channels
     int channels = std::max({1, inputs[LEVEL_INPUT].getChannels(), inputs[CURVE_INPUT].getChannels(), inputs[LEFT_INPUT].getChannels(), inputs[RIGHT_INPUT].getChannels()});
-    int simdCnt = (channels+3)/4;
-
-    // configure oversample
-    if (params[OVER_PARAM].getValue() != oldOversample) {
-      oldOversample = params[OVER_PARAM].getValue();
-      oversample = overVals[static_cast<int>(oldOversample)];
-      for (int i=0; i<4; i++){
-        levelUpSample[i].setOversample(oversample);
-        curveUpSample[i].setOversample(oversample);
-        leftUpSample[i].setOversample(oversample);
-        rightUpSample[i].setOversample(oversample);
-        leftDownSample[i].setOversample(oversample);
-        rightDownSample[i].setOversample(oversample);
-      }
-    }
-    
-    // configure level
-    if (static_cast<int>(params[RANGE_PARAM].getValue()) != range){
-      range = static_cast<int>(params[RANGE_PARAM].getValue());
-      ParamQuantity* q = paramQuantities[LEVEL_PARAM];
-      q->displayMultiplier = levelScale = levelScaleVals[range];
-      q->displayOffset = levelOffset = levelOffsetVals[range];
-      q->defaultValue = levelDefaultVals[range];
-    }  
-
-    float level = params[LEVEL_PARAM].getValue() * levelScale + levelOffset;
+    float level = params[LEVEL_PARAM].getValue();
     float curve = params[CURVE_PARAM].getValue();
-    float bias = params[BIAS_PARAM].getValue();
-    float offset = offsetVals[static_cast<int>(params[OFFSET_PARAM].getValue())];
-    int clip = static_cast<int>(params[CLIP_PARAM].getValue());
     using float_4 = simd::float_4;
-    float_4 leftIn[4], rightIn[4], levelIn[4], curveIn[4], gain, shape, leftOut[4], rightOut[4];
-    bool leftInConnected = inputs[LEFT_INPUT].isConnected(),
-         rightInConnected = inputs[RIGHT_INPUT].isConnected(),
-         levelConnected = inputs[LEVEL_INPUT].isConnected(),
-         curveConnected = inputs[CURVE_INPUT].isConnected(),
-         leftOutConnected = outputs[LEFT_OUTPUT].isConnected(),
-         rightOutConnected = outputs[RIGHT_OUTPUT].isConnected(),
-         ringMod = (params[MODE_PARAM].getValue()>0.f);
-
-    for( int o=0; o<oversample; o++){
-      for( int s=0, c=0; s<simdCnt; s++, c+=4){
-        curveIn[s] = o ? (curveConnected ? float_4::zero() : curveIn[s]) : inputs[CURVE_INPUT].getNormalPolyVoltageSimd<float_4>(0.f, c) * (curveConnected ? oversample : 1);
-        levelIn[s] = o ? (levelConnected ? float_4::zero() : levelIn[s]) : inputs[LEVEL_INPUT].getNormalPolyVoltageSimd<float_4>(10.f, c)/10.f * (levelConnected ? oversample : 1);
-        leftIn[s] = o ? (leftInConnected ? float_4::zero() : leftIn[s]) : inputs[LEFT_INPUT].getNormalPolyVoltageSimd<float_4>(10.f, c) * (leftInConnected ? oversample : 1);
-        rightIn[s] = o ? (rightInConnected ? float_4::zero() : rightIn[s]) : inputs[RIGHT_INPUT].getNormalPolyVoltageSimd<float_4>(leftIn[s], c) * (rightInConnected ? oversample : 1);
-        if (oversample>1) {
-          if (curveConnected) curveIn[s] = curveUpSample[s].process(curveIn[s]);
-          if (levelConnected) levelIn[s] = levelUpSample[s].process(levelIn[s]);
-          if (leftInConnected) leftIn[s] = leftUpSample[s].process(leftIn[s]);
-          if (rightInConnected) rightIn[s] = rightUpSample[s].process(rightIn[s]);
-        }
-        levelIn[s] += bias;
-        if (!ringMod) levelIn[s] = clamp(levelIn[s]);
-        shape = clamp(curveIn[s]/10.f + curve, -1.f, 1.f);
-        gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*levelIn[s]+1.f), simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
-        leftOut[s] = leftIn[s] * gain * level;
-        rightOut[s] = rightIn[s] * gain * level;
-        if (clip == HARD_CLIP){
-          leftOut[s] = clamp(leftOut[s], -10.f, 10.f);
-          rightOut[s] = clamp(rightOut[s], -10.f, 10.f);
-        }
-        if (clip == SOFT_CLIP){
-          leftOut[s] = softClip(leftOut[s]);
-          rightOut[s] = softClip(rightOut[s]);
-        }
-        if (oversample>1) {
-          if (leftOutConnected) leftOut[s] = leftDownSample[s].process(leftOut[s]);
-          if (rightOutConnected) rightOut[s] = rightDownSample[s].process(rightOut[s]);
-        }
-      }
-    }
-    for (int s=0, c=0; s<simdCnt; s++, c+=4){
-      outputs[LEFT_OUTPUT].setVoltageSimd(leftOut[s]+offset, c);
-      outputs[RIGHT_OUTPUT].setVoltageSimd(rightOut[s]+offset, c);
-    }
+    float_4 gain, shape, left, right;
+    for( int c=0; c<channels; c+=4){
+      shape = clamp(inputs[CURVE_INPUT].getNormalPolyVoltageSimd<float_4>(0.f, c)/10.f + curve, -1.f, 1.f);
+      gain = clamp(inputs[LEVEL_INPUT].getNormalPolyVoltageSimd<float_4>(10.f, c)/10.f);
+      gain = crossfade(gain, ifelse(shape>0.f, 11.f*gain/(10.f*gain+1.f), simd::pow(gain,4)), ifelse(shape>0.f, shape, -shape));
+      left = inputs[LEFT_INPUT].getNormalPolyVoltageSimd<float_4>(10.f, c);
+      right = inputs[RIGHT_INPUT].getNormalPolyVoltageSimd<float_4>(left, c) * gain * level;
+      left *= gain * level;
+      outputs[LEFT_OUTPUT].setVoltageSimd(left, c);
+      outputs[RIGHT_OUTPUT].setVoltageSimd(right, c);
+    }  
     outputs[LEFT_OUTPUT].setChannels(channels);
     outputs[RIGHT_OUTPUT].setChannels(channels);
   }
@@ -192,8 +114,6 @@ struct ShapedVCAWidget : VenomWidget {
   struct OverSwitch : GlowingSvgSwitchLockable {
     OverSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
     }
@@ -203,7 +123,6 @@ struct ShapedVCAWidget : VenomWidget {
     OffsetSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
     }
   };
 

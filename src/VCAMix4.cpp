@@ -102,9 +102,6 @@ struct VCAMix4 : VenomModule {
     initDCBlock();
   }
 
-  void onPortChange(const PortChangeEvent& e) override {
-  }
-
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||
