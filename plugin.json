@@ -145,12 +145,15 @@
     {
       "slug": "ShapedVCA",
       "name": "Shaped VCA",
-      "description": "Stereo VCA with a variable response curve",
+      "description": "Stereo VCA with a variable response curve, hard/soft clipping, ring modulation, and oversampling",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#shaped-vca",
       "tags": [
         "Attenuator",
         "Polyphonic",
-        "Voltage-controlled amplifier"
+        "Ring modulator",
+        "Utility",
+        "Voltage-controlled amplifier",
+        "Waveshaper"
       ]
     },
     {
