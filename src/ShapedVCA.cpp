@@ -121,16 +121,17 @@ struct ShapedVCA : VenomModule {
 
     for( int o=0; o<oversample; o++){
       for( int s=0, c=0; s<simdCnt; s++, c+=4){
-        curveIn[s] = o ? (curveConnected ? float_4::zero() : curveIn[s]) : inputs[CURVE_INPUT].getNormalPolyVoltageSimd<float_4>(0.f, c) * (curveConnected ? oversample : 1);
-        levelIn[s] = o ? (levelConnected ? float_4::zero() : levelIn[s]) : inputs[LEVEL_INPUT].getNormalPolyVoltageSimd<float_4>(10.f, c)/10.f * (levelConnected ? oversample : 1);
-        leftIn[s] = o ? (leftInConnected ? float_4::zero() : leftIn[s]) : inputs[LEFT_INPUT].getNormalPolyVoltageSimd<float_4>(10.f, c) * (leftInConnected ? oversample : 1);
-        rightIn[s] = o ? (rightInConnected ? float_4::zero() : rightIn[s]) : inputs[RIGHT_INPUT].getNormalPolyVoltageSimd<float_4>(leftIn[s], c) * (rightInConnected ? oversample : 1);
+        curveIn[s] = curveConnected && !o ? inputs[CURVE_INPUT].getPolyVoltageSimd<float_4>(c) * oversample : float_4::zero(); // normal value is 0.f, so this simpler logic works
+        levelIn[s] = levelConnected ? (o ? float_4::zero() : inputs[LEVEL_INPUT].getPolyVoltageSimd<float_4>(c)/10.f * oversample) : 1.f; // normal is non-zero, so a bit more logic needed
+        leftIn[s] = leftInConnected ? (o ? float_4::zero() : inputs[LEFT_INPUT].getPolyVoltageSimd<float_4>(c) * oversample) : 10.f; // normal is non-zero, so a bit more logic needed
+        if (rightInConnected) rightIn[s] = o ? float_4::zero() : inputs[RIGHT_INPUT].getPolyVoltageSimd<float_4>(c) * oversample; // normal is left, so set later if not connected
         if (oversample>1) {
           if (curveConnected) curveIn[s] = curveUpSample[s].process(curveIn[s]);
           if (levelConnected) levelIn[s] = levelUpSample[s].process(levelIn[s]);
           if (leftInConnected) leftIn[s] = leftUpSample[s].process(leftIn[s]);
           if (rightInConnected) rightIn[s] = rightUpSample[s].process(rightIn[s]);
-        }
+        } 
+        if (!rightInConnected) rightIn[s] = leftIn[s];
         levelIn[s] += bias;
         if (!ringMod) levelIn[s] = clamp(levelIn[s]);
         shape = clamp(curveIn[s]/10.f + curve, -1.f, 1.f);
