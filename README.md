@@ -811,11 +811,11 @@ The Right input is normaled to the Left input. The Left input is normaled to 10V
 After applying the effective gain to the inputs, the final result is sent to the Left and Right outputs.
 
 ### O (Output Offset) button adjacent to output ports
-This color coded switch can apply an offset to the final output
+This color coded switch can apply an offset to the final output. The output offset is applied before any clipping.
 
-dark gray (default) = Off - No offset
-red = -5 volt offset
-green = +5 volt offset
+- dark gray (default) = Off - No offset
+- red = -5 volt offset
+- green = +5 volt offset
 
 The output offset is particularly useful when using the Shaped VCA as a wave shaper for a bipolar Level input. Use the Bias to convert the Level input to unipolar, and use the -5 output offset to convert the wave shaped signal back to bipolar. The +5 output offset is useful when a negative gain is used to invert the signal prior to wave shaping.
 
