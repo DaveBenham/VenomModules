@@ -735,10 +735,96 @@ All outputs are monophonic 0V when the module is bypassed.
 
 ## SHAPED VCA
 ![SHAPED VCA module image](doc/ShapedVCA.png)  
-A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
+Stereo polyphonic VCA with a variable response curve, and optional hard/soft clipping, ring modulation, and oversampling.
+
+### General operation
+The Shaped VCA can function as a typical voltage controlled amplifier or attenuator, or a ring modulator, or a constant voltage source, or a wave shaper, depending on which inputs are patched and what options are chosen.
+
+### R (Level Range) button
+This color coded switch establishes the range of the Level knob.
+
+- yellow (default) = 0 to 1
+- green = 0 to 2
+- dark blue = 0 to 10
+- pink = -1 to 1
+- orange = -2 to 2
+- purple = -10 to 10
+
+### M (VCA Mode) button
+This color coded switch establishes the VCA mode
+
+- dark gray (default) = Unipolar (2 quadrant) with Level CV input clamped to 0 to 10.
+- white = Bipolar (4 quadrant) with Level CV input unconstrained, such that the effective gain is also unconstrained. This is the mode used for ring modulation.
+
+### C (Output Clipping) button
+This color coded switch establishes how the output is clipped
+
+- dark gray (default) = Off - No clipping
+- yellow = hard clipped at +/- 10 Volts
+- orange = soft clipped at +/- 10 Volts using an approximated tanh algorithm to provide saturation.
+
+It is highly recommended that hard or soft clipping be applied if performing ring modulation with a logarithmic response curve.
+
+### O (Oversampling) button
+This color coded switch establishes the amount of oversampling used to mitigate audio aliasing that may be introduced by clipping or non-linear response curves.
+
+- dark gray (default) = Off - No oversampling
+- yellow = x4 oversampling
+- green = x8 oversampling
+- light blue = x16 oversampling
+- dark blue = x32 oversampling
+
+Oversampling is typically not needed for most VCA operations. But it may be useful with high frequency audio outputs when clipping and/or non-linear response curves are applied. Oversampling is highly recommended if performing ring modulation with a logarithmic response curve.
+
+Oversampling uses significant CPU resources, so it is best to use the minimum oversampling value that gives the desired output.
+
+Note that oversampling cannot compensate for inputs that already contain aliasing.
+
+### Level knob
+Sets the maximum gain applied to the input signal(s). The range is dependent on the Range paramater. The default value is unity gain, regardless which range is chosen.
+
+### Level CV input
+Attenuates or inverts and attenuates the gain. The exact behavior is dependent on the Mode parameter setting. Regardless what mode, 10V equals full maximum level, and 0V equals zero output. The effective gain for in between values is dependent on the Curve parameter and CV input. When in biploar mode, -10V is inverted max level. When in unipolar mode, the level input is clamped to a 0 to 10 volt range.
+
+The Level input is normaled to 10V so that unpatched level input results in the full gain specified by the Level knob. In this way Shaped VCA can operate as an attenuator or amplifier, without voltage control.
+
+### Bias knob
+
+The Bias knob can add from 0 to 5 volts to the Level CV input. It is useful for converting a bipolar Level input to unipolar so it can be wave shaped by the Curve response. It is also useful for cross fading between ring modulation and amplitude modulation when the VCA Mode is set to bipolar.
+
+### Curve knob
+Controls the response curve of the level CV input, with full clockwise (1) giving an approximated logarithmic response, noon (0) a linear response, and full counterclockwise (-1) an exponential response. Intermediate values cross fade between the extremes.
+
+The default value is 0 = linear response curve.
+
+### Curve CV input
+The Curve CV input is divided by 10 and then summed with the Curve knob value to establish the effective response curve. The final effective curve level is clamped to +/- 1.
+
+The Curve CV input is normaled to 0V.
+
+### Left and Right inputs
+
+The Right input is normaled to the Left input. The Left input is normaled to 10V so that Shaped VCA without any patched inputs can function as a constant CV source with the Level knob setting the value. The 10V normaled input is also convenient for using Shaped VCA as a wave shaper for the Level input.
+
+### Left and Right outputs
+
+After applying the effective gain to the inputs, the final result is sent to the Left and Right outputs.
+
+### O (Output Offset) button adjacent to output ports
+This color coded switch can apply an offset to the final output
+
+dark gray (default) = Off - No offset
+red = -5 volt offset
+green = +5 volt offset
+
+The output offset is particularly useful when using the Shaped VCA as a wave shaper for a bipolar Level input. Use the Bias to convert the Level input to unipolar, and use the -5 output offset to convert the wave shaped signal back to bipolar. The +5 output offset is useful when a negative gain is used to invert the signal prior to wave shaping.
+
+### Polyphony
+
+The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) are available via standard Venom context menus. But Rhythm Explorer has its own design for limited parameter locking, so the standard parameter locking menus are not available.
+[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
 
 ### Bypass
 The Left and Right inputs are passed unchanged to the Left and Right outputs when the module is bypassed. The Right input remains normaled to the Left input while bypassed. However, the left input is not normaled to 10V while bypassed.
