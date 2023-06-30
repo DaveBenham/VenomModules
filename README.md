@@ -735,9 +735,8 @@ All outputs are monophonic 0V when the module is bypassed.
 
 ## SHAPED VCA
 ![SHAPED VCA module image](doc/ShapedVCA.png)  
-Stereo polyphonic VCA with a variable response curve, and optional hard/soft clipping, ring modulation, and oversampling.
+Shaped VCA is a stereo polyphonic voltage controlled amplifier with a variable response curve, and optional hard/soft clipping, ring modulation, and oversampling.
 
-### General operation
 The Shaped VCA can function as a typical voltage controlled amplifier or attenuator, or a ring modulator, or a constant voltage source, or a wave shaper, depending on which inputs are patched and what options are chosen.
 
 ### R (Level Range) button
