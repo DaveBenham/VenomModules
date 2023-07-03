@@ -1,4 +1,4 @@
-// Venom Modules (c) 2022 Dave Benham
+// Venom Modules (c) 2023 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -41,11 +41,6 @@ struct Mix4Stereo : VenomModule {
                   leftDcBlockAfterFilter[4],  rightDcBlockAfterFilter[4];
 
   Mix4Stereo() {
-    struct FixedSwitchQuantity : SwitchQuantity {
-      std::string getDisplayValueString() override {
-        return labels[getValue()];
-      }
-    };
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < 4; i++){
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);

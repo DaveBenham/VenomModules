@@ -1,4 +1,4 @@
-// Venom Modules (c) 2022 Dave Benham
+// Venom Modules (c) 2023 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -83,12 +83,17 @@ struct BernoulliSwitch : VenomModule {
     configOutput(A_OUTPUT, "A");
     configOutput(B_OUTPUT, "B");
     configBypass(A_INPUT, A_OUTPUT);
-    configBypass(B_INPUT, B_OUTPUT);
+    configBypass(inputs[B_INPUT].isConnected() ? B_INPUT : A_INPUT, B_OUTPUT);
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
     lights[POLY_SENSE_ALL_LIGHT].setBrightness(false);
     for (int i=0; i<PORT_MAX_CHANNELS; i++)
       fade[i].rise = fade[i].fall = FADE_RATE;
+  }
+
+  void onPortChange(const PortChangeEvent& e) override {
+    if (e.type == Port::INPUT && e.portId == B_INPUT)
+      bypassRoutes[1].inputId = e.connecting ? B_INPUT : A_INPUT;
   }
 
   void onReset() override {

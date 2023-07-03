@@ -1,4 +1,4 @@
-// Venom Modules (c) 2022 Dave Benham
+// Venom Modules (c) 2023 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -11,7 +11,6 @@ struct Recurse : VenomModule {
     SCALE_PARAM,
     OFFSET_PARAM,
     TIMING_PARAM,
-    ORDER_PARAM,
     PARAMS_LEN
   };
   enum InputId {

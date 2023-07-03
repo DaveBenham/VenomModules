@@ -1,4 +1,4 @@
-// Venom Modules (c) 2022 Dave Benham
+// Venom Modules (c) 2023 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -48,9 +48,12 @@ void init(Plugin* p) {
   p->addModel(modelMix4);
   p->addModel(modelMix4Stereo);
   p->addModel(modelPolyClone);
+  p->addModel(modelPolyUnison);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);
+  p->addModel(modelReformation);
   p->addModel(modelRhythmExplorer);
+  p->addModel(modelShapedVCA);
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);
   p->addModel(modelWinComp);

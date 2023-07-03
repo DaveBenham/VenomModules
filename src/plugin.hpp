@@ -1,4 +1,4 @@
-// Venom Modules (c) 2022 Dave Benham
+// Venom Modules (c) 2023 Dave Benham
 // Licensed under GNU GPLv3
 
 #pragma once
@@ -16,9 +16,12 @@ extern Model* modelHQ;
 extern Model* modelMix4;
 extern Model* modelMix4Stereo;
 extern Model* modelPolyClone;
+extern Model* modelPolyUnison;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
+extern Model* modelReformation;
 extern Model* modelRhythmExplorer;
+extern Model* modelShapedVCA;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
 extern Model* modelWinComp;
@@ -228,6 +231,12 @@ struct VenomWidget : ModuleWidget {
   }
 };
 
+struct FixedSwitchQuantity : SwitchQuantity {
+  std::string getDisplayValueString() override {
+    return labels[getValue()];
+  }
+};
+
 template <typename TBase>
 struct RotarySwitch : TBase {
   RotarySwitch() {
@@ -400,6 +409,18 @@ struct YellowRedLight : TBase {
   }
 };
 
+struct VCVSliderLockable : VCVSlider {
+  void appendContextMenu(Menu* menu) override {
+    if (module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+template <typename TLightBase = RedLight>
+struct VCVLightSliderLockable : LightSlider<VCVSliderLockable, VCVSliderLight<TLightBase>> {
+  VCVLightSliderLockable() {}
+};
+
 struct GlowingSvgSwitch : app::SvgSwitch {
   GlowingSvgSwitch(){
     shadow->opacity = 0.0;
@@ -474,6 +495,13 @@ struct RoundBlackKnobSnapLockable : RoundBlackKnobLockable {
 };
 
 struct RoundSmallBlackKnobLockable : RoundSmallBlackKnob {
+  void appendContextMenu(Menu* menu) override {
+    if (module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+struct TrimpotLockable : Trimpot {
   void appendContextMenu(Menu* menu) override {
     if (module)
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);

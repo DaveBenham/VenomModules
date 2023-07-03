@@ -1,4 +1,4 @@
-// Venom Modules (c) 2022 Dave Benham
+// Venom Modules (c) 2023 Dave Benham
 // Licensed under GNU GPLv3
 
 // Thanks to Andrew Hanson for the initial prototype code
@@ -98,7 +98,7 @@ struct RhythmExplorer : VenomModule {
     CLOCK_POLY_OUTPUT,
     START_OF_BAR_OUTPUT,
     GATE_OR_OUTPUT,
-    GATE_XOR_OUTPUT,
+    UNUSED_OUTPUT,
     GATE_XOR_ODD_OUTPUT,
     GATE_XOR_ONE_OUTPUT,
     START_OF_PHRASE_OUTPUT,
@@ -160,11 +160,6 @@ struct RhythmExplorer : VenomModule {
 
   RhythmExplorer() {
 
-    struct FixedSwitchQuantity : SwitchQuantity {
-      std::string getDisplayValueString() override {
-        return labels[getValue()];
-      }
-    };
     struct GlobalModeQuantity : SwitchQuantity {
       std::string getDisplayValueString() override {
         RhythmExplorer* module = reinterpret_cast<RhythmExplorer*>(this->module);
@@ -200,6 +195,7 @@ struct RhythmExplorer : VenomModule {
     configSwitch(PATOFF_PARAM, 0.f, 1.f, 0.f, "Pattern Status", {"On", "Off"});
 
     configOutput(GATE_OR_OUTPUT,"OR Trigger poly");
+    configOutput(UNUSED_OUTPUT,"Unused");
     configOutput(GATE_XOR_ODD_OUTPUT,"XOR Odd Parity Trigger poly");
     configOutput(GATE_XOR_ONE_OUTPUT,"XOR 1 Hot Trigger poly");
 
@@ -210,6 +206,7 @@ struct RhythmExplorer : VenomModule {
     configOutput(START_OF_BAR_OUTPUT,"Start of Bar Trigger");
     configOutput(START_OF_PHRASE_OUTPUT,"Start of Phrase Trigger");
 
+    configInput(MODE_CHANNEL_INPUT, "Unused Mode CV 1");
     for(int si = 0; si < SLIDER_COUNT; si++){
       std::string si_s = std::to_string(si+1);
       configSwitch<FixedSwitchQuantity>(RATE_PARAM + si, 0, 9, si+1, "Division " + si_s, CHANNEL_DIVISION_LABELS);

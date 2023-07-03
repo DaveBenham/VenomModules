@@ -1,4 +1,4 @@
-// Venom Modules (c) 2022 Dave Benham
+// Venom Modules (c) 2023 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -217,14 +217,17 @@ struct HQ : VenomModule {
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "range", json_integer(range));
+    json_object_set_new(rootJ, "monitor", json_integer(monitor));
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
-    json_t* val = json_object_get(rootJ, "range");
-    if (val)
+    json_t* val;
+    if ((val = json_object_get(rootJ, "range")))
       range = json_integer_value(val);
+    if((val = json_object_get(rootJ, "monitor")))
+      monitor = json_integer_value(val);
   }
 
 };

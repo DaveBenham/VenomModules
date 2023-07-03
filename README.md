@@ -1,17 +1,21 @@
 # Venom
-Venom modules version 2.2 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
+Venom modules version 2.3 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
 Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
 |----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
 
-|[RHYTHM EXPLORER](#rhythm-explorer)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
+|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
+|----|----|----|
+|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
+
+|[SHAPED VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
 |----|----|----|----|
-|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![WINCOMP module image](doc/WinComp.PNG)|
+|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![WINCOMP module image](doc/WinComp.PNG)|
 
 
 ## Themes
@@ -75,7 +79,7 @@ Bernoulli Switch is fully polyphonic. There are two modes available from the con
 - **All inputs**
 
   The number of coin flips is the maximum channel count found across all four inputs - TRIG, PROB, A, and B. Monophonic inputs are replicated to match the maximum channel count. Polyphonic channels with missing channels treat the missing channel as 0V.
-  
+
   Polphonic inputs in A and/or B can always be scrambled across A and B outputs.
 
 A small LED between the INPUT ports glows yellow when polyphony detection is configured for "All inputs". The LED is off (black) when configured for "TRIG and PROB only".
@@ -99,7 +103,7 @@ The following factory presets are available that emulate the four configurations
 [Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
 
 ### Bypass Behavior
-If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. However, the A input is not normalled to the TRIG input while bypassed.
+If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. The B input is still normalled to the A input while bypassed.
 
 [Return to Table Of Contents](#venom)
 
@@ -291,6 +295,54 @@ If Clone Merge is bypassed then the input is passed unchanged to the output.
 [Return to Table Of Contents](#venom)
 
 
+## POLY UNISON
+![Poly Unison module image](doc/PolyUnison.PNG)  
+Replicate each channel of a polyphonic input with a variable detune spread, and merge the results into a single polyphonic output.
+
+### COUNT (Unison Count) knob
+Sets the number of unison channels for each input channel, from 1 to 16.
+
+### COUNT (Unison Count) input
+Monophonic bipolar CV modulates the unison count, with each 1/3 volt representing 1 unison voice. The CV is summed with the Count knob value, and the result clamped to the range 1 to 16.
+
+### DETUNE knob
+Sets the detune spread for each source channel, measured in semitones. This parameter has no effect if the unison count is 1. The unison voices will be distributed evenly across the spread. The increment between voices = Spread / (Count - 1).
+
+### DETUNE input
+Monophonic V/Oct bipolar input modulates the detune spread. The CV input is summed with the detune knob value to determine the effective detune spread. The effective spread is not constrained by the knob range.
+
+### DIR (Detune Direction) button
+This color coded button specifies how the detune spread is applied to each replication set.
+- Off (gray) = Center - The unison voices are divided evenly above and below the input V/oct. The range is (Input - Spread/2) to (Input + Spread/2).
+- Green = Up - The unison voices start at the input V/oct and move up. The range is (Input) to (Input + Spread). 
+- Red = Down - The unison voices start below the input and end at the input V/oct. The range is (Input - Spread) to (Input).
+
+### RNG (Detune Range) button
+This color coded button specifies the range of the detune knob:
+- Off (gray) = 1 semitone = 1/12 Volt
+- Blue = 1 octave = 12 semitones = 1 Volt
+- Green = 5 octaves = 60 semitones = 5 Volts
+
+### POLY input
+Each channel from the polyphonic input is replicated based on the unison count as long as the total replicated channel count does not exceed 16. Input channels that cannot be replicated the full amount are ignored.
+
+The absense of input is treated as monophonic constant 0V.
+
+For each channel appearing at the input, the corresponding LED above glows yellow if the channel could be successfully replicated, and red if it could not be replicated. LEDs beyond the input channel count remain off (black).
+
+### POLY output
+All of the replicated channels are merged into the single polyphonic output. The poly output starts with all replications from input channel 1, followed by replications from input channel 2, etc. Detune spread for each input channel goes from low to high (unless the detune CV creates a negative spread)
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly Unison is bypassed then the input is passed unchanged to the output.
+
+[Return to Table Of Contents](#venom)
+
+
 ## RECURSE
 ![RECURSE module image](doc/Recurse.PNG)  
 Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes to less than 16 for each input channel. There are no limits placed on any of the input or output voltages.
@@ -356,6 +408,97 @@ In addition, The Left Return is normalled to the Left Send, and the Right Return
 The Recursion Count, Scale, Offset, and Modulation Timing settings are applied to both Left and Right identically.
 
 Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. The right input remains normalled to the left input while bypassed. Bypassed left and right send are monophonic 0V.
+
+[Return to Table Of Contents](#venom)
+
+
+## REFORMATION
+![Reformation module image](doc/Reformation.PNG)  
+Transform CV or audio by mapping way point voltages to new values.
+
+### General Operation
+
+Reformation transforms incoming CV or audio by remapping 5 voltage way points (min, 1/4, 1/2, 3/4, max) to new values, and performing linear interpolation of intermediate values. The input may be configured to handle unipolar or bipolar signals, and the output can be independently offset to unipolar or bipolar. Each way point mapping is controlled by a combination of a slider and two attenuverted CV inputs. The resultant signal can be overdriven with hard or soft clipping at 20V peak to peak, and then attenuated back down to the desired level. CV inputs are available for both the drive and final level. Oversampling is available to control aliasing that would otherwise be introduced by the transformation and/or clipping.
+
+Reformation is fully polyphonic, and all modulation can be driven at audio rates.
+
+Reformation can be be used as a waveshaper and/or VCA and/or distortion effect (hard clipper or saturating limiter). CV control of each way point provides for amplitude modulation of specific regions of a wave form.
+
+### Way Point Sliders
+
+Each slider is assigned an input voltage according to its label above, and the slider value determines the re-mapped voltage for the given way point. The sliders are labeled in a relative way. The exact values depend on the chosen input polarity.
+
+|Polarity|MIN|1/4|1/2|3/4|MAX|
+|---|---|---|---|---|---|
+|Unipolar (0V - 10V)|0V|2.5V|5V|7.5V|10V|
+|Bipolar (-5V - 5V)|-5V|-2.5V|0V|2.5V|5V|
+
+Each slider defaults to the way point input voltage (no change), which is marked by a bold line on the scale.
+
+### Way Point CV1 and CV2
+
+Below each slider is a pair of bipolar CV inputs, each with its own attenuverter. The attenuverted CV inputs are summed with the slider values to establish the effective mapping for each way point. The summed value is not constrained, so it is possible to modulate a signal outside the standard unipolar or bipolar voltage ranges.
+
+### Input Polarity
+
+The color coded IN button establishes the expected polarity of the input:
+
+- Green (default) = Unipolar
+- Red = Bipolar
+
+### Output Polarity
+
+The color coded OUT button establishes the polarity of the final output. The transformed signal is offset as needed to achieve the correct output polarity.
+
+- Green (default) = Unipolar
+- Red = Bipolar
+
+Note that unipolar output is not guaranteed to be >= 0V unless one of the clipping options is enabled.
+
+### Drive
+
+The drive amplifies the resultant signal prior to any clipping. The drive range is from 1 (no amplification) to 10 (multiply by 10), with the default at 2. The drive value is the sum of the knob value and the Drive input, clamped to a range from 1 to 10.
+
+Note that unipolar inputs are offset -5V to become bipolar, prior to applying the drive.
+
+### Clipping
+
+The color coded CLIP button specifies the type of clipping that is applied.
+
+- Gray = Off (no clipping)
+- Yellow (default) = hard clipping at +/- 10V
+- Orange = soft tanh clipping at +/- 10V
+
+### Level
+
+The level knob and level CV input function as a typical voltage controlled attenuator that is applied after the drive and clipping. The effective attenuation is the product of the Level knob (ranging from 0 to 1) and the Level input divided by 10V. The attenuation is then clamped to a value between 0 and 1. The default level is 0.5. So in the absence of any clipping, the default drive of 2 coupled with the default level of 0.5 results in no change.
+
+### Output
+
+The final output is offset by +5V if the output is configured to be unipolar. It is possible for unipolar output to have negative values if clipping has not been applied.
+
+### Oversampling
+
+The color coded OVER button specifies the amount of oversampling that is done to mitigate aliasing that can be introduced by the mapping transformation and clipping.
+
+- Gray (default) = No oversampling
+- Light Blue = x4
+- Dark Blue = x8
+
+Oversampling is relatively CPU intensive, and should only be applied when needed. Control voltage and low to medium frequency audio typically do not need oversampling. But the quality of moderately high frequency output can be improved by oversampling.
+
+Note that oversampling cannot remove aliasing that may be present in inputs driven at audio rates. To get the best possible results, make sure that all audio signals at the IN, CV, DRIVE, or LEVEL inputs is clean.
+
+### Polyphony
+
+The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+
+### Bypass
+
+The Input is passed unchanged to the Output when REFORMATION is bypassed.
 
 [Return to Table Of Contents](#venom)
 
@@ -590,8 +733,106 @@ All outputs are monophonic 0V when the module is bypassed.
 [Return to Table Of Contents](#venom)
 
 
+## SHAPED VCA
+![SHAPED VCA module image](doc/ShapedVCA.png)  
+Shaped VCA is a stereo polyphonic voltage controlled amplifier with a variable response curve, and optional hard/soft clipping, ring modulation, and oversampling.
+
+The Shaped VCA can function as a typical voltage controlled amplifier or attenuator, or a ring modulator, or a constant voltage source, or a wave shaper, depending on which inputs are patched and what options are chosen.
+
+### R (Level Range) button
+This color coded switch establishes the range of the Level knob.
+
+- yellow (default) = 0 to 1
+- green = 0 to 2
+- dark blue = 0 to 10
+- pink = -1 to 1
+- orange = -2 to 2
+- purple = -10 to 10
+
+### M (VCA Mode) button
+This color coded switch establishes the VCA mode
+
+- dark gray (default) = Unipolar (2 quadrant) with Level CV input clamped to 0 to 10.
+- white = Bipolar (4 quadrant) with Level CV input unconstrained, such that the effective gain is also unconstrained. This is the mode used for ring modulation.
+
+### C (Output Clipping) button
+This color coded switch establishes how the output is clipped
+
+- dark gray (default) = Off - No clipping
+- yellow = hard clipped at +/- 10 Volts
+- orange = soft clipped at +/- 10 Volts using an approximated tanh algorithm to provide saturation.
+
+It is highly recommended that hard or soft clipping be applied if performing ring modulation with a logarithmic response curve.
+
+### O (Oversampling) button
+This color coded switch establishes the amount of oversampling used to mitigate audio aliasing that may be introduced by clipping or non-linear response curves.
+
+- dark gray (default) = Off - No oversampling
+- yellow = x4 oversampling
+- green = x8 oversampling
+- light blue = x16 oversampling
+- dark blue = x32 oversampling
+
+Oversampling is typically not needed for most VCA operations. But it may be useful with high frequency audio outputs when clipping and/or non-linear response curves are applied. Oversampling is highly recommended if performing ring modulation with a logarithmic response curve.
+
+Oversampling uses significant CPU resources, so it is best to use the minimum oversampling value that gives the desired output.
+
+Note that oversampling cannot compensate for inputs that already contain aliasing.
+
+### Level knob
+Sets the maximum gain applied to the input signal(s). The range is dependent on the Range paramater. The default value is unity gain, regardless which range is chosen.
+
+### Level CV input
+Attenuates or inverts and attenuates the gain. The exact behavior is dependent on the Mode parameter setting. Regardless what mode, 10V equals full maximum level, and 0V equals zero output. The effective gain for in between values is dependent on the Curve parameter and CV input. When in biploar mode, -10V is inverted max level. When in unipolar mode, the level input is clamped to a 0 to 10 volt range.
+
+The Level input is normaled to 10V so that unpatched level input results in the full gain specified by the Level knob. In this way Shaped VCA can operate as an attenuator or amplifier, without voltage control.
+
+### Bias knob
+
+The Bias knob can add from 0 to 5 volts to the Level CV input. It is useful for converting a bipolar Level input to unipolar so it can be wave shaped by the Curve response. It is also useful for cross fading between ring modulation and amplitude modulation when the VCA Mode is set to bipolar.
+
+### Curve knob
+Controls the response curve of the level CV input, with full clockwise (1) giving an approximated logarithmic response, noon (0) a linear response, and full counterclockwise (-1) an exponential response. Intermediate values cross fade between the extremes.
+
+The default value is 0 = linear response curve.
+
+### Curve CV input
+The Curve CV input is divided by 10 and then summed with the Curve knob value to establish the effective response curve. The final effective curve level is clamped to +/- 1.
+
+The Curve CV input is normaled to 0V.
+
+### Left and Right inputs
+
+The Right input is normaled to the Left input. The Left input is normaled to 10V so that Shaped VCA without any patched inputs can function as a constant CV source with the Level knob setting the value. The 10V normaled input is also convenient for using Shaped VCA as a wave shaper for the Level input.
+
+### Left and Right outputs
+
+After applying the effective gain to the inputs, the final result is sent to the Left and Right outputs.
+
+### O (Output Offset) button adjacent to output ports
+This color coded switch can apply an offset to the final output. The output offset is applied before any clipping.
+
+- dark gray (default) = Off - No offset
+- red = -5 volt offset
+- green = +5 volt offset
+
+The output offset is particularly useful when using the Shaped VCA as a wave shaper for a bipolar Level input. Use the Bias to convert the Level input to unipolar, and use the -5 output offset to convert the wave shaped signal back to bipolar. The +5 output offset is useful when a negative gain is used to invert the signal prior to wave shaping.
+
+### Polyphony
+
+The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+
+### Bypass
+The Left and Right inputs are passed unchanged to the Left and Right outputs when the module is bypassed. The Right input remains normaled to the Left input while bypassed. However, the left input is not normaled to 10V while bypassed.
+
+[Return to Table Of Contents](#venom)
+
+
 ## VCA MIX 4
-![VCA Mix 4 module image](doc/VCAMix4.png)
+![VCA Mix 4 module image](doc/VCAMix4.png)  
 A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
 
 ### General Operation
@@ -624,9 +865,13 @@ The polyphonic chain input allows multiple VCA MIX 4 to be connected in series, 
 The final mix is output here. The final mix output may be clipped and/or have DC offset removed, depending on the settings of the Clip and DC buttons.
 
 ### Polyphony
-The number of output polyphonic channels for each of the four channels is normally set independently to the maximum number of channels found across each CV and channel input pair. The number of output polyphonic channels for the final mix is normally the maximum channel count found across all inputs - the four channel inputs, the four CV inputs, and the chain input. Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
+The polyphonic channel count for each of the four numbered channel outputs is normally set to the maximum number of channels found across each CV and channel input pair. The count is set independently for each numbered channel output.
 
-There is one major exception when the Level Mode is set to poly sum. In this mode, polyphonic signals at the channel inputs and chain input are summed into a monophonic signal before any modulation. CV inputs are monophonic in this mode, meaning polyphonic CV channels 2 and above will be ignored.
+The final mix polyphonic channel count is normally the maximum channel count across the numbered outputs that are not excluded, as well as the chain and mix CV inputs.
+
+Monophonic inputs are replicated to match the output polyphony. But polyphonic inputs with fewer channels than in the output send 0V for any missing channels.
+
+There is one major exception when the Level Mode is set to poly sum, causing all outputs to be monophonic. In this mode, polyphonic signals at the numbered inputs and chain input are summed into a monophonic signal before any modulation. CV inputs are monophonic in this mode, meaning polyphonic CV channels 2 and above will be ignored.
 
 ### M (Level Mode) button
 The color coded mode button determines how the 4 channel and the mix knobs behave. The mode button cycles through 5 possible modes. The button context menu allows direct selection of any mode. Each mode is labeled for audio or CV according to typical usage, but all modes can be applied to both audio and CV.
@@ -662,7 +907,7 @@ The color coded clip button determines how (or if) the final output is clipped. 
 - **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
 
 ### X (eXclude) button
-The color coded exclude button determines if patched channel outputs are included in the final mix.
+The color coded exclude button determines if patched channel outputs are excluded or included in the final mix.
 - **Off** (dark gray - default): patched output channels are included in the final mix
 - **On** (red): patched output channels are excluded from the final mix
 
@@ -683,8 +928,8 @@ A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or 
 VCA Mix 4 Stereo is a stereo version of the VCA MIX 4, sharing the same features, but with the following differences:
 - Each of the channel inputs and outputs, as well as the Chain input and Mix output are doubled to support left and right channels. Each stereo pair is controlled by its own single Level knob and CV input.
 - Each right input is normaled to the corresponding left input. When using the bipolar Level mode, each input level knob produces constant CV only if both the left and right inputs are unpatched.
-- The output channel count for each numbered channel is the maximum polyphony found across the left, right, and CV input.
-- The output channel count for the Mix output is the maximum polyphony found across all left and right channel and Chain inputs, plus all the CV inputs.
+- The output channel count for each numbered channel is the maximum polyphony found across the corresponding left, right, and CV inputs.
+- The output channel count for the Mix output is the maximum polyphony found across the chain and Mix CV inputs, as well as each numbered channel output that is not excluded from the mix.
 - When bypassed, each channel's left input is sent unchanged to the left output, and right input to the right output. The right inputs are still normaled to the left inputs when bypassed. The Mix outputs remain monophonic 0V when bypassed.
 
 All other behaviors are the same as for Mix 4.
@@ -693,7 +938,7 @@ All other behaviors are the same as for Mix 4.
 
 
 ## WINCOMP
-![WINCOMP module image](doc/WinComp.PNG)
+![WINCOMP module image](doc/WinComp.PNG)  
 A windowed comparator inspired by the VCV Fundamental COMPARE module, based on specs originally proposed at 
 https://community.vcvrack.com/t/vcv-compare-gates-logic-and-process/17828/17?u=davevenom.
 

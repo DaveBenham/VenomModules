@@ -1,4 +1,4 @@
-// Venom Modules (c) 2022 Dave Benham
+// Venom Modules (c) 2023 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -45,11 +45,6 @@ struct VCAMix4 : VenomModule {
   DCBlockFilter_4 dcBlockBeforeFilter[4], dcBlockAfterFilter[4];
 
   VCAMix4() {
-    struct FixedSwitchQuantity : SwitchQuantity {
-      std::string getDisplayValueString() override {
-        return labels[getValue()];
-      }
-    };
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < 4; i++){
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));
@@ -141,9 +136,12 @@ struct VCAMix4 : VenomModule {
     bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
 
     int inChannels[4];
-    for (int i=0; i<4; i++)
+    int channels = std::max({1, inputs[CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    for (int i=0; i<4; i++) {
       inChannels[i] = mode == 1 ? 1 : std::max({1, inputs[CV_INPUTS+i].getChannels(), inputs[INPUTS+i].getChannels()});
-    int channels = std::max({inChannels[0], inChannels[1], inChannels[2], inChannels[3], inputs[MIX_CV_INPUT].getChannels(), inputs[CHAIN_INPUT].getChannels()});
+      if (inChannels[i] > channels && (!exclude || !outputs[OUTPUTS+i].isConnected()))
+        channels = inChannels[i];
+    }
     simd::float_4 in, out, cv;
     for (int c=0; c<channels; c+=4){
       out = inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
