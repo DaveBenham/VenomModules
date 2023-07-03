@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.2 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
+Venom modules version 2.3 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 

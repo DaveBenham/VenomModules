@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.?.? (2023-??-??)
+## 2.3.0 (2023-07-03)
 ### New Modules
 - Poly Unison
 - Reformation
