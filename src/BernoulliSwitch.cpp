@@ -109,7 +109,11 @@ struct BernoulliSwitch : VenomModule {
     using float_4 = simd::float_4;
     float_4 aOut[4], bOut[4];
     Module* expanderCandidate = getRightExpander().module;
-    Module* expander = expanderCandidate && !expanderCandidate->isBypassed() && expanderCandidate->model == modelBernoulliSwitchExpander ? expanderCandidate : NULL;
+    Module* expander = expanderCandidate 
+                    && !expanderCandidate->isBypassed() 
+                    && expanderCandidate->model == modelBernoulliSwitchExpander 
+                     ? expanderCandidate 
+                     : NULL;
     float scaleA = params[SCALE_A_PARAM].getValue(),
           scaleB = params[SCALE_B_PARAM].getValue(),
           offA = params[OFFSET_A_PARAM].getValue(),
@@ -122,9 +126,9 @@ struct BernoulliSwitch : VenomModule {
     if (expander ) {
       probAttn = expander->getParam(PROB_CV_PARAM).getValue();
       if (expander->getInput(SCALE_CV_A_INPUT).isConnected())
-        scaleA = clamp(scaleA + expander->getInput(SCALE_CV_A_INPUT).getVoltage()*expander->getParam(SCALE_CV_A_PARAM).getValue()/10.f, -1.f, 1.f);
+        scaleA = scaleA + expander->getInput(SCALE_CV_A_INPUT).getVoltage()*expander->getParam(SCALE_CV_A_PARAM).getValue()/10.f;
       if (expander->getInput(SCALE_CV_B_INPUT).isConnected())
-        scaleB = clamp(scaleB + expander->getInput(SCALE_CV_B_INPUT).getVoltage()*expander->getParam(SCALE_CV_B_PARAM).getValue()/10.f, -1.f, 1.f);
+        scaleB = scaleB + expander->getInput(SCALE_CV_B_INPUT).getVoltage()*expander->getParam(SCALE_CV_B_PARAM).getValue()/10.f;
       if (expander->getInput(OFFSET_CV_A_INPUT).isConnected())
         offA += expander->getInput(OFFSET_CV_A_INPUT).getVoltage()*expander->getParam(OFFSET_CV_A_PARAM).getValue();
       if (expander->getInput(OFFSET_CV_B_INPUT).isConnected())
@@ -137,7 +141,9 @@ struct BernoulliSwitch : VenomModule {
     bool invTrig = rise < fall;
     int aChannels = std::max(1, inputs[A_INPUT].getChannels());
     int bChannels = std::max(1, inputs[B_INPUT].getChannels());
-    int mode = expander && expander->getInput(MODE_CV_INPUT).isConnected() ? clamp(static_cast<int>(expander->getInput(MODE_CV_INPUT).getVoltage())+1, 0, 2) : static_cast<int>(params[MODE_PARAM].getValue());
+    int mode = expander && expander->getInput(MODE_CV_INPUT).isConnected() 
+             ? clamp(static_cast<int>(expander->getInput(MODE_CV_INPUT).getVoltage())+1, 0, 2) 
+             : static_cast<int>(params[MODE_PARAM].getValue());
     lights[TRIG_LIGHT].setBrightness(manual ? 1.f : LIGHT_OFF);
     if (invTrig) {
       rise = -rise;
