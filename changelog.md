@@ -1,5 +1,9 @@
 # Venom Modules Changelog
 
+## 2.3.1 (2023-07-??)
+### New Module
+- Bernoulli Switch Expander
+
 ## 2.3.0 (2023-07-03)
 ### New Modules
 - Poly Unison
