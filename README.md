@@ -5,9 +5,9 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
-|----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
+|----|----|----|----|----|----|----|----|----|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
 
 |[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|----|----|
@@ -107,6 +107,28 @@ If Bernoulli Switch is bypassed then the A input is passed unchanged to the A ou
 
 [Return to Table Of Contents](#venom)
 
+## BERNOULLI SWITCH EXPANDER
+![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)  
+Adds CV inputs with attenuverters for all of the Bernoulli Switch parameters, all of which can be driven at audio rates.
+
+The expander must be placed to the right of the Bernoulli Switch. The LED near the top glows yellow when a successful connection is made.
+
+All the expander inputs are additive with their associated Bernoulli Switch parameters, with one exception. The mode input supersedes the mode parameter when patched. 
+- Toggle mode <= -1V
+- Swap mode >-1V and <1V
+- Gate mode >= 1V
+
+An attenuator for the Bernoulli Switch Probability CV was added rather than an attenuator for the expander mode CV.
+
+All expander CV inputs are monophonic, with the signal applied equally to any polyphony found at the Bernoulli Switch.
+
+None of the expander inputs are oversampled, even if the Bernoulli Switch has oversampling enabled.
+
+All expander inputs as well as the probability CV attenuator are ignored when the expander is bypassed.
+
+[Watch this video](https://www.youtube.com/watch?v=VRERXi6RuPE) to see how the Bernoulli Switch coupled with the Bernoulli Switch Expander can transform a simple sine wave into a dynamic complex stereo sound.
+
+[Return to Table Of Contents](#venom)
 
 ## CLONE MERGE
 ![Clone Merge module image](doc/CloneMerge.png)  

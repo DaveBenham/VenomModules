@@ -10,6 +10,8 @@
 #define MODULE_NAME BernoulliSwitch
 
 struct BernoulliSwitch : VenomModule {
+  #include "BernoulliSwitchExpander.hpp"
+  
   enum ParamId {
     PROB_PARAM,
     TRIG_PARAM,
@@ -106,6 +108,12 @@ struct BernoulliSwitch : VenomModule {
     VenomModule::process(args);
     using float_4 = simd::float_4;
     float_4 aOut[4], bOut[4];
+    Module* expanderCandidate = getRightExpander().module;
+    Module* expander = expanderCandidate 
+                    && !expanderCandidate->isBypassed() 
+                    && expanderCandidate->model == modelBernoulliSwitchExpander 
+                     ? expanderCandidate 
+                     : NULL;
     float scaleA = params[SCALE_A_PARAM].getValue(),
           scaleB = params[SCALE_B_PARAM].getValue(),
           offA = params[OFFSET_A_PARAM].getValue(),
@@ -113,23 +121,37 @@ struct BernoulliSwitch : VenomModule {
           rise = params[RISE_PARAM].getValue(),
           fall = params[FALL_PARAM].getValue(),
           probOff = params[PROB_PARAM].getValue(),
-          manual = params[TRIG_PARAM].getValue() > 0.f ? 10.f : 0.f;
+          manual = params[TRIG_PARAM].getValue() > 0.f ? 10.f : 0.f,
+          probAttn = 1.f;
+    if (expander ) {
+      probAttn = expander->getParam(PROB_CV_PARAM).getValue();
+      if (expander->getInput(SCALE_CV_A_INPUT).isConnected())
+        scaleA = scaleA + expander->getInput(SCALE_CV_A_INPUT).getVoltage()*expander->getParam(SCALE_CV_A_PARAM).getValue()/10.f;
+      if (expander->getInput(SCALE_CV_B_INPUT).isConnected())
+        scaleB = scaleB + expander->getInput(SCALE_CV_B_INPUT).getVoltage()*expander->getParam(SCALE_CV_B_PARAM).getValue()/10.f;
+      if (expander->getInput(OFFSET_CV_A_INPUT).isConnected())
+        offA += expander->getInput(OFFSET_CV_A_INPUT).getVoltage()*expander->getParam(OFFSET_CV_A_PARAM).getValue();
+      if (expander->getInput(OFFSET_CV_B_INPUT).isConnected())
+        offB += expander->getInput(OFFSET_CV_B_INPUT).getVoltage()*expander->getParam(OFFSET_CV_B_PARAM).getValue();
+      if (expander->getInput(RISE_CV_INPUT).isConnected())
+        rise += expander->getInput(RISE_CV_INPUT).getVoltage()*expander->getParam(RISE_CV_PARAM).getValue();
+      if (expander->getInput(FALL_CV_INPUT).isConnected())
+        fall += expander->getInput(FALL_CV_INPUT).getVoltage()*expander->getParam(FALL_CV_PARAM).getValue();
+    }  
     bool invTrig = rise < fall;
     int aChannels = std::max(1, inputs[A_INPUT].getChannels());
     int bChannels = std::max(1, inputs[B_INPUT].getChannels());
-    int mode = static_cast<int>(params[MODE_PARAM].getValue());
+    int mode = expander && expander->getInput(MODE_CV_INPUT).isConnected() 
+             ? clamp(static_cast<int>(expander->getInput(MODE_CV_INPUT).getVoltage())+1, 0, 2) 
+             : static_cast<int>(params[MODE_PARAM].getValue());
     lights[TRIG_LIGHT].setBrightness(manual ? 1.f : LIGHT_OFF);
     if (invTrig) {
       rise = -rise;
       fall = -fall;
     }
-    int channels = inputPolyControl ?
-      std::max({ 1, aChannels, bChannels,
-        inputs[TRIG_INPUT].getChannels(), inputs[PROB_INPUT].getChannels()
-      }) :
-      std::max({ 1,
-        inputs[TRIG_INPUT].getChannels(), inputs[PROB_INPUT].getChannels()
-      });
+    int channels = std::max({1, inputs[TRIG_INPUT].getChannels(), inputs[PROB_INPUT].getChannels()});
+    if (inputPolyControl)
+      channels = std::max({channels, aChannels, bChannels});
     int xChannels = channels;
     if (channels > oldChannels) {
       for (int c=oldChannels; c<channels; c++){
@@ -167,7 +189,7 @@ struct BernoulliSwitch : VenomModule {
 
     float_4 trigIn0, trigIn;
     for (int c=0; c<channels; c+=4){
-      float_4 prob = inputs[PROB_INPUT].getPolyVoltageSimd<float_4>(c)/10.f + probOff;
+      float_4 prob = inputs[PROB_INPUT].getPolyVoltageSimd<float_4>(c)*probAttn/10.f + probOff;
       trigIn = trigIn0 = inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c) + manual;
       float_4 aIn, bIn, swapGain, remainderGain;
       for (int i=0; i<oversample; i++) {

@@ -43,6 +43,7 @@ void init(Plugin* p) {
 
   // Add modules here
   p->addModel(modelBernoulliSwitch);
+  p->addModel(modelBernoulliSwitchExpander);
   p->addModel(modelCloneMerge);
   p->addModel(modelHQ);
   p->addModel(modelMix4);

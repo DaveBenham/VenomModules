@@ -1,0 +1,27 @@
+  enum ExpParamId {
+    PROB_CV_PARAM,
+    RISE_CV_PARAM,
+    FALL_CV_PARAM,
+    OFFSET_CV_A_PARAM,
+    OFFSET_CV_B_PARAM,
+    SCALE_CV_A_PARAM,
+    SCALE_CV_B_PARAM,
+    EXP_PARAMS_LEN
+  };
+  enum ExpInputId {
+    MODE_CV_INPUT,
+    RISE_CV_INPUT,
+    FALL_CV_INPUT,
+    OFFSET_CV_A_INPUT,
+    OFFSET_CV_B_INPUT,
+    SCALE_CV_A_INPUT,
+    SCALE_CV_B_INPUT,
+    EXP_INPUTS_LEN
+  };
+  enum ExpOutputId {
+    EXP_OUTPUTS_LEN
+  };
+  enum ExpLightId {
+    EXPAND_LIGHT,
+    EXP_LIGHTS_LEN
+  };
