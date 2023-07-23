@@ -7,11 +7,11 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />Expander](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
 |----|----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.PNG)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
+|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
 
 |[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|----|----|
-|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.png)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
+|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
 |[SHAPED VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
 |----|----|----|----|
