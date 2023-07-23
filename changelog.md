@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.3.1 (2023-07-??)
+## 2.3.1 (2023-07-23)
 ### New Module
 - Bernoulli Switch Expander
 
