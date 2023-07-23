@@ -109,9 +109,9 @@ If Bernoulli Switch is bypassed then the A input is passed unchanged to the A ou
 
 ## BERNOULLI SWITCH EXPANDER
 ![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)  
-Adds CV inputs with attenuverters for all of the Bernoulli Switch parameters.
+Adds CV inputs with attenuverters for all of the Bernoulli Switch parameters, all of which can be driven at audio rates.
 
-The expander must be placed to the right of Bernoulli Switch. The LED near the top glows yellow when a successful connection is made.
+The expander must be placed to the right of the Bernoulli Switch. The LED near the top glows yellow when a successful connection is made.
 
 All the expander inputs are additive with their associated Bernoulli Switch parameters, with one exception. The mode input supersedes the mode parameter when patched. 
 - Toggle mode <= -1V
@@ -120,11 +120,13 @@ All the expander inputs are additive with their associated Bernoulli Switch para
 
 An attenuator for the Bernoulli Switch Probability CV was added rather than an attenuator for the expander mode CV.
 
-All expander CV inputs are monophonic, with the signal applied equally to all polyphonic channels found at the Bernoulli Switch.
+All expander CV inputs are monophonic, with the signal applied equally to any polyphony found at the Bernoulli Switch.
 
 None of the expander inputs are oversampled, even if the Bernoulli Switch has oversampling enabled.
 
 All expander inputs as well as the probability CV attenuator are ignored when the expander is bypassed.
+
+[Watch this video](https://www.youtube.com/watch?v=VRERXi6RuPE) to see how the Bernoulli Switch coupled with the Bernoulli Switch Expander can transform a simple sine wave into a dynamic complex stereo sound.
 
 [Return to Table Of Contents](#venom)
 
