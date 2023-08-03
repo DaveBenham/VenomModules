@@ -543,7 +543,7 @@ All trigger and gate inputs have a transition to high threshold of 2 volts and t
 Trigger and gate high outputs are 10 volts, and low outputs 0 volts.
 
 ### CLOCK Input
-The Rhythm Explorer will not run properly until a 24 ppqn (pulses per quarter note) clock is patched into the CLOCK input.
+The Rhythm Explorer will not run properly until a 24 or 48 PPQN (pulses per quarter note) clock is patched into the CLOCK input. By default Rhythm Explorer expects 24 PPQN. The "Clock input PPQN" option within the module context menu gives options for either 24 or 48 PPQN. 
 
 ### RUN
 If the RUN input is not patched, then every press of the RUN button will toggle the run state on or off. The RUN button will be brightly lit while running, and off (actually very dimly lit) when not running.
@@ -674,11 +674,26 @@ The CV value is rounded to the nearest integer, and clamped to be within the val
 
 #### CLOCK output
 
-Each division outputs an appropriately divided clock division for that division. Each clock pulse has a length of one 24 ppqn clock pulse. Each division clock is also sent to one channel in the GLOBAL CLOCK poly output.
+Each division outputs an appropriately divided clock division for that division. Each division clock is also sent to one channel in the GLOBAL CLOCK poly output.
 
 #### GATE output
 
-For each issued beat, a gate is sent to the GATE output with length of one 24 ppqn clock pulse. Each division gate is also sent to one channel in the GLOBAL GATE poly output.
+For each issued beat, a gate is sent to the GATE output. Each division gate is also sent to one channel in the GLOBAL GATE poly output.
+
+#### CLOCK and GATE width options
+
+By default both the CLOCK and GATE output gate widths match the input clock gate. The module context menu has options to select alternate widths.
+
+- **Clock output width**
+  - Input clock pulse
+  - 50%
+
+- **Gate output width**
+  - Input clock pulse
+  - 50%
+  - 100% (consecutive high gates are tied together)
+
+Note that if the input clock PPQN is set to 24 and the output width is 50%, then the 1/32 division will actually have a 33.3% width. Using a 48 PPQN clock guarantees 50% is accurate for all divisions.
 
 ### GLOBAL Column
 
