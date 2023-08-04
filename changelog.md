@@ -1,5 +1,15 @@
 # Venom Modules Changelog
 
+## 2.4.0 (2023-08-04)
+### New Module
+- Venom Blank
+
+### Behavior Change
+- Rhythm Explorer: There are now options to select 24 or 48 PPQN input clocks, as well as options to set output gate widths to input clock width, 50% of division width, or 100% of division width.
+
+### Bug Fix
+- Rhythm Explorer: Fix initial load switch display when lock is active
+
 ## 2.3.2 (2023-07-23)
 ### New Module
 - Bernoulli Switch Expander

@@ -43,7 +43,7 @@ static const std::vector<std::string> POLY_MODE_LABELS = {
   "Offbeat"
 };
 
-static const int GATE_LENGTH [10] = {
+static const int GATE_LENGTH [10] = { //Assuming 24 PPQN
   48,
   24,
   12,
@@ -134,6 +134,9 @@ struct RhythmExplorer : VenomModule {
   float internalSeed;
   bool runGateActive;
   int resetTiming = 0;
+  int ppqn = 0;
+  int clockWidth = 0;
+  int gateWidth = 0;
 
   //Non Persistant State
   bool isUni;
@@ -141,6 +144,7 @@ struct RhythmExplorer : VenomModule {
   int currentCycle;
   int currentBar;
   rack::random::Xoroshiro128Plus rng;
+  bool runStop = false;
   bool resetArmed;
   bool seedArmed = false;
   bool clockHigh;
@@ -150,7 +154,8 @@ struct RhythmExplorer : VenomModule {
   bool newSeedTrigHigh;
   bool runGateBtnHigh;
   bool runGateTrigHigh;
-  bool lockActive;
+  bool drawn = false;
+  bool lockActive = false;
   bool initBtnHigh;
   bool densityLightOn[SLIDER_COUNT];
   bool newBar;
@@ -179,7 +184,7 @@ struct RhythmExplorer : VenomModule {
 
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configInput(CLOCK_INPUT,"24PPQN Clock");
+    configInput(CLOCK_INPUT,"24 PPQN Clock");
     configInput(NEW_SEED_TRIGGER_INPUT,"Dice Trigger");
     configInput(RESET_TRIGGER_INPUT,"Reset Trigger");
     configInput(SEED_INPUT,"Seed");
@@ -239,6 +244,11 @@ struct RhythmExplorer : VenomModule {
     getSeed();
     initialize();
   }
+  
+  void setPPQN(int val) {
+    ppqn = val;
+    getInputInfo(CLOCK_INPUT)->name = val ? "48 PPQN Clock" : "24 PPQN Clock";
+  }  
 
   void onReset(const ResetEvent& e) override {
     ParamQuantity* q;
@@ -276,13 +286,15 @@ struct RhythmExplorer : VenomModule {
     }
     reseedRng();
     updateLights();
-    setLockStatus();
   }
 
   json_t *dataToJson() override{
     json_t *rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "internalSeed", json_real(internalSeed));
     json_object_set_new(rootJ, "runGateActive", json_boolean(runGateActive));
+    json_object_set_new(rootJ, "ppqn", json_integer(ppqn));
+    json_object_set_new(rootJ, "clockWidth", json_integer(clockWidth));
+    json_object_set_new(rootJ, "gateWidth", json_integer(gateWidth));
     json_object_set_new(rootJ, "resetTiming", json_integer(resetTiming));
     return rootJ;
   }
@@ -299,6 +311,15 @@ struct RhythmExplorer : VenomModule {
       runGateActive = json_is_true(val);
     if (runGateActive)
       resetArmed = newBar = newPhrase = true;
+    val = json_object_get(rootJ, "ppqn");
+    if (val)
+      setPPQN(json_integer_value(val));
+    val = json_object_get(rootJ, "clockWidth");
+    if (val)
+      clockWidth = json_integer_value(val);
+    val = json_object_get(rootJ, "gateWidth");
+    if (val)
+      gateWidth = json_integer_value(val);
     val = json_object_get(rootJ, "resetTiming");
     if (val)
       resetTiming = json_integer_value(val);
@@ -404,7 +425,7 @@ struct RhythmExplorer : VenomModule {
     lights[PATOFF_LIGHT].setBrightnessSmooth((params[PATOFF_PARAM].getValue()>0.f) ? 1.f : LIGHT_OFF, args.sampleTime);
 
     // Lock
-    if ((params[LOCK_PARAM].getValue()>0.f) != lockActive)
+    if (drawn && (params[LOCK_PARAM].getValue()>0.f) != lockActive)
       setLockStatus();
     lights[LOCK_LIGHT].setBrightnessSmooth(lockActive ? 1.f : LIGHT_OFF, args.sampleTime);
 
@@ -419,7 +440,7 @@ struct RhythmExplorer : VenomModule {
     }
     lights[INIT_DENSITY_LIGHT].setBrightnessSmooth(initBtnHigh ? 1.f : LIGHT_OFF, args.sampleTime);
 
-    // Mutes - fully handled,  Modes - handled for button lable display only, LOCK may prevent true display
+    // Mutes - fully handled,  Modes - handled for button label display only, LOCK may prevent true display
     for (int i=0; i<SLIDER_COUNT; i++) {
       if(i>0 && inputs[MODE_CHANNEL_INPUT + i].isConnected())
         params[MODE_CHANNEL_PARAM + i].setValue(rack::math::clamp(static_cast<int>(inputs[MODE_CHANNEL_INPUT + i].getVoltage()), 0, 3));
@@ -441,12 +462,17 @@ struct RhythmExplorer : VenomModule {
       outputs[START_OF_BAR_OUTPUT].setVoltage(0.f);
       outputs[CLOCK_POLY_OUTPUT].setVoltage(0.f, 9);
       for (int i=0; i<SLIDER_COUNT; i++){
-        outputs[GATE_OUTPUT + i].setVoltage(0.f);
-        outputs[GATE_POLY_OUTPUT].setVoltage(0.f, i);
-        outputs[CLOCK_OUTPUT + i].setVoltage(0.f);
-        outputs[CLOCK_POLY_OUTPUT].setVoltage(0.f, i);
-        densityLightOn[i] = false;
+        if (!clockWidth || runStop){
+          outputs[CLOCK_OUTPUT + i].setVoltage(0.f);
+          outputs[CLOCK_POLY_OUTPUT].setVoltage(0.f, i);
+        }
+        if (!gateWidth || runStop){
+          outputs[GATE_OUTPUT + i].setVoltage(0.f);
+          outputs[GATE_POLY_OUTPUT].setVoltage(0.f, i);
+          densityLightOn[i] = false;
+        }
       }
+      runStop = false;
     }
     
     bool runStart = false;
@@ -456,12 +482,14 @@ struct RhythmExplorer : VenomModule {
       if ((runGateTrigHigh ^ runGateBtnHigh) != runGateActive){
         runGateActive = !runGateActive;
         runStart = runGateActive;
+        runStop = !runStart;
       }
     }
     else {
       if(buttonTrigger(runGateBtnHigh,params[RUN_GATE_PARAM].getValue())){
         runGateActive = !runGateActive;
         runStart = runGateActive;
+        runStop = !runStart;
       }
     }
     if(runStart) {
@@ -494,7 +522,7 @@ struct RhythmExplorer : VenomModule {
     if(clockEvent && runGateActive){
 
       currentPulse++;
-      int resetDelay = resetTiming > 1 ? GATE_LENGTH[resetTiming-2] : 9999;
+      int resetDelay = resetTiming > 1 ? GATE_LENGTH[resetTiming-2] * (ppqn+1) : 9999;
       if(resetArmed && (
           resetTiming == 0 ||
           currentPulse % resetDelay == 0
@@ -543,7 +571,9 @@ struct RhythmExplorer : VenomModule {
       int outChannel = 0;
       int outGateCount[8] = {0,0,0,0,0,0,0,0};
       for(int si = 0; si < SLIDER_COUNT; si++){
-        int gateLength = GATE_LENGTH[ static_cast<int>(params[RATE_PARAM + si].getValue()) ];
+        int gateLength = GATE_LENGTH[ static_cast<int>(params[RATE_PARAM + si].getValue()) ] * (ppqn+1);
+        int clockWidthCnt = clockWidth ? gateLength / 2 : 0;
+        int gateWidthCnt = gateWidth == 0 ? 0 : gateWidth == 1 ? gateLength / 2 : gateLength;
         int globalMode = rack::math::clamp(
           static_cast<int>(
             inputs[MODE_POLY_INPUT].getNormalPolyVoltage(
@@ -570,6 +600,15 @@ struct RhythmExplorer : VenomModule {
             outChannel++;
           channelMode = ALL_MODE;
         }
+        if (clockWidthCnt && (currentPulse % clockWidthCnt == 0)){
+          outputs[CLOCK_OUTPUT + si].setVoltage(0.f);
+          outputs[CLOCK_POLY_OUTPUT].setVoltage(0.f, si);
+        }
+        if (gateWidthCnt && (currentPulse % gateWidthCnt == 0)){
+          outputs[GATE_OUTPUT + si].setVoltage(0.f);
+          outputs[GATE_POLY_OUTPUT].setVoltage(0.f, si);
+          densityLightOn[si] = false;
+        }  
         if(currentPulse % gateLength == 0){
           outputs[CLOCK_OUTPUT + si].setVoltage(10.f);
           outputs[CLOCK_POLY_OUTPUT].setVoltage(10.f, si);
@@ -828,8 +867,34 @@ struct RhythmExplorerWidget : VenomWidget {
     assert(module);
 
     menu->addChild(new MenuSeparator);
+
+    std::vector<std::string> ppqnLabels;
+    ppqnLabels.push_back("24");
+    ppqnLabels.push_back("48");
+    menu->addChild(createIndexSubmenuItem("Clock input PPQN", ppqnLabels,
+      [=]() {return module->ppqn;},
+      [=](int i) {module->setPPQN(i);}
+    ));
+
+    std::vector<std::string> clockWidthLabels;
+    clockWidthLabels.push_back("Input clock pulse");
+    clockWidthLabels.push_back("50%");
+    menu->addChild(createIndexSubmenuItem("Clock output width", clockWidthLabels,
+      [=]() {return module->clockWidth;},
+      [=](int i) {module->clockWidth = i;}
+    ));
+      
+    std::vector<std::string> gateWidthLabels;
+    gateWidthLabels.push_back("Input clock pulse");
+    gateWidthLabels.push_back("50%");
+    gateWidthLabels.push_back("100%");
+    menu->addChild(createIndexSubmenuItem("Gate output width", gateWidthLabels,
+      [=]() {return module->gateWidth;},
+      [=](int i) {module->gateWidth = i;}
+    ));
+
     std::vector<std::string> resetLabels;
-    resetLabels.push_back("Clock (24 ppqn)");
+    resetLabels.push_back("Input clock pulse");
     resetLabels.push_back("Bar");
     resetLabels.push_back("1/2");
     resetLabels.push_back("1/4");
@@ -847,6 +912,13 @@ struct RhythmExplorerWidget : VenomWidget {
     ));
 
     VenomWidget::appendContextMenu(menu);
+  }
+
+  void draw(const DrawArgs & args) override {
+    ModuleWidget::draw(args);
+    if (module){
+      dynamic_cast<RhythmExplorer*>(this->module)->drawn = true;
+    }
   }
 
 };

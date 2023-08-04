@@ -57,6 +57,7 @@ void init(Plugin* p) {
   p->addModel(modelShapedVCA);
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);
+  p->addModel(modelVenomBlank);
   p->addModel(modelWinComp);
 
   // Any other plugin initialization may go here.
