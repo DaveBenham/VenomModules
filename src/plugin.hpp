@@ -25,6 +25,7 @@ extern Model* modelRhythmExplorer;
 extern Model* modelShapedVCA;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
+extern Model* modelVenomBlank;
 extern Model* modelWinComp;
 
 ////////////////////////////////

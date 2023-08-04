@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.3.2 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
+Venom modules version 2.4.0 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
@@ -13,9 +13,9 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 |----|----|----|
 |![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
-|[SHAPED VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[WINCOMP](#wincomp)|
-|----|----|----|----|
-|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![WINCOMP module image](doc/WinComp.PNG)|
+|[SHAPED VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM BLANK](#venom-blank)|[WINCOMP](#wincomp)|
+|----|----|----|----|----|
+|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WINCOMP module image](doc/WinComp.PNG)|
 
 
 ## Themes
@@ -970,6 +970,13 @@ VCA Mix 4 Stereo is a stereo version of the VCA MIX 4, sharing the same features
 - When bypassed, each channel's left input is sent unchanged to the left output, and right input to the right output. The right inputs are still normaled to the left inputs when bypassed. The Mix outputs remain monophonic 0V when bypassed.
 
 All other behaviors are the same as for Mix 4.
+
+[Return to Table Of Contents](#venom)
+
+
+## VENOM BLANK
+![VENOM BLANK module image](doc/WinComp.PNG)  
+A 3hp blank with standard Venom themes.
 
 [Return to Table Of Contents](#venom)
 
