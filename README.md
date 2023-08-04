@@ -13,7 +13,7 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 |----|----|----|
 |![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
-|[SHAPED VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM BLANK](#venom-blank)|[WINCOMP](#wincomp)|
+|[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM<br />BLANK](#venom-blank)|[WINCOMP](#wincomp)|
 |----|----|----|----|----|
 |![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WINCOMP module image](doc/WinComp.PNG)|
 
@@ -975,7 +975,7 @@ All other behaviors are the same as for Mix 4.
 
 
 ## VENOM BLANK
-![VENOM BLANK module image](doc/WinComp.PNG)  
+![VENOM BLANK module image](doc/VenomBlank.PNG)  
 A 3hp blank with standard Venom themes.
 
 [Return to Table Of Contents](#venom)
