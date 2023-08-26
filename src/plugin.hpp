@@ -50,40 +50,61 @@ inline std::string faceplatePath(std::string mod, std::string theme = "Ivory") {
 }
 
 int getDefaultTheme();
+int getDefaultDarkTheme();
 void setDefaultTheme(int theme);
+void setDefaultDarkTheme(int theme);
 
 struct VenomModule : Module {
 
   int currentTheme = 0;
   int defaultTheme = getDefaultTheme();
+  int defaultDarkTheme = getDefaultDarkTheme();
   int prevTheme = -1;
+  int prevDarkTheme = -1;
 
-  std::string currentThemeStr(){
-    return modThemes[currentTheme==0 ? defaultTheme+1 : currentTheme];
+  std::string currentThemeStr(bool dark=false){
+    return modThemes[currentTheme==0 ? (dark ? defaultDarkTheme : defaultTheme)+1 : currentTheme];
   }
 
   bool lockableParams = false;
   void appendParamMenu(Menu* menu, int parmId) {
+    ParamQuantity* q = paramQuantities[parmId];
+    ParamExtension* e = &paramExtensions[parmId];
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolMenuItem("Lock parameter", "",
       [=]() {
-        return paramExtensions[parmId].locked;
+        return e->locked;
       },
       [=](bool val){
         setLock(val, parmId);
       }
     ));
+    menu->addChild(createMenuItem("Set default to current value", "",
+      [=]() {
+        if (e->locked) e->dflt = q->getImmediateValue();
+        else q->defaultValue = q->getImmediateValue();
+      }
+    ));
+    if (e->factoryDflt != (e->locked ? e->dflt : q->defaultValue))
+      menu->addChild(createMenuItem("Restore factory default", "",
+        [=]() {
+          if (e->locked) e->dflt = e->factoryDflt;
+          else q->defaultValue = e->factoryDflt;
+        }
+      ));
   }
 
   struct ParamExtension {
     bool locked;
     bool initLocked;
     bool lockable;
-    float min, max, dflt;
+    bool initDfltValid;
+    float min, max, dflt, initDflt, factoryDflt;
     ParamExtension(){
       locked = false;
       initLocked = false;
       lockable = false;
+      initDfltValid = false;
     }
   };
 
@@ -125,7 +146,11 @@ struct VenomModule : Module {
     if (paramInitRequired){
       paramInitRequired = false;
       for (int i=0; i<getNumParams(); i++){
-        setLock(paramExtensions[i].initLocked, i);
+        ParamQuantity* q = paramQuantities[i];
+        ParamExtension* e = &paramExtensions[i];
+        e->factoryDflt = q->defaultValue;
+        if (e->initDfltValid) q->defaultValue = e->initDflt;
+        setLock(e->initLocked, i);
       }
     }
   }
@@ -133,8 +158,11 @@ struct VenomModule : Module {
   json_t* dataToJson() override {
     json_t* rootJ = json_object();
     for (int i=0; i<getNumParams(); i++){
+      ParamExtension* e = &paramExtensions[i];
       std::string nm = "paramLock"+std::to_string(i);
-      json_object_set_new(rootJ, nm.c_str(), json_boolean(paramExtensions[i].locked));
+      json_object_set_new(rootJ, nm.c_str(), json_boolean(e->locked));
+      nm = "paramDflt"+std::to_string(i);
+      json_object_set_new(rootJ, nm.c_str(), json_real(e->locked ? e->dflt : paramQuantities[i]->defaultValue));
     }
     json_object_set_new(rootJ, "currentTheme", json_integer(currentTheme));
     return rootJ;
@@ -143,9 +171,15 @@ struct VenomModule : Module {
   void dataFromJson(json_t* rootJ) override {
     json_t* val;
     for (int i=0; i<getNumParams(); i++){
+      ParamExtension* e = &paramExtensions[i];
       std::string nm = "paramLock"+std::to_string(i);
       if ((val = json_object_get(rootJ, nm.c_str())))
-        paramExtensions[i].initLocked = json_boolean_value(val);
+        e->initLocked = json_boolean_value(val);
+      nm = "paramDflt"+std::to_string(i);
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        e->initDflt = json_real_value(val);
+        e->initDfltValid = true;
+      }
     }
     val = json_object_get(rootJ, "currentTheme");
     if (val)
@@ -167,13 +201,11 @@ struct VenomWidget : ModuleWidget {
 
   void setVenomPanel(std::string name){
     moduleName = name;
-    setPanel(createPanel(asset::plugin(pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr() : themes[getDefaultTheme()]))));
+    setPanel(createPanel(
+      asset::plugin( pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr() : themes[getDefaultTheme()])),
+      asset::plugin( pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr(true) : themes[getDefaultDarkTheme()]))
+    ));
   }
-
-/*
-  VenomWidget(VenomModule* module){
-  }
-*/
 
   void appendContextMenu(Menu* menu) override {
     VenomModule* module = dynamic_cast<VenomModule*>(this->module);
@@ -205,6 +237,16 @@ struct VenomWidget : ModuleWidget {
       }
     ));
     menu->addChild(createIndexSubmenuItem(
+      "Venom Default Dark Theme",
+      themes,
+      [=]() {
+        return getDefaultDarkTheme();
+      },
+      [=](int theme) {
+        setDefaultDarkTheme(theme);
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
       "Theme",
       modThemes,
       [=]() {
@@ -224,9 +266,17 @@ struct VenomWidget : ModuleWidget {
         if(module->currentTheme == 0)
           module->prevTheme = -1;
       }
+      if (module->defaultDarkTheme != getDefaultDarkTheme()){
+        module->defaultDarkTheme = getDefaultDarkTheme();
+        if(module->currentTheme == 0)
+          module->prevTheme = -1;
+      }
       if (module->prevTheme != module->currentTheme){
         module->prevTheme = module->currentTheme;
-        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, faceplatePath(moduleName, module->currentThemeStr()))));
+        setPanel(createPanel(
+          asset::plugin( pluginInstance, faceplatePath(moduleName, module->currentThemeStr())),
+          asset::plugin( pluginInstance, faceplatePath( moduleName, module->currentThemeStr(true)))
+        ));
       }
     }
     Widget::step();

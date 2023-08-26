@@ -19,16 +19,27 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 
 
 ## Themes
-The context menu of every module includes options to set the default theme for the Venom plugin, as well as a theme override for each module instance. There are 4 themes to choose from.
+The context menu of every module includes options to set the default theme and default dark theme for the Venom plugin, as well as a theme override for each module instance.
+
+There are 4 themes to choose from.
 
 |Ivory|Coal|Earth|Danger|
 |---|---|---|---|
 |![Ivory theme image](doc/Ivory.png)|![Coal theme image](doc/Coal.png)|![Earth theme image](doc/Earth.png)|![Danger theme image](doc/Danger.png)|
 
+If a module instance is set to use a specific theme, then that theme will be used regardless whether VCV Rack is set to use dark panels or not. If a module is set to use the default theme, then the VCV Rack "Use dark panels if available" setting controls which default is used. If not enabled, then the default theme is used. If enabled then the default dark theme is used.
 
-## Parameter Locks
-Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu option to lock the paramenter. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.
+If you want the default theme to disregard the VCV Rack dark panel setting, then simply set both defaults to the same theme.
 
+The factory default theme is ivory, and the factory default dark theme is coal.
+
+
+## Parameter Locks and Custom Defaults
+Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu options to lock the paramenter as well as set a custom default value. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.
+
+Parameter lock and custom default settings are saved with the patch and restored upon patch load. Parameter lock and custom default settings are also preserved when duplicating a module.
+
+### Parameter Locks
 The display name includes "(locked)" when hovering over a locked parameter.
 
 The parameter value cannot be changed by any means while the parameter is locked. All of the normal means of changing a parameter value are blocked:
@@ -38,8 +49,8 @@ The parameter value cannot be changed by any means while the parameter is locked
 - Preset changes are ignored
 - Randomization requests are ignored
 
-Parameter lock settings are saved with the patch and restored upon patch load. Parameter lock settings are also preserved when duplicating a module.
-
+### Custom Defaults
+A custom default value overrides the factory default whenever a parameter is initialized. An additional parameter menu option is added to restore the factory default whenever a custom default is in effect.
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)  
@@ -100,7 +111,7 @@ The following factory presets are available that emulate the four configurations
 - Toggled Bernoulli Gate - Toggles triggering gate between A and B
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass Behavior
 If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. The B input is still normalled to the A input while bypassed.
@@ -146,7 +157,7 @@ An LED glows yellow for each input that is successfully replicated. The LED glow
 All of the replicated inputs are merged into the single polyphonic output. The poly output starts with all clones from input 1, followed by clones from input 2, etc.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -206,7 +217,7 @@ If this port is patched, then the V/Oct input is quantized to the nearest harmon
 The final computed partial is converted into a delta V/Oct and added to the ROOT to establish the final output V/Oct value.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -264,7 +275,7 @@ The color coded clip button determines how (or if) the final output is clipped. 
 - **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -308,7 +319,7 @@ For each channel appearing at the input, the corresponding LED above glows yello
 All of the replicated channels are merged into the single polyphonic output. The poly output starts with all clones from input channel 1, followed by clones from input channel 2, etc.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -356,7 +367,7 @@ For each channel appearing at the input, the corresponding LED above glows yello
 All of the replicated channels are merged into the single polyphonic output. The poly output starts with all replications from input channel 1, followed by replications from input channel 2, etc. Detune spread for each input channel goes from low to high (unless the detune CV creates a negative spread)
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -408,7 +419,7 @@ The unlabeled Modulation Mode knob determines when the SCALE and OFFSET operatio
 Since the Return is normalled to the Send, it is possible to generate a polyphonic series of constant voltages using only the RECURSE module. For example, leave all inputs and the Return unpatched, set the Recursion Count to 16, the Scale to 1, the Offset to 1V, and the Mode to nPre. The SEND output will have 16 channels of integral values from 1 to 16. Change the Mode to nPost and the values will range from 0 to 15.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -516,7 +527,7 @@ Note that oversampling cannot remove aliasing that may be present in inputs driv
 The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -860,7 +871,7 @@ The output offset is particularly useful when using the Shaped VCA as a wave sha
 The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 The Left and Right inputs are passed unchanged to the Left and Right outputs when the module is bypassed. The Right input remains normaled to the Left input while bypassed. However, the left input is not normaled to 10V while bypassed.
@@ -949,7 +960,7 @@ The color coded exclude button determines if patched channel outputs are exclude
 - **On** (red): patched output channels are excluded from the final mix
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -1039,7 +1050,7 @@ Oversampling uses significant CPU, so there are multiple options to choose from:
 An LED glows blue above the output ports if oversampling is enabled. The LED is black when oversampling is off.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks](#parameter-locks) are available via standard Venom context menus.
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.

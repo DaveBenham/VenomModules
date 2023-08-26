@@ -1,11 +1,12 @@
 // Venom Modules (c) 2023 Dave Benham
-// Licensed under GNU GPLv3
+// Licensed under GNU GPLv3 
 
 #include "plugin.hpp"
 
 Plugin* pluginInstance;
 static std::string venomSettingsFileName = asset::user("Venom.json");
 int defaultTheme = 0;
+int defaultDarkTheme = 1;
 
 void setDefaultTheme(int theme){
   if (defaultTheme != theme){
@@ -34,8 +35,39 @@ void readDefaultTheme(){
   }
 }
 
+void setDefaultDarkTheme(int theme){
+  if (defaultDarkTheme != theme){
+    FILE *file = fopen(venomSettingsFileName.c_str(), "w");
+    if (file){
+      defaultDarkTheme = theme;
+      json_t *rootJ = json_object();
+      json_object_set_new(rootJ, "defaultDarkTheme", json_integer(theme));
+      json_dumpf(rootJ, file, JSON_INDENT(2) | JSON_REAL_PRECISION(9));
+      fclose(file);
+      json_decref(rootJ);
+    }
+  }
+}
+
+void readDefaultDarkTheme(){
+  FILE *file = fopen(venomSettingsFileName.c_str(), "r");
+  if (file){
+    json_error_t error;
+    json_t *rootJ = json_loadf(file, 0, &error);
+    json_t *jsonVal = json_object_get(rootJ, "defaultDarkTheme");
+    if (jsonVal)
+      defaultDarkTheme = json_integer_value(jsonVal);
+    fclose(file);
+    json_decref(rootJ);
+  }
+}
+
 int getDefaultTheme(){
   return defaultTheme;
+}
+
+int getDefaultDarkTheme(){
+  return defaultDarkTheme;
 }
 
 void init(Plugin* p) {
