@@ -4,8 +4,6 @@
 #include "plugin.hpp"
 #include <float.h>
 
-#define MODULE_NAME HQ
-
 struct HQ : VenomModule {
   enum ParamId {
     PARTIAL_PARAM,

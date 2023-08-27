@@ -3,8 +3,6 @@
 
 #include "plugin.hpp"
 
-#define MODULE_NAME Recurse
-
 struct Recurse : VenomModule {
   enum ParamId {
     COUNT_PARAM,
@@ -163,12 +161,12 @@ struct RecurseWidget : VenomWidget {
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 39.8)));
     countDisplay->module = module;
     addChild(countDisplay);
-    addParam(createLockableParamCentered<RoundSmallBlackKnobSnapLockable>(mm2px(Vec(18.134, 43.87)), module, Recurse::COUNT_PARAM));
+    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(18.134, 43.87)), module, Recurse::COUNT_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 58.3)), module, Recurse::SCALE_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 58.3)), module, Recurse::SCALE_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 72.75)), module, Recurse::OFFSET_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 72.75)), module, Recurse::OFFSET_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobSnapLockable>(mm2px(Vec(12.7155, 84.50)), module, Recurse::TIMING_PARAM));
+    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(12.7155, 84.50)), module, Recurse::TIMING_PARAM));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 101.55)), module, Recurse::SEND_OUTPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, Recurse::RETURN_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, Recurse::IN_INPUT));

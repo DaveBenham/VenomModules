@@ -2,7 +2,6 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#define MODULE_NAME RecurseStereo
 
 struct RecurseStereo : VenomModule {
   enum ParamId {
@@ -207,12 +206,12 @@ struct RecurseStereoWidget : VenomWidget {
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 10.9)));
     countDisplay->module = module;
     addChild(countDisplay);
-    addParam(createLockableParamCentered<RoundSmallBlackKnobSnapLockable>(mm2px(Vec(18.134, 14.97)), module, RecurseStereo::COUNT_PARAM));
+    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(18.134, 14.97)), module, RecurseStereo::COUNT_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 29.4)), module, RecurseStereo::SCALE_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 29.4)), module, RecurseStereo::SCALE_PARAM));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 43.85)), module, RecurseStereo::OFFSET_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 43.85)), module, RecurseStereo::OFFSET_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobSnapLockable>(mm2px(Vec(12.7155, 55.60)), module, RecurseStereo::TIMING_PARAM));
+    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(12.7155, 55.60)), module, RecurseStereo::TIMING_PARAM));
 
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 72.65)), module, RecurseStereo::SEND_L_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 72.65)), module, RecurseStereo::SEND_R_OUTPUT));

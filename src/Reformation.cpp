@@ -6,7 +6,6 @@
 #include "math.hpp"
 #include <float.h>
 
-#define MODULE_NAME Reformation
 #define MAP_COUNT 5
 
 std::string mapLabel[MAP_COUNT] = {"Min", "1/4", "1/2", "3/4", "Max"};

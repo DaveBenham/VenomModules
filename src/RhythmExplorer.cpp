@@ -13,8 +13,6 @@
 #define LIGHT_DIM 0.1f
 #define LIGHT_FADE 5e-6f
 
-#define MODULE_NAME RhythmExplorer
-
 static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/2",
   "1/4",

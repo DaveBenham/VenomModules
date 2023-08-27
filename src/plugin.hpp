@@ -501,22 +501,10 @@ struct RoundHugeBlackKnobLockable : RoundHugeBlackKnob {
   }
 };
 
-struct RoundHugeBlackKnobSnapLockable : RoundHugeBlackKnobLockable {
-  RoundHugeBlackKnobSnapLockable() {
-    snap = true;
-  }
-};
-
 struct RoundBigBlackKnobLockable : RoundBigBlackKnob {
   void appendContextMenu(Menu* menu) override {
     if (module)
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
-  }
-};
-
-struct RoundBigBlackKnobSnapLockable : RoundBigBlackKnobLockable {
-  RoundBigBlackKnobSnapLockable() {
-    snap = true;
   }
 };
 
@@ -527,22 +515,10 @@ struct RoundLargeBlackKnobLockable : RoundLargeBlackKnob {
   }
 };
 
-struct RoundLargeBlackKnobSnapLockable : RoundLargeBlackKnobLockable {
-  RoundLargeBlackKnobSnapLockable() {
-    snap = true;
-  }
-};
-
 struct RoundBlackKnobLockable : RoundBlackKnob {
   void appendContextMenu(Menu* menu) override {
     if (module)
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
-  }
-};
-
-struct RoundBlackKnobSnapLockable : RoundBlackKnobLockable {
-  RoundBlackKnobSnapLockable() {
-    snap = true;
   }
 };
 
@@ -557,12 +533,6 @@ struct TrimpotLockable : Trimpot {
   void appendContextMenu(Menu* menu) override {
     if (module)
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
-  }
-};
-
-struct RoundSmallBlackKnobSnapLockable : RoundSmallBlackKnobLockable {
-  RoundSmallBlackKnobSnapLockable() {
-    snap = true;
   }
 };
 

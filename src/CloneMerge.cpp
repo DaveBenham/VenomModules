@@ -3,8 +3,6 @@
 
 #include "plugin.hpp"
 
-#define MODULE_NAME CloneMerge
-
 struct CloneMerge : VenomModule {
   enum ParamId {
     CLONE_PARAM,

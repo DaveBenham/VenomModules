@@ -3,8 +3,6 @@
 
 #include "plugin.hpp"
 
-#define MODULE_NAME PolyClone
-
 struct PolyClone : VenomModule {
   enum ParamId {
     CLONE_PARAM,

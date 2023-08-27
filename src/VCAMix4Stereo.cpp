@@ -6,8 +6,6 @@
 #include <cfloat>
 #include "Filter.hpp"
 
-#define MODULE_NAME VCAMix4Stereo
-
 struct VCAMix4Stereo : VenomModule {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 4),

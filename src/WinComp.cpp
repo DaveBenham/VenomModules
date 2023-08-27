@@ -4,8 +4,6 @@
 #include "Filter.hpp"
 #include "plugin.hpp"
 
-#define MODULE_NAME WinComp
-
 struct WinComp : VenomModule {
   enum ParamId {
     A_PARAM,

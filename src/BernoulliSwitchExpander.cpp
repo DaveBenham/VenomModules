@@ -3,8 +3,6 @@
 
 #include "plugin.hpp"
 
-#define MODULE_NAME BernoulliSwitchExpander
-
 struct BernoulliSwitchExpander : VenomModule {
   #include "BernoulliSwitchExpander.hpp"
 

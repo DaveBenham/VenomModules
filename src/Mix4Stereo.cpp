@@ -5,8 +5,6 @@
 #include "math.hpp"
 #include "Filter.hpp"
 
-#define MODULE_NAME Mix4Stereo
-
 struct Mix4Stereo : VenomModule {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 4),
