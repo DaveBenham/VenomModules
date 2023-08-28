@@ -697,10 +697,10 @@ struct VCVBezelLightBig : TBase {
 
 
 template <typename TBase, typename TLight = WhiteLight>
-struct LightButton : TBase {
+struct MyLightButton : TBase {
   app::ModuleLightWidget* light;
 
-  LightButton() {
+  MyLightButton() {
     light = new TLight;
     // Move center of light to center of box
     light->box.pos = this->box.size.div(2).minus(light->box.size.div(2));
@@ -712,7 +712,7 @@ struct LightButton : TBase {
   }
 };
 
-using VCVBezelLightBigWhite = LightButton<VCVBezelBig, VCVBezelLightBig<WhiteLight>>;
+using VCVBezelLightBigWhite = MyLightButton<VCVBezelBig, VCVBezelLightBig<WhiteLight>>;
 
 struct RhythmExplorerWidget : VenomWidget {
 
