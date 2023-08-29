@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.4.0 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
+Venom modules version 2.4.1 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
 
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
@@ -37,7 +37,7 @@ The factory default theme is ivory, and the factory default dark theme is coal.
 ## Parameter Locks and Custom Defaults
 Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu options to lock the paramenter as well as set a custom default value. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.
 
-Parameter lock and custom default settings are saved with the patch and restored upon patch load. Parameter lock and custom default settings are also preserved when duplicating a module.
+Parameter lock and custom default settings are saved with the patch and with presets, and restored upon patch or preset load. Parameter lock and custom default settings are also preserved when duplicating a module.
 
 ### Parameter Locks
 The display name includes "(locked)" when hovering over a locked parameter.
@@ -46,7 +46,6 @@ The parameter value cannot be changed by any means while the parameter is locked
 - The parameter cannot be dragged or pushed
 - Context menu value keyins are ignored
 - Double click and context menu initialization are ignored
-- Preset changes are ignored
 - Randomization requests are ignored
 
 ### Custom Defaults
@@ -773,7 +772,7 @@ These outputs are normally monophonic, combining the beats of all 8 divisions. B
 There is a Vermona randomRHYTHM preset available that configures the Rhythm Explorer to make it easy to get a flavor of what it would be like to actually use the Vermona hardware. The Phrase is set to 1 and Bar to 4, like the Vermona 4/4 time. It configures the divisions as 1/4, 1/8, 1/16, 1/4T, 1/4, 1/8, 1/16, 1/4T. All divisions are assigned mode ALL except division 5 is assigned ALL - NEW. It also sets the Global Mode to Offset so the OR output will behave like the Vermona. In this way there are effectively two rhythm generators configured like the Vermona, exept they both share a common clock, dice, and reset. The OR output is polyphonic - an external split module is needed to separate the OR output into separate outputs for each rhythm generator. 
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) are available via standard Venom context menus. But Rhythm Explorer has its own design for limited parameter locking, so the standard parameter locking menus are not available.
+[Venom Themes](#themes) are available via standard Venom context menus. But Rhythm Explorer has its own design for limited parameter locking, so the standard parameter locking menus are not available. Neither are custom default options available to parameters.
 
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.

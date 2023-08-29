@@ -1,5 +1,12 @@
 # Venom Modules Changelog
 
+## 2.4.1 (2023-??-??)
+### Enhancements
+- Venom Default Dark Theme option has been added to all module context menus
+- Modules using default theme use normal default if VCV dark panel option is off, and dark default if VCV dark panel option is on
+- Added option to set custom default value for most parameters via parameter context menu
+- Presets can now save and restore parameter lock settings
+
 ## 2.4.0 (2023-08-04)
 ### New Module
 - Venom Blank
