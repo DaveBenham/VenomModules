@@ -152,7 +152,6 @@ struct RhythmExplorer : VenomModule {
   bool newSeedTrigHigh;
   bool runGateBtnHigh;
   bool runGateTrigHigh;
-  bool drawn = false;
   bool lockActive = false;
   bool initBtnHigh;
   bool densityLightOn[SLIDER_COUNT];
@@ -423,7 +422,7 @@ struct RhythmExplorer : VenomModule {
     lights[PATOFF_LIGHT].setBrightnessSmooth((params[PATOFF_PARAM].getValue()>0.f) ? 1.f : LIGHT_OFF, args.sampleTime);
 
     // Lock
-    if (drawn && (params[LOCK_PARAM].getValue()>0.f) != lockActive)
+    if (drawn && ((params[LOCK_PARAM].getValue()>0.f) != lockActive))
       setLockStatus();
     lights[LOCK_LIGHT].setBrightnessSmooth(lockActive ? 1.f : LIGHT_OFF, args.sampleTime);
 
@@ -910,13 +909,6 @@ struct RhythmExplorerWidget : VenomWidget {
     ));
 
     VenomWidget::appendContextMenu(menu);
-  }
-
-  void draw(const DrawArgs & args) override {
-    ModuleWidget::draw(args);
-    if (module){
-      dynamic_cast<RhythmExplorer*>(this->module)->drawn = true;
-    }
   }
 
 };

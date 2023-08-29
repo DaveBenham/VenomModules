@@ -61,6 +61,9 @@ struct VenomModule : Module {
   int defaultDarkTheme = getDefaultDarkTheme();
   int prevTheme = -1;
   int prevDarkTheme = -1;
+  bool drawn = false;
+  bool paramsInitialized = false;
+  bool extProcNeeded = true;
 
   std::string currentThemeStr(bool dark=false){
     return modThemes[currentTheme==0 ? (dark ? defaultDarkTheme : defaultTheme)+1 : currentTheme];
@@ -109,21 +112,22 @@ struct VenomModule : Module {
   };
 
   void setLock(bool val, int id) {
-    if (paramExtensions[id].lockable && paramExtensions[id].locked != val){
-      paramExtensions[id].locked = val;
+    ParamExtension* e = &paramExtensions[id];
+    if (e->lockable && e->locked != val){
+      e->locked = val;
       ParamQuantity* q = paramQuantities[id];
       if (val){
-        paramExtensions[id].min = q->minValue;
-        paramExtensions[id].max = q->maxValue;
-        paramExtensions[id].dflt = q->defaultValue;
+        e->min = q->minValue;
+        e->max = q->maxValue;
+        e->dflt = q->defaultValue;
         q->name += " (locked)";
         q->minValue = q->maxValue = q->defaultValue = q->getValue();
       }
       else {
         q->name.erase(q->name.length()-9);
-        q->minValue = paramExtensions[id].min;
-        q->maxValue = paramExtensions[id].max;
-        q->defaultValue = paramExtensions[id].dflt;
+        q->minValue = e->min;
+        q->maxValue = e->max;
+        q->defaultValue = e->dflt;
       }
     }
   }
@@ -134,7 +138,6 @@ struct VenomModule : Module {
   }
 
   std::vector<ParamExtension> paramExtensions;
-  bool paramInitRequired = false;
 
   void venomConfig(int paramCnt, int inCnt, int outCnt, int lightCnt){
     config(paramCnt, inCnt, outCnt, lightCnt);
@@ -143,15 +146,18 @@ struct VenomModule : Module {
   }
 
   void process(const ProcessArgs& args) override {
-    if (paramInitRequired){
-      paramInitRequired = false;
+    if (drawn && extProcNeeded){
       for (int i=0; i<getNumParams(); i++){
-        ParamQuantity* q = paramQuantities[i];
         ParamExtension* e = &paramExtensions[i];
-        e->factoryDflt = q->defaultValue;
-        if (e->initDfltValid) q->defaultValue = e->initDflt;
+        if (!paramsInitialized){
+          ParamQuantity* q = paramQuantities[i];
+          e->factoryDflt = q->defaultValue;
+          if (e->initDfltValid) q->defaultValue = e->initDflt;
+        }
         setLock(e->initLocked, i);
       }
+      paramsInitialized = true;
+      extProcNeeded = false;
     }
   }
 
@@ -163,6 +169,8 @@ struct VenomModule : Module {
       json_object_set_new(rootJ, nm.c_str(), json_boolean(e->locked));
       nm = "paramDflt"+std::to_string(i);
       json_object_set_new(rootJ, nm.c_str(), json_real(e->locked ? e->dflt : paramQuantities[i]->defaultValue));
+      nm = "paramVal"+std::to_string(i);
+      json_object_set_new(rootJ, nm.c_str(), json_real(paramQuantities[i]->getImmediateValue()));
     }
     json_object_set_new(rootJ, "currentTheme", json_integer(currentTheme));
     return rootJ;
@@ -172,31 +180,38 @@ struct VenomModule : Module {
     json_t* val;
     for (int i=0; i<getNumParams(); i++){
       ParamExtension* e = &paramExtensions[i];
-      std::string nm = "paramLock"+std::to_string(i);
+      setLock(false, i);
+      std::string nm = "paramDflt"+std::to_string(i);
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        if (paramsInitialized) {
+          paramQuantities[i]->defaultValue = json_real_value(val);
+        }
+        else {
+          e->initDflt = json_real_value(val);
+          e->initDfltValid = true;
+        }
+      }
+      nm = "paramVal"+std::to_string(i);
+      if ((val = json_object_get(rootJ, nm.c_str())))
+        paramQuantities[i]->setImmediateValue(json_real_value(val));
+      nm = "paramLock"+std::to_string(i);
       if ((val = json_object_get(rootJ, nm.c_str())))
         e->initLocked = json_boolean_value(val);
-      nm = "paramDflt"+std::to_string(i);
-      if ((val = json_object_get(rootJ, nm.c_str()))){
-        e->initDflt = json_real_value(val);
-        e->initDfltValid = true;
-      }
     }
     val = json_object_get(rootJ, "currentTheme");
     if (val)
       currentTheme = json_integer_value(val);
+    extProcNeeded = true;
+    drawn = false;  
   }
 
 };
 
 struct VenomWidget : ModuleWidget {
-  bool initialDraw = false;
   std::string moduleName;
   void draw(const DrawArgs & args) override {
     ModuleWidget::draw(args);
-    if (!initialDraw && module){
-      dynamic_cast<VenomModule*>(this->module)->paramInitRequired = true;
-      initialDraw = true;
-    }
+    if (module) dynamic_cast<VenomModule*>(this->module)->drawn = true;
   }
 
   void setVenomPanel(std::string name){
