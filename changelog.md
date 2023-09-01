@@ -1,17 +1,17 @@
 # Venom Modules Changelog
 
-## 2.4.1 (2023-??-??)
+## 2.4.1 (2023-09-01)
 ### Enhancements
 - Venom Default Dark Theme option has been added to all module context menus
 - Modules using default theme use normal default if VCV dark panel option is off, and dark default if VCV dark panel option is on
-- Added option to set custom default value for most parameters via parameter context menu
-- Presets can now save and restore parameter lock settings
+- Added option to set custom default value for most parameters via parameter context menus
+- Presets now save and restore parameter lock and default value settings
 
 ## 2.4.0 (2023-08-04)
 ### New Module
 - Venom Blank
 
-### Behavior Change
+### Enhancements
 - Rhythm Explorer: There are now options to select 24 or 48 PPQN input clocks, as well as options to set output gate widths to input clock width, 50% of division width, or 100% of division width.
 
 ### Bug Fix
