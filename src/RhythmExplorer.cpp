@@ -13,8 +13,6 @@
 #define LIGHT_DIM 0.1f
 #define LIGHT_FADE 5e-6f
 
-#define MODULE_NAME RhythmExplorer
-
 static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/2",
   "1/4",
@@ -154,7 +152,6 @@ struct RhythmExplorer : VenomModule {
   bool newSeedTrigHigh;
   bool runGateBtnHigh;
   bool runGateTrigHigh;
-  bool drawn = false;
   bool lockActive = false;
   bool initBtnHigh;
   bool densityLightOn[SLIDER_COUNT];
@@ -425,7 +422,7 @@ struct RhythmExplorer : VenomModule {
     lights[PATOFF_LIGHT].setBrightnessSmooth((params[PATOFF_PARAM].getValue()>0.f) ? 1.f : LIGHT_OFF, args.sampleTime);
 
     // Lock
-    if (drawn && (params[LOCK_PARAM].getValue()>0.f) != lockActive)
+    if (drawn && ((params[LOCK_PARAM].getValue()>0.f) != lockActive))
       setLockStatus();
     lights[LOCK_LIGHT].setBrightnessSmooth(lockActive ? 1.f : LIGHT_OFF, args.sampleTime);
 
@@ -699,10 +696,10 @@ struct VCVBezelLightBig : TBase {
 
 
 template <typename TBase, typename TLight = WhiteLight>
-struct LightButton : TBase {
+struct MyLightButton : TBase {
   app::ModuleLightWidget* light;
 
-  LightButton() {
+  MyLightButton() {
     light = new TLight;
     // Move center of light to center of box
     light->box.pos = this->box.size.div(2).minus(light->box.size.div(2));
@@ -714,7 +711,7 @@ struct LightButton : TBase {
   }
 };
 
-using VCVBezelLightBigWhite = LightButton<VCVBezelBig, VCVBezelLightBig<WhiteLight>>;
+using VCVBezelLightBigWhite = MyLightButton<VCVBezelBig, VCVBezelLightBig<WhiteLight>>;
 
 struct RhythmExplorerWidget : VenomWidget {
 
@@ -912,13 +909,6 @@ struct RhythmExplorerWidget : VenomWidget {
     ));
 
     VenomWidget::appendContextMenu(menu);
-  }
-
-  void draw(const DrawArgs & args) override {
-    ModuleWidget::draw(args);
-    if (module){
-      dynamic_cast<RhythmExplorer*>(this->module)->drawn = true;
-    }
   }
 
 };

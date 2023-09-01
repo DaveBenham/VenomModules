@@ -3,8 +3,6 @@
 
 #include "plugin.hpp"
 
-#define MODULE_NAME PolyUnison
-
 struct PolyUnison : VenomModule {
   enum ParamId {
     CLONE_PARAM,

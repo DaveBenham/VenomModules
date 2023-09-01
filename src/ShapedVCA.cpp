@@ -6,7 +6,6 @@
 #include <cfloat>
 #include "Filter.hpp"
 
-#define MODULE_NAME ShapedVCA
 #define HARD_CLIP 1
 #define SOFT_CLIP 2
 
