@@ -2,11 +2,12 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
+#include "MixModule.hpp"
 #include "math.hpp"
 #include <cfloat>
 #include "Filter.hpp"
 
-struct VCAMix4 : VenomModule {
+struct VCAMix4 : MixBaseModule {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 4),
     MIX_LEVEL_PARAM,
@@ -44,6 +45,7 @@ struct VCAMix4 : VenomModule {
 
   VCAMix4() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    mixType = VCAMIX4_TYPE;
     for (int i=0; i < 4; i++){
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);
@@ -101,7 +103,7 @@ struct VCAMix4 : VenomModule {
   }
 
   void process(const ProcessArgs& args) override {
-    VenomModule::process(args);
+    MixBaseModule::process(args);
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||
         connected[0] != inputs[INPUTS + 0].isConnected() ||
         connected[1] != inputs[INPUTS + 1].isConnected() ||

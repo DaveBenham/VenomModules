@@ -16,6 +16,11 @@ extern Model* modelCloneMerge;
 extern Model* modelHQ;
 extern Model* modelMix4;
 extern Model* modelMix4Stereo;
+extern Model* modelMixMute;
+extern Model* modelMixOffset;
+extern Model* modelMixPan;
+extern Model* modelMixSend;
+extern Model* modelMixSolo;
 extern Model* modelPolyClone;
 extern Model* modelPolyUnison;
 extern Model* modelRecurse;
@@ -64,6 +69,7 @@ struct VenomModule : Module {
   bool drawn = false;
   bool paramsInitialized = false;
   bool extProcNeeded = true;
+  std::string moduleName = "";
 
   std::string currentThemeStr(bool dark=false){
     return modThemes[currentTheme==0 ? (dark ? defaultDarkTheme : defaultTheme)+1 : currentTheme];
@@ -216,6 +222,8 @@ struct VenomWidget : ModuleWidget {
 
   void setVenomPanel(std::string name){
     moduleName = name;
+    VenomModule* mod = dynamic_cast<VenomModule*>(this->module);
+    if (mod) mod->moduleName = name;
     setPanel(createPanel(
       asset::plugin( pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr() : themes[getDefaultTheme()])),
       asset::plugin( pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr(true) : themes[getDefaultDarkTheme()]))
@@ -565,6 +573,22 @@ struct CKSSThreeHorizontalLockable : CKSSThreeHorizontal {
   }
 };
 
+template <typename TLightBase = WhiteLight>
+struct VCVLightBezelLockable : VCVLightBezel<TLightBase> {
+  void appendContextMenu(Menu* menu) override {
+    if (this->module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+template <typename TLightBase = WhiteLight>
+struct VCVLightBezelLatchLockable : VCVLightBezelLatch<TLightBase> {
+  void appendContextMenu(Menu* menu) override {
+    if (this->module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
 template <typename TLight>
 struct VCVLightButtonLockable : VCVButton {
   app::ModuleLightWidget* light;
@@ -585,4 +609,3 @@ struct VCVLightButtonLockable : VCVButton {
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
-

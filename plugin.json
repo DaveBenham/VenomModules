@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.4.1",
+  "version": "2.5.0beta",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -77,6 +77,71 @@
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-4-stereo",
       "tags": [
         "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "MixMute",
+      "name": "Mix Mute Expander",
+      "description": "Add mutes to any of the Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-mute-expander",
+      "tags": [
+        "Attenuator",
+        "Expander",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "MixOffset",
+      "name": "Mix Offset Expander",
+      "description": "Add offset control to any of the Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-offset-expander",
+      "tags": [
+        "Attenuator",
+        "Expander",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "MixPan",
+      "name": "Mix Pan Expander",
+      "description": "Add pan control to either of the stereo Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-pan-expander",
+      "tags": [
+        "Attenuator",
+        "Expander",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "MixSend",
+      "name": "Mix Send Expander",
+      "description": "Add send/return to any of the Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-send-expander",
+      "tags": [
+        "Attenuator",
+        "Expander",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "MixSolo",
+      "name": "Mix Solo Expander",
+      "description": "Add solo to any of the Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-solo-expander",
+      "tags": [
+        "Attenuator",
+        "Expander",
         "Mixer",
         "Polyphonic",
         "Utility"

@@ -2,10 +2,11 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
+#include "MixModule.hpp"
 #include "math.hpp"
 #include "Filter.hpp"
 
-struct Mix4Stereo : VenomModule {
+struct Mix4Stereo : MixBaseModule {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 4),
     MIX_LEVEL_PARAM,
@@ -40,6 +41,8 @@ struct Mix4Stereo : VenomModule {
 
   Mix4Stereo() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    mixType=MIX4ST_TYPE;
+    stereo = true;
     for (int i=0; i < 4; i++){
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);
       configInput(LEFT_INPUTS+i, string::f("Left channel %d", i + 1));
@@ -87,7 +90,7 @@ struct Mix4Stereo : VenomModule {
   }
 
   void process(const ProcessArgs& args) override {
-    VenomModule::process(args);
+    MixBaseModule::process(args);
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||
       connected[0] != (inputs[LEFT_INPUTS + 0].isConnected() || inputs[RIGHT_INPUTS + 0].isConnected()) ||
       connected[1] != (inputs[LEFT_INPUTS + 1].isConnected() || inputs[RIGHT_INPUTS + 1].isConnected()) ||

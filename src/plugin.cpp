@@ -80,6 +80,11 @@ void init(Plugin* p) {
   p->addModel(modelHQ);
   p->addModel(modelMix4);
   p->addModel(modelMix4Stereo);
+  p->addModel(modelMixMute);
+  p->addModel(modelMixOffset);
+  p->addModel(modelMixPan);
+  p->addModel(modelMixSend);
+  p->addModel(modelMixSolo);
   p->addModel(modelPolyClone);
   p->addModel(modelPolyUnison);
   p->addModel(modelRecurse);
