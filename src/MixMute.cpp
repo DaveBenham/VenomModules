@@ -4,11 +4,11 @@
 #include "plugin.hpp"
 #include "MixModule.hpp"
 
-#define LIGHT_OFF 0.04f
+#define LIGHT_OFF 0.02f
 #define LIGHT_ON  1.f
 
 struct MixMute : MixExpanderModule {
-
+  
   MixMute() {
     venomConfig(MUTE_PARAMS_LEN, MUTE_INPUTS_LEN, MUTE_OUTPUTS_LEN, MUTE_LIGHTS_LEN);
     mixType = MIXMUTE_TYPE;

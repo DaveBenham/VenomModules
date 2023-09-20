@@ -48,7 +48,8 @@ struct Mix4 : MixBaseModule {
       "Unipolar dB (audio x2)", "Unipolar poly sum dB (audio x2)", "Bipolar % (CV)", "Bipolar x2 (CV)", "Bipolar x10 (CV)"
     });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
-    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 6.f, 0.f, "Mix Clipping", {"Off", "Hard post-level", "Soft post-level", "Soft oversampled post-levl", 
+                                                                                         "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level"});
     configOutput(MIX_OUTPUT, "Mix");
     initOversample();
     initDCBlock();
@@ -107,38 +108,128 @@ struct Mix4 : MixBaseModule {
       scale = mode == 4 ? 10.f : mode == 3 ? 2.f : 1.f;
       offset = mode <= 1 ? 0.f : -1.f;
     }
+    bool mixMuted = false;
     int clip = static_cast<int>(params[CLIP_PARAM].getValue());
     int dcBlock = static_cast<int>(params[DCBLOCK_PARAM].getValue());
+    float preOff[4], postOff[4];
+    for (int ch=0; ch<4; ch++) {
+      int Cnt = mode == 1 ? inputs[INPUTS+ch].getChannels() : 1;
+      preOff[ch] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+ch].getValue() * Cnt : 0.f;
+      postOff[ch] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+ch].getValue() * Cnt : 0.f;
+    }
 
     int channels = mode == 1 ? 1 : std::max({1, inputs[INPUTS].getChannels(), inputs[INPUTS+1].getChannels(), inputs[INPUTS+2].getChannels(), inputs[INPUTS+3].getChannels()});
-    simd::float_4 out;
-    for (int c=0; c<channels; c+=4){
-      out = mode == 1 ?
-            inputs[INPUTS+0].getVoltageSum() * (params[LEVEL_PARAMS+0].getValue()+offset)*scale
-          + inputs[INPUTS+1].getVoltageSum() * (params[LEVEL_PARAMS+1].getValue()+offset)*scale
-          + inputs[INPUTS+2].getVoltageSum() * (params[LEVEL_PARAMS+2].getValue()+offset)*scale
-          + inputs[INPUTS+3].getVoltageSum() * (params[LEVEL_PARAMS+3].getValue()+offset)*scale
-        :
-            inputs[INPUTS+0].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+0].getValue()+offset)*scale
-          + inputs[INPUTS+1].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+1].getValue()+offset)*scale
-          + inputs[INPUTS+2].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+2].getValue()+offset)*scale
-          + inputs[INPUTS+3].getNormalPolyVoltageSimd<simd::float_4>(normal, c) * (params[LEVEL_PARAMS+3].getValue()+offset)*scale;
-      out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
-      if (dcBlock && dcBlock <= 2)
-        out = dcBlockBeforeFilter[c/4].process(out);
-      if (clip == 1)
-        out = clamp(out, -10.f, 10.f);
-      if (clip == 2)
-        out = softClip(out);
-      if (clip == 3){
-        for (int i=0; i<oversample; i++){
-          out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
+    simd::float_4 out, channel[4];
+    for (int c=0; c<channels; c+=4){ // c = polyphonic channel
+      out = 0.f;
+      for (int ch=0; ch<4; ch++){ // ch = mixer channel
+        channel[ch] = mode == 1 ?
+            (inputs[INPUTS+ch].getVoltageSum() + preOff[ch]) * (params[LEVEL_PARAMS+ch].getValue()+offset)*scale + postOff[ch]
+          :
+            (inputs[INPUTS+ch].getNormalPolyVoltageSimd<simd::float_4>(normal, c) + preOff[ch]) * (params[LEVEL_PARAMS+ch].getValue()+offset)*scale + postOff[ch];
+      }
+      for (unsigned int x=0; x<expanders.size(); x++){
+        MixModule* exp = expanders[x];
+        MixModule* muteMod;
+        switch(exp->mixType) {
+          case MIXMUTE_TYPE:
+            muteMod = exp;
+            if (muteSoloExpander && (
+                  muteSoloExpander->params[SOLO_PARAM+0].getValue() || muteSoloExpander->params[SOLO_PARAM+1].getValue() || 
+                  muteSoloExpander->params[SOLO_PARAM+2].getValue() || muteSoloExpander->params[SOLO_PARAM+3].getValue() 
+               )){
+              if (!muteSoloExpander->params[SOLO_PARAM+0].getValue()) channel[0] = 0.f;
+              if (!muteSoloExpander->params[SOLO_PARAM+1].getValue()) channel[1] = 0.f;
+              if (!muteSoloExpander->params[SOLO_PARAM+2].getValue()) channel[2] = 0.f;
+              if (!muteSoloExpander->params[SOLO_PARAM+3].getValue()) channel[3] = 0.f;
+            }
+            else if (!exp->isBypassed()) {
+              muteMod->muteStus[0].process(muteMod->params[MUTE_PARAM+0].getValue()*10.f + muteMod->inputs[MUTE_INPUT+0].getVoltage(), 0.1f, 1.f);
+              muteMod->muteStus[1].process(muteMod->params[MUTE_PARAM+1].getValue()*10.f + muteMod->inputs[MUTE_INPUT+1].getVoltage(), 0.1f, 1.f);
+              muteMod->muteStus[2].process(muteMod->params[MUTE_PARAM+2].getValue()*10.f + muteMod->inputs[MUTE_INPUT+2].getVoltage(), 0.1f, 1.f);
+              muteMod->muteStus[3].process(muteMod->params[MUTE_PARAM+3].getValue()*10.f + muteMod->inputs[MUTE_INPUT+3].getVoltage(), 0.1f, 1.f);
+              if (muteMod->muteStus[0].isHigh()) channel[0] = 0.f;
+              if (muteMod->muteStus[1].isHigh()) channel[1] = 0.f;
+              if (muteMod->muteStus[2].isHigh()) channel[2] = 0.f;
+              if (muteMod->muteStus[3].isHigh()) channel[3] = 0.f;
+            }
+            if (!exp->isBypassed()){
+              muteMod->muteStus[4].process(muteMod->params[MUTE_MIX_PARAM].getValue()*10.f + muteMod->inputs[MUTE_MIX_INPUT].getVoltage(), 0.1f, 1.f);
+              mixMuted = muteMod->muteStus[4].isHigh();
+            }
+            break;
+          case MIXSOLO_TYPE:
+            muteMod = muteSoloExpander;
+            if (!exp->isBypassed() && (
+                 exp->params[SOLO_PARAM+0].getValue() || exp->params[SOLO_PARAM+1].getValue() || 
+                 exp->params[SOLO_PARAM+2].getValue() || exp->params[SOLO_PARAM+3].getValue()
+               )){
+              if (!exp->params[SOLO_PARAM+0].getValue()) channel[0] = 0.f;
+              if (!exp->params[SOLO_PARAM+1].getValue()) channel[1] = 0.f;
+              if (!exp->params[SOLO_PARAM+2].getValue()) channel[2] = 0.f;
+              if (!exp->params[SOLO_PARAM+3].getValue()) channel[3] = 0.f;
+            }
+            else if (muteSoloExpander) {
+              muteMod->muteStus[0].process(muteMod->params[MUTE_PARAM+0].getValue()*10.f + muteMod->inputs[MUTE_INPUT+0].getVoltage(), 0.1f, 1.f);
+              muteMod->muteStus[1].process(muteMod->params[MUTE_PARAM+1].getValue()*10.f + muteMod->inputs[MUTE_INPUT+1].getVoltage(), 0.1f, 1.f);
+              muteMod->muteStus[2].process(muteMod->params[MUTE_PARAM+2].getValue()*10.f + muteMod->inputs[MUTE_INPUT+2].getVoltage(), 0.1f, 1.f);
+              muteMod->muteStus[3].process(muteMod->params[MUTE_PARAM+3].getValue()*10.f + muteMod->inputs[MUTE_INPUT+3].getVoltage(), 0.1f, 1.f);
+              if (muteMod->muteStus[0].isHigh()) channel[0] = 0.f;
+              if (muteMod->muteStus[1].isHigh()) channel[1] = 0.f;
+              if (muteMod->muteStus[2].isHigh()) channel[2] = 0.f;
+              if (muteMod->muteStus[3].isHigh()) channel[3] = 0.f;
+            }
+            if (muteSoloExpander){
+              muteMod->muteStus[4].process(muteMod->params[MUTE_MIX_PARAM].getValue()*10.f + muteMod->inputs[MUTE_MIX_INPUT].getVoltage(), 0.1f, 1.f);
+              mixMuted = muteMod->muteStus[4].isHigh();
+            }
+            break;
+          case MIXSEND_TYPE:
+            exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
+                   channel[0] * exp->params[SEND_PARAM+0].getValue()
+                 + channel[1] * exp->params[SEND_PARAM+1].getValue()
+                 + channel[2] * exp->params[SEND_PARAM+2].getValue()
+                 + channel[3] * exp->params[SEND_PARAM+3].getValue(),
+                 c
+            );
+            if (channels-c <= 4) {
+              exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
+              exp->outputs[RIGHT_SEND_OUTPUT].setVoltage(0.f);
+              exp->outputs[RIGHT_SEND_OUTPUT].setChannels(1);
+            }  
+            out += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            break;
+        }  
+      }
+      if (mixMuted) {
+        out = 0.f;
+      }
+      else {
+        out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
+        if (clip <= 3) {
+          out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+          if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
+        }
+        if (dcBlock && dcBlock <= 2)
+          out = dcBlockBeforeFilter[c/4].process(out);
+        if (clip == 1 || clip == 4)
+          out = clamp(out, -10.f, 10.f);
+        if (clip == 2 || clip == 5)
           out = softClip(out);
-          out = outDownSample[c/4].process(out);
+        if (clip == 3 || clip == 6){
+          for (int i=0; i<oversample; i++){
+            out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
+            out = softClip(out);
+            out = outDownSample[c/4].process(out);
+          }
+        }
+        if (dcBlock == 3 || (dcBlock == 2 && clip))
+          out = dcBlockAfterFilter[c/4].process(out);
+        if (clip > 3){
+          out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+          if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip))
-        out = dcBlockAfterFilter[c/4].process(out);
       outputs[MIX_OUTPUT].setVoltageSimd(out, c);
     }
     outputs[MIX_OUTPUT].setChannels(channels);
@@ -146,35 +237,7 @@ struct Mix4 : MixBaseModule {
 
 };
 
-struct Mix4Widget : VenomWidget {
-
-  struct ModeSwitch : GlowingSvgSwitchLockable {
-    ModeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
-    }
-  };
-
-  struct ClipSwitch : GlowingSvgSwitchLockable {
-    ClipSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
-    }
-  };
-
-  struct DCBlockSwitch : GlowingSvgSwitchLockable {
-    DCBlockSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-    }
-  };
+struct Mix4Widget : MixBaseWidget {
 
   Mix4Widget(Mix4* module) {
     setModule(module);

@@ -73,7 +73,8 @@ struct VCAMix4Stereo : MixBaseModule {
       "Bipolar linear band limited - CV unclamped", "Bipolar exponential band limited - CV unclamped"
     });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
-    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 6.f, 0.f, "Mix Clipping", {"Off", "Hard post-level", "Soft post-level", "Soft oversampled post-levl", 
+                                                                                         "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level"});
     configSwitch<FixedSwitchQuantity>(EXCLUDE_PARAM, 0.f, 1.f, 0.f, "Exclude Patched Outs from Mix", {"Off", "On"});
     configInput(LEFT_CHAIN_INPUT, "Left chain");
     configInput(RIGHT_CHAIN_INPUT, "Right chain");
@@ -252,21 +253,23 @@ struct VCAMix4Stereo : MixBaseModule {
         cv = simd::clamp(cv, 0.f, 1.f);
       if (vcaMode == 1 || vcaMode == 3)
         cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
-      leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
-      rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+      if (clip <= 3) {
+        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+      }
       if (dcBlock && dcBlock <= 2){
         leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
         rightOut = rightDcBlockBeforeFilter[c/4].process(rightOut);
       }
-      if (clip == 1){
+      if (clip == 1 || clip == 4){
         leftOut = clamp(leftOut, -10.f, 10.f);
         rightOut = clamp(rightOut, -10.f, 10.f);
       }
-      if (clip == 2){
+      if (clip == 2 || clip ==5 ){
         leftOut = softClip(leftOut);
         rightOut = softClip(rightOut);
       }
-      if (clip == 3){
+      if (clip == 3 || clip == 6){
         for (int i=0; i<oversample; i++){
           leftOut = leftUpSample[c/4].process(i ? simd::float_4::zero() : leftOut*oversample);
           leftOut = softClip(leftOut);
@@ -279,6 +282,10 @@ struct VCAMix4Stereo : MixBaseModule {
       if (dcBlock == 3 || (dcBlock == 2 && clip)){
         leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
+      }
+      if (clip > 3) {
+        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
       }
       outputs[LEFT_MIX_OUTPUT].setVoltageSimd(leftOut, c);
       outputs[RIGHT_MIX_OUTPUT].setVoltageSimd(rightOut, c);
@@ -293,53 +300,7 @@ struct VCAMix4Stereo : MixBaseModule {
 
 };
 
-struct VCAMix4StereoWidget : VenomWidget {
-
-  struct ModeSwitch : GlowingSvgSwitchLockable {
-    ModeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
-    }
-  };
-
-  struct ClipSwitch : GlowingSvgSwitchLockable {
-    ClipSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
-    }
-  };
-
-  struct DCBlockSwitch : GlowingSvgSwitchLockable {
-    DCBlockSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-    }
-  };
-
-  struct VCAModeSwitch : GlowingSvgSwitchLockable {
-    VCAModeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-    }
-  };
-
-  struct ExcludeSwitch : GlowingSvgSwitchLockable {
-    ExcludeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
-    }
-  };
+struct VCAMix4StereoWidget : MixBaseWidget {
 
   VCAMix4StereoWidget(VCAMix4Stereo* module) {
     setModule(module);

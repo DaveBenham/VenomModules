@@ -123,9 +123,9 @@
     },
     {
       "slug": "MixSend",
-      "name": "Mix Send Expander",
-      "description": "Add send/return to any of the Mix modules",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-send-expander",
+      "name": "Mix Aux Send Expander",
+      "description": "Add aux send/return to any of the Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-aux-send-expander",
       "tags": [
         "Attenuator",
         "Expander",

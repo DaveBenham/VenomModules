@@ -4,7 +4,7 @@
 #include "plugin.hpp"
 #include "MixModule.hpp"
 
-#define LIGHT_OFF 0.04f
+#define LIGHT_OFF 0.02f
 #define LIGHT_ON  1.f
 
 struct MixSend : MixExpanderModule {
@@ -17,7 +17,7 @@ struct MixSend : MixExpanderModule {
       configParam(SEND_PARAM+i, 0.f, 1.f, 0.f, "Send level "+i_s);
     }
     configParam(RETURN_PARAM, 0.f, 1.f, 1.f, "Return level");
-    configSwitch(RETURN_MUTE_PARAM, 0.f, 1.f, 0.f, "Return Mute", {"Unmuted", "Muted"});
+    configSwitch(SEND_MUTE_PARAM, 0.f, 1.f, 0.f, "Send Mute", {"Unmuted", "Muted"});
     configOutput(LEFT_SEND_OUTPUT, "Left send");
     configOutput(RIGHT_SEND_OUTPUT, "Right send");
     configInput(LEFT_RETURN_INPUT, "Left return");
@@ -42,7 +42,7 @@ struct MixSendWidget : MixExpanderWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 103.775f), module, MixModule::SEND_PARAM+2));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 134.514f), module, MixModule::SEND_PARAM+3));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 169.926f), module, MixModule::RETURN_PARAM));
-    addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 203.278f), module, MixModule::RETURN_MUTE_PARAM, MixModule::RETURN_MUTE_LIGHT));
+    addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 203.278f), module, MixModule::SEND_MUTE_PARAM, MixModule::RETURN_MUTE_LIGHT));
     addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f, 240.820f), module, MixModule::LEFT_SEND_OUTPUT));
     addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f, 272.820f), module, MixModule::RIGHT_SEND_OUTPUT));
     addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 310.795f), module, MixModule::LEFT_RETURN_INPUT));
@@ -52,7 +52,7 @@ struct MixSendWidget : MixExpanderWidget {
   void step() override {
     MixExpanderWidget::step();
     if(this->module) {
-      this->module->lights[MixModule::RETURN_MUTE_LIGHT].setBrightness(this->module->params[MixModule::RETURN_MUTE_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
+      this->module->lights[MixModule::RETURN_MUTE_LIGHT].setBrightness(this->module->params[MixModule::SEND_MUTE_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
     }  
   }
 

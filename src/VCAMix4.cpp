@@ -63,7 +63,8 @@ struct VCAMix4 : MixBaseModule {
       "Bipolar linear band limited - CV unclamped", "Bipolar exponential band limited - CV unclamped"
     });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
-    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 6.f, 0.f, "Mix Clipping", {"Off", "Hard post-level", "Soft post-level", "Soft oversampled post-levl", 
+                                                                                         "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level"});
     configSwitch<FixedSwitchQuantity>(EXCLUDE_PARAM, 0.f, 1.f, 0.f, "Exclude Patched Outs from Mix", {"Off", "On"});
     configInput(CHAIN_INPUT, "Chain");
     configOutput(MIX_OUTPUT, "Mix");
@@ -170,14 +171,15 @@ struct VCAMix4 : MixBaseModule {
         cv = vcaBandlimit[0][4][c/4].process(cv);
         out = vcaBandlimit[1][4][c/4].process(out);
       }
-      out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+      if (clip <= 3)
+        out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
       if (dcBlock && dcBlock <= 2)
         out = dcBlockBeforeFilter[c/4].process(out);
-      if (clip == 1)
+      if (clip == 1 || clip == 4)
         out = clamp(out, -10.f, 10.f);
-      if (clip == 2)
+      if (clip == 2 || clip == 5)
         out = softClip(out);
-      if (clip == 3){
+      if (clip == 3 || clip == 6){
         for (int i=0; i<oversample; i++){
           out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
           out = softClip(out);
@@ -186,6 +188,8 @@ struct VCAMix4 : MixBaseModule {
       }
       if (dcBlock == 3 || (dcBlock == 2 && clip))
         out = dcBlockAfterFilter[c/4].process(out);
+      if (clip > 3)
+        out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
       outputs[MIX_OUTPUT].setVoltageSimd(out, c);
     }
     for (int i=0; i<4; i++)
@@ -195,53 +199,7 @@ struct VCAMix4 : MixBaseModule {
 
 };
 
-struct VCAMix4Widget : VenomWidget {
-
-  struct ModeSwitch : GlowingSvgSwitchLockable {
-    ModeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
-    }
-  };
-
-  struct ClipSwitch : GlowingSvgSwitchLockable {
-    ClipSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
-    }
-  };
-
-  struct DCBlockSwitch : GlowingSvgSwitchLockable {
-    DCBlockSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-    }
-  };
-
-  struct VCAModeSwitch : GlowingSvgSwitchLockable {
-    VCAModeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-    }
-  };
-
-  struct ExcludeSwitch : GlowingSvgSwitchLockable {
-    ExcludeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
-    }
-  };
+struct VCAMix4Widget : MixBaseWidget {
 
   VCAMix4Widget(VCAMix4* module) {
     setModule(module);

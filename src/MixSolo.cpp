@@ -4,7 +4,7 @@
 #include "plugin.hpp"
 #include "MixModule.hpp"
 
-#define LIGHT_OFF 0.04f
+#define LIGHT_OFF 0.02f
 #define LIGHT_ON  1.f
 
 struct MixSolo : MixExpanderModule {

@@ -53,7 +53,8 @@ struct Mix4Stereo : MixBaseModule {
       "Unipolar dB (audio x2)", "Unipolar poly sum dB (audio x2)", "Bipolar % (CV)", "Bipolar x2 (CV)", "Bipolar x10 (CV)"
     });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
-    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 0.f, "Mix Clipping", {"Off", "Hard CV clipping", "Soft audio clipping", "Soft oversampled audio clipping"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 6.f, 0.f, "Mix Clipping", {"Off", "Hard post-level", "Soft post-level", "Soft oversampled post-levl", 
+                                                                                         "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level"});
     configOutput(LEFT_OUTPUT, "Left Mix");
     configOutput(RIGHT_OUTPUT, "Right Mix");
     initOversample();
@@ -153,21 +154,23 @@ struct Mix4Stereo : MixBaseModule {
           }
         }
       }
-      leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
-      rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+      if (clip <= 3) {
+        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+      }
       if (dcBlock && dcBlock <= 2){
         leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
         rightOut = rightDcBlockBeforeFilter[c/4].process(rightOut);
       }
-      if (clip == 1){
+      if (clip == 1 || clip ==4){
         leftOut = clamp(leftOut, -10.f, 10.f);
         rightOut = clamp(rightOut, -10.f, 10.f);
       }
-      if (clip == 2){
+      if (clip == 2 || clip == 5){
         leftOut = softClip(leftOut);
         rightOut = softClip(rightOut);
       }
-      if (clip == 3){
+      if (clip == 3 || clip ==6){
         for (int i=0; i<oversample; i++){
           leftOut = leftUpSample[c/4].process(i ? simd::float_4::zero() : leftOut*oversample);
           leftOut = softClip(leftOut);
@@ -181,6 +184,10 @@ struct Mix4Stereo : MixBaseModule {
         leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }
+      if (clip > 3) {
+        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+      }
       outputs[LEFT_OUTPUT].setVoltageSimd(leftOut, c);
       outputs[RIGHT_OUTPUT].setVoltageSimd(rightOut, c);
     }
@@ -190,36 +197,8 @@ struct Mix4Stereo : MixBaseModule {
 
 };
 
-struct Mix4StereoWidget : VenomWidget {
+struct Mix4StereoWidget : MixBaseWidget {
   
-  struct ModeSwitch : GlowingSvgSwitchLockable {
-    ModeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
-    }
-  };
-
-  struct ClipSwitch : GlowingSvgSwitchLockable {
-    ClipSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
-    }
-  };
-
-  struct DCBlockSwitch : GlowingSvgSwitchLockable {
-    DCBlockSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
-    }
-  };
-
   Mix4StereoWidget(Mix4Stereo* module) {
     setModule(module);
     setVenomPanel("Mix4Stereo");

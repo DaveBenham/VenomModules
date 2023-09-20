@@ -13,6 +13,8 @@ struct MixModule : VenomModule {
   };
   
   int mixType=-1;
+  bool softMute = false;
+  bool toggleMute = false;
 
   enum ExpLightId {
     EXP_LIGHT,
@@ -69,7 +71,7 @@ struct MixModule : VenomModule {
   enum SendParamId {
     ENUMS(SEND_PARAM,4),
     RETURN_PARAM,
-    RETURN_MUTE_PARAM,
+    SEND_MUTE_PARAM,
     SEND_PARAMS_LEN
   };
   enum SendInputId {
@@ -106,6 +108,8 @@ struct MixModule : VenomModule {
   
   MixModule* leftExpander = NULL;
   MixModule* rightExpander = NULL;
+  dsp::SchmittTrigger muteStus[5];
+  dsp::SlewLimiter fade[5];
   
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (e.side)
@@ -121,47 +125,163 @@ struct MixExpanderModule : MixModule {
 
 struct MixBaseModule : MixModule {
   bool stereo = false;
-  MixModule* muteModule = NULL;
-  MixModule* offsetModule = NULL;
-  MixModule* panModule = NULL;
-  MixModule* soloModule = NULL;
-  std::vector<MixModule*> sendModules;
+
+  bool mutePresent = false;
+  bool offsetPresent = false;
+  bool panPresent = false;
+  bool sendPresent = true;
+  bool soloPresent = false;
+  MixModule* offsetExpander = NULL;
+  MixModule* muteSoloExpander = NULL;
+  MixModule* muteExpander = NULL;
+  std::vector<MixModule*> expanders;
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+
+    mutePresent = false;
+    offsetPresent = false;
+    panPresent = false;
+    sendPresent = false;
+    soloPresent = false;
     // Clear expanders
-    muteModule = NULL;
-    offsetModule = NULL;
-    panModule = NULL;
-    soloModule = NULL;
-    sendModules.clear();
+    offsetExpander = NULL;
+    muteSoloExpander = NULL;
+    expanders.clear();
     // Load expanders
     for (MixModule* mod = rightExpander; mod; mod = mod->rightExpander) {
-      if (mod->mixType == MIXMUTE_TYPE && !muteModule) {
-        muteModule = mod;
+      if (mod->mixType == MIXMUTE_TYPE && !mutePresent) {
+        mutePresent = true;
+        if (soloPresent) {
+          if (!mod->isBypassed()) muteSoloExpander = mod;
+        }
+        else
+          expanders.push_back(mod);
       }  
-      else if (mod->mixType == MIXOFFSET_TYPE && !offsetModule) {
-        offsetModule = mod;
+      else if (mod->mixType == MIXOFFSET_TYPE && !offsetPresent) {
+        offsetPresent = true;
+        if (!mod->isBypassed()) offsetExpander = mod;
       }
-      else if (mod->mixType == MIXPAN_TYPE && stereo && !panModule) {
-        panModule = mod;
+      else if (mod->mixType == MIXPAN_TYPE && stereo && !panPresent) {
+        panPresent = true;
+        if (!mod->isBypassed()) expanders.push_back(mod);
       }
       else if (mod->mixType == MIXSEND_TYPE) {
-        sendModules.push_back(mod);
+        sendPresent = true;
+        if (!mod->isBypassed() && !mod->params[SEND_MUTE_PARAM].getValue()) expanders.push_back(mod);
       }
-      else if (mod->mixType == MIXSOLO_TYPE && !soloModule) {
-        if (!mod->isBypassed()) soloModule = mod;
+      else if (mod->mixType == MIXSOLO_TYPE && !soloPresent) {
+        soloPresent = true;
+        if (mutePresent) {
+          if (!mod->isBypassed()) muteSoloExpander = mod;
+        }
+        else
+          expanders.push_back(mod);
       }
       else
         break;
     }
-    // Clear bypassed expanders
-    if (muteModule && muteModule->isBypassed()) muteModule = NULL;
-    if (offsetModule && offsetModule->isBypassed()) offsetModule = NULL;
-    if (panModule && panModule->isBypassed()) panModule = NULL;
-    if (soloModule && soloModule->isBypassed()) soloModule = NULL;
   }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "softMute", json_boolean(softMute));
+    json_object_set_new(rootJ, "toggleMute", json_boolean(toggleMute));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "softMute")))
+      softMute = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "toggleMute")))
+      toggleMute = json_boolean_value(val);
+  }
+
 };
+
+struct MixBaseWidget : VenomWidget {
+
+  struct ModeSwitch : GlowingSvgSwitchLockable {
+    ModeSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+    }
+  };
+
+  struct ClipSwitch : GlowingSvgSwitchLockable {
+    ClipSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+    }
+  };
+
+  struct DCBlockSwitch : GlowingSvgSwitchLockable {
+    DCBlockSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+    }
+  };
+
+  struct VCAModeSwitch : GlowingSvgSwitchLockable {
+    VCAModeSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+    }
+  };
+
+  struct ExcludeSwitch : GlowingSvgSwitchLockable {
+    ExcludeSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
+    }
+  };
+
+  void appendContextMenu(Menu* menu) override {
+    MixBaseModule* module = dynamic_cast<MixBaseModule*>(this->module);
+
+    if (module->mutePresent || module->soloPresent || module->sendPresent) {
+      menu->addChild(new MenuSeparator);
+
+      menu->addChild(createBoolMenuItem("Soft mute/solo", "",
+        [=]() {
+          return module->softMute;
+        },
+        [=](bool val) {
+          module->softMute = val;
+        }
+      ));    
+
+      if (module->mutePresent)
+        menu->addChild(createBoolMenuItem("Mute CV toggles on/off", "",
+          [=]() {
+            return module->toggleMute;
+          },
+          [=](bool val) {
+            module->toggleMute = val;
+          }
+        ));    
+    }
+
+    VenomWidget::appendContextMenu(menu);
+  }
+
+};  
 
 struct MixExpanderWidget : VenomWidget {
   void step() override {
@@ -193,8 +313,16 @@ struct MixExpanderWidget : VenomWidget {
       }
       mixMod = dynamic_cast<MixModule*>(mixMod->getLeftExpander().module);
     }
-    if(this->module) this->module->lights[MixModule::EXP_LIGHT].setBrightness(connected);
-
+    if(this->module) {
+      mixMod = dynamic_cast<MixModule*>(this->module);
+      mixMod->lights[MixModule::EXP_LIGHT].setBrightness(connected);
+      if (!connected)
+        for (int i=0; i<mixMod->getNumOutputs(); i++) {
+          mixMod->outputs[i].setVoltage(0.f);
+          mixMod->outputs[i].setChannels(1);
+        }
+    }
+    
     VenomWidget::step();
-  }
+  }  
 };
