@@ -130,67 +130,26 @@ struct Mix4 : MixBaseModule {
       }
       for (unsigned int x=0; x<expanders.size(); x++){
         MixModule* exp = expanders[x];
-        MixModule* muteMod;
+        MixModule* soloMod = NULL;
+        MixModule* muteMod = NULL;
         switch(exp->mixType) {
           case MIXMUTE_TYPE:
             muteMod = exp;
-            if (muteSoloExpander && (
-                  muteSoloExpander->params[SOLO_PARAM+0].getValue() || muteSoloExpander->params[SOLO_PARAM+1].getValue() || 
-                  muteSoloExpander->params[SOLO_PARAM+2].getValue() || muteSoloExpander->params[SOLO_PARAM+3].getValue() 
-               )){
-              if (!muteSoloExpander->params[SOLO_PARAM+0].getValue()) channel[0] = 0.f;
-              if (!muteSoloExpander->params[SOLO_PARAM+1].getValue()) channel[1] = 0.f;
-              if (!muteSoloExpander->params[SOLO_PARAM+2].getValue()) channel[2] = 0.f;
-              if (!muteSoloExpander->params[SOLO_PARAM+3].getValue()) channel[3] = 0.f;
-            }
-            else if (!exp->isBypassed()) {
-              muteMod->muteStus[0].process(muteMod->params[MUTE_PARAM+0].getValue()*10.f + muteMod->inputs[MUTE_INPUT+0].getVoltage(), 0.1f, 1.f);
-              muteMod->muteStus[1].process(muteMod->params[MUTE_PARAM+1].getValue()*10.f + muteMod->inputs[MUTE_INPUT+1].getVoltage(), 0.1f, 1.f);
-              muteMod->muteStus[2].process(muteMod->params[MUTE_PARAM+2].getValue()*10.f + muteMod->inputs[MUTE_INPUT+2].getVoltage(), 0.1f, 1.f);
-              muteMod->muteStus[3].process(muteMod->params[MUTE_PARAM+3].getValue()*10.f + muteMod->inputs[MUTE_INPUT+3].getVoltage(), 0.1f, 1.f);
-              if (muteMod->muteStus[0].isHigh()) channel[0] = 0.f;
-              if (muteMod->muteStus[1].isHigh()) channel[1] = 0.f;
-              if (muteMod->muteStus[2].isHigh()) channel[2] = 0.f;
-              if (muteMod->muteStus[3].isHigh()) channel[3] = 0.f;
-            }
-            if (!exp->isBypassed()){
-              muteMod->muteStus[4].process(muteMod->params[MUTE_MIX_PARAM].getValue()*10.f + muteMod->inputs[MUTE_MIX_INPUT].getVoltage(), 0.1f, 1.f);
-              mixMuted = muteMod->muteStus[4].isHigh();
-            }
+            soloMod = muteSoloExpander;
             break;
           case MIXSOLO_TYPE:
             muteMod = muteSoloExpander;
-            if (!exp->isBypassed() && (
-                 exp->params[SOLO_PARAM+0].getValue() || exp->params[SOLO_PARAM+1].getValue() || 
-                 exp->params[SOLO_PARAM+2].getValue() || exp->params[SOLO_PARAM+3].getValue()
-               )){
-              if (!exp->params[SOLO_PARAM+0].getValue()) channel[0] = 0.f;
-              if (!exp->params[SOLO_PARAM+1].getValue()) channel[1] = 0.f;
-              if (!exp->params[SOLO_PARAM+2].getValue()) channel[2] = 0.f;
-              if (!exp->params[SOLO_PARAM+3].getValue()) channel[3] = 0.f;
-            }
-            else if (muteSoloExpander) {
-              muteMod->muteStus[0].process(muteMod->params[MUTE_PARAM+0].getValue()*10.f + muteMod->inputs[MUTE_INPUT+0].getVoltage(), 0.1f, 1.f);
-              muteMod->muteStus[1].process(muteMod->params[MUTE_PARAM+1].getValue()*10.f + muteMod->inputs[MUTE_INPUT+1].getVoltage(), 0.1f, 1.f);
-              muteMod->muteStus[2].process(muteMod->params[MUTE_PARAM+2].getValue()*10.f + muteMod->inputs[MUTE_INPUT+2].getVoltage(), 0.1f, 1.f);
-              muteMod->muteStus[3].process(muteMod->params[MUTE_PARAM+3].getValue()*10.f + muteMod->inputs[MUTE_INPUT+3].getVoltage(), 0.1f, 1.f);
-              if (muteMod->muteStus[0].isHigh()) channel[0] = 0.f;
-              if (muteMod->muteStus[1].isHigh()) channel[1] = 0.f;
-              if (muteMod->muteStus[2].isHigh()) channel[2] = 0.f;
-              if (muteMod->muteStus[3].isHigh()) channel[3] = 0.f;
-            }
-            if (muteSoloExpander){
-              muteMod->muteStus[4].process(muteMod->params[MUTE_MIX_PARAM].getValue()*10.f + muteMod->inputs[MUTE_MIX_INPUT].getVoltage(), 0.1f, 1.f);
-              mixMuted = muteMod->muteStus[4].isHigh();
-            }
+            soloMod = exp;
             break;
           case MIXSEND_TYPE:
             exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
-                   channel[0] * exp->params[SEND_PARAM+0].getValue()
-                 + channel[1] * exp->params[SEND_PARAM+1].getValue()
-                 + channel[2] * exp->params[SEND_PARAM+2].getValue()
-                 + channel[3] * exp->params[SEND_PARAM+3].getValue(),
-                 c
+                 (  channel[0] * exp->params[SEND_PARAM+0].getValue()
+                  + channel[1] * exp->params[SEND_PARAM+1].getValue()
+                  + channel[2] * exp->params[SEND_PARAM+2].getValue()
+                  + channel[3] * exp->params[SEND_PARAM+3].getValue()
+                 ) * (softMute ? exp->fade[0].process(args.sampleTime, !exp->params[SEND_MUTE_PARAM].getValue())
+                               : (exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue()))
+                 ,c
             );
             if (channels-c <= 4) {
               exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
@@ -199,37 +158,60 @@ struct Mix4 : MixBaseModule {
             }  
             out += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
             break;
-        }  
-      }
-      if (mixMuted) {
-        out = 0.f;
-      }
-      else {
-        out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
-        if (clip <= 3) {
-          out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
-          if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
         }
-        if (dcBlock && dcBlock <= 2)
-          out = dcBlockBeforeFilter[c/4].process(out);
-        if (clip == 1 || clip == 4)
-          out = clamp(out, -10.f, 10.f);
-        if (clip == 2 || clip == 5)
-          out = softClip(out);
-        if (clip == 3 || clip == 6){
-          for (int i=0; i<oversample; i++){
-            out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
-            out = softClip(out);
-            out = outDownSample[c/4].process(out);
+        if (muteMod && !muteMod->isBypassed()) {
+          for (int i=0; i<5; i++) { //assumes MUTE_MIX_PARAM and MUTE_MIX_INPUT follow MUTE_PARAM AND MUTE_MIX_INPUT arrays
+            int evnt = muteMod->muteCV[i].processEvent(muteMod->inputs[MUTE_INPUT+i].getVoltage(), 0.1f, 1.f);
+            if (toggleMute && evnt>0)
+              muteMod->params[MUTE_PARAM+i].setValue(!muteMod->params[MUTE_PARAM+i].getValue());
+            if (!toggleMute && evnt)
+              muteMod->params[MUTE_PARAM+i].setValue(muteMod->muteCV[i].isHigh());
+          }
+        }  
+        if (soloMod && !soloMod->isBypassed() && (
+             soloMod->params[SOLO_PARAM+0].getValue() || soloMod->params[SOLO_PARAM+1].getValue() || 
+             soloMod->params[SOLO_PARAM+2].getValue() || soloMod->params[SOLO_PARAM+3].getValue()
+           )){
+          for (int i=0; i<4; i++){
+            channel[i] *= softMute ? fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue()) 
+                                   : (fade[i].out = soloMod->params[SOLO_PARAM+i].getValue());
           }
         }
-        if (dcBlock == 3 || (dcBlock == 2 && clip))
-          out = dcBlockAfterFilter[c/4].process(out);
-        if (clip > 3){
-          out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
-          if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
+        else if (muteMod && !muteMod->isBypassed()) {
+          for (int i=0; i<4; i++){
+            channel[i] *= softMute ? fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue()) 
+                                   : (fade[i].out = !muteMod->params[MUTE_PARAM+i].getValue());
+          }
+        }
+        if (muteMod && !muteMod->isBypassed()){
+          mixMuted = muteMod->params[MUTE_MIX_PARAM].getValue();
         }
       }
+      out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
+      if (clip <= 3) {
+        out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+        if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
+      }
+      if (dcBlock && dcBlock <= 2)
+        out = dcBlockBeforeFilter[c/4].process(out);
+      if (clip == 1 || clip == 4)
+        out = clamp(out, -10.f, 10.f);
+      if (clip == 2 || clip == 5)
+        out = softClip(out);
+      if (clip == 3 || clip == 6){
+        for (int i=0; i<oversample; i++){
+          out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
+          out = softClip(out);
+          out = outDownSample[c/4].process(out);
+        }
+      }
+      if (dcBlock == 3 || (dcBlock == 2 && clip))
+        out = dcBlockAfterFilter[c/4].process(out);
+      if (clip > 3){
+        out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
+        if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
+      }
+      out *= softMute ? fade[4].process(args.sampleTime, !mixMuted) : (fade[4].out = !mixMuted);
       outputs[MIX_OUTPUT].setVoltageSimd(out, c);
     }
     outputs[MIX_OUTPUT].setChannels(channels);

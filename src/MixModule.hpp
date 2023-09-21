@@ -13,7 +13,7 @@ struct MixModule : VenomModule {
   };
   
   int mixType=-1;
-  bool softMute = false;
+  bool softMute = true;
   bool toggleMute = false;
 
   enum ExpLightId {
@@ -108,8 +108,18 @@ struct MixModule : VenomModule {
   
   MixModule* leftExpander = NULL;
   MixModule* rightExpander = NULL;
-  dsp::SchmittTrigger muteStus[5];
+  dsp::SchmittTrigger muteCV[5];
   dsp::SlewLimiter fade[5];
+  
+  MixModule() {
+    fade[0].rise = fade[0].fall 
+                 = fade[1].rise = fade[1].fall 
+                 = fade[2].rise = fade[2].fall 
+                 = fade[3].rise = fade[3].fall
+                 = fade[4].rise = fade[4].fall
+                 = 40.f;
+                 
+  }  
   
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (e.side)
@@ -168,7 +178,7 @@ struct MixBaseModule : MixModule {
       }
       else if (mod->mixType == MIXSEND_TYPE) {
         sendPresent = true;
-        if (!mod->isBypassed() && !mod->params[SEND_MUTE_PARAM].getValue()) expanders.push_back(mod);
+        if (!mod->isBypassed()) expanders.push_back(mod);
       }
       else if (mod->mixType == MIXSOLO_TYPE && !soloPresent) {
         soloPresent = true;
