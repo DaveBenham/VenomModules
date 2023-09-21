@@ -121,7 +121,7 @@ struct Mix4 : MixBaseModule {
     int channels = mode == 1 ? 1 : std::max({1, inputs[INPUTS].getChannels(), inputs[INPUTS+1].getChannels(), inputs[INPUTS+2].getChannels(), inputs[INPUTS+3].getChannels()});
     simd::float_4 out, channel[4];
     for (int c=0; c<channels; c+=4){ // c = polyphonic channel
-      out = 0.f;
+      out = simd::float_4::zero();
       for (int ch=0; ch<4; ch++){ // ch = mixer channel
         channel[ch] = mode == 1 ?
             (inputs[INPUTS+ch].getVoltageSum() + preOff[ch]) * (params[LEVEL_PARAMS+ch].getValue()+offset)*scale + postOff[ch]
@@ -142,13 +142,18 @@ struct Mix4 : MixBaseModule {
             soloMod = exp;
             break;
           case MIXSEND_TYPE:
+            if (!c) {
+              if (softMute)
+                exp->fade[0].process(args.sampleTime, !exp->params[SEND_MUTE_PARAM].getValue());
+              else
+                exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue();
+            }
             exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
                  (  channel[0] * exp->params[SEND_PARAM+0].getValue()
                   + channel[1] * exp->params[SEND_PARAM+1].getValue()
                   + channel[2] * exp->params[SEND_PARAM+2].getValue()
                   + channel[3] * exp->params[SEND_PARAM+3].getValue()
-                 ) * (softMute ? exp->fade[0].process(args.sampleTime, !exp->params[SEND_MUTE_PARAM].getValue())
-                               : (exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue()))
+                 ) * exp->fade[0].out
                  ,c
             );
             if (channels-c <= 4) {
@@ -173,17 +178,27 @@ struct Mix4 : MixBaseModule {
              soloMod->params[SOLO_PARAM+2].getValue() || soloMod->params[SOLO_PARAM+3].getValue()
            )){
           for (int i=0; i<4; i++){
-            channel[i] *= softMute ? fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue()) 
-                                   : (fade[i].out = soloMod->params[SOLO_PARAM+i].getValue());
+            if (!c) {
+              if (softMute)
+                fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
+              else
+                fade[i].out = soloMod->params[SOLO_PARAM+i].getValue();
+            }  
+            channel[i] *= fade[i].out;
           }
         }
         else if (muteMod && !muteMod->isBypassed()) {
           for (int i=0; i<4; i++){
-            channel[i] *= softMute ? fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue()) 
-                                   : (fade[i].out = !muteMod->params[MUTE_PARAM+i].getValue());
+            if (!c) {
+              if (softMute)
+                fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
+              else
+                fade[i].out = !muteMod->params[MUTE_PARAM+i].getValue();
+            }
+            channel[i] *= fade[i].out;
           }
         }
-        if (muteMod && !muteMod->isBypassed()){
+        if (!c && muteMod && !muteMod->isBypassed()){
           mixMuted = muteMod->params[MUTE_MIX_PARAM].getValue();
         }
       }
@@ -211,7 +226,13 @@ struct Mix4 : MixBaseModule {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale;
         if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
       }
-      out *= softMute ? fade[4].process(args.sampleTime, !mixMuted) : (fade[4].out = !mixMuted);
+      if (!c){
+        if (softMute)
+          fade[4].process(args.sampleTime, !mixMuted);
+        else
+          fade[4].out = !mixMuted;
+      }
+      out *= fade[4].out; // Mix fade factor
       outputs[MIX_OUTPUT].setVoltageSimd(out, c);
     }
     outputs[MIX_OUTPUT].setChannels(channels);
