@@ -151,7 +151,7 @@ struct Mix4Stereo : MixBaseModule {
           if (connected[i]){
             leftChannel[i] = (inputs[LEFT_INPUT+i].getPolyVoltageSimd<simd::float_4>(c) + preOff[i]) * channelScale + postOff[i];
             rightChannel[i] = inputs[RIGHT_INPUT+i].isConnected()
-                            ? (inputs[LEFT_INPUT+i].getPolyVoltageSimd<simd::float_4>(c) + preOff[i]) * channelScale + postOff[i]
+                            ? (inputs[RIGHT_INPUT+i].getPolyVoltageSimd<simd::float_4>(c) + preOff[i]) * channelScale + postOff[i]
                             : leftChannel[i];
           }
           else {
@@ -175,6 +175,7 @@ struct Mix4Stereo : MixBaseModule {
           case MIXPAN_TYPE:
             for (int i=0; i<4; i++) {
               float pan = clamp(exp->params[PAN_PARAM+i].getValue() + exp->inputs[PAN_INPUT+i].getVoltage()*exp->params[PAN_CV_PARAM+i].getValue()/5.f, -1.f, 1.f);
+              int panLaw = !inputs[RIGHT_INPUT+i].isConnected() || stereoPanLaw==10 ? monoPanLaw : stereoPanLaw;
               switch (panLaw) {
                 case 0: // 0 dB
                   leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f;
@@ -212,6 +213,15 @@ struct Mix4Stereo : MixBaseModule {
                   leftChannel[i]  *= (1 - pan)*0.5f;
                   rightChannel[i] *= (1 + pan)*0.5f;
                   break;
+                case 9: // True stereo pan
+                  if (pan>0) {
+                    rightChannel[i] += leftChannel[i] * pan;
+                    leftChannel[i]  *= 1.f - pan;
+                  }
+                  else {
+                    leftChannel[i]  += rightChannel[i] * -pan;
+                    rightChannel[i] *= 1.f + pan;
+                  }
               }
             }
             break;

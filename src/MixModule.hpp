@@ -15,7 +15,8 @@ struct MixModule : VenomModule {
   int mixType=-1;
   bool softMute = true;
   bool toggleMute = false;
-  int panLaw=2;
+  int monoPanLaw=2;    // +3 dB side
+  int stereoPanLaw=10; // Follow mono law
 
   enum ExpLightId {
     EXP_LIGHT,
@@ -198,7 +199,8 @@ struct MixBaseModule : MixModule {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "softMute", json_boolean(softMute));
     json_object_set_new(rootJ, "toggleMute", json_boolean(toggleMute));
-    json_object_set_new(rootJ, "panLaw", json_integer(panLaw));
+    json_object_set_new(rootJ, "monoPanLaw", json_integer(monoPanLaw));
+    json_object_set_new(rootJ, "stereoPanLaw", json_integer(stereoPanLaw));
     return rootJ;
   }
 
@@ -209,8 +211,10 @@ struct MixBaseModule : MixModule {
       softMute = json_boolean_value(val);
     if ((val = json_object_get(rootJ, "toggleMute")))
       toggleMute = json_boolean_value(val);
-    if ((val = json_object_get(rootJ, "panLaw")))
-      panLaw = json_integer_value(val);
+    if ((val = json_object_get(rootJ, "monoPanLaw")))
+      monoPanLaw = json_integer_value(val);
+    if ((val = json_object_get(rootJ, "stereoPanLaw")))
+      stereoPanLaw = json_integer_value(val);
   }
 
 };
@@ -292,15 +296,25 @@ struct MixBaseWidget : VenomWidget {
           }
         ));    
 
-      if (module->panPresent)
+      if (module->panPresent) {
         menu->addChild(createIndexPtrSubmenuItem(
-          "Pan law", {
-            "0 dB",
-            "+1.5 dB side", "+3 dB side", "+4.5 dB side", "+6 dB side",
-            "-1.5 dB center", "-3 dB center", "-4.5 dB center", "-6 dB center",
+          "Mono input pan law", {
+            "0 dB (linear: center overpowered)",
+            "+1.5 dB side (compromise: center overpowered)", "+3 dB side (equal power)", "+4.5 dB side (compromise: side overpowered)", "+6 dB side (linear: side overpowered)",
+            "-1.5 dB center (compromise: center overpowered)", "-3 dB center (equal power)", "-4.5 dB center (compromise: side overpowered)", "-6 dB center (linear: side overpowered)"
           },
-          &module->panLaw
+          &module->monoPanLaw
         ));
+        menu->addChild(createIndexPtrSubmenuItem(
+          "Stereo input pan law", {
+            "0 dB (linear: center overpowered)",
+            "+1.5 dB side (compromise: center overpowered)", "+3 dB side (equal power)", "+4.5 dB side (compromise: side overpowered)", "+6 dB side (linear: side overpowered)",
+            "-1.5 dB center (compromise: center overpowered)", "-3 dB center (equal power)", "-4.5 dB center (compromise: side overpowered)", "-6 dB center (linear: side overpowered)",
+            "True panning (transfer content)", "Follow mono law"
+          },
+          &module->stereoPanLaw
+        ));
+      }
     }
 
     VenomWidget::appendContextMenu(menu);
