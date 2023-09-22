@@ -15,6 +15,7 @@ struct MixModule : VenomModule {
   int mixType=-1;
   bool softMute = true;
   bool toggleMute = false;
+  int panLaw=2;
 
   enum ExpLightId {
     EXP_LIGHT,
@@ -197,6 +198,7 @@ struct MixBaseModule : MixModule {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "softMute", json_boolean(softMute));
     json_object_set_new(rootJ, "toggleMute", json_boolean(toggleMute));
+    json_object_set_new(rootJ, "panLaw", json_integer(panLaw));
     return rootJ;
   }
 
@@ -207,6 +209,8 @@ struct MixBaseModule : MixModule {
       softMute = json_boolean_value(val);
     if ((val = json_object_get(rootJ, "toggleMute")))
       toggleMute = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "panLaw")))
+      panLaw = json_integer_value(val);
   }
 
 };
@@ -265,17 +269,18 @@ struct MixBaseWidget : VenomWidget {
   void appendContextMenu(Menu* menu) override {
     MixBaseModule* module = dynamic_cast<MixBaseModule*>(this->module);
 
-    if (module->mutePresent || module->soloPresent || module->sendPresent) {
+    if (module->mutePresent || module->soloPresent || module->sendPresent || module->panPresent) {
       menu->addChild(new MenuSeparator);
 
-      menu->addChild(createBoolMenuItem("Soft mute/solo", "",
-        [=]() {
-          return module->softMute;
-        },
-        [=](bool val) {
-          module->softMute = val;
-        }
-      ));    
+      if (module->mutePresent || module->soloPresent || module->sendPresent)
+        menu->addChild(createBoolMenuItem("Soft mute/solo", "",
+          [=]() {
+            return module->softMute;
+          },
+          [=](bool val) {
+            module->softMute = val;
+          }
+        ));    
 
       if (module->mutePresent)
         menu->addChild(createBoolMenuItem("Mute CV toggles on/off", "",
@@ -286,6 +291,16 @@ struct MixBaseWidget : VenomWidget {
             module->toggleMute = val;
           }
         ));    
+
+      if (module->panPresent)
+        menu->addChild(createIndexPtrSubmenuItem(
+          "Pan law", {
+            "0 dB",
+            "+1.5 dB side", "+3 dB side", "+4.5 dB side", "+6 dB side",
+            "-1.5 dB center", "-3 dB center", "-4.5 dB center", "-6 dB center",
+          },
+          &module->panLaw
+        ));
     }
 
     VenomWidget::appendContextMenu(menu);
