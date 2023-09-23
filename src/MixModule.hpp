@@ -5,6 +5,8 @@ struct MixModule : VenomModule {
     MIX4ST_TYPE,
     VCAMIX4_TYPE,
     VCAMIX4ST_TYPE,
+    MIXFADE_TYPE,
+    MIXFADE2_TYPE,
     MIXMUTE_TYPE,
     MIXOFFSET_TYPE,
     MIXPAN_TYPE,
@@ -23,6 +25,40 @@ struct MixModule : VenomModule {
     EXP_LIGHTS_LEN
   };
   
+  enum FadeParamId {
+    ENUMS(FADE_TIME_PARAM,4),
+    FADE_MIX_TIME_PARAM,
+    ENUMS(FADE_SHAPE_PARAM,4),
+    FADE_MIX_SHAPE_PARAM,
+    FADE_PARAMS_LEN
+  };
+  enum FadeInputId {
+    FADE_INPUTS_LEN
+  };
+  enum FadeOutputId {
+    ENUMS(FADE_OUTPUT,4),
+    FADE_MIX_OUTPUT,
+    FADE_OUTPUTS_LEN
+  };
+  
+  enum Fade2ParamId {
+    ENUMS(RISE_TIME_PARAM,4),
+    ENUMS(FALL_TIME_PARAM,4),
+    MIX_RISE_TIME_PARAM,
+    MIX_FALL_TIME_PARAM,
+    ENUMS(FADE2_SHAPE_PARAM,4),
+    FADE2_MIX_SHAPE_PARAM,
+    FADE2_PARAMS_LEN
+  };
+  enum Fade2InputId {
+    FADE2_INPUTS_LEN
+  };
+  enum Fade2OutputId {
+    ENUMS(FADE2_OUTPUT,4),
+    FADE2_MIX_OUTPUT,
+    FADE2_OUTPUTS_LEN
+  };
+
   enum MuteParamId {
     ENUMS(MUTE_PARAM,4),
     MUTE_MIX_PARAM,
@@ -143,9 +179,11 @@ struct MixBaseModule : MixModule {
   bool panPresent = false;
   bool sendPresent = true;
   bool soloPresent = false;
+  bool fadePresent = false;
   MixModule* offsetExpander = NULL;
   MixModule* muteSoloExpander = NULL;
   MixModule* muteExpander = NULL;
+  MixModule* fadeExpander = NULL;
   std::vector<MixModule*> expanders;
 
   void process(const ProcessArgs& args) override {
@@ -156,6 +194,7 @@ struct MixBaseModule : MixModule {
     panPresent = false;
     sendPresent = false;
     soloPresent = false;
+    fadePresent = false;
     // Clear expanders
     offsetExpander = NULL;
     muteSoloExpander = NULL;
@@ -169,6 +208,10 @@ struct MixBaseModule : MixModule {
         }
         else
           expanders.push_back(mod);
+      }
+      if ((mod->mixType == MIXFADE_TYPE || mod->mixType == MIXFADE2_TYPE) && !fadePresent && (mutePresent || soloPresent)) {
+        fadePresent = true;
+        if (!mod->isBypassed()) fadeExpander = mod;
       }  
       else if (mod->mixType == MIXOFFSET_TYPE && !offsetPresent) {
         offsetPresent = true;
@@ -327,6 +370,7 @@ struct MixExpanderWidget : VenomWidget {
     bool connected = false;
     MixBaseModule* base;
     MixModule* mixMod = dynamic_cast<MixModule*>(this->module);
+    MixModule* fade = NULL;
     MixModule* mute = NULL;
     MixModule* offset = NULL;
     MixModule* pan = NULL;
@@ -335,6 +379,9 @@ struct MixExpanderWidget : VenomWidget {
       if ((base = dynamic_cast<MixBaseModule*>(mixMod))) {
         connected = (!pan || base->stereo);
         break;
+      } else if (mixMod->mixType == MixModule::MIXFADE_TYPE || mixMod->mixType == MixModule::MIXFADE2_TYPE) {
+        if (fade || mute || solo) break;
+        fade = mixMod;
       } else if (mixMod->mixType == MixModule::MIXMUTE_TYPE) {
         if (mute) break;
         mute = mixMod;
@@ -354,6 +401,8 @@ struct MixExpanderWidget : VenomWidget {
     }
     if(this->module) {
       mixMod = dynamic_cast<MixModule*>(this->module);
+      if ((mixMod->mixType == MixModule::MIXFADE_TYPE || mixMod->mixType == MixModule::MIXFADE2_TYPE) && !mute && !solo)
+        connected = false;
       mixMod->lights[MixModule::EXP_LIGHT].setBrightness(connected);
       if (!connected)
         for (int i=0; i<mixMod->getNumOutputs(); i++) {

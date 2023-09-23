@@ -16,6 +16,8 @@ extern Model* modelCloneMerge;
 extern Model* modelHQ;
 extern Model* modelMix4;
 extern Model* modelMix4Stereo;
+extern Model* modelMixFade;
+extern Model* modelMixFade2;
 extern Model* modelMixMute;
 extern Model* modelMixOffset;
 extern Model* modelMixPan;

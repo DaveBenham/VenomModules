@@ -83,6 +83,32 @@
       ]
     },
     {
+      "slug": "MixFade",
+      "name": "Mix Fade Expander",
+      "description": "Add symmetric mute/solo fades to any of the Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-fade-expander",
+      "tags": [
+        "Attenuator",
+        "Expander",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "MixFade2",
+      "name": "Mix Fade 2 Expander",
+      "description": "Add independent rise/fall fades for mute/solo to any of the Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-fade-2-expander",
+      "tags": [
+        "Attenuator",
+        "Expander",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "MixMute",
       "name": "Mix Mute Expander",
       "description": "Add mutes to any of the Mix modules",
