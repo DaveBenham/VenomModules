@@ -12,11 +12,11 @@ struct MixFade : MixExpanderModule {
     for (int i=0; i<4; i++) {
       std::string i_s = std::to_string(i+1);
       configParam(FADE_TIME_PARAM+i, 0.f, 30.f, 0.f, "Fade " + i_s + " time");
-      configParam(FADE_SHAPE_PARAM+i, -1.f, 1.f, 0.f, "Fade " + i_s + " shape");
+      configParam<ShapeQuantity>(FADE_SHAPE_PARAM+i, -1.f, 1.f, 0.f, "Fade " + i_s + " shape", "%", 0.f, 100.f);
       configOutput(FADE_OUTPUT+i, "Fade " + i_s + " level");
     }  
     configParam(FADE_MIX_TIME_PARAM, 0.f, 30.f, 0.f, "Fade mix time");
-    configParam(FADE_MIX_SHAPE_PARAM, -1.f, 1.f, 0.f, "Fade mix shape");
+    configParam<ShapeQuantity>(FADE_MIX_SHAPE_PARAM, -1.f, 1.f, 0.f, "Fade mix shape");
     configOutput(FADE_MIX_OUTPUT, "Fade mix level");
   }
 

@@ -611,3 +611,10 @@ struct VCVLightButtonLockable : VCVButton {
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
+
+struct ShapeQuantity : ParamQuantity {
+  std::string getUnit() override {
+    float val = this->getValue();
+    return val > 0.f ? "% log" : val < 0.f ? "% exp" : " = linear";
+  }  
+};

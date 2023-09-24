@@ -13,12 +13,12 @@ struct MixFade2 : MixExpanderModule {
       std::string i_s = std::to_string(i+1);
       configParam(RISE_TIME_PARAM+i, 0.f, 30.f, 0.f, "Fade " + i_s + " rise time", " sec");
       configParam(FALL_TIME_PARAM+i, 0.f, 30.f, 0.f, "Fade " + i_s + " fall time", " sec");
-      configParam(FADE2_SHAPE_PARAM+i, -1.f, 1.f, 0.f, "Fade " + i_s + " shape");
+      configParam<ShapeQuantity>(FADE2_SHAPE_PARAM+i, -1.f, 1.f, 0.f, "Fade " + i_s + " shape", "%", 0.f, 100.f);
       configOutput(FADE2_OUTPUT+i, "Fade " + i_s + " level");
     }  
     configParam(MIX_RISE_TIME_PARAM, 0.f, 30.f, 0.f, "Fade mix rise time", " sec");
     configParam(MIX_FALL_TIME_PARAM, 0.f, 30.f, 0.f, "Fade mix fall time", " sec");
-    configParam(FADE2_MIX_SHAPE_PARAM, -1.f, 1.f, 0.f, "Fade mix shape");
+    configParam<ShapeQuantity>(FADE2_MIX_SHAPE_PARAM, -1.f, 1.f, 0.f, "Fade mix shape", "%", 0.f, 100.f);
     configOutput(FADE2_MIX_OUTPUT, "Fade mix level");
   }
 

@@ -148,17 +148,7 @@ struct MixModule : VenomModule {
   MixModule* rightExpander = NULL;
   dsp::SchmittTrigger muteCV[5];
   dsp::SlewLimiter fade[5];
-  
-  MixModule() {
-    fade[0].rise = fade[0].fall 
-                 = fade[1].rise = fade[1].fall 
-                 = fade[2].rise = fade[2].fall 
-                 = fade[3].rise = fade[3].fall
-                 = fade[4].rise = fade[4].fall
-                 = 40.f;
-                 
-  }  
-  
+
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (e.side)
       rightExpander = dynamic_cast<MixModule*>(getRightExpander().module);
@@ -182,7 +172,6 @@ struct MixBaseModule : MixModule {
   bool fadePresent = false;
   MixModule* offsetExpander = NULL;
   MixModule* muteSoloExpander = NULL;
-  MixModule* muteExpander = NULL;
   MixModule* fadeExpander = NULL;
   std::vector<MixModule*> expanders;
 
@@ -195,13 +184,15 @@ struct MixBaseModule : MixModule {
     sendPresent = false;
     soloPresent = false;
     fadePresent = false;
+    
     // Clear expanders
     offsetExpander = NULL;
     muteSoloExpander = NULL;
+    fadeExpander = NULL;
     expanders.clear();
     // Load expanders
     for (MixModule* mod = rightExpander; mod; mod = mod->rightExpander) {
-      if (mod->mixType == MIXMUTE_TYPE && !mutePresent) {
+      if (mod->mixType == MIXMUTE_TYPE && !mutePresent && (!soloPresent || mod->leftExpander->mixType == MIXSOLO_TYPE)) {
         mutePresent = true;
         if (soloPresent) {
           if (!mod->isBypassed()) muteSoloExpander = mod;
@@ -209,11 +200,11 @@ struct MixBaseModule : MixModule {
         else
           expanders.push_back(mod);
       }
-      if ((mod->mixType == MIXFADE_TYPE || mod->mixType == MIXFADE2_TYPE) && !fadePresent && (mutePresent || soloPresent)) {
+      else if ((mod->mixType == MIXFADE_TYPE || mod->mixType == MIXFADE2_TYPE) && !fadePresent && (mod->leftExpander->mixType == MIXMUTE_TYPE || mod->leftExpander->mixType == MIXSOLO_TYPE)) {
         fadePresent = true;
         if (!mod->isBypassed()) fadeExpander = mod;
       }  
-      else if (mod->mixType == MIXOFFSET_TYPE && !offsetPresent) {
+      else if (mod->mixType == MIXOFFSET_TYPE && rightExpander == mod) {
         offsetPresent = true;
         if (!mod->isBypassed()) offsetExpander = mod;
       }
@@ -225,7 +216,7 @@ struct MixBaseModule : MixModule {
         sendPresent = true;
         if (!mod->isBypassed()) expanders.push_back(mod);
       }
-      else if (mod->mixType == MIXSOLO_TYPE && !soloPresent) {
+      else if (mod->mixType == MIXSOLO_TYPE && !soloPresent && (!mutePresent || mod->leftExpander->mixType == MIXMUTE_TYPE)) {
         soloPresent = true;
         if (mutePresent) {
           if (!mod->isBypassed()) muteSoloExpander = mod;
@@ -380,29 +371,27 @@ struct MixExpanderWidget : VenomWidget {
         connected = (!pan || base->stereo);
         break;
       } else if (mixMod->mixType == MixModule::MIXFADE_TYPE || mixMod->mixType == MixModule::MIXFADE2_TYPE) {
-        if (fade || mute || solo) break;
+        if (fade || mute || solo || !mixMod->leftExpander || !(mixMod->leftExpander->mixType==MixModule::MIXSOLO_TYPE || mixMod->leftExpander->mixType==MixModule::MIXMUTE_TYPE)) break;
         fade = mixMod;
       } else if (mixMod->mixType == MixModule::MIXMUTE_TYPE) {
-        if (mute) break;
+        if (mute || (solo && solo->leftExpander != mixMod)) break;
         mute = mixMod;
       } else if (mixMod->mixType == MixModule::MIXOFFSET_TYPE) {
-        if (offset) break;
+        if (offset || !dynamic_cast<MixBaseModule*>(mixMod->leftExpander)) break;
         offset = mixMod;
       } else if (mixMod->mixType == MixModule::MIXPAN_TYPE) {
         if (pan) break;
         pan = mixMod;
       } else if (mixMod->mixType == MixModule::MIXSOLO_TYPE) {
-        if (solo) break;
+        if (solo || (mute && mute->leftExpander != mixMod)) break;
         solo = mixMod;
       } else if (mixMod->mixType != MixModule::MIXSEND_TYPE) {
         break;
       }
-      mixMod = dynamic_cast<MixModule*>(mixMod->getLeftExpander().module);
+      mixMod = mixMod->leftExpander;
     }
     if(this->module) {
       mixMod = dynamic_cast<MixModule*>(this->module);
-      if ((mixMod->mixType == MixModule::MIXFADE_TYPE || mixMod->mixType == MixModule::MIXFADE2_TYPE) && !mute && !solo)
-        connected = false;
       mixMod->lights[MixModule::EXP_LIGHT].setBrightness(connected);
       if (!connected)
         for (int i=0; i<mixMod->getNumOutputs(); i++) {
