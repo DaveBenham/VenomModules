@@ -135,6 +135,12 @@ struct VCAMix4 : MixBaseModule {
     int dcBlock = static_cast<int>(params[DCBLOCK_PARAM].getValue());
     int vcaMode = static_cast<int>(params[VCAMODE_PARAM].getValue());
     bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
+    float preOff[4], postOff[4];
+    for (int i=0; i<4; i++) {
+      int Cnt = mode == 1 ? inputs[INPUTS+i].getChannels() : 1;
+      preOff[i] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
+      postOff[i] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
+    }
 
     int inChannels[4];
     int channels = std::max({1, inputs[CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
@@ -143,7 +149,10 @@ struct VCAMix4 : MixBaseModule {
       if (inChannels[i] > channels && (!exclude || !outputs[OUTPUTS+i].isConnected()))
         channels = inChannels[i];
     }
-    simd::float_4 in, out, cv;
+    simd::float_4 channel[4], out, cv;
+    float fadeLevel[5];
+    fadeLevel[4] = 1.f; //initialize final mix fade factor
+    bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
     for (int c=0; c<channels; c+=4){
       out = inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       for (int i=0; i<4; i++){
@@ -152,16 +161,128 @@ struct VCAMix4 : MixBaseModule {
           cv = simd::clamp(cv, 0.f, 1.f);
         if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
           cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
-        in = mode == 1 ? inputs[INPUTS+i].getVoltageSum() : inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c);
+        channel[i] = preOff[i] + mode == 1 ? inputs[INPUTS+i].getVoltageSum() : inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c);
         if (vcaMode >= 4) {
           cv = vcaBandlimit[0][i][c/4].process(cv);
-          in = vcaBandlimit[1][i][c/4].process(in);
+          channel[i] = vcaBandlimit[1][i][c/4].process(channel[i]);
         }
-        in *= (params[LEVEL_PARAMS+i].getValue()+offset)*scale*cv;
-        outputs[OUTPUTS+i].setVoltageSimd(in, c);
-        if (!exclude || !outputs[OUTPUTS+i].isConnected())
-          out += in;
+        channel[i] *= (params[LEVEL_PARAMS+i].getValue()+offset)*scale*cv;
+        channel[i] += postOff[i];
+        outputs[OUTPUTS+i].setVoltageSimd(channel[i], c);
+        if (exclude && outputs[OUTPUTS+i].isConnected())
+          channel[i] = 0.f;
       }
+
+      for (unsigned int x=0; x<expanders.size(); x++){
+        MixModule* exp = expanders[x];
+        MixModule* soloMod = NULL;
+        MixModule* muteMod = NULL;
+        float shape;
+        switch(exp->mixType) {
+          case MIXMUTE_TYPE:
+            muteMod = exp;
+            soloMod = muteSoloExpander;
+            break;
+          case MIXSOLO_TYPE:
+            muteMod = muteSoloExpander;
+            soloMod = exp;
+            break;
+          case MIXSEND_TYPE:
+            if (!c) {
+              if (softMute)
+                exp->fade[0].process(args.sampleTime, !exp->params[SEND_MUTE_PARAM].getValue());
+              else
+                exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue();
+            }
+            exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
+                 (  channel[0] * exp->params[SEND_PARAM+0].getValue()
+                  + channel[1] * exp->params[SEND_PARAM+1].getValue()
+                  + channel[2] * exp->params[SEND_PARAM+2].getValue()
+                  + channel[3] * exp->params[SEND_PARAM+3].getValue()
+                 ) * exp->fade[0].out
+                 ,c
+            );
+            if (channels-c <= 4) {
+              exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
+              exp->outputs[RIGHT_SEND_OUTPUT].setVoltage(0.f);
+              exp->outputs[RIGHT_SEND_OUTPUT].setChannels(1);
+            }  
+            out += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            break;
+        }
+        if (!c && muteMod && !muteMod->isBypassed()) {
+          for (int i=0; i<5; i++) { //assumes MUTE_MIX_PARAM and MUTE_MIX_INPUT follow MUTE_PARAM AND MUTE_MIX_INPUT arrays
+            int evnt = muteMod->muteCV[i].processEvent(muteMod->inputs[MUTE_INPUT+i].getVoltage(), 0.1f, 1.f);
+            if (toggleMute && evnt>0)
+              muteMod->params[MUTE_PARAM+i].setValue(!muteMod->params[MUTE_PARAM+i].getValue());
+            if (!toggleMute && evnt)
+              muteMod->params[MUTE_PARAM+i].setValue(muteMod->muteCV[i].isHigh());
+          }
+        }  
+        if (soloMod && !soloMod->isBypassed() && (
+             soloMod->params[SOLO_PARAM+0].getValue() || soloMod->params[SOLO_PARAM+1].getValue() || 
+             soloMod->params[SOLO_PARAM+2].getValue() || soloMod->params[SOLO_PARAM+3].getValue()
+           )){
+          for (int i=0; i<4; i++){
+            if (!c) {
+              if (fadeExpander && !fadeExpander->isBypassed()) {
+                fade[i].rise = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[(isFadeType ? static_cast<int>(FADE_TIME_PARAM) : static_cast<int>(RISE_TIME_PARAM))+i].getValue());
+                fade[i].fall = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[(isFadeType ? static_cast<int>(FADE_TIME_PARAM) : static_cast<int>(FALL_TIME_PARAM))+i].getValue());
+                fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
+                shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
+                fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+              }  
+              else if (softMute){
+                fade[i].rise = fade[i].fall = 40.f;
+                fadeLevel[i] = fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
+              }
+              else
+                fadeLevel[i] = fade[i].out = soloMod->params[SOLO_PARAM+i].getValue();
+            }  
+            channel[i] *= fadeLevel[i];
+          }
+        }
+        else if (muteMod && !muteMod->isBypassed()) {
+          for (int i=0; i<4; i++){
+            if (!c) {
+              if (fadeExpander && !fadeExpander->isBypassed()) {
+                fade[i].rise = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[(isFadeType ? static_cast<int>(FADE_TIME_PARAM) : static_cast<int>(RISE_TIME_PARAM))+i].getValue());
+                fade[i].fall = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[(isFadeType ? static_cast<int>(FADE_TIME_PARAM) : static_cast<int>(FALL_TIME_PARAM))+i].getValue());
+                fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
+                shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
+                fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+              }  
+              else if (softMute) {
+                fade[i].rise = fade[i].fall = 40.f;
+                fadeLevel[i] = fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
+              }
+              else
+                fadeLevel[i] = fade[i].out = !muteMod->params[MUTE_PARAM+i].getValue();
+            }
+            channel[i] *= fadeLevel[i];
+          }
+        }
+        if (!c && muteMod && !muteMod->isBypassed()){
+          if (fadeExpander && !fadeExpander->isBypassed()) {
+            fade[4].rise = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[isFadeType ? static_cast<int>(FADE_MIX_TIME_PARAM) : static_cast<int>(MIX_RISE_TIME_PARAM)].getValue());
+            fade[4].fall = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[isFadeType ? static_cast<int>(FADE_MIX_TIME_PARAM) : static_cast<int>(MIX_FALL_TIME_PARAM)].getValue());
+            fade[4].process(args.sampleTime, !muteMod->params[MUTE_MIX_PARAM].getValue());
+            shape = fadeExpander->params[isFadeType ? static_cast<int>(FADE_MIX_SHAPE_PARAM) : static_cast<int>(FADE2_MIX_SHAPE_PARAM)].getValue();
+            fadeLevel[4] = crossfade(fade[4].out, shape>0.f ? 11.f*fade[4].out/(10.f*fade[4].out+1.f) : pow(fade[4].out,4), shape>0.f ? shape : -shape);
+            fadeExpander->outputs[FADE_MIX_OUTPUT].setVoltage(fadeLevel[4]); // fade & fade2 outputs match
+          }  
+          else if (softMute) {
+            fade[4].rise = fade[4].fall = 40.f;
+            fadeLevel[4] = fade[4].process(args.sampleTime, !muteMod->params[MUTE_MIX_PARAM].getValue());
+          }
+          else
+            fadeLevel[4] = fade[4].out = !muteMod->params[MUTE_MIX_PARAM].getValue();
+        }
+      }
+      out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
+
       cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
       if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
@@ -171,8 +292,10 @@ struct VCAMix4 : MixBaseModule {
         cv = vcaBandlimit[0][4][c/4].process(cv);
         out = vcaBandlimit[1][4][c/4].process(out);
       }
-      if (clip <= 3)
+      if (clip <= 3) {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+        if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
+      }
       if (dcBlock && dcBlock <= 2)
         out = dcBlockBeforeFilter[c/4].process(out);
       if (clip == 1 || clip == 4)
@@ -188,8 +311,11 @@ struct VCAMix4 : MixBaseModule {
       }
       if (dcBlock == 3 || (dcBlock == 2 && clip))
         out = dcBlockAfterFilter[c/4].process(out);
-      if (clip > 3)
+      if (clip > 3) {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+        if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
+      }
+      out *= fadeLevel[4]; // Mix fade factor
       outputs[MIX_OUTPUT].setVoltageSimd(out, c);
     }
     for (int i=0; i<4; i++)

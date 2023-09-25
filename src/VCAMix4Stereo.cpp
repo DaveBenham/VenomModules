@@ -162,6 +162,12 @@ struct VCAMix4Stereo : MixBaseModule {
     int dcBlock = static_cast<int>(params[DCBLOCK_PARAM].getValue());
     int vcaMode = static_cast<int>(params[VCAMODE_PARAM].getValue());
     bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
+    float preOff[4], postOff[4];
+    for (int ch=0; ch<4; ch++) {
+      int Cnt = mode == 1 ? std::max({1, inputs[LEFT_INPUTS+ch].getChannels(), inputs[RIGHT_INPUTS+ch].getChannels()}) : 1;
+      preOff[ch] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+ch].getValue() * Cnt : 0.f;
+      postOff[ch] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+ch].getValue() * Cnt : 0.f;
+    }
 
     int inChannels[4];
     int channels = std::max({1, inputs[LEFT_CHAIN_INPUT].getChannels(), inputs[RIGHT_CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
@@ -173,15 +179,18 @@ struct VCAMix4Stereo : MixBaseModule {
       if (inChannels[i] > channels && (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected())))
         channels = inChannels[i];
     }
-    simd::float_4 leftOut, rightOut, out, cv;
+    simd::float_4 leftOut, rightOut, cv, leftChannel[4], rightChannel[4];
     float channelScale;
+    float fadeLevel[5];
+    fadeLevel[4] = 1.f; //initialize final mix fade factor
+    bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
     for (int c=0; c<channels; c+=4){
       leftOut = inputs[LEFT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       rightOut = inputs[RIGHT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       if (mode == 1){
         for (int i=0; i<4; i++){
           cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
-          out = inputs[LEFT_INPUTS+i].getVoltageSum();
+          leftChannel[i] = inputs[LEFT_INPUTS+i].getVoltageSum() + preOff[i];
           channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
           if (vcaMode <= 1)
             cv = simd::clamp(cv, 0.f, 1.f);
@@ -189,21 +198,25 @@ struct VCAMix4Stereo : MixBaseModule {
             cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
           if (vcaMode >= 4) {
             cv = leftVcaBandlimit[0][i][c/4].process(cv);
-            out = leftVcaBandlimit[1][i][c/4].process(out);
+            leftChannel[i] = leftVcaBandlimit[1][i][c/4].process(leftChannel[i]);
           }
-          out *= channelScale * cv;
-          outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
-          if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
-            leftOut += out;
+          leftChannel[i] *= channelScale * cv;
+          leftChannel[i] += postOff[i];
+          outputs[LEFT_OUTPUTS+i].setVoltageSimd(leftChannel[i], c);
+
           if(inputs[RIGHT_INPUTS+i].isConnected()){
-            out = inputs[RIGHT_INPUTS+i].getVoltageSum();
+            rightChannel[i] = inputs[RIGHT_INPUTS+i].getVoltageSum() + preOff[i];
             if (vcaMode >= 4)
-              out = rightVcaBandlimit[1][i][c/4].process(out);
-            out *= channelScale * cv;
+              rightChannel[i] = rightVcaBandlimit[1][i][c/4].process(rightChannel[i]);
+            rightChannel[i] *= channelScale * cv;
+            rightChannel[i] += postOff[i];
           }
-          outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
-          if (!exclude || !outputs[RIGHT_OUTPUTS+i].isConnected())
-            rightOut += out;
+          else rightChannel[i] = leftChannel[i];
+          outputs[RIGHT_OUTPUTS+i].setVoltageSimd(rightChannel[i], c);
+          if (exclude && outputs[LEFT_OUTPUTS+i].isConnected())
+            leftChannel[i] = 0.f;
+          if (exclude && outputs[RIGHT_OUTPUTS+i].isConnected())
+            rightChannel[i] = 0.f;
         }
       }
       else {
@@ -215,47 +228,232 @@ struct VCAMix4Stereo : MixBaseModule {
             cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
           channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
           if (connected[i]){
-            out = inputs[LEFT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c);
+            leftChannel[i] = inputs[LEFT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) + preOff[i];
             if (vcaMode >= 4){
               cv = leftVcaBandlimit[0][i][c/4].process(cv);
-              out = leftVcaBandlimit[1][i][c/4].process(out);
+              leftChannel[i] = leftVcaBandlimit[1][i][c/4].process(leftChannel[i]);
             }
-            out *= channelScale * cv;
-            outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
-            if (!exclude || !outputs[LEFT_OUTPUTS+i].isConnected())
-              leftOut += out;
+            leftChannel[i] *= channelScale * cv;
+            leftChannel[i] += postOff[i];
+            outputs[LEFT_OUTPUTS+i].setVoltageSimd(leftChannel[i], c);
             if (inputs[RIGHT_INPUTS+i].isConnected()){
-              out = inputs[RIGHT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c);
-              out *= channelScale * cv;
+              rightChannel[i] = inputs[RIGHT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) + preOff[i];
               if (vcaMode >= 4)
-                out = rightVcaBandlimit[1][i][c/4].process(out);
-              out *= channelScale * cv;
+                rightChannel[i] = rightVcaBandlimit[1][i][c/4].process(rightChannel[i]);
+              rightChannel[i] *= channelScale * cv;
+              rightChannel[i] += postOff[i];
             }
-            outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
-            if (!exclude || !outputs[RIGHT_OUTPUTS+i].isConnected())
-              rightOut += out;
+            else rightChannel[i] = leftChannel[i];
+            outputs[RIGHT_OUTPUTS+i].setVoltageSimd(rightChannel[i], c);
+            if (exclude && outputs[LEFT_OUTPUTS+i].isConnected())
+              leftChannel[i] = 0.f;
+            if (exclude && outputs[RIGHT_OUTPUTS+i].isConnected())
+              rightChannel[i] = 0.f;
           }
           else {
-            out = normal * channelScale;
+            leftChannel[i] = normal * channelScale + preOff[i];
             if (vcaMode >= 4)
-              out = leftVcaBandlimit[0][i][c/4].process(cv);
-            outputs[LEFT_OUTPUTS+i].setVoltageSimd(out, c);
-            outputs[RIGHT_OUTPUTS+i].setVoltageSimd(out, c);
-            if (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected())){
-              leftOut += out;
-              rightOut += out;
-            }
+              cv = leftVcaBandlimit[0][i][c/4].process(cv);
+            leftChannel[i] *= cv;
+            leftChannel[i] += postOff[i];
+            rightChannel[i] = leftChannel[i];
+            outputs[LEFT_OUTPUTS+i].setVoltageSimd(leftChannel[i], c);
+            outputs[RIGHT_OUTPUTS+i].setVoltageSimd(rightChannel[i], c);
+            if (exclude && outputs[LEFT_OUTPUTS+i].isConnected())
+              leftChannel[i] = 0.f;
+            if (exclude && outputs[RIGHT_OUTPUTS+i].isConnected())
+              rightChannel[i] = 0.f;
           }
         }
       }
+      
+      for (unsigned int x=0; x<expanders.size(); x++){
+        MixModule* exp = expanders[x];
+        MixModule* soloMod = NULL;
+        MixModule* muteMod = NULL;
+        float shape;
+        switch(exp->mixType) {
+          case MIXMUTE_TYPE:
+            muteMod = exp;
+            soloMod = muteSoloExpander;
+            break;
+          case MIXSOLO_TYPE:
+            muteMod = muteSoloExpander;
+            soloMod = exp;
+            break;
+          case MIXPAN_TYPE:
+            for (int i=0; i<4; i++) {
+              float pan = clamp(exp->params[PAN_PARAM+i].getValue() + exp->inputs[PAN_INPUT+i].getVoltage()*exp->params[PAN_CV_PARAM+i].getValue()/5.f, -1.f, 1.f);
+              int panLaw = !inputs[RIGHT_INPUTS+i].isConnected() || stereoPanLaw==10 ? monoPanLaw : stereoPanLaw;
+              switch (panLaw) {
+                case 0: // 0 dB
+                  leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f;
+                  rightChannel[i] *= pan<0 ? 1.f + pan : 1.f;
+                  break;
+                case 1: // +1.5 dB side
+                  leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f - pan*0.25f;
+                  rightChannel[i] *= pan<0 ? 1.f + pan : 1.f + pan*0.25f;
+                  break;
+                case 2: // +3 dB side
+                  leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f - pan*0.5f;
+                  rightChannel[i] *= pan<0 ? 1.f + pan : 1.f + pan*0.5f;
+                  break;
+                case 3: // +4.5 dB side
+                  leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f - pan*0.75f;
+                  rightChannel[i] *= pan<0 ? 1.f + pan : 1.f + pan*0.75f;
+                  break;
+                case 4: // +6 dB side
+                  leftChannel[i]  *= 1 - pan;
+                  rightChannel[i] *= 1 + pan;
+                  break;
+                case 5: // -1.5 dB center
+                  leftChannel[i]  *= (pan>0 ? 1.f - pan : 1.f - pan*0.25f) * 0.875f;
+                  rightChannel[i] *= (pan<0 ? 1.f + pan : 1.f + pan*0.25f) * 0.875f;
+                  break;
+                case 6: // -3 dB center
+                  leftChannel[i]  *= (pan>0 ? 1.f - pan : 1.f - pan*0.5f) * 0.75f;
+                  rightChannel[i] *= (pan<0 ? 1.f + pan : 1.f + pan*0.5f) * 0.75f;
+                  break;
+                case 7: // -4.5 dB center
+                  leftChannel[i]  *= (pan>0 ? 1.f - pan : 1.f - pan*0.75f) * 0.625f;
+                  rightChannel[i] *= (pan<0 ? 1.f + pan : 1.f + pan*0.75f) * 0.625f;
+                  break;
+                case 8: // -6 dB center
+                  leftChannel[i]  *= (1 - pan)*0.5f;
+                  rightChannel[i] *= (1 + pan)*0.5f;
+                  break;
+                case 9: // True stereo pan
+                  if (pan>0) {
+                    rightChannel[i] += leftChannel[i] * pan;
+                    leftChannel[i]  *= 1.f - pan;
+                  }
+                  else {
+                    leftChannel[i]  += rightChannel[i] * -pan;
+                    rightChannel[i] *= 1.f + pan;
+                  }
+              }
+            }
+            break;
+          case MIXSEND_TYPE:
+            if (!c) {
+              if (softMute)
+                exp->fade[0].process(args.sampleTime, !exp->params[SEND_MUTE_PARAM].getValue());
+              else
+                exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue();
+            }
+            exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
+              (  leftChannel[0] * exp->params[SEND_PARAM+0].getValue()
+               + leftChannel[1] * exp->params[SEND_PARAM+1].getValue()
+               + leftChannel[2] * exp->params[SEND_PARAM+2].getValue()
+               + leftChannel[3] * exp->params[SEND_PARAM+3].getValue()
+              ) * exp->fade[0].out
+              ,c
+            );
+            exp->outputs[RIGHT_SEND_OUTPUT].setVoltageSimd(
+              (  rightChannel[0] * exp->params[SEND_PARAM+0].getValue()
+               + rightChannel[1] * exp->params[SEND_PARAM+1].getValue()
+               + rightChannel[2] * exp->params[SEND_PARAM+2].getValue()
+               + rightChannel[3] * exp->params[SEND_PARAM+3].getValue()
+              ) * exp->fade[0].out
+              ,c
+            );
+            if (channels-c <= 4) {
+              exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
+              exp->outputs[RIGHT_SEND_OUTPUT].setChannels(channels);
+            }  
+            leftOut  += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            rightOut += exp->inputs[RIGHT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            break;
+        }
+        if (!c && muteMod && !muteMod->isBypassed()) {
+          for (int i=0; i<5; i++) { //assumes MUTE_MIX_PARAM and MUTE_MIX_INPUT follow MUTE_PARAM AND MUTE_MIX_INPUT arrays
+            int evnt = muteMod->muteCV[i].processEvent(muteMod->inputs[MUTE_INPUT+i].getVoltage(), 0.1f, 1.f);
+            if (toggleMute && evnt>0)
+              muteMod->params[MUTE_PARAM+i].setValue(!muteMod->params[MUTE_PARAM+i].getValue());
+            if (!toggleMute && evnt)
+              muteMod->params[MUTE_PARAM+i].setValue(muteMod->muteCV[i].isHigh());
+          }
+        }  
+        if (soloMod && !soloMod->isBypassed() && (
+             soloMod->params[SOLO_PARAM+0].getValue() || soloMod->params[SOLO_PARAM+1].getValue() || 
+             soloMod->params[SOLO_PARAM+2].getValue() || soloMod->params[SOLO_PARAM+3].getValue()
+           )){
+          for (int i=0; i<4; i++){
+            if (!c) {
+              if (fadeExpander && !fadeExpander->isBypassed()) {
+                fade[i].rise = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[(isFadeType ? static_cast<int>(FADE_TIME_PARAM) : static_cast<int>(RISE_TIME_PARAM))+i].getValue());
+                fade[i].fall = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[(isFadeType ? static_cast<int>(FADE_TIME_PARAM) : static_cast<int>(FALL_TIME_PARAM))+i].getValue());
+                fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
+                shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
+                fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+              }  
+              else if (softMute){
+                fade[i].rise = fade[i].fall = 40.f;
+                fadeLevel[i] = fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
+              }
+              else
+                fadeLevel[i] = fade[i].out = soloMod->params[SOLO_PARAM+i].getValue();
+            }  
+            leftChannel[i] *= fadeLevel[i];
+            rightChannel[i] *= fadeLevel[i];
+          }
+        }
+        else if (muteMod && !muteMod->isBypassed()) {
+          for (int i=0; i<4; i++){
+            if (!c) {
+              if (fadeExpander && !fadeExpander->isBypassed()) {
+                fade[i].rise = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[(isFadeType ? static_cast<int>(FADE_TIME_PARAM) : static_cast<int>(RISE_TIME_PARAM))+i].getValue());
+                fade[i].fall = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[(isFadeType ? static_cast<int>(FADE_TIME_PARAM) : static_cast<int>(FALL_TIME_PARAM))+i].getValue());
+                fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
+                shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
+                fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+              }  
+              else if (softMute) {
+                fade[i].rise = fade[i].fall = 40.f;
+                fadeLevel[i] = fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
+              }
+              else
+                fadeLevel[i] = fade[i].out = !muteMod->params[MUTE_PARAM+i].getValue();
+            }
+            leftChannel[i]  *= fadeLevel[i];
+            rightChannel[i] *= fadeLevel[i];
+          }
+        }
+        if (!c && muteMod && !muteMod->isBypassed()){
+          if (fadeExpander && !fadeExpander->isBypassed()) {
+            fade[4].rise = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[isFadeType ? static_cast<int>(FADE_MIX_TIME_PARAM) : static_cast<int>(MIX_RISE_TIME_PARAM)].getValue());
+            fade[4].fall = 1.f/std::max(softMute ? 0.025f : 0.f, fadeExpander->params[isFadeType ? static_cast<int>(FADE_MIX_TIME_PARAM) : static_cast<int>(MIX_FALL_TIME_PARAM)].getValue());
+            fade[4].process(args.sampleTime, !muteMod->params[MUTE_MIX_PARAM].getValue());
+            shape = fadeExpander->params[isFadeType ? static_cast<int>(FADE_MIX_SHAPE_PARAM) : static_cast<int>(FADE2_MIX_SHAPE_PARAM)].getValue();
+            fadeLevel[4] = crossfade(fade[4].out, shape>0.f ? 11.f*fade[4].out/(10.f*fade[4].out+1.f) : pow(fade[4].out,4), shape>0.f ? shape : -shape);
+            fadeExpander->outputs[FADE_MIX_OUTPUT].setVoltage(fadeLevel[4]); // fade & fade2 outputs match
+          }  
+          else if (softMute) {
+            fade[4].rise = fade[4].fall = 40.f;
+            fadeLevel[4] = fade[4].process(args.sampleTime, !muteMod->params[MUTE_MIX_PARAM].getValue());
+          }
+          else
+            fadeLevel[4] = fade[4].out = !muteMod->params[MUTE_MIX_PARAM].getValue();
+        }
+      }
+      float preMixOff = offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f;
+      float postMixOff = offsetExpander ? offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue() : 0.f;
+      leftOut += leftChannel[0] + leftChannel[1] + leftChannel[2] + leftChannel[3] + preMixOff;
+      rightOut += rightChannel[0] + rightChannel[1] + rightChannel[2] + rightChannel[3] + preMixOff;
+
       cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
       if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
       if (vcaMode == 1 || vcaMode == 3)
         cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
+      if (vcaMode >= 4)
+        cv = leftVcaBandlimit[0][4][c/4].process(cv);
+
       if (clip <= 3) {
-        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
-        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
+        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
       }
       if (dcBlock && dcBlock <= 2){
         leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
@@ -284,9 +482,11 @@ struct VCAMix4Stereo : MixBaseModule {
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }
       if (clip > 3) {
-        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
-        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
+        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
       }
+      leftOut  *= fadeLevel[4]; // Mix fade factor
+      rightOut *= fadeLevel[4]; // Mix fade factor
       outputs[LEFT_MIX_OUTPUT].setVoltageSimd(leftOut, c);
       outputs[RIGHT_MIX_OUTPUT].setVoltageSimd(rightOut, c);
     }

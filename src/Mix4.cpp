@@ -111,10 +111,10 @@ struct Mix4 : MixBaseModule {
     int clip = static_cast<int>(params[CLIP_PARAM].getValue());
     int dcBlock = static_cast<int>(params[DCBLOCK_PARAM].getValue());
     float preOff[4], postOff[4];
-    for (int ch=0; ch<4; ch++) {
-      int Cnt = mode == 1 ? inputs[INPUTS+ch].getChannels() : 1;
-      preOff[ch] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+ch].getValue() * Cnt : 0.f;
-      postOff[ch] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+ch].getValue() * Cnt : 0.f;
+    for (int i=0; i<4; i++) {
+      int Cnt = mode == 1 ? inputs[INPUTS+i].getChannels() : 1;
+      preOff[i] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
+      postOff[i] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
     }
 
     int channels = mode == 1 ? 1 : std::max({1, inputs[INPUTS].getChannels(), inputs[INPUTS+1].getChannels(), inputs[INPUTS+2].getChannels(), inputs[INPUTS+3].getChannels()});
@@ -124,11 +124,11 @@ struct Mix4 : MixBaseModule {
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
     for (int c=0; c<channels; c+=4){ // c = polyphonic channel
       out = simd::float_4::zero();
-      for (int ch=0; ch<4; ch++){ // ch = mixer channel
-        channel[ch] = mode == 1 ?
-            (inputs[INPUTS+ch].getVoltageSum() + preOff[ch]) * (params[LEVEL_PARAMS+ch].getValue()+offset)*scale + postOff[ch]
+      for (int i=0; i<4; i++){
+        channel[i] = mode == 1 ?
+            (inputs[INPUTS+i].getVoltageSum() + preOff[i]) * (params[LEVEL_PARAMS+i].getValue()+offset)*scale + postOff[i]
           :
-            (inputs[INPUTS+ch].getNormalPolyVoltageSimd<simd::float_4>(normal, c) + preOff[ch]) * (params[LEVEL_PARAMS+ch].getValue()+offset)*scale + postOff[ch];
+            (inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c) + preOff[i]) * (params[LEVEL_PARAMS+i].getValue()+offset)*scale + postOff[i];
       }
       for (unsigned int x=0; x<expanders.size(); x++){
         MixModule* exp = expanders[x];
