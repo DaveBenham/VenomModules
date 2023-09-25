@@ -312,6 +312,8 @@ Mix expanders must be placed to the right of the main mix module. Multiple expan
 
 Bypassing an expander disables that expander without disrupting expanders to the right.
 
+All expanders except Offset are processed after the main Mix input channel Levels are applied, and before the main final Mix level is applied. When used with VCA Mix 4 or VCA Mix 4 Stereo, the expanders are processed after each channel has already been sent to the VCA channel output. Again, the Offset expander is an exception.
+
 The order of operations generally proceeds from left to right. The order typically does not affect the end result unless Aux Send modules are used. However, some expanders have restrictions on where they are placed, and/or how many can be used for a single mix module. Refer to each expander for details.
 
 CV inputs and outputs are generally all monophonic, with the effect applied equally to all polyphonic channels in the main mix module. The one exception is the Aux Send module, which fully supports polyphonic cables.
@@ -329,7 +331,7 @@ Some of the expanders have hidden options that are only available in the main mi
  * If enabled, then Mute CV functions as a toggle
 
 #### Mono input pan law &nbsp;(Pan expander)
-Controls how left and right channels are attenuated/amplified as a mono input is panned. This affects whether a mono signal loudness appears constant as it is panned.
+Controls how left and right channels are attenuated/amplified as a mono input is panned. This affects the perceived loudness as a signal is panned left and right versus center.
  * 0 dB (linear: center overpowered)  
    While panning left, the left gain is held constant while the right is attenuated. While panning right, the right gain is held constant while the left is attenuated. Mono signals sound softer when panned left or right compared to when panned center.
  * +1.5 dB side (compromise: center overpowered)  
