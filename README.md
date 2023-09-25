@@ -306,9 +306,25 @@ All other behaviors are the same as for Mix 4.
 
 ## MIX EXPANDERS
 ![Mix Offset Expander module image](doc/MixOffset.png) ![Mix Mute Expander module image](doc/MixMute.png) ![Mix Solo Expander module image](doc/MixSolo.png) ![Mix Fade Expander module image](doc/MixFade.png) ![Mix Fade2 Expander module image](doc/MixFade2.png) ![Mix Pan Expander module image](doc/MixPan.png) ![Mix Send Expander module image](doc/MixSend.png)  
-Extends the functionality of the four Mix modules: Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+A collection of expander modules that extend the functionality of the four Mix modules: Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+
+Mix expanders must be placed to the right of the main mix module. Multiple expanders can be used for one mix module as long as they form a contiguous chain to the right. Each expander has an LED in the upper left that glows yellow if successfully connected to a mix module.
+
+Bypassing an expander disables that expander without disrupting expanders to the right.
+
+The order of operations generally proceeds from left to right. The order typically does not affect the end result unless Aux Send modules are used. However, some expanders have restrictions on where they are placed, and/or how many can be used for a single mix module. Refer to each expander for details.
+
+CV inputs and outputs are generally all monophonic, with the effect applied equally to all polyphonic channels in the main mix module. The one exception is the Aux Send module, which fully supports polyphonic cables.
 
 ### MIX OFFSET EXPANDER
+
+Gives the ability to apply constant offset voltages immediately before and/or after a level gain is applied on the main mixer. Offsets are always the first expander to be applied, and so the Offset expander must be adjascent to the main mix module.
+
+The Pre offsets are applied immediately before each level gain.
+
+The Post offsets are applied immediately after each level gain.
+
+Offsets are often used for converting unipolar signals to bipolar, or vice-versa.
 
 ### MIX MUTE EXPANDER
 
