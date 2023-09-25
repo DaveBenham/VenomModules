@@ -1,5 +1,15 @@
 # Venom Modules Changelog
 
+## 2.5.0 (2023-??-??)
+### New Modules
+- Mix Offset Expander
+- Mix Mute Expander
+- Mix Solo Expander
+- Mix Fade Expander
+- Mix Fade 2 Expander
+- Mix Pan Expander
+- Mix Aux Send Expander
+
 ## 2.4.1 (2023-09-01)
 ### Enhancements
 - Venom Default Dark Theme option has been added to all module context menus
