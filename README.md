@@ -11,7 +11,7 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 
 |[MIX EXPANDERS](#mix-expanders)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
 |----|----|----|----|
-|![Mix Offset Expander module image](doc/MixOffset.png) ![Mix Mute Expander module image](doc/MixMute.png) ![Mix Solo Expander module image](doc/MixSolo.png) ![Mix Fade Expander module image](doc/MixFade.png) ![Mix Fade2 Expander module image](doc/MixFade2.png) ![Mix Pan Expander module image](doc/MixPan.png) ![Mix Send Expander module image](doc/MixSend.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
+|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
 
 |[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|----|----|
@@ -305,7 +305,7 @@ All other behaviors are the same as for Mix 4.
 
 
 ## MIX EXPANDERS
-![Mix Offset Expander module image](doc/MixOffset.png) ![Mix Mute Expander module image](doc/MixMute.png) ![Mix Solo Expander module image](doc/MixSolo.png) ![Mix Fade Expander module image](doc/MixFade.png) ![Mix Fade2 Expander module image](doc/MixFade2.png) ![Mix Pan Expander module image](doc/MixPan.png) ![Mix Send Expander module image](doc/MixSend.png)  
+![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)  
 A collection of expander modules that extend the functionality of the four Mix modules: Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
 
 Mix expanders must be placed to the right of the main mix module. Multiple expanders can be used for one mix module as long as they form a contiguous chain to the right. Each expander has an LED in the upper left that glows yellow if successfully connected to a mix module.
@@ -316,27 +316,114 @@ The order of operations generally proceeds from left to right. The order typical
 
 CV inputs and outputs are generally all monophonic, with the effect applied equally to all polyphonic channels in the main mix module. The one exception is the Aux Send module, which fully supports polyphonic cables.
 
-### MIX OFFSET EXPANDER
+Venom expanders are written so that communication between the parent module and the expander does not add any sample delays.
 
-Gives the ability to apply constant offset voltages immediately before and/or after a level gain is applied on the main mixer. Offsets are always the first expander to be applied, and so the Offset expander must be adjascent to the main mix module.
+Some of the expanders have hidden options that are only available in the main mix module context menu. These expander related menu options only appear when the relevant expander is connected to the mix module.
+
+#### Soft mute/solo &nbsp;(Mute and/or Solo and/or Send expander)
+ * If enabled (default), then mute/solo transitions are slewed to take 25 msec (or more if fades are applied).
+ * If disabled, then mute/solo transitions are immediate (unless fades are applied)
+
+#### Mute CV toggles on/off &nbsp;(Mute expander)
+ * If disabled (default), then Mute CV functions as a gate
+ * If enabled, then Mute CV functions as a toggle
+
+#### Mono input pan law &nbsp;(Pan expander)
+Controls how left and right channels are attenuated/amplified as a mono input is panned. This affects whether a mono signal loudness appears constant as it is panned.
+ * 0 dB (linear: center overpowered)  
+   While panning left, the left gain is held constant while the right is attenuated. While panning right, the right gain is held constant while the left is attenuated. Mono signals sound softer when panned left or right compared to when panned center.
+ * +1.5 dB side (compromise: center overpowered)  
+   When panning left, the left channel is amplified slightly to +1.5 dB when panned full left. Likewise when panning right the right channel is amplified slightly. Mono signals still sound softer when panned left or right, but to a lesser degree.
+ * +3 dB side (default - equal power)  
+   While panning left, the left channel is amplified until it reaches +3 dB when panned full left. The right channel is similarly amplified when panning right. Mono signal loudness is perceived to be constant regardless whether panned left, center, or right.
+ * +4.5 dB side (compromise: side overpowered)  
+   When panning left, the left channel is amplified until it reaches +4.5 dB when panned hard left. The right channel is similarly amplified when panning right. Mono signals sound slightly louder when panned left or right compared to center.
+ * +6 dB (linear: side overpowered)  
+   When panning left or right, one side is amplifed and the other attenuated in equal amounts, such that the net gain is always 1. Mono signals sound louder when panned left or right compared to center.
+ * -1.5 dB center (compromise: center overpowered)  
+   Same as +1.5 dB side except the center is attenuated rather than amplify the side.
+ * -3 dB center (equeal power)  
+   Same as +3 dB side except the center is attenuated rather than amplify the side.
+ * -4.5 dB center (compromise: side overpowered)  
+   Same as +4.5 dB side except the center is attenuated rather than amplify the side.
+ * -6 dB center (linear: side overpowered)  
+   Same as +6 dB side except the center is attenuated rather than ammplify the side.
+
+#### Stereo input pan law &nbsp;(Pan expander)
+Controls how left and right channels are attenuated/amplified as a stereo input is panned. All of the mono options are available, plus the following
+ * True panning (transfer content)
+   Right channel input is mixed in with the left channel while panning left, and vice versa while panning right.
+ * Follow mono law (default)
+   The mono pan law setting is used for stereo inputs as well
+
+### MIX OFFSET EXPANDER
+Gives the ability to add constant offset voltages immediately before and/or after a level gain is applied on the main mixer. Offsets are always the first expander to be applied, and so the Offset expander must be adjacent to the main mix module.
+
+Offsets are available for the individual numbered input channels, as well as the final mix output.
 
 The Pre offsets are applied immediately before each level gain.
 
 The Post offsets are applied immediately after each level gain.
 
+Unlike other expanders, offsets are included in VCA channel outputs when used with VCA Mix or VCA Mix Stereo.
+
 Offsets are often used for converting unipolar signals to bipolar, or vice-versa.
+
+Only one Offset expander can be used per mix module.
 
 ### MIX MUTE EXPANDER
 
+Provides buttons and CV inputs to mute any of the four numbered channels, as well as the final mix. The channel is muted whenever the button is glowing bright red.
+
+The CV inputs function as Schmitt triggers, switching to high when the voltage rises to 1 volt or more, and switching to low when dropping to 0.1 volt or less.
+
+A context menu on the main Mix module determines whether the CV inputs function as gates or triggers. By default the CV functions as a gate, meaning the mute is turned on when the CV goes high, and turns off when the CV goes low. If configured as a trigger, then the mute state toggles on or off each time the CV transitions to high.
+
+Manual button presses can override the CV inputs - every button press is guaranteed to toggle the mute state.
+
+Mute states can be overriden by Solo expander buttons.
+
+Since Solo and Mute are applied at the same time, they must be adjacent if both expanders are used. It does not matter which appears first.
+
+Only one Mute expander can be used per mix module.
+
 ### MIX SOLO EXPANDER
+
+Provides buttons to solo one or more of the numbered mix channels. If none of the solo buttons are lit, then the expander has no effect. If at least one solo button is lit (bright green), then all channels that are not lit are muted. Numbered channels on a Mute expander are ignored if at least one solo button is lit.
+
+Since Solo and Mute are applied at the same time, they must be adjacent if both expanders are used. It does not matter which appears first.
+
+Only one Solo expander can be used per mix module.
 
 ### MIX FADE EXPANDER
 
-### MIX FADE2 EXPANDER
+Converts mute/unmute transitions from Mute and Solo expanders to timed fade transitions.
+
+A single Time control for each numbered Mix channel controls the fade in (rise) time and the fade out (fall) time. The fade time ranges from 0 to 30 seconds.
+
+Each channel also has a Shape control, with full counterclockwise (-100%) representing exponential, center (0) representing linear, and full clockwise (100%) representing logarithmic. Points in between are a proportional blend of linear and logorithmic/exponential.
+
+The fade level outputs provide CV representing the current fade level of each channel. The output is 0 V when fully muted, and 10 V when fully unmuted.
+
+Fade is actually an expander for the Mute and Solo expanders, and thus must appear adjacent and to the right of either a Mute or Solo expander.
+
+Only one Fade expander can be used per mix module. Fade and Fade 2 are mutually exclusive. Using Fade precludes the use of Fade 2.
+
+### MIX FADE 2 EXPANDER
+
+Fade 2 is identical to Fade except it gives independent control over the fade rise and fall times.
+
+Each Time control from Fade is replaced by a pair of Rise and Fall controls on Fade 2.
+
+Only one Fade 2 expander can be used per mix module. Fade 2 and Fade are mutually exclusive. Using Fade 2 precludes the use of Fade.
 
 ### MIX PAN EXPANDER
 
+Pan is only available to stereo mix modules Mix 4 Stereo and VCA Mix 4 Stereo. Only one Pan module can be used per mix module.
+
 ### MIX AUX SEND EXPANDER
+
+Any number of Send modules can be used with a single mix module.
 
 [Return to Table Of Contents](#venom)
 
