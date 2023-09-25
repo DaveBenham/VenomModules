@@ -5,9 +5,13 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
-|----|----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
+|----|----|----|----|----|----|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
+
+|[MIX EXPANDERS](#mix-expanders)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
+|----|----|----|----|
+|![Mix Offset Expander module image](doc/MixOffset.png) ![Mix Mute Expander module image](doc/MixMute.png) ![Mix Solo Expander module image](doc/MixSolo.png) ![Mix Fade Expander module image](doc/MixFade.png) ![Mix Fade2 Expander module image](doc/MixFade2.png) ![Mix Pan Expander module image](doc/MixPan.png) ![Mix Send Expander module image](doc/MixSend.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
 
 |[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|----|----|
@@ -300,8 +304,28 @@ All other behaviors are the same as for Mix 4.
 [Return to Table Of Contents](#venom)
 
 
+## MIX EXPANDERS
+![Mix Offset Expander module image](doc/MixOffset.png) ![Mix Mute Expander module image](doc/MixMute.png) ![Mix Solo Expander module image](doc/MixSolo.png) ![Mix Fade Expander module image](doc/MixFade.png) ![Mix Fade2 Expander module image](doc/MixFade2.png) ![Mix Pan Expander module image](doc/MixPan.png) ![Mix Send Expander module image](doc/MixSend.png)  
+Extends the functionality of the four Mix modules: Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+
+### MIX OFFSET EXPANDER
+
+### MIX MUTE EXPANDER
+
+### MIX SOLO EXPANDER
+
+### MIX FADE EXPANDER
+
+### MIX FADE2 EXPANDER
+
+### MIX PAN EXPANDER
+
+### MIX AUX SEND EXPANDER
+
+[Return to Table Of Contents](#venom)
+
 ## POLY CLONE
-![Poly Clone module image](doc/PolyClone.png)
+![Poly Clone module image](doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
 ### CLONE knob
