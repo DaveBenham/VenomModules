@@ -338,7 +338,7 @@ Controls how left and right channels are attenuated/amplified as a mono input is
    While panning left, the left channel is amplified until it reaches +3 dB when panned full left. The right channel is similarly amplified when panning right. Mono signal loudness is perceived to be constant regardless whether panned left, center, or right.
  * +4.5 dB side (compromise: side overpowered)  
    When panning left, the left channel is amplified until it reaches +4.5 dB when panned hard left. The right channel is similarly amplified when panning right. Mono signals sound slightly louder when panned left or right compared to center.
- * +6 dB (linear: side overpowered)  
+ * +6 dB side (linear: side overpowered)  
    When panning left or right, one side is amplifed and the other attenuated in equal amounts, such that the net gain is always 1. Mono signals sound louder when panned left or right compared to center.
  * -1.5 dB center (compromise: center overpowered)  
    Same as +1.5 dB side except the center is attenuated rather than amplify the side.
@@ -351,9 +351,9 @@ Controls how left and right channels are attenuated/amplified as a mono input is
 
 #### Stereo input pan law &nbsp;(Pan expander)
 Controls how left and right channels are attenuated/amplified as a stereo input is panned. All of the mono options are available, plus the following
- * True panning (transfer content)
+ * True panning (transfer content)  
    Right channel input is mixed in with the left channel while panning left, and vice versa while panning right.
- * Follow mono law (default)
+ * Follow mono law (default)  
    The mono pan law setting is used for stereo inputs as well
 
 ### MIX OFFSET EXPANDER
@@ -419,9 +419,31 @@ Only one Fade 2 expander can be used per mix module. Fade 2 and Fade are mutuall
 
 ### MIX PAN EXPANDER
 
+Allows panning of Mix input channels left and right via numbered knobs and inputs.
+
+Each knob ranges from -1 (full counterclockwise) for hard left, to 0 (noon) for center, to +1 (full clockwise) for hard right.
+
+Each CV input has an associated CV attenuverter. The CV is added to the knob value to determine the final pan level. Bipolar CV is expected, with -5V representing hard left and +5V representing hard right (assuming the knob is center panned). So -10V is guaranteed to result in pan hard left even if the knob is panned hard right. Similarly, +10V guarantees pan hard right even if the knob is panned hard left.
+
 Pan is only available to stereo mix modules Mix 4 Stereo and VCA Mix 4 Stereo. Only one Pan module can be used per mix module.
 
 ### MIX AUX SEND EXPANDER
+
+Provides an auxilliary mix of the four mix inputs that can be sent to the Send output(s), and optionally returned to the Return input(s)
+
+Each numbered knob can attenuate the channel to between 0% and 100%, before the channels are mixed and send to the Send output(s).
+
+The Return input(s) are attenuated by the Return knob before being mixed in with the final Mix module mix. The return is mixed in prior to applying the final Level gain at the main Mix module.
+
+Both Send oututs and Return inputs support polyphonic cables.
+
+The Mute button sets the Send output(s) to constant 0V when lit.
+
+Both Left and Right Send and Return inputs and outputs are used when the main Mix module is stereo (Mix 4 Stereo, or VCA Mix 4 Stereo).
+
+If the main Mix module is not stereo (Mix 4, or VCA Mix 4), then the Right Send output is constant monophonic 0V, and any right Return is ignored.
+
+The position of the Send module in a chain of Mix expanders is important. Expanders to the left of the Send expander affect the Send output. Expanders to the right of the Send expander do not affect the Send output.
 
 Any number of Send modules can be used with a single mix module.
 
