@@ -22,7 +22,8 @@ struct MixSend : MixExpanderModule {
     configOutput(RIGHT_SEND_OUTPUT, "Right send");
     configInput(LEFT_RETURN_INPUT, "Left return");
     configInput(RIGHT_RETURN_INPUT, "Right return");
-  }
+    fade[0].rise = fade[0].fall = 40.f;
+}
 
   void process(const ProcessArgs& args) override {
     MixExpanderModule::process(args);
