@@ -332,30 +332,30 @@ Some of the expanders have hidden options that are only available in the main mi
 
 #### Mono input pan law &nbsp;(Pan expander)
 Controls how left and right channels are attenuated/amplified as a mono input is panned. This affects the perceived loudness as a signal is panned left and right versus center.
- * 0 dB (linear: center overpowered)  
+ * **0 dB (linear: center overpowered)**  
    While panning left, the left gain is held constant while the right is attenuated. While panning right, the right gain is held constant while the left is attenuated. Mono signals sound softer when panned left or right compared to when panned center.
- * +1.5 dB side (compromise: center overpowered)  
+ * **+1.5 dB side (compromise: center overpowered)**  
    When panning left, the left channel is amplified slightly to +1.5 dB when panned full left. Likewise when panning right the right channel is amplified slightly. Mono signals still sound softer when panned left or right, but to a lesser degree.
- * +3 dB side (default - equal power)  
+ * **+3 dB side (default - equal power)**  
    While panning left, the left channel is amplified until it reaches +3 dB when panned full left. The right channel is similarly amplified when panning right. Mono signal loudness is perceived to be constant regardless whether panned left, center, or right.
- * +4.5 dB side (compromise: side overpowered)  
+ * **+4.5 dB side (compromise: side overpowered)**  
    When panning left, the left channel is amplified until it reaches +4.5 dB when panned hard left. The right channel is similarly amplified when panning right. Mono signals sound slightly louder when panned left or right compared to center.
- * +6 dB side (linear: side overpowered)  
+ * **+6 dB side (linear: side overpowered)**  
    When panning left or right, one side is amplifed and the other attenuated in equal amounts, such that the net gain is always 1. Mono signals sound louder when panned left or right compared to center.
- * -1.5 dB center (compromise: center overpowered)  
+ * **-1.5 dB center (compromise: center overpowered)**  
    Same as +1.5 dB side except the center is attenuated rather than amplify the side.
- * -3 dB center (equeal power)  
+ * **-3 dB center (equeal power)**  
    Same as +3 dB side except the center is attenuated rather than amplify the side.
- * -4.5 dB center (compromise: side overpowered)  
+ * **-4.5 dB center (compromise: side overpowered)**  
    Same as +4.5 dB side except the center is attenuated rather than amplify the side.
- * -6 dB center (linear: side overpowered)  
+ * **-6 dB center (linear: side overpowered)**  
    Same as +6 dB side except the center is attenuated rather than ammplify the side.
 
 #### Stereo input pan law &nbsp;(Pan expander)
 Controls how left and right channels are attenuated/amplified as a stereo input is panned. All of the mono options are available, plus the following
- * True panning (transfer content)  
+ * **True panning (transfer content)**  
    Right channel input is mixed in with the left channel while panning left, and vice versa while panning right.
- * Follow mono law (default)  
+ * **Follow mono law (default)**  
    The mono pan law setting is used for stereo inputs as well
 
 ### MIX OFFSET EXPANDER
@@ -989,13 +989,13 @@ The Level input is normaled to 10V so that unpatched level input results in the 
 
 The Bias knob can add from 0 to 5 volts to the Level CV input. It is useful for converting a bipolar Level input to unipolar so it can be wave shaped by the Curve response. It is also useful for cross fading between ring modulation and amplitude modulation when the VCA Mode is set to bipolar.
 
-### Curve knob
-Controls the response curve of the level CV input, with full clockwise (1) giving an approximated logarithmic response, noon (0) a linear response, and full counterclockwise (-1) an exponential response. Intermediate values cross fade between the extremes.
+### Response Curve knob
+Controls the response curve of the level CV input, with full clockwise (100%) giving an approximated logarithmic response, noon (0) a linear response, and full counterclockwise (-100%) an exponential response. Intermediate values cross fade between the extremes and linear.
 
 The default value is 0 = linear response curve.
 
 ### Curve CV input
-The Curve CV input is divided by 10 and then summed with the Curve knob value to establish the effective response curve. The final effective curve level is clamped to +/- 1.
+The Curve CV input is multiplied by 10 and then summed with the Curve knob value to establish the effective response curve. The final effective curve level is clamped to +/- 100%.
 
 The Curve CV input is normaled to 0V.
 
