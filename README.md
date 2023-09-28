@@ -960,7 +960,7 @@ This color coded switch establishes how the output is clipped
 - yellow = hard clipped at +/- 10 Volts
 - orange = soft clipped at +/- 10 Volts using an approximated tanh algorithm to provide saturation.
 
-It is highly recommended that hard or soft clipping be applied if performing ring modulation with a logarithmic response curve.
+It is highly recommended that hard or soft clipping be applied if performing ring modulation with a logarithmic response curve using the old algorithm.
 
 ### O (Oversampling) button
 This color coded switch establishes the amount of oversampling used to mitigate audio aliasing that may be introduced by clipping or non-linear response curves.
@@ -998,6 +998,12 @@ The default value is 0 = linear response curve.
 The Curve CV input is multiplied by 10 and then summed with the Curve knob value to establish the effective response curve. The final effective curve level is clamped to +/- 100%.
 
 The Curve CV input is normaled to 0V.
+
+### Logarithm algorithm
+
+Logarithms aren't defined for negative values, but ring modulation needs to support negative values. So to make logarithmic responses work with ring modulation, the approximated logarithm of the absolute value is used and then multiplied by the sign of the original value (1 or -1).
+
+The original version of Shaped VCA used a different algorithm that worked, but gave some wicked high voltage spikes that required clipping. The old algorithm is probably not what is wanted, but to support any old patches that relied on the old behavior, there is a context menu option to force the use of the old logarithm algorithm. Pre-existing patches prior to version 2.5.0 automatically default to the old algorithm.
 
 ### Left and Right inputs
 
