@@ -307,48 +307,47 @@ struct MixBaseWidget : VenomWidget {
   void appendContextMenu(Menu* menu) override {
     MixBaseModule* module = dynamic_cast<MixBaseModule*>(this->module);
 
-    if (module->mutePresent || module->soloPresent || module->sendPresent || module->panPresent) {
+    if (module->mutePresent || module->soloPresent || module->sendPresent || module->panPresent)
       menu->addChild(new MenuSeparator);
 
-      if (module->mutePresent || module->soloPresent || module->sendPresent)
-        menu->addChild(createBoolMenuItem("Soft mute/solo", "",
-          [=]() {
-            return module->softMute;
-          },
-          [=](bool val) {
-            module->softMute = val;
-          }
-        ));    
+    if (module->mutePresent || module->soloPresent || module->sendPresent)
+      menu->addChild(createBoolMenuItem("Soft mute/solo", "",
+        [=]() {
+          return module->softMute;
+        },
+        [=](bool val) {
+          module->softMute = val;
+        }
+      ));    
 
-      if (module->mutePresent)
-        menu->addChild(createBoolMenuItem("Mute CV toggles on/off", "",
-          [=]() {
-            return module->toggleMute;
-          },
-          [=](bool val) {
-            module->toggleMute = val;
-          }
-        ));    
+    if (module->mutePresent)
+      menu->addChild(createBoolMenuItem("Mute CV toggles on/off", "",
+        [=]() {
+          return module->toggleMute;
+        },
+        [=](bool val) {
+          module->toggleMute = val;
+        }
+      ));    
 
-      if (module->panPresent) {
-        menu->addChild(createIndexPtrSubmenuItem(
-          "Mono input pan law", {
-            "0 dB (linear: center overpowered)",
-            "+1.5 dB side (compromise: center overpowered)", "+3 dB side (equal power)", "+4.5 dB side (compromise: side overpowered)", "+6 dB side (linear: side overpowered)",
-            "-1.5 dB center (compromise: center overpowered)", "-3 dB center (equal power)", "-4.5 dB center (compromise: side overpowered)", "-6 dB center (linear: side overpowered)"
-          },
-          &module->monoPanLaw
-        ));
-        menu->addChild(createIndexPtrSubmenuItem(
-          "Stereo input pan law", {
-            "0 dB (linear: center overpowered)",
-            "+1.5 dB side (compromise: center overpowered)", "+3 dB side (equal power)", "+4.5 dB side (compromise: side overpowered)", "+6 dB side (linear: side overpowered)",
-            "-1.5 dB center (compromise: center overpowered)", "-3 dB center (equal power)", "-4.5 dB center (compromise: side overpowered)", "-6 dB center (linear: side overpowered)",
-            "True panning (transfer content)", "Follow mono law"
-          },
-          &module->stereoPanLaw
-        ));
-      }
+    if (module->panPresent) {
+      menu->addChild(createIndexPtrSubmenuItem(
+        "Mono input pan law", {
+          "0 dB (linear: center overpowered)",
+          "+1.5 dB side (compromise: center overpowered)", "+3 dB side (equal power)", "+4.5 dB side (compromise: side overpowered)", "+6 dB side (linear: side overpowered)",
+          "-1.5 dB center (compromise: center overpowered)", "-3 dB center (equal power)", "-4.5 dB center (compromise: side overpowered)", "-6 dB center (linear: side overpowered)"
+        },
+        &module->monoPanLaw
+      ));
+      menu->addChild(createIndexPtrSubmenuItem(
+        "Stereo input pan law", {
+          "0 dB (linear: center overpowered)",
+          "+1.5 dB side (compromise: center overpowered)", "+3 dB side (equal power)", "+4.5 dB side (compromise: side overpowered)", "+6 dB side (linear: side overpowered)",
+          "-1.5 dB center (compromise: center overpowered)", "-3 dB center (equal power)", "-4.5 dB center (compromise: side overpowered)", "-6 dB center (linear: side overpowered)",
+          "True panning (transfer content)", "Follow mono law"
+        },
+        &module->stereoPanLaw
+      ));
     }
 
     VenomWidget::appendContextMenu(menu);

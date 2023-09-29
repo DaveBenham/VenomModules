@@ -78,6 +78,8 @@ void init(Plugin* p) {
   p->addModel(modelBernoulliSwitchExpander);
   p->addModel(modelCloneMerge);
   p->addModel(modelHQ);
+  p->addModel(modelLinearBeats);
+  p->addModel(modelLinearMute);
   p->addModel(modelMix4);
   p->addModel(modelMix4Stereo);
   p->addModel(modelMixFade);
