@@ -5,9 +5,9 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
-|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />MUTE](#linear-mute)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
+|----|----|----|----|----|----|----|----|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Mute module image](doc/LinearMute.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
 
 |[MIX EXPANDERS](#mix-expanders)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
 |----|----|----|----|
@@ -228,6 +228,18 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 [Return to Table Of Contents](#venom)
 
+## LINEAR BEATS
+![Linear Beats module image](doc/LinearBeats.png)  
+Only allow one gate to pass through at a time across multiple incoming gate channels.
+
+[Return to Table Of Contents](#venom)
+
+
+## LINEAR MUTE
+![Linear Mute module image](doc/LinearMute.png)  
+Add channel mutes to Linear Beats.
+
+[Return to Table Of Contents](#venom)
 
 ## MIX 4
 ![Mix 4 module image](doc/Mix4.png)  
