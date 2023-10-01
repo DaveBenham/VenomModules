@@ -44,15 +44,13 @@ struct LinearBeats : VenomModule {
     float proc(bool trig, float inValue, bool& preState, int mode, bool inMute, bool outMute) {
       Event event;
       if (trig && (event = processEvent(inValue, 0.1f, 1.f))){
-        if (TRIGGERED)
-          outState = mode==0 || mode==2 ? !preState && state : state;
+        if (event == TRIGGERED) {
+          outState = (mode==1 || mode==3 || !preState) && !inMute;
+          preState = mode==2 ? preState : mode==3 ? outState : preState || outState;
+        }
         else
           outState = false;
       }
-      if (inMute)
-        outState = false;
-      else
-        preState = mode==2 ? preState : mode==3 ? state : preState || state;
       return outState && !outMute ? 10.f : 0.f;
     }  
   };
@@ -70,19 +68,11 @@ struct LinearBeats : VenomModule {
       int cnt = inputs[IN_INPUT+i].getChannels();
       for (int c=oldCnt[i]; c<cnt; c++)
         channel[i][c].outState = channel[i][c].state = false;
-      for(int c=0; c<cnt; c++){
-        outputs[OUT_OUTPUT+i].setVoltage(
-          channel[i][c].proc(
-            trig, 
-            inputs[IN_INPUT+i].getVoltage(c), 
-            preState,
-            params[MODE_PARAM+i].getValue(), 
-            inMute ? inMute->params[MUTE_PARAM+i].getValue() : false, 
-            finalOutMute ? finalOutMute->params[MUTE_PARAM+i].getValue() : false
-          ), 
-          c
-        );
-      }
+      int mode = params[MODE_PARAM+i].getValue();
+      bool muteIn = inMute && inMute->params[MUTE_PARAM+i].getValue();
+      bool muteOut = finalOutMute && finalOutMute->params[MUTE_PARAM+i].getValue();
+      for(int c=0; c<cnt; c++)
+        outputs[OUT_OUTPUT+i].setVoltage( channel[i][c].proc(trig,inputs[IN_INPUT+i].getVoltage(c), preState, mode, muteIn, muteOut), c);
       outputs[OUT_OUTPUT+i].setChannels(cnt);
       oldCnt[i] = cnt;
     }
