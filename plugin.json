@@ -61,7 +61,7 @@
     {
       "slug": "LinearBeats",
       "name": "Linear Beats",
-      "description": "Convert multi-channel triggers/gates into a linear drumming pattern",
+      "description": "Convert multiple trigger/gate channels into a linear drumming pattern",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#linear-beats",
       "tags": [
         "Logic",
@@ -69,10 +69,10 @@
       ]
     },
     {
-      "slug": "LinearMute",
-      "name": "Linear Mute",
-      "description": "Add input and/or output mutes to the Linear Beats module",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#linear-beats",
+      "slug": "LinearBeatsExpander",
+      "name": "Linear Beats Expander",
+      "description": "Add bypass and input/output mutes to the Linear Beats module",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#linear-beats-expander",
       "tags": [
         "Logic",
         "Expander"

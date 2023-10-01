@@ -39,7 +39,7 @@
      id="namedview102"
      showgrid="true"
      inkscape:zoom="2.2342105"
-     inkscape:cx="22.603062"
+     inkscape:cx="22.603063"
      inkscape:cy="190"
      inkscape:window-x="1592"
      inkscape:window-y="-8"
@@ -244,4 +244,54 @@
      id="layer2"
      inkscape:label="Text Labels"
      style="display:none" />
+  <g
+     id="g1193"
+     style="display:inline;fill:#000000;fill-opacity:1"
+     transform="translate(-0.00176269,0.00177709)">
+    <g
+       id="g151728"
+       transform="translate(2,-8)"
+       style="fill:#000000;fill-opacity:1">
+      <g
+         aria-label="1"
+         id="text9323-6-6"
+         style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1"
+         transform="translate(-4.1072622,17.410017)">
+        <path
+           d="m 11.419762,194.86545 h -1.097657 v -4.13672 q -0.6015621,0.5625 -1.4179683,0.83203 v -0.99609 q 0.4296875,-0.14063 0.9335937,-0.53125 0.5039066,-0.39453 0.6914066,-0.91797 h 0.890625 z"
+           id="path79780"
+           style="fill:#000000;fill-opacity:1" />
+      </g>
+      <g
+         aria-label="2"
+         id="text9323-6-3-6"
+         style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1"
+         transform="translate(-4.1072628,16.089464)">
+        <path
+           d="m 12.085778,227.08554 v 1.01953 H 8.238122 q 0.0625,-0.57812 0.375,-1.09375 0.3125,-0.51953 1.234375,-1.375 0.742187,-0.6914 0.910156,-0.9375 0.226563,-0.33984 0.226563,-0.67187 0,-0.36719 -0.199219,-0.5625 -0.195313,-0.19922 -0.542969,-0.19922 -0.3437498,0 -0.5468748,0.20703 -0.203125,0.20703 -0.234375,0.6875 l -1.09375,-0.10938 q 0.097656,-0.90625 0.6132813,-1.30078 0.515625,-0.39453 1.2890625,-0.39453 0.847656,0 1.332031,0.45703 0.484375,0.45703 0.484375,1.13672 0,0.38672 -0.140625,0.73828 -0.136719,0.34766 -0.4375,0.73047 -0.199219,0.25391 -0.71875,0.73047 -0.519531,0.47656 -0.660156,0.63281 -0.1367188,0.15625 -0.2226563,0.30469 z"
+           id="path79783"
+           style="fill:#000000;fill-opacity:1" />
+      </g>
+      <g
+         aria-label="3"
+         id="text9323-6-3-4-2"
+         style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1"
+         transform="translate(-4.107262,14.768952)">
+        <path
+           d="m 8.2596054,259.77634 1.0625,-0.12891 q 0.050781,0.40625 0.2734375,0.62109 0.2226563,0.21485 0.5390621,0.21485 0.339844,0 0.570313,-0.25781 0.234375,-0.25782 0.234375,-0.69532 0,-0.41406 -0.222656,-0.65625 -0.222657,-0.24218 -0.542969,-0.24218 -0.2109376,0 -0.5039063,0.082 l 0.1210937,-0.89453 q 0.4453126,0.0117 0.6796876,-0.19141 0.234375,-0.20703 0.234375,-0.54688 0,-0.28906 -0.171875,-0.46093 -0.171875,-0.17188 -0.457031,-0.17188 -0.2812503,0 -0.4804691,0.19531 -0.1992187,0.19532 -0.2421875,0.57032 l -1.0117187,-0.17188 q 0.1054687,-0.51953 0.3164062,-0.82812 0.2148438,-0.3125 0.59375,-0.48828 0.3828125,-0.17969 0.8554691,-0.17969 0.808593,0 1.296875,0.51562 0.402343,0.42188 0.402343,0.95313 0,0.7539 -0.824218,1.20312 0.492187,0.10547 0.785156,0.47266 0.296875,0.36719 0.296875,0.88672 0,0.7539 -0.550781,1.28515 -0.550782,0.53125 -1.371094,0.53125 -0.7773438,0 -1.2890626,-0.44531 -0.5117187,-0.44922 -0.59375,-1.17187 z"
+           id="path79786"
+           style="fill:#000000;fill-opacity:1" />
+      </g>
+      <g
+         aria-label="4"
+         id="text9323-6-3-4-7-9"
+         style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1"
+         transform="translate(-4.107263,13.448364)">
+        <path
+           d="m 10.447106,294.58432 v -1.15234 H 8.1033564 v -0.96094 l 2.4843746,-3.63672 h 0.921875 v 3.63281 h 0.710938 v 0.96485 h -0.710938 v 1.15234 z m 0,-2.11719 v -1.95703 l -1.3164059,1.95703 z"
+           id="path79789"
+           style="fill:#000000;fill-opacity:1" />
+      </g>
+    </g>
+  </g>
 </svg>

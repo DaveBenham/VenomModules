@@ -133,6 +133,7 @@ struct MixModule : VenomModule {
     SOLO_PARAMS_LEN
   };
   enum SoloInputId {
+    ENUMS(SOLO_INPUT,4),
     SOLO_INPUTS_LEN
   };
   enum SoloOutputId {
@@ -146,7 +147,7 @@ struct MixModule : VenomModule {
   
   MixModule* leftExpander = NULL;
   MixModule* rightExpander = NULL;
-  dsp::SchmittTrigger muteCV[5];
+  dsp::SchmittTrigger muteCV[5], soloCV[4];
   dsp::SlewLimiter fade[5];
 
   void onExpanderChange(const ExpanderChangeEvent& e) override {
@@ -321,7 +322,7 @@ struct MixBaseWidget : VenomWidget {
       ));    
 
     if (module->mutePresent)
-      menu->addChild(createBoolMenuItem("Mute CV toggles on/off", "",
+      menu->addChild(createBoolMenuItem("Mute/Solo CV toggles on/off", "",
         [=]() {
           return module->toggleMute;
         },

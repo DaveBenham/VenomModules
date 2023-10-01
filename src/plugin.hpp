@@ -15,7 +15,7 @@ extern Model* modelBernoulliSwitchExpander;
 extern Model* modelCloneMerge;
 extern Model* modelHQ;
 extern Model* modelLinearBeats;
-extern Model* modelLinearMute;
+extern Model* modelLinearBeatsExpander;
 extern Model* modelMix4;
 extern Model* modelMix4Stereo;
 extern Model* modelMixFade;

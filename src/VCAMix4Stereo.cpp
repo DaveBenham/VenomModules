@@ -374,6 +374,15 @@ struct VCAMix4Stereo : MixBaseModule {
               muteMod->params[MUTE_PARAM+i].setValue(muteMod->muteCV[i].isHigh());
           }
         }  
+        if (!c && soloMod && !soloMod->isBypassed()) {
+          for (int i=0; i<4; i++) {
+            int evnt = soloMod->soloCV[i].processEvent(soloMod->inputs[SOLO_INPUT+i].getVoltage(), 0.1f, 1.f);
+            if (toggleMute && evnt>0)
+              soloMod->params[SOLO_PARAM+i].setValue(!soloMod->params[SOLO_PARAM+i].getValue());
+            if (!toggleMute && evnt)
+              soloMod->params[SOLO_PARAM+i].setValue(soloMod->soloCV[i].isHigh());
+          }
+        }  
         if (soloMod && !soloMod->isBypassed() && (
              soloMod->params[SOLO_PARAM+0].getValue() || soloMod->params[SOLO_PARAM+1].getValue() || 
              soloMod->params[SOLO_PARAM+2].getValue() || soloMod->params[SOLO_PARAM+3].getValue()

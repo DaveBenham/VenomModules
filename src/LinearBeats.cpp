@@ -4,7 +4,7 @@
 #include "plugin.hpp"
 
 struct LinearBeats : VenomModule {
-  #include "LinearMute.hpp"
+  #include "LinearBeatsExpander.hpp"
 
   enum ParamId {
     ENUMS(MODE_PARAM,9),
@@ -25,6 +25,8 @@ struct LinearBeats : VenomModule {
   
   Module* inMute = NULL;
   Module* outMute = NULL;
+  bool toggleCV = false;
+  dsp::SchmittTrigger inMuteCV[9], outMuteCV[9], inDisableCV, outDisableCV;
 
   LinearBeats() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -63,30 +65,75 @@ struct LinearBeats : VenomModule {
     
     bool preState = false;
     bool trig = (!inputs[CLOCK_INPUT].isConnected()) || clockTrigger.process(inputs[CLOCK_INPUT].getVoltage(), 0.1f, 1.f);
-    Module* finalOutMute = outMute && (!outMute->getRightExpander().module || outMute->getRightExpander().module->model != modelLinearBeats) ? outMute : NULL;
-    for(int i=0; i<9; i++){
-      int cnt = inputs[IN_INPUT+i].getChannels();
-      for (int c=oldCnt[i]; c<cnt; c++)
-        channel[i][c].outState = channel[i][c].state = false;
-      int mode = params[MODE_PARAM+i].getValue();
-      bool muteIn = inMute && inMute->params[MUTE_PARAM+i].getValue();
-      bool muteOut = finalOutMute && finalOutMute->params[MUTE_PARAM+i].getValue();
-      for(int c=0; c<cnt; c++)
-        outputs[OUT_OUTPUT+i].setVoltage( channel[i][c].proc(trig,inputs[IN_INPUT+i].getVoltage(c), preState, mode, muteIn, muteOut), c);
-      outputs[OUT_OUTPUT+i].setChannels(cnt);
-      oldCnt[i] = cnt;
+    Module* finalInMute = inMute && !inMute->isBypassed() ? inMute : NULL;
+    Module* finalOutMute = outMute && !outMute->isBypassed() && (!outMute->getRightExpander().module || outMute->getRightExpander().module->model != modelLinearBeats) ? outMute : NULL;
+    if (finalInMute) {
+      for (int i=0; i<9; i++) {
+        int evnt = inMuteCV[i].processEvent(finalInMute->inputs[MUTE_INPUT+i].getVoltage(), 0.1f, 1.f);
+        if (toggleCV && evnt>0)
+          finalInMute->params[MUTE_PARAM+i].setValue(!finalInMute->params[MUTE_PARAM+i].getValue());
+        if (!toggleCV && evnt)
+          finalInMute->params[MUTE_PARAM+i].setValue(inMuteCV[i].isHigh());
+      }
+      int evnt = inDisableCV.processEvent(finalInMute->inputs[BYPASS_INPUT].getVoltage(), 0.1f, 1.f);
+      if (toggleCV && evnt>0)
+        finalInMute->params[BYPASS_PARAM].setValue(!finalInMute->params[BYPASS_PARAM].getValue());
+      if (!toggleCV && evnt)
+        finalInMute->params[BYPASS_PARAM].setValue(inDisableCV.isHigh());
+    }  
+    if (finalOutMute) {
+      for (int i=0; i<9; i++) {
+        int evnt = outMuteCV[i].processEvent(finalOutMute->inputs[MUTE_INPUT+i].getVoltage(), 0.1f, 1.f);
+        if (toggleCV && evnt>0)
+          finalOutMute->params[MUTE_PARAM+i].setValue(!finalOutMute->params[MUTE_PARAM+i].getValue());
+        if (!toggleCV && evnt)
+          finalOutMute->params[MUTE_PARAM+i].setValue(outMuteCV[i].isHigh());
+      }
+      int evnt = outDisableCV.processEvent(finalOutMute->inputs[BYPASS_INPUT].getVoltage(), 0.1f, 1.f);
+      if (toggleCV && evnt>0)
+        finalOutMute->params[BYPASS_PARAM].setValue(!finalOutMute->params[BYPASS_PARAM].getValue());
+      if (!toggleCV && evnt)
+        finalOutMute->params[BYPASS_PARAM].setValue(outDisableCV.isHigh());
+    }
+    if ((finalInMute && finalInMute->params[BYPASS_PARAM].getValue()) || (finalOutMute && finalOutMute->params[BYPASS_PARAM].getValue())) {
+      for (int i=0; i<9; i++) {
+        if ((finalInMute && finalInMute->params[MUTE_PARAM+i].getValue()) || (finalOutMute && finalOutMute->params[MUTE_PARAM+i].getValue())) {
+          outputs[OUT_OUTPUT+i].setVoltage(0.f);
+          outputs[OUT_OUTPUT+i].setChannels(0);
+        }
+        else {
+          float v[16];
+          inputs[IN_INPUT+i].readVoltages(&v[0]);
+          outputs[OUT_OUTPUT+i].setChannels(inputs[IN_INPUT+i].getChannels());
+          outputs[OUT_OUTPUT+i].writeVoltages(&v[0]);
+        }
+      }
+    }
+    else {
+      for(int i=0; i<9; i++){
+        int cnt = inputs[IN_INPUT+i].getChannels();
+        for (int c=oldCnt[i]; c<cnt; c++)
+          channel[i][c].outState = channel[i][c].state = false;
+        int mode = params[MODE_PARAM+i].getValue();
+        bool muteIn = finalInMute && inMute->params[MUTE_PARAM+i].getValue();
+        bool muteOut = finalOutMute && finalOutMute->params[MUTE_PARAM+i].getValue();
+        for(int c=0; c<cnt; c++)
+          outputs[OUT_OUTPUT+i].setVoltage( channel[i][c].proc(trig,inputs[IN_INPUT+i].getVoltage(c), preState, mode, muteIn, muteOut), c);
+        outputs[OUT_OUTPUT+i].setChannels(cnt);
+        oldCnt[i] = cnt;
+      }
     }
   }
   
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (e.side) { // right
       outMute = getRightExpander().module;
-      if (outMute && outMute->model != modelLinearMute)
+      if (outMute && outMute->model != modelLinearBeatsExpander)
         outMute = NULL;
     }
     else { // left
       inMute = getLeftExpander().module;
-      if ( inMute && inMute->model != modelLinearMute)
+      if ( inMute && inMute->model != modelLinearBeatsExpander)
         inMute = NULL;
     }
   }  
@@ -115,6 +162,22 @@ struct LinearBeatsWidget : VenomWidget {
       y+=31.556f;
     }
     addInput(createInputCentered<PJ301MPort>(Vec(16.5f,y), module, LinearBeats::CLOCK_INPUT));
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    LinearBeats* module = dynamic_cast<LinearBeats*>(this->module);
+    if (module->inMute || module->outMute) {
+      menu->addChild(new MenuSeparator);
+      menu->addChild(createBoolMenuItem("Expander CV toggles button on/off", "",
+        [=]() {
+          return module->toggleCV;
+        },
+        [=](bool val) {
+          module->toggleCV = val;
+        }
+      ));
+    }
+    VenomWidget::appendContextMenu(menu);
   }
 
 };
