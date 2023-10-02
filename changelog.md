@@ -2,6 +2,8 @@
 
 ## 2.5.0 (2023-??-??)
 ### New Modules
+- Linear Beats
+- Linear Beats Expander
 - Mix Offset Expander
 - Mix Mute Expander
 - Mix Solo Expander

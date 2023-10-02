@@ -321,7 +321,7 @@ struct MixBaseWidget : VenomWidget {
         }
       ));    
 
-    if (module->mutePresent)
+    if (module->mutePresent || module->soloPresent)
       menu->addChild(createBoolMenuItem("Mute/Solo CV toggles on/off", "",
         [=]() {
           return module->toggleMute;

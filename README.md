@@ -230,7 +230,29 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 ## LINEAR BEATS
 ![Linear Beats module image](doc/LinearBeats.png)  
-Only allow one gate to pass through at a time across multiple incoming gate channels.
+Only allow one trigger/gate to strike at a time across multiple incoming trigger/gate channels, thus converting overlapping drum triggers into a linear drumming pattern.
+
+Lower lettered inputs (toward the top) take precedence over higher lettered inputs (toward the bottom). Linear Beats is polyphonic, and lower numbered polyphonic channels take precedence over higher numbered channels.
+
+A gate/trigger appearing at the input may or may not be passed through to the output depending on the channel mode, and whether or not a higher precedence channel transitioned to high at the same time. A lower precedence channel may strike a new gate while higher precedence gates are high as long as none of those higher precedence gates transitioned to high at the same time.
+
+Each channel has four possible modes controlled by color coded buttons:
+ - **Linear (green)** - Any gate will not pass through if a higher precedence gate transitioned to high at the same time. Any gate that does pass through will block lower precedence gates.
+ - **All (off, dark gray)** - All gates will pass through, regardless whether higher precedence channels transitioned to high at the same time. All gates will block lower precedence gates.
+ - **Non-blocking Linear (orange)** - Any gate will not pass through if a higher precedence gate transitioned to high at the same time. Gates that do pass through will ***not*** block lower precedence gates.
+ - **New All (white)** - All higher precedence gates are forgotten and a new linear drumming group is started. All gates will pass through and also will block lower precedence gates.
+ 
+There does not exist a Non-blocking All mode. If you want to allow gates through that do not block lower precedence channels, then simply put that channel toward the top and start a new linear drumming group with a New All mode below.
+
+A channel mode applies identically to all polyphonic channels on a given lettered channel.
+
+All inputs are Schmitt triggers that transition to high when the level rises to 1V or above, and transition to low when the level falls to 0.1V or lower. The outputs are 10V for high, and 0V for low.
+
+If Linear Beats is not clocked, then it is dependent on all trigger/gate transitions being exactly in sync down to the sample level.
+
+If the input gates are not guaranteed to be in sync, then you can add a clock input to effectively force all triggers/gates to be in sync with the timing "grid" of the clock. Inputs are only checked for transition to high or low whenever the clock transitions to high. The clock should be delayed at least as much as the most delayed input. If you want outgoing gates to be 50% duty cycle, then the clock should run at least twice as fast as your fasted incoming channel.
+
+If Linear Beats is bypassed, then all inputs are passed through unchanged to the outputs.
 
 [Return to Table Of Contents](#venom)
 
@@ -238,6 +260,22 @@ Only allow one gate to pass through at a time across multiple incoming gate chan
 ## LINEAR BEATS EXPANDER
 ![Linear Beats Expander module image](doc/LinearBeatsExpander.png)  
 Add bypass and input/output mutes to Linear Beats.
+
+The Linear Beats expander can be placed to the left or right of a Linear Beats module. Left expanders apply mutes to the inputs, so that muted channels never block lower precedence channels. Right expanders apply mutes to the outputs so that muted channels can still block lower precedence channels.
+
+If an expander is sandwiched between two Linear Beats, then it will preferentially connect to the right as an input mute.
+
+A single Linear Beats can make use of both input and output mutes simultaneously.
+
+Two small LEDs at the top of the expander indicate which direction, if any, the expander is connected. The LED glows yellow when connected.
+
+A channel is muted whenever the mute button glows red. Pressing a mute button is guaranteed to toggle the mute state. Each mute can also be controlled via CV. A "Expander CV toggles button on/off" context menu option ***on the main Linear Beats module*** controls how the CV operates.
+ - If enabled, then the corresponding button toggled on or off whenever the CV input transitions to high.
+ - If disabled (default), then the corresponding button is turned on (muted) when the CV transitions to high, and turned off (unmuted) when the CV transitions to low.
+
+In addition to mutes, the expander has a Disable button / CV input pair that turns off linear drumming, allowing all input triggers/gates to pass through, without syncing to any clock.  The Disable CV operates the same as for the mutes. If a Linear Beats has both an input and output expander, then disabling either side will disable the linear drumming.
+
+An expander is ignored if it is bypassed.
 
 [Return to Table Of Contents](#venom)
 
@@ -338,9 +376,9 @@ Some of the expanders have hidden options that are only available in the main mi
  * If enabled (default), then mute/solo transitions are slewed to take 25 msec (or more if fades are applied).
  * If disabled, then mute/solo transitions are immediate (unless fades are applied)
 
-#### Mute CV toggles on/off &nbsp;(Mute expander)
- * If disabled (default), then Mute CV functions as a gate
- * If enabled, then Mute CV functions as a toggle
+#### Mute/solo CV toggles on/off &nbsp;(Mute expander)
+ * If disabled (default), then Mute CV and Solo CV function as a gate
+ * If enabled, then Mute CV and Solo CV function as a toggle
 
 #### Mono input pan law &nbsp;(Pan expander)
 Controls how left and right channels are attenuated/amplified as a mono input is panned. This affects the perceived loudness as a signal is panned left and right versus center.
@@ -403,7 +441,13 @@ Only one Mute expander can be used per mix module.
 
 ### MIX SOLO EXPANDER
 
-Provides buttons to solo one or more of the numbered mix channels. If none of the solo buttons are lit, then the expander has no effect. If at least one solo button is lit (bright green), then all channels that are not lit are muted. Numbered channels on a Mute expander are ignored if at least one solo button is lit.
+Provides buttons and CV inputs to solo one or more of the numbered mix channels. If none of the solo buttons are lit, then the expander has no effect. If at least one solo button is lit (bright green), then all channels that are not lit are muted. Numbered channels on a Mute expander are ignored if at least one solo button is lit.
+
+The CV inputs function as Schmitt triggers, switching to high when the voltage rises to 1 volt or more, and switching to low when dropping to 0.1 volt or less.
+
+A context menu on the main Mix module determines whether the CV inputs function as gates or triggers. By default the CV functions as a gate, meaning the solo is turned on when the CV goes high, and turns off when the CV goes low. If configured as a trigger, then the solo state toggles on or off each time the CV transitions to high.
+
+Manual button presses can override the CV inputs - every button press is guaranteed to toggle the solo state.
 
 Since Solo and Mute are applied at the same time, they must be adjacent if both expanders are used. It does not matter which appears first.
 
