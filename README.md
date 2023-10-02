@@ -230,13 +230,13 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 ## LINEAR BEATS
 ![Linear Beats module image](doc/LinearBeats.png)  
-Only allow one trigger/gate to strike at a time across multiple incoming trigger/gate channels, thus converting coinciding drum triggers into a linear drumming pattern.
+Only allow one trigger/gate to strike at a time across multiple incoming trigger/gate channels, thus converting coincident drum triggers into a linear drumming pattern.
 
 Lower lettered inputs (toward the top) take precedence over higher lettered inputs (toward the bottom). Linear Beats is polyphonic, and lower numbered polyphonic channels take precedence over higher numbered channels.
 
-A gate/trigger appearing at the input may or may not be passed through to the output depending on the channel mode, and whether or not a higher precedence channel transitioned to high at the same time. A lower precedence channel in Linear mode may strike a new gate while higher precedence gates are high as long as none of those higher precedence gates transitioned to high at the same time.
+A gate/trigger appearing at the input may or may not be passed through to the output depending on the channel mode, and whether or not a higher precedence channel transitioned to high at the same time. A lower precedence channel in Linear mode may strike a new gate while higher precedence gates are high as long as none of those higher precedence gate transitions are coincident.
 
-For example, in the image below the top oscilloscope shows gate patterns with coinciding gates. The bottom oscilloscope shows the effect of Linear Beats - gates that coincide with higher precedence gates are removed.  
+For example, in the image below the top oscilloscope shows gate patterns with coincident gates. The bottom oscilloscope shows the effect of Linear Beats - lower precedence gates with coincident transitions to high are removed.  
 ![Linear Beats example image](doc/LinearBeatsExample.PNG)
 
 Each channel has four possible modes controlled by a color coded button:
