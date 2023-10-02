@@ -230,13 +230,16 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 ## LINEAR BEATS
 ![Linear Beats module image](doc/LinearBeats.png)  
-Only allow one trigger/gate to strike at a time across multiple incoming trigger/gate channels, thus converting overlapping drum triggers into a linear drumming pattern.
+Only allow one trigger/gate to strike at a time across multiple incoming trigger/gate channels, thus converting coinciding drum triggers into a linear drumming pattern.
 
 Lower lettered inputs (toward the top) take precedence over higher lettered inputs (toward the bottom). Linear Beats is polyphonic, and lower numbered polyphonic channels take precedence over higher numbered channels.
 
-A gate/trigger appearing at the input may or may not be passed through to the output depending on the channel mode, and whether or not a higher precedence channel transitioned to high at the same time. A lower precedence channel may strike a new gate while higher precedence gates are high as long as none of those higher precedence gates transitioned to high at the same time.
+A gate/trigger appearing at the input may or may not be passed through to the output depending on the channel mode, and whether or not a higher precedence channel transitioned to high at the same time. A lower precedence channel in Linear mode may strike a new gate while higher precedence gates are high as long as none of those higher precedence gates transitioned to high at the same time.
 
-Each channel has four possible modes controlled by color coded buttons:
+For example, in the image below the top oscilloscope shows gate patterns with coinciding gates. The bottom oscilloscope shows the effect of Linear Beats - gates that coincide with higher precedence gates are removed.  
+![Linear Beats example image](doc/LinearBeatsExample.PNG)
+
+Each channel has four possible modes controlled by a color coded button:
  - **Linear (green)** - Any gate will not pass through if a higher precedence gate transitioned to high at the same time. Any gate that does pass through will block lower precedence gates.
  - **All (off, dark gray)** - All gates will pass through, regardless whether higher precedence channels transitioned to high at the same time. All gates will block lower precedence gates.
  - **Non-blocking Linear (orange)** - Any gate will not pass through if a higher precedence gate transitioned to high at the same time. Gates that do pass through will ***not*** block lower precedence gates.
@@ -250,7 +253,7 @@ All inputs are Schmitt triggers that transition to high when the level rises to 
 
 If Linear Beats is not clocked, then it is dependent on all trigger/gate transitions being exactly in sync down to the sample level.
 
-If the input gates are not guaranteed to be in sync, then you can add a clock input to effectively force all triggers/gates to be in sync with the timing "grid" of the clock. Inputs are only checked for transition to high or low whenever the clock transitions to high. The clock should be delayed at least as much as the most delayed input. If you want outgoing gates to be 50% duty cycle, then the clock should run at least twice as fast as your fasted incoming channel.
+If the input gates are not guaranteed to be in sync, then you can add a clock input to effectively force all triggers/gates to be in sync with the timing "grid" of the clock. Inputs are only checked for transition to high or low whenever the clock transitions to high. The clock should be delayed at least as much as the most delayed input. If you want outgoing gates to be 50% duty cycle, then the clock should run at least twice as fast as your fastest incoming channel.
 
 If Linear Beats is bypassed, then all inputs are passed through unchanged to the outputs.
 
@@ -269,8 +272,8 @@ A single Linear Beats can make use of both input and output mutes simultaneously
 
 Two small LEDs at the top of the expander indicate which direction, if any, the expander is connected. The LED glows yellow when connected.
 
-A channel is muted whenever the mute button glows red. Pressing a mute button is guaranteed to toggle the mute state. Each mute can also be controlled via CV. A "Expander CV toggles button on/off" context menu option ***on the main Linear Beats module*** controls how the CV operates.
- - If enabled, then the corresponding button toggled on or off whenever the CV input transitions to high.
+A channel is muted whenever the mute button glows red. Pressing a mute button is guaranteed to toggle the mute state. Each mute can also be controlled via CV. An "Expander CV toggles button on/off" context menu option ***on the main Linear Beats module*** controls how the CV operates.
+ - If enabled, then the corresponding button toggles on or off whenever the CV input transitions to high.
  - If disabled (default), then the corresponding button is turned on (muted) when the CV transitions to high, and turned off (unmuted) when the CV transitions to low.
 
 In addition to mutes, the expander has a Disable button / CV input pair that turns off linear drumming, allowing all input triggers/gates to pass through, without syncing to any clock.  The Disable CV operates the same as for the mutes. If a Linear Beats has both an input and output expander, then disabling either side will disable the linear drumming.
