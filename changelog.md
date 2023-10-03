@@ -12,6 +12,10 @@
 - Mix Pan Expander
 - Mix Aux Send Expander
 
+### Enhancements
+- Shaped VCA: The response curve displayed range is now -100% exp to 100% log instead of -1 to 1
+- Shaped VCA: Improved 4 quadrant logarithmic response with option for old behavior
+  
 ## 2.4.1 (2023-09-01)
 ### Enhancements
 - Venom Default Dark Theme option has been added to all module context menus
