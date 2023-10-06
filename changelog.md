@@ -13,8 +13,15 @@
 - Mix Aux Send Expander
 
 ### Enhancements
-- Shaped VCA: The response curve displayed range is now -100% exp to 100% log instead of -1 to 1
-- Shaped VCA: Improved 4 quadrant logarithmic response with option for old behavior
+- Shaped VCA:
+  - The response curve displayed range is now -100% exp to 100% log instead of -1 to 1
+  - Improved 4 quadrant logarithmic response with option for old behavior
+- Bernoulli Switch:
+  - Added "Normal Value" parameter that specifies what value is normaled to the A input, either the raw trig input, or the Scmitt trigger result
+  - Bernoulli Gate and Toggled Bernoulli Gate presets now send normaled true gates instead of the the raw trigger input signal, so those mode now truly behave like the Mutable Instruments Branches.
+
+### Bug Fixes
+- Bernoulli Switch: Fixed a number of bugs dealing with polyphony
   
 ## 2.4.1 (2023-09-01)
 ### Enhancements

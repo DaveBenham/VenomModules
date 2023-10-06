@@ -20,6 +20,7 @@ struct BernoulliSwitch : VenomModule {
     OFFSET_B_PARAM,
     SCALE_A_PARAM,
     SCALE_B_PARAM,
+    NORMAL_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -49,6 +50,7 @@ struct BernoulliSwitch : VenomModule {
   };
 
   dsp::SchmittTrigger trig[PORT_MAX_CHANNELS];
+  dsp::SchmittTrigger normTrig[PORT_MAX_CHANNELS];
   bool swap[PORT_MAX_CHANNELS];
   dsp::SlewLimiter fade[PORT_MAX_CHANNELS];
   int oldChannels = 0;
@@ -80,6 +82,7 @@ struct BernoulliSwitch : VenomModule {
     configInput(B_INPUT, "B");
     configInput(TRIG_INPUT, "Trigger");
     configInput(PROB_INPUT, "Probability");
+    configSwitch<FixedSwitchQuantity>(NORMAL_PARAM, 0.f, 1.f, 0.f, "Normal value", {"Raw trigger input", "Schmitt trigger result"});
     configOutput(A_OUTPUT, "A");
     configOutput(B_OUTPUT, "B");
     configBypass(A_INPUT, A_OUTPUT);
@@ -121,6 +124,7 @@ struct BernoulliSwitch : VenomModule {
           probOff = params[PROB_PARAM].getValue(),
           manual = params[TRIG_PARAM].getValue() > 0.f ? 10.f : 0.f,
           probAttn = 1.f;
+    bool schmittNorm = params[NORMAL_PARAM].getValue();
     if (expander ) {
       probAttn = expander->getParam(PROB_CV_PARAM).getValue();
       if (expander->getInput(SCALE_CV_A_INPUT).isConnected())
@@ -154,6 +158,7 @@ struct BernoulliSwitch : VenomModule {
     if (channels > oldChannels) {
       for (int c=oldChannels; c<channels; c++){
         trig[c].reset();
+        normTrig[c].reset();
         swap[c] = false;
         fade[c].out = 0.f;
       }
@@ -188,7 +193,14 @@ struct BernoulliSwitch : VenomModule {
     float_4 trigIn0, trigIn;
     for (int c=0; c<channels; c+=4){
       float_4 prob = inputs[PROB_INPUT].getPolyVoltageSimd<float_4>(c)*probAttn/10.f + probOff;
-      trigIn = trigIn0 = inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c) + manual;
+      trigIn = inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c) + manual;
+      trigIn0 = trigIn;
+      for (int j=0; j<4 && c+j<channels; j++) {
+        int cj = c + j;
+        normTrig[cj].process(invTrig ? -trigIn0.s[j] : trigIn0.s[j], fall, rise);
+        if (schmittNorm)
+          trigIn0.s[j] = normTrig[cj].isHigh() ? (invTrig ? -10.f : 10.f) : 0.f;
+      }  
       float_4 aIn, bIn, swapGain, remainderGain;
       for (int i=0; i<oversample; i++) {
         if (oversample > 1)
@@ -227,11 +239,13 @@ struct BernoulliSwitch : VenomModule {
         }
 
         int c2End = c+1;
-        if (channels == 1 && !inputPolyControl)
+        if (channels == 1 && !inputPolyControl) {
           c2End = xChannels = aChannels > bChannels ? aChannels : bChannels;
+          trigIn0.s[1] = trigIn0.s[2] = trigIn0.s[3] = trigIn0.s[0];
+        }
         for (int c2=c; c2<c2End; c2+=4) {
           int c0 = c2/4;
-          aIn = i ? float_4::zero() : inputs[A_INPUT].getNormalPolyVoltageSimd<float_4>(trigIn0[c/4], c2) * scaleA + offA;
+          aIn = i ? float_4::zero() : inputs[A_INPUT].getNormalPolyVoltageSimd<float_4>(trigIn0, c2) * scaleA + offA;
           bIn = i ? float_4::zero() : inputs[B_INPUT].getPolyVoltageSimd<float_4>(c2) * scaleB + offB;
           if (oversample>1) {
             aIn = aUpSample[c0].process(aIn * oversample);
@@ -279,6 +293,14 @@ struct BernoulliSwitch : VenomModule {
 };
 
 struct BernoulliSwitchWidget : VenomWidget {
+
+  struct NormalSwitch : GlowingSvgSwitchLockable {
+    NormalSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+    }
+  };
+
   BernoulliSwitchWidget(BernoulliSwitch* module) {
     setModule(module);
     setVenomPanel("BernoulliSwitch");
@@ -302,6 +324,7 @@ struct BernoulliSwitchWidget : VenomWidget {
     addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, BernoulliSwitch::B_OUTPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, BernoulliSwitch::TRIG_INPUT));
     addInput(createInputCentered<PJ301MPort>(mm2px(Vec(18.134, 116.0)), module, BernoulliSwitch::PROB_INPUT));
+    addParam(createLockableParamCentered<NormalSwitch>(Vec(5.1615,325.3265), module, BernoulliSwitch::NORMAL_PARAM));
 
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(12.7155, 83.9)), module, BernoulliSwitch::POLY_SENSE_ALL_LIGHT));
     addChild(createLightCentered<SmallSimpleLight<RedBlueLight<>>>(mm2px(Vec(12.7155, 98.35)), module, BernoulliSwitch::AUDIO_LIGHT));
