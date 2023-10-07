@@ -207,20 +207,20 @@ struct RecurseStereoWidget : VenomWidget {
     countDisplay->module = module;
     addChild(countDisplay);
     addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(18.134, 14.97)), module, RecurseStereo::COUNT_PARAM));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 29.4)), module, RecurseStereo::SCALE_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.299, 29.4)), module, RecurseStereo::SCALE_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 29.4)), module, RecurseStereo::SCALE_PARAM));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 43.85)), module, RecurseStereo::OFFSET_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 43.85)), module, RecurseStereo::OFFSET_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 43.85)), module, RecurseStereo::OFFSET_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(12.7155, 55.60)), module, RecurseStereo::TIMING_PARAM));
 
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 72.65)), module, RecurseStereo::SEND_L_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 72.65)), module, RecurseStereo::SEND_R_OUTPUT));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 87.1)), module, RecurseStereo::RETURN_L_INPUT));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(18.134, 87.1)), module, RecurseStereo::RETURN_R_INPUT));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.297, 101.55)), module, RecurseStereo::IN_L_INPUT));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, RecurseStereo::IN_R_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.297, 116.0)), module, RecurseStereo::OUT_L_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 116.0)), module, RecurseStereo::OUT_R_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 72.65)), module, RecurseStereo::SEND_L_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 72.65)), module, RecurseStereo::SEND_R_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 87.1)), module, RecurseStereo::RETURN_L_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 87.1)), module, RecurseStereo::RETURN_R_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 101.55)), module, RecurseStereo::IN_L_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 101.55)), module, RecurseStereo::IN_R_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 116.0)), module, RecurseStereo::OUT_L_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 116.0)), module, RecurseStereo::OUT_R_OUTPUT));
 
     addChild(createLightCentered<TinyLight<YlwLight<>>>(mm2px(Vec(12.7115, 29.4)), module, RecurseStereo::SCALE_LIGHT));
     addChild(createLightCentered<TinyLight<YlwLight<>>>(mm2px(Vec(12.7115, 43.85)), module, RecurseStereo::OFFSET_LIGHT));

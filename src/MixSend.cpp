@@ -44,10 +44,10 @@ struct MixSendWidget : MixExpanderWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 134.514f), module, MixModule::SEND_PARAM+3));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 169.926f), module, MixModule::RETURN_PARAM));
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 203.278f), module, MixModule::SEND_MUTE_PARAM, MixModule::RETURN_MUTE_LIGHT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f, 240.820f), module, MixModule::LEFT_SEND_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f, 272.820f), module, MixModule::RIGHT_SEND_OUTPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 310.795f), module, MixModule::LEFT_RETURN_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 343.925f), module, MixModule::RIGHT_RETURN_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f, 240.820f), module, MixModule::LEFT_SEND_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f, 272.820f), module, MixModule::RIGHT_SEND_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f, 310.795f), module, MixModule::LEFT_RETURN_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f, 343.925f), module, MixModule::RIGHT_RETURN_INPUT));
   }
 
   void step() override {

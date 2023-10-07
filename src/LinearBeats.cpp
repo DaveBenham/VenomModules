@@ -156,9 +156,9 @@ struct LinearBeatsWidget : VenomWidget {
     setVenomPanel("LinearBeats");
     float y=56.5f;
     for(int i=0; i<9; i++){
-      addInput(createInputCentered<PJ301MPort>(Vec(16.5f,y), module, LinearBeats::IN_INPUT+i));
+      addInput(createInputCentered<PolyPJ301MPort>(Vec(16.5f,y), module, LinearBeats::IN_INPUT+i));
       addParam(createLockableParamCentered<ModeSwitch>(Vec(37.5f,y), module, LinearBeats::MODE_PARAM+i));
-      addOutput(createOutputCentered<PJ301MPort>(Vec(58.5f,y), module, LinearBeats::OUT_OUTPUT+i));
+      addOutput(createOutputCentered<PolyPJ301MPort>(Vec(58.5f,y), module, LinearBeats::OUT_OUTPUT+i));
       y+=31.556f;
     }
     addInput(createInputCentered<PJ301MPort>(Vec(16.5f,y), module, LinearBeats::CLOCK_INPUT));

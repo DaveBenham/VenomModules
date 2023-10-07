@@ -237,14 +237,14 @@ struct ShapedVCAWidget : VenomWidget {
     addParam(createLockableParamCentered<ModeSwitch>(Vec(17.243f,41.f), module, ShapedVCA::MODE_PARAM));
     addParam(createLockableParamCentered<ClipSwitch>(Vec(27.758f,41.f), module, ShapedVCA::CLIP_PARAM));
     addParam(createLockableParamCentered<OverSwitch>(Vec(38.274f,41.f), module, ShapedVCA::OVER_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,106.5f), module, ShapedVCA::LEVEL_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,106.5f), module, ShapedVCA::LEVEL_INPUT));
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(22.5f,138.5f), module, ShapedVCA::BIAS_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f,172.f), module, ShapedVCA::CURVE_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,202.5f), module, ShapedVCA::CURVE_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,240.f), module, ShapedVCA::LEFT_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,270.f), module, ShapedVCA::RIGHT_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,309.f), module, ShapedVCA::LEFT_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,339.f), module, ShapedVCA::RIGHT_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,202.5f), module, ShapedVCA::CURVE_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,240.f), module, ShapedVCA::LEFT_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,270.f), module, ShapedVCA::RIGHT_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,309.f), module, ShapedVCA::LEFT_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,339.f), module, ShapedVCA::RIGHT_OUTPUT));
     addParam(createLockableParamCentered<OffsetSwitch>(Vec(37.531f,326.013f), module, ShapedVCA::OFFSET_PARAM));
   }
 

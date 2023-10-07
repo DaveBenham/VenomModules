@@ -173,8 +173,8 @@ struct PolyUnisonWidget : VenomWidget {
       }
     }
 
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5,301.712), module, PolyUnison::POLY_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5,340.434), module, PolyUnison::POLY_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5,301.712), module, PolyUnison::POLY_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5,340.434), module, PolyUnison::POLY_OUTPUT));
   }
 
 };

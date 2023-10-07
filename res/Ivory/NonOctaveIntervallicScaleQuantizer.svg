@@ -38,13 +38,13 @@
      inkscape:window-height="1057"
      id="namedview102"
      showgrid="false"
-     inkscape:zoom="2.2342105"
-     inkscape:cx="152.17904"
-     inkscape:cy="200.29447"
+     inkscape:zoom="1.5798254"
+     inkscape:cx="184.83055"
+     inkscape:cy="150.96605"
      inkscape:window-x="1592"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="f45e0130-37b7-4f8b-95b3-6408baa23eb1"
      inkscape:pagecheckerboard="0"
      units="px"
      inkscape:showpageshadow="false"
@@ -558,6 +558,12 @@
        cy="206"
        r="10.06775" />
     <circle
+       style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.5255;stroke-opacity:1"
+       id="path1065-7-2-58-6-0-3"
+       cx="278.18848"
+       cy="85.27916"
+       r="8.2372503" />
+    <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.8645;stroke-opacity:1"
        id="path1065-7-2-58-6-5"
        cx="172.5"
@@ -777,55 +783,55 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"
-       x="278.173"
-       y="64.2127"
-       id="text21194-4-8-6-1"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.66667px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"
+       x="297.91525"
+       y="86.855392"
+       id="text56679-4-6-8"><tspan
          sodipodi:role="line"
-         id="tspan63213"
-         x="278.173"
-         y="64.2127">MODE</tspan></text>
-    <rect
-       style="display:inline;opacity:0.98;fill:#ff0000;fill-opacity:1;stroke-width:0.377953"
-       id="rect28157-8-0"
-       width="13"
-       height="28"
-       x="266.73941"
-       y="68.000244"
-       rx="0" />
+         id="tspan66526"
+         x="297.91525"
+         y="86.855392">EQUI</tspan></text>
     <g
-       id="g63255"
-       transform="translate(0,-0.56429395)">
+       id="g65655"
+       transform="translate(5.5948175,-19.510012)">
+      <rect
+         style="display:inline;opacity:0.98;fill:#ff0000;fill-opacity:1;stroke-width:0.331486"
+         id="rect28157-0-1"
+         width="14"
+         height="20"
+         x="266.0271"
+         y="68.000244"
+         rx="0" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"
+         x="278.173"
+         y="64.2127"
+         id="text21194-4-8-6-1"><tspan
+           sodipodi:role="line"
+           id="tspan63213"
+           x="278.173"
+           y="64.2127">MODE</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.33333px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle"
-         x="288.67108"
-         y="93.595276"
+         x="289.56625"
+         y="83.743591"
          id="text56679-48-0"><tspan
            sodipodi:role="line"
            id="tspan63173"
-           x="288.67108"
-           y="93.595276">Quant</tspan></text>
+           x="289.56625"
+           y="83.743591">Quant</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.33333px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"
-         x="294.29218"
-         y="84.330162"
-         id="text56679-4-6-8"><tspan
-           sodipodi:role="line"
-           id="tspan63193"
-           x="294.29218"
-           y="84.330162">EquiQuant</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.33333px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"
-         x="288.79739"
-         y="75.033798"
+         x="289.58069"
+         y="74.917091"
          id="text56679-3-2-5"><tspan
            sodipodi:role="line"
            id="tspan63133"
-           x="288.79739"
-           y="75.033798">Chord</tspan></text>
+           x="289.58069"
+           y="74.917091">Chord</tspan></text>
     </g>
   </g>
   <g

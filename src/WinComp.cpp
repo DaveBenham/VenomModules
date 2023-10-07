@@ -367,7 +367,7 @@ struct WinComp : VenomModule {
 
 struct WinCompWidget : VenomWidget {
 
-  struct AbsInvPort : PJ301MPort {
+  struct AbsInvPort : PolyPJ301MPort {
     int modId;
     void appendContextMenu(Menu* menu) override {
       WinComp* module = dynamic_cast<WinComp*>(this->module);
@@ -389,11 +389,11 @@ struct WinCompWidget : VenomWidget {
     setModule(module);
     setVenomPanel("WinComp");
 
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 15.93)), module, WinComp::A_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.299, 15.93)), module, WinComp::A_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 15.93)), module, WinComp::A_PARAM));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 30.05)), module, WinComp::B_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.299, 30.05)), module, WinComp::B_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 30.05)), module, WinComp::B_PARAM));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.299, 43.87)), module, WinComp::TOL_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.299, 43.87)), module, WinComp::TOL_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 43.87)), module, WinComp::TOL_PARAM));
 
     addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(7.299, 58.3)), module, WinComp::MIN_OUTPUT, WinComp::MIN_PORT));
@@ -401,12 +401,12 @@ struct WinCompWidget : VenomWidget {
     addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(7.299, 72.75)), module, WinComp::CLAMP_OUTPUT, WinComp::CLAMP_PORT));
     addOutput(createAbsInvOutputCentered<AbsInvPort>(mm2px(Vec(18.134, 72.75)), module, WinComp::OVER_OUTPUT, WinComp::OVER_PORT));
 
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.299, 87.10)), module, WinComp::EQ_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 87.10)), module, WinComp::NEQ_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.299, 101.55)), module, WinComp::LSEQ_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 101.55)), module, WinComp::GREQ_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.299, 116.0)), module, WinComp::LS_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(18.134, 116.0)), module, WinComp::GR_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.299, 87.10)), module, WinComp::EQ_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 87.10)), module, WinComp::NEQ_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.299, 101.55)), module, WinComp::LSEQ_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 101.55)), module, WinComp::GREQ_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.299, 116.0)), module, WinComp::LS_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 116.0)), module, WinComp::GR_OUTPUT));
 
 
     addChild(createLightCentered<SmallLight<BluLight<>>>(mm2px(Vec(12.7, 51.5)), module, WinComp::OVERSAMPLE_LIGHT));

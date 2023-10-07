@@ -83,7 +83,7 @@ struct CloneMergeWidget : VenomWidget {
       addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(x+dy*0.5f, y-dy*0.3f), module, CloneMerge::MONO_LIGHTS + i*2));
     }
     y+=dy*0.33f;
-    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, CloneMerge::POLY_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, CloneMerge::POLY_OUTPUT));
   }
 
 };

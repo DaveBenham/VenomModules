@@ -406,17 +406,17 @@ struct Mix4StereoWidget : MixBaseWidget {
     addParam(createLockableParamCentered<DCBlockSwitch>(Vec(62.443,82.655), module, Mix4Stereo::DCBLOCK_PARAM));
     addParam(createLockableParamCentered<ClipSwitch>(Vec(62.443,114.895), module, Mix4Stereo::CLIP_PARAM));
 
-    addInput(createInputCentered<PJ301MPort>(Vec(21.812,201.993), module, Mix4Stereo::LEFT_INPUT+0));
-    addInput(createInputCentered<PJ301MPort>(Vec(21.812,235.233), module, Mix4Stereo::LEFT_INPUT+1));
-    addInput(createInputCentered<PJ301MPort>(Vec(21.812,268.473), module, Mix4Stereo::LEFT_INPUT+2));
-    addInput(createInputCentered<PJ301MPort>(Vec(21.812,301.712), module, Mix4Stereo::LEFT_INPUT+3));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(21.812,340.434), module, Mix4Stereo::LEFT_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.812,201.993), module, Mix4Stereo::LEFT_INPUT+0));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.812,235.233), module, Mix4Stereo::LEFT_INPUT+1));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.812,268.473), module, Mix4Stereo::LEFT_INPUT+2));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.812,301.712), module, Mix4Stereo::LEFT_INPUT+3));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(21.812,340.434), module, Mix4Stereo::LEFT_OUTPUT));
 
-    addInput(createInputCentered<PJ301MPort>(Vec(53.189,201.993), module, Mix4Stereo::RIGHT_INPUT+0));
-    addInput(createInputCentered<PJ301MPort>(Vec(53.189,235.233), module, Mix4Stereo::RIGHT_INPUT+1));
-    addInput(createInputCentered<PJ301MPort>(Vec(53.189,268.473), module, Mix4Stereo::RIGHT_INPUT+2));
-    addInput(createInputCentered<PJ301MPort>(Vec(53.189,301.712), module, Mix4Stereo::RIGHT_INPUT+3));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(53.189,340.434), module, Mix4Stereo::RIGHT_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(53.189,201.993), module, Mix4Stereo::RIGHT_INPUT+0));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(53.189,235.233), module, Mix4Stereo::RIGHT_INPUT+1));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(53.189,268.473), module, Mix4Stereo::RIGHT_INPUT+2));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(53.189,301.712), module, Mix4Stereo::RIGHT_INPUT+3));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(53.189,340.434), module, Mix4Stereo::RIGHT_OUTPUT));
   }
 
 };

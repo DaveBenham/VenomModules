@@ -21,6 +21,10 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 |----|----|----|----|----|
 |![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WINCOMP module image](doc/WinComp.PNG)|
 
+## Color Code Ports
+All polyphonic ports use brass cores, while monophonic ports use steel cores.
+
+Input ports are on the base faceplate color with base labels. Output ports are on a contrasting color with inverted labels.
 
 ## Themes
 The context menu of every module includes options to set the default theme and default dark theme for the Venom plugin, as well as a theme override for each module instance.

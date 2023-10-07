@@ -259,10 +259,10 @@ struct HQWidget : VenomWidget {
     addParam(createLockableParam<CKSSThreeHorizontalLockable>(mm2px(Vec(2.9, 25.5)), module, HQ::SERIES_PARAM));
     addParam(createLockableParamCentered<RoundBlackKnobLockable>(mm2px(Vec(7.62, 42.9)), module, HQ::PARTIAL_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.62, 58)), module, HQ::CV_PARAM));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 68)), module, HQ::CV_INPUT));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 83)), module, HQ::ROOT_INPUT));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 98)), module, HQ::IN_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.62, 113)), module, HQ::OUT_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.62, 68)), module, HQ::CV_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.62, 83)), module, HQ::ROOT_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.62, 98)), module, HQ::IN_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.62, 113)), module, HQ::OUT_OUTPUT));
   }
 
   void appendContextMenu(Menu* menu) override {

@@ -620,3 +620,9 @@ struct ShapeQuantity : ParamQuantity {
     return val > 0.f ? "% log" : val < 0.f ? "% exp" : " = linear";
   }  
 };
+
+struct PolyPJ301MPort : app::SvgPort {
+    PolyPJ301MPort() {
+        setSvg(Svg::load(asset::plugin( pluginInstance, "res/PJ301M-poly.svg")));
+    }
+};
