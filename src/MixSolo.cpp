@@ -14,7 +14,7 @@ struct MixSolo : MixExpanderModule {
     mixType = MIXSOLO_TYPE;
     for (int i=0; i<4; i++) {
       std::string i_s = std::to_string(i+1);
-      configSwitch(SOLO_PARAM+i, 0.f, 1.f, 0.f, "Solo " + i_s, {"Off", "On"});
+      configSwitch<FixedSwitchQuantity>(SOLO_PARAM+i, 0.f, 1.f, 0.f, "Solo " + i_s, {"Off", "On"});
       configInput(SOLO_INPUT+i, "Solo " + i_s);
     }  
   }

@@ -71,7 +71,7 @@ struct BernoulliSwitch : VenomModule {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(PROB_PARAM, 0.f, 1.f, 0.5f, "Probability", "%", 0.f, 100.f, 0.f);
     configButton(TRIG_PARAM, "Manual 10V Trigger");
-    configSwitch(MODE_PARAM, 0, 2, 1, "Probability Mode", {"Toggle", "Swap", "Gate"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0, 2, 1, "Probability Mode", {"Toggle", "Swap", "Gate"});
     configParam(RISE_PARAM, -10.f, 10.f, 1.f, "Rise Threshold", " V");
     configParam(FALL_PARAM, -10.f, 10.f, 0.1f, "Fall Threshold", " V");
     configParam(OFFSET_A_PARAM, -10.f, 10.f, 0.f, "A Offset", " V");

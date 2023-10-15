@@ -114,7 +114,7 @@ struct HQ : VenomModule {
 
   HQ() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-    configSwitch(SERIES_PARAM, 0, 2, 0, "Harmonic Series", {"All", "Odd", "Even"});
+    configSwitch<FixedSwitchQuantity>(SERIES_PARAM, 0, 2, 0, "Harmonic Series", {"All", "Odd", "Even"});
     configParam<PartialQuantity>(PARTIAL_PARAM, 0.f, 1.f, 0.f, "Partial", "");
     configParam(CV_PARAM, -1.f, 1.f, 0.f, "CV", "%", 0.f, 100.f, 0.f);
     configInput(CV_INPUT, "CV");

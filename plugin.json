@@ -195,6 +195,16 @@
       ]
     },
     {
+      "slug": "NORS_IQ",
+      "name": "Non-Octave-Repeating Scale Intervallic Quantizer",
+      "description": "Add solo to any of the Mix modules",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#non-octave-repeating-scale-intervallic-quantizer",
+      "tags": [
+        "Quantizer",
+        "Polyphonic"
+      ]
+    },
+    {
       "slug": "PolyClone",
       "name": "Poly Clone",
       "description": "Clone each channel of a polyphonic input and merge the results into a single polyphonic output",

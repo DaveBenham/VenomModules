@@ -14,10 +14,10 @@ struct MixMute : MixExpanderModule {
     mixType = MIXMUTE_TYPE;
     for (int i=0; i<4; i++) {
       std::string i_s = std::to_string(i+1);
-      configSwitch(MUTE_PARAM+i, 0.f, 1.f, 0.f, "Mute " + i_s, {"Unmuted", "Muted"});
+      configSwitch<FixedSwitchQuantity>(MUTE_PARAM+i, 0.f, 1.f, 0.f, "Mute " + i_s, {"Unmuted", "Muted"});
       configInput(MUTE_INPUT+i, "Mute " + i_s);
     }  
-    configSwitch(MUTE_MIX_PARAM, 0.f, 1.f, 0.f, "Mute Mix", {"Unmuted", "Muted"});
+    configSwitch<FixedSwitchQuantity>(MUTE_MIX_PARAM, 0.f, 1.f, 0.f, "Mute Mix", {"Unmuted", "Muted"});
     configInput(MUTE_MIX_INPUT, "Mute Mix");
   }
 

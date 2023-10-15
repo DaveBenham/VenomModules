@@ -89,6 +89,7 @@ void init(Plugin* p) {
   p->addModel(modelMixPan);
   p->addModel(modelMixSend);
   p->addModel(modelMixSolo);
+  p->addModel(modelNORS_IQ);
   p->addModel(modelPolyClone);
   p->addModel(modelPolyUnison);
   p->addModel(modelRecurse);

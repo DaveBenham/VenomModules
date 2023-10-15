@@ -17,7 +17,7 @@ struct MixSend : MixExpanderModule {
       configParam(SEND_PARAM+i, 0.f, 1.f, 0.f, "Send level "+i_s);
     }
     configParam(RETURN_PARAM, 0.f, 1.f, 1.f, "Return level");
-    configSwitch(SEND_MUTE_PARAM, 0.f, 1.f, 0.f, "Send Mute", {"Unmuted", "Muted"});
+    configSwitch<FixedSwitchQuantity>(SEND_MUTE_PARAM, 0.f, 1.f, 0.f, "Send Mute", {"Unmuted", "Muted"});
     configOutput(LEFT_SEND_OUTPUT, "Left send");
     configOutput(RIGHT_SEND_OUTPUT, "Right send");
     configInput(LEFT_RETURN_INPUT, "Left return");

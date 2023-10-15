@@ -25,6 +25,7 @@ extern Model* modelMixOffset;
 extern Model* modelMixPan;
 extern Model* modelMixSend;
 extern Model* modelMixSolo;
+extern Model* modelNORS_IQ;
 extern Model* modelPolyClone;
 extern Model* modelPolyUnison;
 extern Model* modelRecurse;
@@ -330,13 +331,6 @@ struct RotarySwitch : TBase {
   }
 };
 
-struct CKSSNarrow : app::SvgSwitch {
-  CKSSNarrow() {
-    addFrame(Svg::load(asset::plugin(pluginInstance, "res/components/SwitchNarrow_0.svg")));
-    addFrame(Svg::load(asset::plugin(pluginInstance, "res/components/SwitchNarrow_2.svg")));
-  }
-};
-
 struct DigitalDisplay : Widget {
   Module* module;
   std::string fontPath;
@@ -563,6 +557,13 @@ struct TrimpotLockable : Trimpot {
   }
 };
 
+struct CKSSLockable : CKSS {
+  void appendContextMenu(Menu* menu) override {
+    if (module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
 struct CKSSThreeLockable : CKSSThree {
   void appendContextMenu(Menu* menu) override {
     if (module)
@@ -593,23 +594,18 @@ struct VCVLightBezelLatchLockable : VCVLightBezelLatch<TLightBase> {
   }
 };
 
-template <typename TLight>
-struct VCVLightButtonLockable : VCVButton {
-  app::ModuleLightWidget* light;
-
-  VCVLightButtonLockable() {
-    light = new TLight;
-    // Move center of light to center of box
-    light->box.pos = box.size.div(2).minus(light->box.size.div(2));
-    addChild(light);
-  }
-
-  app::ModuleLightWidget* getLight() {
-    return light;
-  }
-
+template <typename TLight = WhiteLight>
+struct VCVLightButtonLockable : VCVLightButton<TLight> {
   void appendContextMenu(Menu* menu) override {
-    if (module)
+    if (this->module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+template <typename TLight = WhiteLight>
+struct VCVLightButtonLatchLockable : VCVLightLatch<TLight> {
+  void appendContextMenu(Menu* menu) override {
+    if (this->module)
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
@@ -622,7 +618,7 @@ struct ShapeQuantity : ParamQuantity {
 };
 
 struct PolyPJ301MPort : app::SvgPort {
-    PolyPJ301MPort() {
-        setSvg(Svg::load(asset::plugin( pluginInstance, "res/PJ301M-poly.svg")));
-    }
+  PolyPJ301MPort() {
+    setSvg(Svg::load(asset::plugin( pluginInstance, "res/PJ301M-poly.svg")));
+  }
 };
