@@ -17,7 +17,6 @@ struct NORS_IQ : VenomModule {
     ROOT_UNIT_PARAM,
     ROUND_PARAM,
     EQUI_PARAM,
-    MODE_PARAM,
     ENUMS(INTVL_PARAM,10),
     PARAMS_LEN
   };
@@ -39,7 +38,7 @@ struct NORS_IQ : VenomModule {
   };
   enum LightId {
     EQUI_LIGHT,
-    ENUMS(NOTE_LIGHT,10),
+    ENUMS(NOTE_LIGHT,10*8),
     LIGHTS_LEN
   };
   
@@ -53,12 +52,9 @@ struct NORS_IQ : VenomModule {
     ROUND_NEAR,
     ROUND_UP
   };
-  enum ModeId {
-    QUANT_MODE,
-    CHORD_MODE
-  };
 
   dsp::SchmittTrigger trig[PORT_MAX_CHANNELS];
+  int channelNote[16];
 
   NORS_IQ() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -70,10 +66,9 @@ struct NORS_IQ : VenomModule {
     configSwitch<FixedSwitchQuantity>(ROOT_UNIT_PARAM, 0, 2, 0, "Scale root unit", {"V/Oct", "Cents", "Note"});
     configSwitch<FixedSwitchQuantity>(ROUND_PARAM, 0, 2, 1, "Round algorithm", {"Down", "Nearest", "Up"});
     configSwitch<FixedSwitchQuantity>(EQUI_PARAM, 0.f, 1.f, 0.f, "Equi-likely", {"Off", "On"});
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0, 1, 0, "Mode", {"Quantize", "Chord"});
     for (int i=0; i<10; i++) {
       std::string name = "Interval " + std::to_string(i+1);
-      configParam(INTVL_PARAM+i, 0, 1, 0, name);
+      configParam(INTVL_PARAM+i, 1, 100, 1, name);
       configInput(INTVL_INPUT+i, name + " CV");
     }
     configInput(POI_INPUT, "Pseudo-octave interval CV");
@@ -89,29 +84,39 @@ struct NORS_IQ : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+    float intvl = (params[POI_PARAM].getValue() + inputs[POI_INPUT].getVoltage()) 
+                / (params[EDPO_PARAM].getValue() + std::round(inputs[EDPO_INPUT].getVoltage()*10.f));
+    float root = params[ROOT_PARAM].getValue() + inputs[ROOT_INPUT].getVoltage();
+    int len = params[LENGTH_PARAM].getValue() + std::round(inputs[LENGTH_INPUT].getVoltage());
+    float step[10];
+    float scale = 0.f;
+    int round = params[ROUND_PARAM].getValue();
+    for (int i=0; i<len; i++){
+      scale += (step[i] = intvl * (params[INTVL_PARAM+i].getValue() + std::round(inputs[INTVL_INPUT+i].getVoltage()*10.f)));
+      outputs[SCALE_OUTPUT].setVoltage(scale+root, i+1);
+    }
+    outputs[SCALE_OUTPUT].setVoltage(root, 0);
+    outputs[SCALE_OUTPUT].setChannels(len+1);
+    float in = inputs[IN_INPUT].getVoltage();
+    int oct = (in - root) / scale;
+    float out = scale * oct + root;
+    if (in < out)
+      out -= scale;
+    channelNote[0] = 0;
+    for (int i=0; i<len; i++) {
+      if (round == ROUND_NEAR && in < out + step[i]/2)
+        break;
+      if (round == ROUND_DOWN && in < out + step[i])
+        break;
+      if (round == ROUND_UP && in <= out)
+        break;
+      out += step[i];
+      channelNote[0]++;
+    }
+    if (channelNote[0]==len)
+      channelNote[0]=0;
+    outputs[OUT_OUTPUT].setVoltage(out);
   }
-
-
-/*
-  json_t* dataToJson() override {
-    json_t* rootJ = VenomModule::dataToJson();
-    json_object_set_new(rootJ, "monitorChannel", json_integer(lightChannel));
-    json_object_set_new(rootJ, "inputPolyControl", json_boolean(inputPolyControl));
-    json_object_set_new(rootJ, "audioProc", json_integer(audioProc));
-    return rootJ;
-  }
-
-  void dataFromJson(json_t* rootJ) override {
-    VenomModule::dataFromJson(rootJ);
-    json_t* val;
-    if ((val = json_object_get(rootJ, "monitorChannel")))
-      lightChannel = json_integer_value(val);
-    if ((val = json_object_get(rootJ, "inputPolyControl")))
-      inputPolyControl = json_boolean_value(val);
-    if ((val = json_object_get(rootJ, "audioProc")))
-      audioProc = json_integer_value(val);
-  }
-*/
 
 };
 
@@ -126,34 +131,27 @@ struct NORS_IQWidget : VenomWidget {
     setModule(module);
     setVenomPanel("NORS_IQ");
 
-/*
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(5.0, 18.75)), module, NORS_IQ::NO_SWAP_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(20.431, 18.75)), module, NORS_IQ::SWAP_LIGHT));
-*/    
-
-//    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(12.7155, 18.75)), module, NORS_IQ::PROB_PARAM));
-//    addParam(createLockableLightParamCentered<VCVLightButtonLockable<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(6.5, 31.5)), module, NORS_IQ::TRIG_PARAM, NORS_IQ::TRIG_LIGHT));
-
     addParam(createLockableParam<CKSSLockable>(Vec(21.698, 72.0), module, NORS_IQ::POI_UNIT_PARAM));
     addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(55.0, 82.0), module, NORS_IQ::POI_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(94.1, 82.0), module, NORS_IQ::EDPO_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(131.2, 82.0), module, NORS_IQ::LENGTH_PARAM));
     addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(169.3, 82.0), module, NORS_IQ::ROOT_PARAM));
     addParam(createLockableParam<CKSSThreeLockable>(Vec(188.881, 68.0), module, NORS_IQ::ROOT_UNIT_PARAM));
-    addParam(createLockableParam<CKSSThreeLockable>(Vec(227.264, 68.0), module, NORS_IQ::ROUND_PARAM));
-    addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(278.188, 85.279), module, NORS_IQ::EQUI_PARAM, NORS_IQ::EQUI_LIGHT));
-    addParam(createLockableParam<CKSSLockable>(Vec(271.622, 48.490), module, NORS_IQ::MODE_PARAM));
+    addParam(createLockableParam<CKSSThreeLockable>(Vec(233.264, 68.0), module, NORS_IQ::ROUND_PARAM));
+    addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(284.188, 82.0), module, NORS_IQ::EQUI_PARAM, NORS_IQ::EQUI_LIGHT));
 
     float x = 22.5f, y = 206.0f;
     for (int i=0; i<10; i++) {
-      addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(x, y), module, NORS_IQ::INTVL_PARAM+i));
+      for (int j=0; j<8; j++)
+        addChild(createLightCentered<TinyLight<YlwLight<>>>(Vec(x-15,y-15+j*5), module, NORS_IQ::NOTE_LIGHT+i+j*11));
+      addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(x, y), module, NORS_IQ::INTVL_PARAM+i));
       addInput(createInputCentered<PJ301MPort>(Vec(x, y+32.5f), module, NORS_IQ::INTVL_INPUT+i));
       x+=30.f;
     }
     addInput(createInputCentered<PJ301MPort>(Vec(55.0, 312.834), module, NORS_IQ::POI_INPUT));
     addInput(createInputCentered<PJ301MPort>(Vec(94.1, 312.834), module, NORS_IQ::EDPO_INPUT));
     addInput(createInputCentered<PJ301MPort>(Vec(131.2,312.834), module, NORS_IQ::LENGTH_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(169.3,312.834), module, NORS_IQ::ROOT_INPUT));
+    addInput(createInputCentered<PJ301MPort>(Vec(169.3,312.834), module, NORS_IQ::ROOT_INPUT));
 
     addInput(createInputCentered<PolyPJ301MPort>(Vec(217.279, 289.616), module, NORS_IQ::IN_INPUT));
     addInput(createInputCentered<PolyPJ301MPort>(Vec(251.867, 289.616), module, NORS_IQ::TRIG_INPUT));
@@ -170,9 +168,12 @@ struct NORS_IQWidget : VenomWidget {
 
   void step() override {
     VenomWidget::step();
-    if(this->module) {
-      this->module->lights[NORS_IQ::EQUI_LIGHT].setBrightness(this->module->params[NORS_IQ::EQUI_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
-    }  
+    NORS_IQ* mod = dynamic_cast<NORS_IQ*>(this->module);
+    if(mod) {
+      mod->lights[NORS_IQ::EQUI_LIGHT].setBrightness(mod->params[NORS_IQ::EQUI_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
+      for (int i=0; i<10; i++)
+        mod->lights[NORS_IQ::NOTE_LIGHT+i].setBrightness(mod->channelNote[0]==i);
+    }
   }
 
 };
