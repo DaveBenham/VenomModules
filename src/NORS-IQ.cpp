@@ -2,6 +2,7 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
+#include <float.h>
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
@@ -34,11 +35,11 @@ struct NORS_IQ : VenomModule {
     OUT_OUTPUT,
     TRIG_OUTPUT,
     SCALE_OUTPUT,
+    POCT_OUTPUT,
     OUTPUTS_LEN
   };
   enum LightId {
     EQUI_LIGHT,
-    ENUMS(NOTE_LIGHT,10*8),
     LIGHTS_LEN
   };
   
@@ -53,8 +54,12 @@ struct NORS_IQ : VenomModule {
     ROUND_UP
   };
 
-  dsp::SchmittTrigger trig[PORT_MAX_CHANNELS];
-  int channelNote[16];
+  dsp::SchmittTrigger trigIn[16];
+  dsp::PulseGenerator trigOut[16];
+  int channelNote[16]{};
+  int oldTrigChannels = 0;
+  int oldChannels = 0;
+  float oldOut[16]{};
 
   NORS_IQ() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -80,6 +85,9 @@ struct NORS_IQ : VenomModule {
     configOutput(OUT_OUTPUT, "V/Oct");
     configOutput(TRIG_OUTPUT, "Trigger");
     configOutput(SCALE_OUTPUT, "Scale");
+    configOutput(POCT_OUTPUT, "Pseudo-octave");
+    configBypass(TRIG_INPUT, TRIG_OUTPUT);
+    configBypass(IN_INPUT, OUT_OUTPUT);
   }
 
   void process(const ProcessArgs& args) override {
@@ -91,31 +99,68 @@ struct NORS_IQ : VenomModule {
     float step[10];
     float scale = 0.f;
     int round = params[ROUND_PARAM].getValue();
+    bool equi = params[EQUI_PARAM].getValue();
     for (int i=0; i<len; i++){
       scale += (step[i] = intvl * (params[INTVL_PARAM+i].getValue() + std::round(inputs[INTVL_INPUT+i].getVoltage()*10.f)));
       outputs[SCALE_OUTPUT].setVoltage(scale+root, i+1);
     }
     outputs[SCALE_OUTPUT].setVoltage(root, 0);
     outputs[SCALE_OUTPUT].setChannels(len+1);
-    float in = inputs[IN_INPUT].getVoltage();
-    int oct = (in - root) / scale;
-    float out = scale * oct + root;
-    if (in < out)
-      out -= scale;
-    channelNote[0] = 0;
-    for (int i=0; i<len; i++) {
-      if (round == ROUND_NEAR && in < out + step[i]/2)
-        break;
-      if (round == ROUND_DOWN && in < out + step[i])
-        break;
-      if (round == ROUND_UP && in <= out)
-        break;
-      out += step[i];
-      channelNote[0]++;
+    int trigChannels = inputs[TRIG_INPUT].getChannels();
+    if (trigChannels < oldTrigChannels) {
+      for (int c=trigChannels; c<oldTrigChannels; c++)
+        trigIn[c].process(0.f);
+      oldTrigChannels = trigChannels;
     }
-    if (channelNote[0]==len)
-      channelNote[0]=0;
-    outputs[OUT_OUTPUT].setVoltage(out);
+    int channels = std::max({1, trigChannels, inputs[IN_INPUT].getChannels()});
+    if (channels < oldChannels) {
+      for (int c=channels; c<oldChannels; c++)
+        trigOut[c].reset();
+      oldChannels = channels;
+    }  
+    for (int c=0; c<channels; c++) {
+      if (trigIn[c].process(inputs[TRIG_INPUT].getPolyVoltage(c), 0.1f, 1.f) || !inputs[TRIG_INPUT].isConnected()) {
+        float in = inputs[IN_INPUT].getPolyVoltage(c);
+        int oct = (in - root) / scale;
+        float out = scale * oct + root;
+        if (in < out) {
+          out -= scale;
+          oct--;
+        }
+        float test = out;
+        float testStep = scale / len;
+        channelNote[c] = 0;
+        for (int i=0; i<len; i++) {
+          if (!equi)
+            testStep = step[i];
+          if (round == ROUND_NEAR && in < test + testStep/2)
+            break;
+          if (round == ROUND_DOWN && in < test + testStep)
+            break;
+          if (round == ROUND_UP && in <= test)
+            break;
+          test += testStep;
+          out = equi ? out + step[i] : test;
+          channelNote[c]++;
+        }
+        if (channelNote[c]==len) {
+          channelNote[c]=0;
+          oct++;
+        }
+        if (!isNear(oldOut[c],out)) {
+          oldOut[c] = out;
+          if (!inputs[TRIG_INPUT].isConnected())
+            trigOut[c].trigger();
+        }
+        outputs[OUT_OUTPUT].setVoltage(out, c);
+        outputs[POCT_OUTPUT].setVoltage(oct, c);
+      }
+      trigOut[c].process(args.sampleTime);
+      outputs[TRIG_OUTPUT].setVoltage( inputs[TRIG_INPUT].isConnected() ? inputs[TRIG_INPUT].getPolyVoltage(c) : (trigOut[c].remaining > 0.f ? 10.f : 0.f), c);
+    }
+    outputs[OUT_OUTPUT].setChannels(channels);
+    outputs[POCT_OUTPUT].setChannels(channels);
+    outputs[TRIG_OUTPUT].setChannels(channels);
   }
 
 };
@@ -142,8 +187,6 @@ struct NORS_IQWidget : VenomWidget {
 
     float x = 22.5f, y = 206.0f;
     for (int i=0; i<10; i++) {
-      for (int j=0; j<8; j++)
-        addChild(createLightCentered<TinyLight<YlwLight<>>>(Vec(x-15,y-15+j*5), module, NORS_IQ::NOTE_LIGHT+i+j*11));
       addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(x, y), module, NORS_IQ::INTVL_PARAM+i));
       addInput(createInputCentered<PJ301MPort>(Vec(x, y+32.5f), module, NORS_IQ::INTVL_INPUT+i));
       x+=30.f;
@@ -155,9 +198,10 @@ struct NORS_IQWidget : VenomWidget {
 
     addInput(createInputCentered<PolyPJ301MPort>(Vec(217.279, 289.616), module, NORS_IQ::IN_INPUT));
     addInput(createInputCentered<PolyPJ301MPort>(Vec(251.867, 289.616), module, NORS_IQ::TRIG_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(286.455, 289.616), module, NORS_IQ::TRIG_OUTPUT));
 
     addOutput(createOutputCentered<PolyPJ301MPort>(Vec(217.279, 336.052), module, NORS_IQ::OUT_OUTPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(251.867, 336.052), module, NORS_IQ::TRIG_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(251.867, 336.052), module, NORS_IQ::POCT_OUTPUT));
     addOutput(createOutputCentered<PolyPJ301MPort>(Vec(286.455, 336.052), module, NORS_IQ::SCALE_OUTPUT));
     
     NORS_IQDisplay<NORS_IQ>* display = createWidget<NORS_IQDisplay<NORS_IQ>>(Vec(6.83,102.629));
@@ -171,8 +215,6 @@ struct NORS_IQWidget : VenomWidget {
     NORS_IQ* mod = dynamic_cast<NORS_IQ*>(this->module);
     if(mod) {
       mod->lights[NORS_IQ::EQUI_LIGHT].setBrightness(mod->params[NORS_IQ::EQUI_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
-      for (int i=0; i<10; i++)
-        mod->lights[NORS_IQ::NOTE_LIGHT+i].setBrightness(mod->channelNote[0]==i);
     }
   }
 
