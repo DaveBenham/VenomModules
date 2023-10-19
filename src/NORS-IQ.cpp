@@ -61,13 +61,55 @@ struct NORS_IQ : VenomModule {
   int oldChannels = 0;
   float oldOut[16]{};
 
+  struct IntervalQuantity : ParamQuantity {
+    std::string getDisplayValueString() override {
+      if (module->params[POI_UNIT_PARAM].getValue() == CENT_UNIT) {
+        std::string num = std::to_string(getValue()*1200.f);
+        num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
+        return num + " cents";
+      }
+      // VOCT_UNIT
+      std::string num = std::to_string(getValue());
+      num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
+      return num + " V";
+    }
+    void setDisplayValue(float v) override {
+      setValue( module->params[POI_UNIT_PARAM].getValue() == CENT_UNIT ? v/1200.f : v);
+    }
+  };
+
+  struct RootQuantity : ParamQuantity {
+    std::string getDisplayValueString() override {
+      if (module->params[ROOT_UNIT_PARAM].getValue() == NOTE_UNIT) {
+        std::string num = std::to_string(pow(2.f, getValue() + log2(dsp::FREQ_C4)));
+        num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
+        return num + " Hz";
+      }
+      if (module->params[ROOT_UNIT_PARAM].getValue() == CENT_UNIT) {
+        std::string num = std::to_string(getValue()*1200.f);
+        num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
+        return num + " cents";
+      }
+      // VOCT_UNIT
+      std::string num = std::to_string(getValue());
+      num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
+      return num + " V";
+    }
+    void setDisplayValue(float v) override {
+      if (module->params[ROOT_UNIT_PARAM].getValue() == NOTE_UNIT)
+        setValue(log2(v) - log2(dsp::FREQ_C4));
+      else
+        setValue( module->params[ROOT_UNIT_PARAM].getValue() == CENT_UNIT ? v/1200.f : v);
+    }
+  };
+
   NORS_IQ() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch<FixedSwitchQuantity>(POI_UNIT_PARAM, 0, 1, 0, "Interval unit", {"V/Oct", "Cents"});
-    configParam(POI_PARAM, 0.f, 2.f, 1.f, "Pseudo-octave interval", " V");
+    configParam<IntervalQuantity>(POI_PARAM, 0.f, 2.f, 1.f, "Pseudo-octave interval");
     configParam(EDPO_PARAM, 1.f, 100.f, 12.f, "Equal divisions per pseudo-octave");
     configParam(LENGTH_PARAM, 1.f, 10.f, 7.f, "Scale length");
-    configParam(ROOT_PARAM, -4.f, 4.f, 0.f, "Scale root");
+    configParam<RootQuantity>(ROOT_PARAM, -4.f, 4.f, 0.f, "Scale root");
     configSwitch<FixedSwitchQuantity>(ROOT_UNIT_PARAM, 0, 2, 0, "Scale root unit", {"V/Oct", "Cents", "Note"});
     configSwitch<FixedSwitchQuantity>(ROUND_PARAM, 0, 2, 1, "Round algorithm", {"Down", "Nearest", "Up"});
     configSwitch<FixedSwitchQuantity>(EQUI_PARAM, 0.f, 1.f, 0.f, "Equi-likely", {"Off", "On"});
