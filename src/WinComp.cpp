@@ -171,6 +171,7 @@ struct WinComp : VenomModule {
         if (aOS) a = aUpSample[c/4].process(i ? float_4::zero() : a*oversample);
         if (bOS) b = bUpSample[c/4].process(i ? float_4::zero() : b*oversample);
         if (tolOS) tol = tolUpSample[c/4].process(i ? float_4::zero() : tol*oversample);
+        tol = simd::fmax(tol, 1e-6);
 
         float_4 bMin = b - tol;
         float_4 bMax = b + tol;
