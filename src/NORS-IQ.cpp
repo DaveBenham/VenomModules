@@ -2,6 +2,7 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
+#include "fmt/core.h"
 #include <float.h>
 
 #define LIGHT_ON 1.f
@@ -63,15 +64,10 @@ struct NORS_IQ : VenomModule {
 
   struct IntervalQuantity : ParamQuantity {
     std::string getDisplayValueString() override {
-      if (module->params[POI_UNIT_PARAM].getValue() == CENT_UNIT) {
-        std::string num = std::to_string(getValue()*1200.f);
-        num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
-        return num + " cents";
-      }
+      if (module->params[POI_UNIT_PARAM].getValue() == CENT_UNIT)
+        return fmt::format("{:g} cents", getValue()*1200.f);
       // VOCT_UNIT
-      std::string num = std::to_string(getValue());
-      num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
-      return num + " V";
+      return fmt::format("{:g} V", getValue());
     }
     void setDisplayValue(float v) override {
       setValue( module->params[POI_UNIT_PARAM].getValue() == CENT_UNIT ? v/1200.f : v);
@@ -80,20 +76,12 @@ struct NORS_IQ : VenomModule {
 
   struct RootQuantity : ParamQuantity {
     std::string getDisplayValueString() override {
-      if (module->params[ROOT_UNIT_PARAM].getValue() == FREQ_UNIT) {
-        std::string num = std::to_string(pow(2.f, getValue() + log2(dsp::FREQ_C4)));
-        num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
-        return num + " Hz";
-      }
-      if (module->params[ROOT_UNIT_PARAM].getValue() == CENT_UNIT) {
-        std::string num = std::to_string(getValue()*1200.f);
-        num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
-        return num + " cents";
-      }
+      if (module->params[ROOT_UNIT_PARAM].getValue() == FREQ_UNIT)
+        return fmt::format("{:g} Hz", pow(2.f, getValue() + log2(dsp::FREQ_C4)));
+      if (module->params[ROOT_UNIT_PARAM].getValue() == CENT_UNIT)
+        return fmt::format("{:g} cents", getValue()*1200.f);
       // VOCT_UNIT
-      std::string num = std::to_string(getValue());
-      num.erase(num.erase( num.find_last_not_of('0') + 1, std::string::npos ).find_last_not_of('.') + 1, std::string::npos);
-      return num + " V";
+      return fmt::format("{:g} V", getValue());
     }
     void setDisplayValue(float v) override {
       if (module->params[ROOT_UNIT_PARAM].getValue() == FREQ_UNIT)
