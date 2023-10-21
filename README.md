@@ -544,7 +544,7 @@ The monophonic input is scaled at 10 divisions per volt.
 The effective number of divisions is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value is displayed below the knob (not yet implemented).
 
 ### Scale Length and input
-Defines the number of inervals (notes) in the scale. The final interval defines the jump from the last note in the scale to the root of the next pseudo-octave. The default value is 7.
+Defines the number of intervals (notes) in the scale. The final interval defines the jump from the last note in the scale to the root of the next pseudo-octave. The default value is 7.
 
 The monophonic input is scaled at 1 scale interval per volt.
 
