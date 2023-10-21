@@ -122,16 +122,16 @@ struct NORS_IQ : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    float intvl = (params[POI_PARAM].getValue() + inputs[POI_INPUT].getVoltage()) 
-                / (params[EDPO_PARAM].getValue() + std::round(inputs[EDPO_INPUT].getVoltage()*10.f));
+    float intvl = clamp(params[POI_PARAM].getValue() + inputs[POI_INPUT].getVoltage(), 0.f, 2.f) 
+                / clamp(params[EDPO_PARAM].getValue() + std::round(inputs[EDPO_INPUT].getVoltage()*10.f), 1.f, 100.f);
     float root = params[ROOT_PARAM].getValue() + inputs[ROOT_INPUT].getVoltage();
-    int len = params[LENGTH_PARAM].getValue() + std::round(inputs[LENGTH_INPUT].getVoltage());
+    int len = clamp(params[LENGTH_PARAM].getValue() + std::round(inputs[LENGTH_INPUT].getVoltage()), 1.f, 10.f);
     float step[10];
     float scale = 0.f;
     int round = params[ROUND_PARAM].getValue();
     bool equi = params[EQUI_PARAM].getValue();
     for (int i=0; i<len; i++){
-      scale += (step[i] = intvl * (params[INTVL_PARAM+i].getValue() + std::round(inputs[INTVL_INPUT+i].getVoltage()*10.f)));
+      scale += (step[i] = intvl * clamp(params[INTVL_PARAM+i].getValue() + std::round(inputs[INTVL_INPUT+i].getVoltage()*10.f), 1.f, 100.f));
       outputs[SCALE_OUTPUT].setVoltage(scale+root, i+1);
     }
     outputs[SCALE_OUTPUT].setVoltage(root, 0);
