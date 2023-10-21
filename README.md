@@ -521,7 +521,7 @@ Any number of Send modules can be used with a single mix module.
 
 ## NON-OCTAVE REPEATING SCALE INTERVALLIC QUANTIZER
 ![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)  
-Quantizer for any scale up to length 10 defined by intervals. Each interval in the scale is an integral number of Equal Divisions per Octave (EDO), or Equal Divisions per Pseudo-Octave interval (EDPO). The scale is defined by a root note for the scale, followed by a series of intervals. The first interval is added to the root to get the 2nd note in the scale. The second interval defines the 3rd note, etc. Importantly, the final interval defines the step from the last note of the scale to the root of the next pseudo-octave in the series. This is what allows the definition of non-octave based scales.
+Quantizer for any scale with up to 10 notes defined by intervals. Each interval in the scale is an integral number of Equal Divisions per Octave (EDO), or Equal Divisions per Pseudo-Octave (EDPO). The scale is defined by a root note for the scale, followed by a series of intervals. The first interval is added to the root to get the 2nd note in the scale. The second interval is added to the 2nd note to define the 3rd note, etc. Importantly, the final interval defines the step from the last note of the scale to the root of the next pseudo-octave in the series. This is what allows the definition of non-octave based scales.
 
 The module is also convenient for defining extended chords based on intervals.
 
@@ -590,11 +590,16 @@ If the polyphonic Trig input is patched, then input values are only quantized wh
 
 If the Trig input is not patched, then input V/Oct values are continuously quantized.
 
+### Chromatic Scales
+A chromatic scale is likely to have more than 10 notes. This can be accomplished by setting the Scale Length to 1 and the first (and only) interval to 1.
+
 ### OUT output
 The polyphonic OUT output produces the quantized V/Oct values.
 
 ### P-OCT (Pseudo-Octave) output
 This polyphonic output produces integral voltages that represent the pseudo-octave of each quantized note. A value of 0 represents the scale pseudo-octave containing the effective Scale Root. A value of 1 represents the next scale pseudo-octave up. A value of -1 represents the first pseudo-octave below the effective Scale Root. And so on...
+
+This value will not have much meaning if using a chromatic scale with Scale Length = 1.
 
 ### Trig output
 If the Trig input is not patched, then a 1ms 10V trigger is issued every time a new note is quantized.
@@ -609,9 +614,9 @@ If one input is monophonic, and the other polyphonic, then the monophonic values
 If both inputs are polyphonic, but one input has fewer channels than the other, then missing channels are treated as constant 0V.
 
 ### Scale output
-This polyphonic output outputs all the V/Oct values for the scale starting at the Scale Root, plus the first note of the next scale pseudo-octave up. The number of channels will be the Scale Length + 1.
+This polyphonic output produces all the V/Oct values for the scale starting at the Scale Root, through the first note of the next scale one scale pseudo-octave up. The number of channels will be the Scale Length + 1.
 
-This output can also be used as an extended chord rooted at the Scale Root.
+This output can also be used as an extended chord rooted at the Scale Root. Simply define the intervals between the notes in your chord, patch the root of the chord to the Scale Root input, and leave the IN input unpatched.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
