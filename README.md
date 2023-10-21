@@ -521,6 +521,104 @@ Any number of Send modules can be used with a single mix module.
 
 ## NON-OCTAVE REPEATING SCALE INTERVALLIC QUANTIZER
 ![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)  
+Quantizer for any scale up to length 10 defined by intervals. Each interval in the scale is an integral number of Equal Divisions per Octave (EDO), or Equal Divisions per Pseudo-Octave interval (EDPO). The scale is defined by a root note for the scale, followed by a series of intervals. The first interval is added to the root to get the 2nd note in the scale. The second interval defines the 3rd note, etc. Importantly, the final interval defines the step from the last note of the scale to the root of the next pseudo-octave in the series. This is what allows the definition of non-octave based scales.
+
+The module is also convenient for defining extended chords based on intervals.
+
+### Pseudo-Octave Interval knob, input, and unit switch
+Defines the interval that will be divided into equal divisions to define the chromatic interval for the scale. By default it is one octave, but it could be smaller or larger than an octave.
+
+The switch beside the knob defines what unit will be used for display and manual entry. Possible values are:
+- **V/Oct** (default): 1 V = 1 octave.
+- **Cents**: 100 cents = one 12 Equal Tempered half step, and 1200 cents = one octave. The final scale need not have any relationship to 12 ET - the cents unit is just a convenient way to measure an interval.
+
+The monophonic input always uses the V/Oct standard.
+
+The effective pseudo-octave interval is the sum of the knob and input values, clamped to a value between 0 and 2 octaves. The effective value is displayed below the knob (not yet implemented), using the units defined by the switch.
+
+### EDPO (Equal Divisions per Pseudo Octave) knob and input
+Defines the number of equal divisions of the pseudo-octave interval, which in turn defines the scale's chromatic step interval. The default value is 12.
+
+The monophonic input is scaled at 10 divisions per volt.
+
+The effective number of divisions is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value is displayed below the knob (not yet implemented).
+
+### Scale Length and input
+Defines the number of inervals (notes) in the scale. The final interval defines the jump from the last note in the scale to the root of the next pseudo-octave.
+
+The monophonic input is scaled at 1 scale interval per volt.
+
+The effective scale length is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 10. The effective value is displayed below the knob (not yet implemented).
+
+### Scale Root knob, input, and unit switch
+Defines the root note of the repeating scale.
+
+The switch beside the knob defines what unit is used for display and manual entry.
+- **V/Oct** (default): 1 V = 1 octave, where 0 V represents the note C4
+- **Cents**: 100 cents = one 12 ET half step, where 0 V represents the note C4
+- **Freq**: Measures the root note frequency in Hz.
+
+The knob default is always C4, regardless which unit is used.
+
+The monophonic input always uses the V/Oct standard.
+
+The effective Scale Root is the sum of the knob and input values. The effective value is displayed below the knob (not yet implemented), using the units defined by the switch.
+
+### Round switch
+Determines how input voltages are quantized
+- **Up**: Input values between two notes are always rounded up to the higher note
+- **Nearest** (default): Input values between two notes are always rounded to the closest note, with values at the halfway point rounded up
+- **Down**: Input values between two notes are always rounded down to the lower note
+
+### Equi-likely button
+If enabled, then the notes of the scale are mapped to even divisions of the pseudo-octave defined by the scale, such that each note of the scale has equal probability when the input is fed random values.
+
+By default this mode is off.
+
+### Scale interval knobs and inputs 1 through 10
+The 10 small knobs and monophonic inputs below the display area define the intervals used in the scale. Each interval is defined as an integral number of chromatic steps as defined by the Pseudo-Octave Interval and the EDPO. The left most knob defines the interval between the root note and the 2nd note of the scale. The right-most active knob defines the interval between the last note of the scale and the root of the next pseudo-octave.
+
+The inputs are scaled at 10 chromatic steps per volt. 
+
+The effective interval is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value for each interval is displayed above the respective knob (not yet implemented). Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
+
+### IN input
+The polyphonic IN input provides the V/Oct frequency control voltage to be quantized.
+
+### Trig input
+If the polyphonic Trig input is patched, then input values are only quantized when a trigger is received. Each quantized value is held until the next trigger is received.
+
+If the Trig input is not patched, then input V/Oct values are continuously quantized.
+
+### OUT output
+The polyphonic OUT output produces the quantized V/Oct values.
+
+### P-OCT (Pseudo-Octave) output
+This polyphonic output produces integral voltages that represent the pseudo-octave of each quantized note. A value of 0 represents the scale pseudo-octave containing the effective Scale Root. A value of 1 represents the next scale pseudo-octave up. A value of -1 represents the first pseudo-octave below the effective Scale Root. And so on...
+
+### Trig output
+If the Trig input is not patched, then a 1ms 10V trigger is issued every time a new note is quantized.
+
+If the Trig input is patched, then the Trig input is passed through directly to the Trig output.
+
+### Polyphony channel count
+The polyphony channel count for the three outputs above are computed as the maximum number of channels found between the IN and Trig inputs.
+
+If one input is monophonic, and the other polyphonic, then the monophonic values are replicated to match the channel count of the polyphonic input.
+
+If both inputs are polyphonic, but one input has fewer channels than the other, then missing channels are treated as constant 0V.
+
+### Scale output
+This polyphonic output outputs all the V/Oct values for the scale starting at the Scale Root, plus the first note of the next scale pseudo-octave up. The number of channels will be the Scale Length + 1.
+
+This output can also be used as an extended chord rooted at the Scale Root.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If the module is bypassed then the Trig input is passed unchanged to the Trig output. All other bypassed outputs are monophonic constant 0 volts.
 
 [Return to Table Of Contents](#venom)
 
