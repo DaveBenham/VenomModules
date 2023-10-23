@@ -4,6 +4,7 @@
 #include "plugin.hpp"
 #include "fmt/core.h"
 #include <float.h>
+#include <string.h>
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
@@ -58,30 +59,45 @@ struct NORS_IQ : VenomModule {
   dsp::SchmittTrigger trigIn[16];
   dsp::PulseGenerator trigOut[16];
   int channelNote[16]{};
+  int channelOct[16]{};
   int oldTrigChannels = 0;
   int oldChannels = 0;
   float oldOut[16]{};
 
+  float poi = 1;
+  int edpo = 12;
+  int len = 0;
+  float root = 0;
+  int intvl[10]{};
+  
+  std::string poiStr(float val) {
+    if (params[POI_UNIT_PARAM].getValue() == CENT_UNIT)
+      return fmt::format("{:g} \u00A2", val*1200.f);
+    // VOCT_UNIT
+    return fmt::format("{:g} V", val);
+  }  
+
   struct IntervalQuantity : ParamQuantity {
     std::string getDisplayValueString() override {
-      if (module->params[POI_UNIT_PARAM].getValue() == CENT_UNIT)
-        return fmt::format("{:g} cents", getValue()*1200.f);
-      // VOCT_UNIT
-      return fmt::format("{:g} V", getValue());
+      return dynamic_cast<NORS_IQ*>(module)->poiStr(getValue());
     }
     void setDisplayValue(float v) override {
       setValue( module->params[POI_UNIT_PARAM].getValue() == CENT_UNIT ? v/1200.f : v);
     }
   };
+  
+  std::string rootStr(float val) {
+    if (params[ROOT_UNIT_PARAM].getValue() == FREQ_UNIT)
+      return fmt::format("{:g} Hz", pow(2.f, val + log2(dsp::FREQ_C4)));
+    if (params[ROOT_UNIT_PARAM].getValue() == CENT_UNIT)
+      return fmt::format("{:g} \u00A2", val*1200.f);
+    // VOCT_UNIT
+    return fmt::format("{:g} V", val);
+  }
 
   struct RootQuantity : ParamQuantity {
     std::string getDisplayValueString() override {
-      if (module->params[ROOT_UNIT_PARAM].getValue() == FREQ_UNIT)
-        return fmt::format("{:g} Hz", pow(2.f, getValue() + log2(dsp::FREQ_C4)));
-      if (module->params[ROOT_UNIT_PARAM].getValue() == CENT_UNIT)
-        return fmt::format("{:g} cents", getValue()*1200.f);
-      // VOCT_UNIT
-      return fmt::format("{:g} V", getValue());
+      return dynamic_cast<NORS_IQ*>(module)->rootStr(getValue());
     }
     void setDisplayValue(float v) override {
       if (module->params[ROOT_UNIT_PARAM].getValue() == FREQ_UNIT)
@@ -122,16 +138,18 @@ struct NORS_IQ : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    float intvl = clamp(params[POI_PARAM].getValue() + inputs[POI_INPUT].getVoltage(), 0.f, 2.f) 
-                / clamp(params[EDPO_PARAM].getValue() + std::round(inputs[EDPO_INPUT].getVoltage()*10.f), 1.f, 100.f);
-    float root = params[ROOT_PARAM].getValue() + inputs[ROOT_INPUT].getVoltage();
-    int len = clamp(params[LENGTH_PARAM].getValue() + std::round(inputs[LENGTH_INPUT].getVoltage()), 1.f, 10.f);
+    poi = clamp(params[POI_PARAM].getValue() + inputs[POI_INPUT].getVoltage(), 0.f, 2.f);
+    edpo = clamp(params[EDPO_PARAM].getValue() + std::round(inputs[EDPO_INPUT].getVoltage()*10.f), 1.f, 100.f);
+    float minIntvl = poi / edpo;
+    root = clamp(params[ROOT_PARAM].getValue() + inputs[ROOT_INPUT].getVoltage(), -4.f, 4.f);
+    len = clamp(params[LENGTH_PARAM].getValue() + std::round(inputs[LENGTH_INPUT].getVoltage()), 1.f, 10.f);
     float step[10];
     float scale = 0.f;
     int round = params[ROUND_PARAM].getValue();
     bool equi = params[EQUI_PARAM].getValue();
     for (int i=0; i<len; i++){
-      scale += (step[i] = intvl * clamp(params[INTVL_PARAM+i].getValue() + std::round(inputs[INTVL_INPUT+i].getVoltage()*10.f), 1.f, 100.f));
+      intvl[i] = clamp(params[INTVL_PARAM+i].getValue() + std::round(inputs[INTVL_INPUT+i].getVoltage()*10.f), 1.f, 100.f);
+      scale += (step[i] = minIntvl * intvl[i]);
       outputs[SCALE_OUTPUT].setVoltage(scale+root, i+1);
     }
     outputs[SCALE_OUTPUT].setVoltage(root, 0);
@@ -146,8 +164,8 @@ struct NORS_IQ : VenomModule {
     if (channels < oldChannels) {
       for (int c=channels; c<oldChannels; c++)
         trigOut[c].reset();
-      oldChannels = channels;
-    }  
+    }
+    oldChannels = channels;
     for (int c=0; c<channels; c++) {
       if (trigIn[c].process(inputs[TRIG_INPUT].getPolyVoltage(c), 0.1f, 1.f) || !inputs[TRIG_INPUT].isConnected()) {
         float in = inputs[IN_INPUT].getPolyVoltage(c);
@@ -177,6 +195,7 @@ struct NORS_IQ : VenomModule {
           channelNote[c]=0;
           oct++;
         }
+        channelOct[c] = oct;
         if (!isNear(oldOut[c],out)) {
           oldOut[c] = out;
           if (!inputs[TRIG_INPUT].isConnected())
@@ -195,12 +214,121 @@ struct NORS_IQ : VenomModule {
 
 };
 
-struct NORS_IQWidget : VenomWidget {
 
-  template <class TModule>  
-  struct NORS_IQDisplay : LedDisplay {
-    NORS_IQ* module = NULL;
-  };  
+struct NORS_IQDisplay : LedDisplay {
+  NORS_IQ* module = NULL;
+  ModuleWidget* moduleWidget = NULL;
+  std::string fontPath;
+  
+  NORS_IQDisplay() {
+    fontPath = asset::system("res/fonts/ShareTechMono-Regular.ttf");
+  }
+
+  void drawLine(const DrawArgs& args, float x0, float y0, float x1, float y1) {
+    nvgBeginPath(args.vg);
+    nvgMoveTo(args.vg, x0, y0);
+    nvgLineTo(args.vg, x1, y1);
+    nvgStroke(args.vg);
+  }
+  
+  void drawNote(const DrawArgs& args, float x0, float y0, int oct, std::shared_ptr<Font> font) {
+    if (oct < 0) {
+      nvgFillColor(args.vg, SCHEME_RED);
+      oct=-oct;
+    }
+    else
+      nvgFillColor(args.vg, SCHEME_YELLOW);
+
+    float xDelta = 2.5f;
+    float yDelta = 3.8f;
+    nvgBeginPath(args.vg);
+    nvgMoveTo(args.vg, x0-xDelta, y0+yDelta);
+    nvgLineTo(args.vg, x0-xDelta, y0-yDelta);
+    nvgLineTo(args.vg, x0+xDelta, y0-yDelta);
+    nvgLineTo(args.vg, x0+xDelta, y0+yDelta);
+    nvgClosePath(args.vg);
+
+    char chr;
+    if (oct < 10)
+      chr = '0' + oct;
+    else if (oct < 36)
+      chr = 'A' + oct - 10;
+    else if (oct < 62)
+      chr = 'a' + oct - 36;
+    else
+      chr = ' ';
+    std::string txt = string::f("%c", chr);
+    nvgFill(args.vg);
+    nvgFontSize(args.vg, 9);
+    nvgFillColor(args.vg, SCHEME_BLACK);
+    nvgTextAlign(args.vg, NVG_ALIGN_CENTER + NVG_ALIGN_MIDDLE);
+    nvgText(args.vg, x0, y0, txt.c_str(), NULL);
+  }
+
+  void drawLayer(const DrawArgs& args, int layer) override {
+    if (layer != 1)
+      return;
+
+    // draw lines
+    nvgStrokeColor(args.vg, nvgRGBA(0xff, 0xd7, 0x14, 0x40));
+    drawLine(args, 2.f,21.f, 300.233f,21.f);
+    drawLine(args, 2.f,64.f, 300.233f,64.f);
+    drawLine(args, 107.2f,2.6f, 107.2f,21.f);
+    drawLine(args, 143.f,2.6f, 143.f,21.f);
+    float x = 30.3f;
+    for (int i=0; i<9; i++) {
+      drawLine(args, x,21.f, x,82.247);
+      x += 30.f;
+    }
+    
+    // draw text
+    int dummyIntvl[5] {3,2,2,3,2};
+    std::shared_ptr<Font> font = APP->window->loadFont(fontPath);
+    if (!font)
+      return;
+    nvgFontSize(args.vg, 13);
+    nvgFontFaceId(args.vg, font->handle);
+    nvgFillColor(args.vg, SCHEME_YELLOW);
+
+    std::string txt;
+    txt = module ? module->poiStr(module->poi) + string::f("/%d", module->edpo) : "1200 \u00A2/12";
+    nvgTextAlign(args.vg, NVG_ALIGN_RIGHT + NVG_ALIGN_TOP);
+    nvgText(args.vg, 101.f, 6.f, txt.c_str(), NULL);
+
+    txt = module ? string::f("%d", module->len) : "5";
+    nvgTextAlign(args.vg, NVG_ALIGN_CENTER + NVG_ALIGN_TOP);
+    nvgText(args.vg, 125.1f, 6.f, txt.c_str(), NULL);
+
+    txt = module ? module->rootStr(module->root) : "261.626 Hz";
+    nvgTextAlign(args.vg, NVG_ALIGN_LEFT + NVG_ALIGN_TOP);
+    nvgText(args.vg, 151.f, 6.f, txt.c_str(), NULL);
+    
+    nvgTextAlign(args.vg, NVG_ALIGN_CENTER + NVG_ALIGN_BOTTOM);
+    x = 15.3f;
+    for (int i=0; i<(module ? module->len : 5); i++) {
+      txt = string::f("%d", module ? module->intvl[i] : dummyIntvl[i]);
+      nvgText(args.vg, x, 81.f, txt.c_str(), NULL);
+      x += 30.f;
+    }
+    
+    // draw quantized notes
+    float x0 = 6.3f;
+    float y0 = 55.4f;
+    float xDelta = 6.f;
+    float yDelta = 8.6f;
+    float width = 30;
+    if (module) {
+      for (int c=0; c<module->oldChannels; c++) {
+        int cx = c/4;
+        int cy = c - cx*4;
+        drawNote(args, x0 + module->channelNote[c]*width + cx*xDelta, y0 - cy*yDelta, module->channelOct[c], font);
+      }
+    } else drawNote(args, x0, y0, 0, font);
+  }
+
+};  
+
+struct NORS_IQWidget : VenomWidget {
 
   NORS_IQWidget(NORS_IQ* module) {
     setModule(module);
@@ -234,9 +362,10 @@ struct NORS_IQWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPJ301MPort>(Vec(251.867, 336.052), module, NORS_IQ::POCT_OUTPUT));
     addOutput(createOutputCentered<PolyPJ301MPort>(Vec(286.455, 336.052), module, NORS_IQ::SCALE_OUTPUT));
     
-    NORS_IQDisplay<NORS_IQ>* display = createWidget<NORS_IQDisplay<NORS_IQ>>(Vec(6.83,102.629));
+    NORS_IQDisplay* display = createWidget<NORS_IQDisplay>(Vec(6.83,102.629));
     display->box.size = Vec(302.233, 84.847);
     display->module = module;
+    display->moduleWidget = this;
     addChild(display);
   }
 

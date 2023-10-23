@@ -534,21 +534,21 @@ The switch beside the knob defines what unit will be used for display and manual
 
 The monophonic input always uses the V/Oct standard.
 
-The effective pseudo-octave interval is the sum of the knob and input values, clamped to a value between 0 and 2 octaves. The effective value is displayed below the knob (not yet implemented), using the units defined by the switch.
+The effective pseudo-octave interval is the sum of the knob and input values, clamped to a value between 0 and 2 octaves. The effective value is displayed below the knob, using the units defined by the switch.
 
 ### EDPO (Equal Divisions per Pseudo Octave) knob and input
 Defines the number of equal divisions of the pseudo-octave interval, which in turn defines the scale's chromatic step interval. The default value is 12.
 
 The monophonic input is scaled at 10 divisions per volt.
 
-The effective number of divisions is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value is displayed below the knob (not yet implemented).
+The effective number of divisions is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value is displayed below the knob.
 
 ### Scale Length and input
 Defines the number of intervals (notes) in the scale. The final interval defines the jump from the last note in the scale to the root of the next pseudo-octave. The default value is 7.
 
 The monophonic input is scaled at 1 scale interval per volt.
 
-The effective scale length is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 10. The effective value is displayed below the knob (not yet implemented).
+The effective scale length is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 10. The effective value is displayed below the knob.
 
 ### Scale Root knob, input, and unit switch
 Defines the root note of the repeating scale.
@@ -562,7 +562,7 @@ The knob default is always C4, regardless which unit is used.
 
 The monophonic input always uses the V/Oct standard.
 
-The effective Scale Root is the sum of the knob and input values. The effective value is displayed below the knob (not yet implemented), using the units defined by the switch.
+The effective Scale Root is the sum of the knob and input values, clamped to a value between -4V (C0) and 4V (C8). The effective value is displayed below the knob, using the units defined by the switch.
 
 ### Round switch
 Determines how input voltages are quantized
@@ -580,7 +580,19 @@ The 10 small knobs and monophonic inputs below the display area define the inter
 
 The inputs are scaled at 10 chromatic steps per volt. 
 
-The effective interval is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value for each interval is displayed above the respective knob (not yet implemented). Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
+The effective interval is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value for each interval is displayed above the respective knob. Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
+
+### Display Panel
+The display panel is divided into 3 sections. As already described above, the top section displays the effective values for the upper controls, and the bottom section displays the effective values for the 10 interval controls.
+
+The middle section indicates which note within the scale is selected. Each polyphonic channel has its own position within a 4 x 4 grid above each interval.
+
+The left most grid above the left most interval knob represents the root of the scale. The next grid represents the 2nd note, etc.
+
+The indicator is yellow when the selected note is >= the effective Scale Root, and red if < the Scale Root. The character within each indicator represents the distance away from the root (pseudo)octave. A value of 0 represents the scale containing the Scale Root. The (pseudo)octave indicators are coded as follows:
+ - 0-9 = 0-9
+ - A-Z = 10 - 35
+ - a-z = 37 - 61
 
 ### IN input
 The polyphonic IN input provides the V/Oct frequency control voltage to be quantized.

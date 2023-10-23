@@ -11,6 +11,7 @@
 - Mix Fade 2 Expander
 - Mix Pan Expander
 - Mix Aux Send Expander
+- Non-Octave Repeating Scale Intervallic Quantizer
 
 ### Enhancements
 - All modules: Polyphonic ports now use brass cores, while monophonic ports use steel.
