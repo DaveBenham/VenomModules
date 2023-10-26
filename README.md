@@ -545,7 +545,7 @@ The monophonic input always uses the V/Oct standard, regardless how the Interval
 
 The effective pseudo-octave interval is the sum of the knob and input values, clamped to a value between 0 and 2 octaves. The effective value is displayed below the knob, using the units defined by the switch.
 
-The PseudoOctave Interval is ignored if the Equal Divs button is off.
+The PseudoOctave Interval is ignored and nothing is displayed if the Equal Divs button is off.
 
 ### EDPO (Equal Divisions per Pseudo Octave) knob and input
 Defines the number of equal divisions of the pseudo-octave interval, which in turn defines the scale's chromatic step interval. The default value is 12.
@@ -584,14 +584,14 @@ Determines how input voltages are quantized
 - **Down**: Input values between two notes are always rounded down to the lower note
 
 ### Equi-likely button
-If enabled, then the notes of the scale are mapped to even divisions of the pseudo-octave defined by the scale, such that each note of the scale has equal probability when the input is fed random values.
+If enabled, then the notes of the scale are mapped to even divisions of the total scale interval, such that each note of the scale has equal probability when the input is fed random values.
 
 By default this mode is off.
 
 ### Scale interval knobs and inputs 1 through 13, and Poly Interval input
 The 13 small knobs and monophonic inputs below the display area define the intervals used in the scale. Up to 13 channels in the Poly Interval input can also be used to modulate the 13 intervals.
 
-The method used to define the interval depends on the Equal Divs button. The Poly Interval input gives polyphonic control
+The method used to define the interval depends on the Equal Divs button.
 
 #### Equal Divs ON
 Each interval is defined as an integral number of chromatic steps as defined by the Pseudo-Octave Interval and the EDPO. The left most knob defines the interval between the root note and the 2nd note of the scale. The right-most active knob defines the interval between the Nth note of the scale and the root of the next pseudo-octave.
@@ -609,7 +609,7 @@ The knob value defaults to 0 (no change in pitch), with a range from 0 to 2 octa
 
 The monophonic input is scaled at 1 volt per octave.
 
-The effective interval is the sum of the knob and the input values, clamped to a value between 0 and 2 octaves. The effective interval value is displayed above the respective knob. Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
+The effective interval is the sum of the knob and the input values, clamped to a value between 0 and 2 octaves. The effective interval value is displayed above each respective knob. Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
 
 ### Display Panel
 The display panel is divided into 3 sections. As already described above, the top section displays the effective values for the upper controls, and the bottom section displays the effective values for the 13 interval controls.
