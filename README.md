@@ -521,20 +521,31 @@ Any number of Send modules can be used with a single mix module.
 
 ## NON-OCTAVE REPEATING SCALE INTERVALLIC QUANTIZER
 ![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)  
-Quantizer for any scale with up to 10 notes defined by intervals. Each interval in the scale is an integral number of Equal Divisions per Octave (EDO), or Equal Divisions per Pseudo-Octave (EDPO). The scale is defined by a root note for the scale, followed by a series of intervals. The first interval is added to the root to get the 2nd note in the scale. The second interval is added to the 2nd note to define the 3rd note, etc. Importantly, the final interval defines the step from the last note of the scale to the root of the next pseudo-octave in the series. This is what allows the definition of non-octave based scales.
+Quantizer for any scale with up to 13 intervals between notes. The scale is defined by a root note for the scale, followed by a series of intervals. The first interval is added to the root to get the 2nd note in the scale. The second interval is added to the 2nd note to define the 3rd note, etc. The final interval defines the step from the Nth note of the scale to the root of the next pseudo-octave in the series. The total interval from one root to the next need not be an octave.
 
 The module is also convenient for defining extended chords based on intervals.
 
-### Pseudo-Octave Interval knob, input, and unit switch
-Defines the interval that will be divided into equal divisions to define the chromatic interval for the scale. By default it is one octave, but it could be smaller or larger than an octave.
+### Interval Unit switch
+This switch controls what unit is used to display and or manually enter intervals.
+- **V/Oct**: 1 V = 1 octave.
+- **Cents** (default): 100 cents = one 12 Equal Tempered half step, and 1200 cents = one octave. The scale and/or interval need not have any relationship to 12 ET - the cents unit is just a convenient way to measure an interval.
+- **Ratio**: Interval frequency ratios are unitless, and are defined as the frequency of the high note / frequency of the low note. For example, a perfect fifth may be entered as 3/2, but the ratio will always be displayed relative to 1. So a perfect fifth would be displayed as 1.5:1
 
-The switch beside the knob defines what unit will be used for display and manual entry. Possible values are:
-- **V/Oct** (default): 1 V = 1 octave.
-- **Cents**: 100 cents = one 12 Equal Tempered half step, and 1200 cents = one octave. The final scale need not have any relationship to 12 ET - the cents unit is just a convenient way to measure an interval.
+### Equal Divs button
+Controls how intra-note intervals are defined.
 
-The monophonic input always uses the V/Oct standard.
+If On (default), then intra-note intervals are specified as an integral number of chromatic steps that are defined by an equal division (EDPO) of some larger interval (Pseud-Oct Interval).
+
+If the Equal Divs button is off, then the Pseud-Oct Interval and EDPO values are ignored, and intra-note intervals are specified directly as an interval.
+
+### Pseud-Oct Interval knob and input
+Defines the pseudo-octave interval that will be divided into equal divisions to define the chromatic interval for the scale. The default knob value is one octave. The interval unit is specified by the Interval Unit switch.
+
+The monophonic input always uses the V/Oct standard, regardless how the Interval Unit switch is configured.
 
 The effective pseudo-octave interval is the sum of the knob and input values, clamped to a value between 0 and 2 octaves. The effective value is displayed below the knob, using the units defined by the switch.
+
+The PseudoOctave Interval is ignored if the Equal Divs button is off.
 
 ### EDPO (Equal Divisions per Pseudo Octave) knob and input
 Defines the number of equal divisions of the pseudo-octave interval, which in turn defines the scale's chromatic step interval. The default value is 12.
@@ -543,19 +554,21 @@ The monophonic input is scaled at 10 divisions per volt.
 
 The effective number of divisions is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value is displayed below the knob.
 
+The EDPO is ignored if the Equal Divs button is off.
+
 ### Scale Length and input
-Defines the number of intervals (notes) in the scale. The final interval defines the jump from the last note in the scale to the root of the next pseudo-octave. The default value is 7.
+Defines the number of intervals or steps in the repeating scale (notes - 1). The final interval defines the jump from the Nth note in the scale to the root of the next pseudo-octave. The default value is 12.
 
-The monophonic input is scaled at 1 scale interval per volt.
+The monophonic input is scaled at 0.5 Volt per step.
 
-The effective scale length is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 10. The effective value is displayed below the knob.
+The effective scale length is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 13. The effective value is displayed below the knob.
 
-### Scale Root knob, input, and unit switch
+### Scale Root knob, input, and Root Unit switch
 Defines the root note of the repeating scale.
 
 The switch beside the knob defines what unit is used for display and manual entry.
 - **V/Oct** (default): 1 V = 1 octave, where 0 V represents the note C4
-- **Cents**: 100 cents = one 12 ET half step, where 0 V represents the note C4
+- **Cents**: 100 cents = one 12 ET half step, where 0 cents represents the note C4
 - **Freq**: Measures the root note frequency in Hz.
 
 The knob default is always C4, regardless which unit is used.
@@ -575,15 +588,31 @@ If enabled, then the notes of the scale are mapped to even divisions of the pseu
 
 By default this mode is off.
 
-### Scale interval knobs and inputs 1 through 10
-The 10 small knobs and monophonic inputs below the display area define the intervals used in the scale. Each interval is defined as an integral number of chromatic steps as defined by the Pseudo-Octave Interval and the EDPO. The left most knob defines the interval between the root note and the 2nd note of the scale. The right-most active knob defines the interval between the last note of the scale and the root of the next pseudo-octave.
+### Scale interval knobs and inputs 1 through 13, and Poly Interval input
+The 13 small knobs and monophonic inputs below the display area define the intervals used in the scale. Up to 13 channels in the Poly Interval input can also be used to modulate the 13 intervals.
 
-The inputs are scaled at 10 chromatic steps per volt. 
+The method used to define the interval depends on the Equal Divs button. The Poly Interval input gives polyphonic control
 
-The effective interval is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value for each interval is displayed above the respective knob. Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
+#### Equal Divs ON
+Each interval is defined as an integral number of chromatic steps as defined by the Pseudo-Octave Interval and the EDPO. The left most knob defines the interval between the root note and the 2nd note of the scale. The right-most active knob defines the interval between the Nth note of the scale and the root of the next pseudo-octave.
+
+Each knob defaults to 1, with a range of 1 to 100.
+
+The monophonic inputs are scaled at 10 chromatic steps per volt. 
+
+The effective count is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective count is displayed above the respective knob. Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
+
+#### Equal Divs OFF
+Each interval is specified directly.
+
+The knob value defaults to 0 (no change in pitch), with a range from 0 to 2 octaves. The unit used for manual entry and display is controled by the Interval Unit switch.
+
+The monophonic input is scaled at 1 volt per octave.
+
+The effective interval is the sum of the knob and the input values, clamped to a value between 0 and 2 octaves. The effective interval value is displayed above the respective knob. Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
 
 ### Display Panel
-The display panel is divided into 3 sections. As already described above, the top section displays the effective values for the upper controls, and the bottom section displays the effective values for the 10 interval controls.
+The display panel is divided into 3 sections. As already described above, the top section displays the effective values for the upper controls, and the bottom section displays the effective values for the 13 interval controls.
 
 The middle section indicates which note within the scale is selected. Each polyphonic channel has its own position within a 4 x 4 grid above each interval.
 
@@ -603,7 +632,7 @@ If the polyphonic Trig input is patched, then input values are only quantized wh
 If the Trig input is not patched, then input V/Oct values are continuously quantized.
 
 ### Chromatic Scales
-A chromatic scale is likely to have more than 10 notes. This can be accomplished by setting the Scale Length to 1 and the first (and only) interval to 1.
+Equal Division Chromatic scales with more than 13 intervals may be accomplished by setting the Scale Length to 1 and the first (and only) interval to 1.
 
 ### OUT output
 The polyphonic OUT output produces the quantized V/Oct values.
