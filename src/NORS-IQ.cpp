@@ -34,6 +34,7 @@ struct NORS_IQ : VenomModule {
     ROOT_INPUT,
     IN_INPUT,
     TRIG_INPUT,
+    POLY_INTVL_INPUT,
     INPUTS_LEN
   };
   enum OutputId {
@@ -194,6 +195,7 @@ struct NORS_IQ : VenomModule {
       configParam<IntervalQuantity>(INTVL_PARAM+i, 0, 1, 0, name);
       configInput(INTVL_INPUT+i, name + " CV");
     }
+    configInput(POLY_INTVL_INPUT, "Polyphonic intervals");
     configInput(POI_INPUT, "Pseudo-octave interval CV");
     configInput(EDPO_INPUT, "Equal divisions per pseudo-octave CV");
     configInput(LENGTH_INPUT, "Scale length CV");
@@ -224,11 +226,11 @@ struct NORS_IQ : VenomModule {
     bool equi = params[EQUI_PARAM].getValue();
     for (int i=0; i<len; i++){
       if (equalDivs) {
-        intvl[i] = clamp(std::round(params[INTVL_PARAM+i].getValue()*99+1) + std::round(inputs[INTVL_INPUT+i].getVoltage()*10.f), 1.f, 100.f);
+        intvl[i] = clamp(std::round(params[INTVL_PARAM+i].getValue()*99+1) + std::round((inputs[INTVL_INPUT+i].getVoltage()+inputs[POLY_INTVL_INPUT].getVoltage(i))*10.f), 1.f, 100.f);
         step[i] = minIntvl * intvl[i];
       }
       else {
-        step[i] = clamp(params[INTVL_PARAM+i].getValue()*2 + inputs[INTVL_INPUT+i].getVoltage(), 0.f, 2.f);
+        step[i] = clamp(params[INTVL_PARAM+i].getValue()*2 + inputs[INTVL_INPUT+i].getVoltage() + inputs[POLY_INTVL_INPUT].getVoltage(i), 0.f, 2.f);
       }
       scale += step[i];
       outputs[SCALE_OUTPUT].setVoltage(scale+root, i+1);
@@ -465,6 +467,9 @@ struct NORS_IQWidget : VenomWidget {
       addInput(createInputCentered<PJ301MPort>(Vec(x, y+32.5f), module, NORS_IQ::INTVL_INPUT+i));
       x+=30.f;
     }
+
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(35.603, 312.834), module, NORS_IQ::POLY_INTVL_INPUT));
+
     addInput(createInputCentered<PJ301MPort>(Vec(125.0, 312.834), module, NORS_IQ::POI_INPUT));
     addInput(createInputCentered<PJ301MPort>(Vec(164.1, 312.834), module, NORS_IQ::EDPO_INPUT));
     addInput(createInputCentered<PJ301MPort>(Vec(201.2,312.834), module, NORS_IQ::LENGTH_INPUT));

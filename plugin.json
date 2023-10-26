@@ -197,7 +197,7 @@
     {
       "slug": "NORS_IQ",
       "name": "Non-Octave-Repeating Scale Intervallic Quantizer",
-      "description": "Quantizer for any scale up to length 10 based on intervals defined by equal divisions of any pseudo-octave interval",
+      "description": "Quantizer for any scale defined by up to 13 intervals between notes",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#non-octave-repeating-scale-intervallic-quantizer",
       "tags": [
         "Quantizer",
