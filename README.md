@@ -567,9 +567,9 @@ The effective scale length is the sum of the knob and input values, rounded and 
 Defines the root note of the repeating scale.
 
 The switch beside the knob defines what unit is used for display and manual entry.
-- **V/Oct** (default): 1 V = 1 octave, where 0 V represents the note C4
+- **V/Oct**: 1 V = 1 octave, where 0 V represents the note C4
 - **Cents**: 100 cents = one 12 ET half step, where 0 cents represents the note C4
-- **Freq**: Measures the root note frequency in Hz.
+- **Freq** (default): Measures the root note frequency in Hz.
 
 The knob default is always C4, regardless which unit is used.
 

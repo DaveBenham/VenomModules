@@ -181,13 +181,13 @@ struct NORS_IQ : VenomModule {
 
   NORS_IQ() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-    configSwitch<FixedSwitchQuantity>(INTVL_UNIT_PARAM, 0, 2, 0, "Interval unit", {"Volts", "Cents", "Ratio"});
+    configSwitch<FixedSwitchQuantity>(INTVL_UNIT_PARAM, 0, 2, 1, "Interval unit", {"Volts", "Cents", "Ratio"});
     configSwitch<FixedSwitchQuantity>(EQUAL_DIVS_PARAM, 0.f, 1.f, 1.f, "Equal Interval Divisions", {"Off", "On"});
     configParam<POIQuantity>(POI_PARAM, 0.f, 2.f, 1.f, "Pseudo-octave interval", " V");
     configParam(EDPO_PARAM, 1.f, 100.f, 12.f, "Equal divisions per pseudo-octave");
     configParam(LENGTH_PARAM, 1.f, INTVL_CNT, 12.f, "Scale length");
     configParam<RootQuantity>(ROOT_PARAM, -4.f, 4.f, 0.f, "Scale root", " V");
-    configSwitch<FixedSwitchQuantity>(ROOT_UNIT_PARAM, 0, 2, 0, "Scale root unit", {"Volts", "Cents", "Hertz"});
+    configSwitch<FixedSwitchQuantity>(ROOT_UNIT_PARAM, 0, 2, 2, "Scale root unit", {"Volts", "Cents", "Hertz"});
     configSwitch<FixedSwitchQuantity>(ROUND_PARAM, 0, 2, 1, "Round algorithm", {"Down", "Nearest", "Up"});
     configSwitch<FixedSwitchQuantity>(EQUI_PARAM, 0.f, 1.f, 0.f, "Equi-likely", {"Off", "On"});
     for (int i=0; i<INTVL_CNT; i++) {
