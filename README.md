@@ -543,7 +543,7 @@ Defines the pseudo-octave interval that will be divided into equal divisions to 
 
 The monophonic input always uses the V/Oct standard, regardless how the Interval Unit switch is configured.
 
-The effective pseudo-octave interval is the sum of the knob and input values, clamped to a value between 0 and 2 octaves. The effective value is displayed below the knob, using the units defined by the switch.
+The effective pseudo-octave interval is the sum of the knob and input values, clamped to a value between 0 and 4 octaves. The effective value is displayed below the knob, using the units defined by the switch.
 
 The PseudoOctave Interval is ignored and nothing is displayed if the Equal Divs button is off.
 
