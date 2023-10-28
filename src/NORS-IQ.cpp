@@ -183,7 +183,7 @@ struct NORS_IQ : VenomModule {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch<FixedSwitchQuantity>(INTVL_UNIT_PARAM, 0, 2, 1, "Interval unit", {"Volts", "Cents", "Ratio"});
     configSwitch<FixedSwitchQuantity>(EQUAL_DIVS_PARAM, 0.f, 1.f, 1.f, "Equal Interval Divisions", {"Off", "On"});
-    configParam<POIQuantity>(POI_PARAM, 0.f, 2.f, 1.f, "Pseudo-octave interval", " V");
+    configParam<POIQuantity>(POI_PARAM, 0.f, 4.f, 1.f, "Pseudo-octave interval", " V");
     configParam(EDPO_PARAM, 1.f, 100.f, 12.f, "Equal divisions per pseudo-octave");
     configParam(LENGTH_PARAM, 1.f, INTVL_CNT, 12.f, "Scale length");
     configParam<RootQuantity>(ROOT_PARAM, -4.f, 4.f, 0.f, "Scale root", " V");
@@ -216,7 +216,7 @@ struct NORS_IQ : VenomModule {
       equalDivs = !equalDivs;
       setIntervalUnit();
     }
-    poi = clamp(params[POI_PARAM].getValue() + inputs[POI_INPUT].getVoltage(), 0.f, 2.f);
+    poi = clamp(params[POI_PARAM].getValue() + inputs[POI_INPUT].getVoltage(), 0.f, 4.f);
     edpo = clamp(params[EDPO_PARAM].getValue() + std::round(inputs[EDPO_INPUT].getVoltage()*10.f), 1.f, 100.f);
     float minIntvl = poi / edpo;
     root = clamp(params[ROOT_PARAM].getValue() + inputs[ROOT_INPUT].getVoltage(), -4.f, 4.f);
