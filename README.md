@@ -621,7 +621,7 @@ The left most grid above the left most interval knob represents the root of the 
 The indicator is yellow when the selected note is >= the effective Scale Root, and red if < the Scale Root. The character within each indicator represents the distance away from the root (pseudo)octave. A value of 0 represents the scale containing the Scale Root. The (pseudo)octave indicators are coded as follows:
  - 0-9 = 0-9
  - A-Z = 10 - 35
- - a-z = 37 - 61
+ - a-z = 36 - 61
 
 ### IN input
 The polyphonic IN input provides the V/Oct frequency control voltage to be quantized.
