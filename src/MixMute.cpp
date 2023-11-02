@@ -12,6 +12,7 @@ struct MixMute : MixExpanderModule {
   MixMute() {
     venomConfig(MUTE_PARAMS_LEN, MUTE_INPUTS_LEN, MUTE_OUTPUTS_LEN, MUTE_LIGHTS_LEN);
     mixType = MIXMUTE_TYPE;
+    configLight(EXP_LIGHT, "Left connection indicator");
     for (int i=0; i<4; i++) {
       std::string i_s = std::to_string(i+1);
       configSwitch<FixedSwitchQuantity>(MUTE_PARAM+i, 0.f, 1.f, 0.f, "Mute " + i_s, {"Unmuted", "Muted"});

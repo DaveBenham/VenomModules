@@ -9,6 +9,7 @@ struct MixFade : MixExpanderModule {
   MixFade() {
     venomConfig(FADE_PARAMS_LEN, FADE_INPUTS_LEN, FADE_OUTPUTS_LEN, EXP_LIGHTS_LEN);
     mixType = MIXFADE_TYPE;
+    configLight(EXP_LIGHT, "Left connection indicator");
     for (int i=0; i<4; i++) {
       std::string i_s = std::to_string(i+1);
       configParam(FADE_TIME_PARAM+i, 0.f, 30.f, 0.f, "Fade " + i_s + " time");

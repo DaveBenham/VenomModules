@@ -87,6 +87,10 @@ struct BernoulliSwitch : VenomModule {
     configOutput(B_OUTPUT, "B");
     configBypass(A_INPUT, A_OUTPUT);
     configBypass(inputs[B_INPUT].isConnected() ? B_INPUT : A_INPUT, B_OUTPUT);
+    configLight(NO_SWAP_LIGHT, "No-swap indicator");
+    configLight(SWAP_LIGHT, "Swap indicator");
+    configLight(POLY_SENSE_ALL_LIGHT, "Polyphony sense all indicator");
+    configLight(AUDIO_LIGHT, "Audio processing (antipop red, oversample blue) indicator");
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
     lights[POLY_SENSE_ALL_LIGHT].setBrightness(false);

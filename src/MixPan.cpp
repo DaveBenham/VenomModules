@@ -9,6 +9,7 @@ struct MixPan : MixExpanderModule {
   MixPan() {
     venomConfig(PAN_PARAMS_LEN, PAN_INPUTS_LEN, PAN_OUTPUTS_LEN, EXP_LIGHTS_LEN);
     mixType = MIXPAN_TYPE;
+    configLight(EXP_LIGHT, "Left connection indicator");
     for (int i=0; i<4; i++) {
       std::string i_s = std::to_string(i+1);
       configParam(PAN_PARAM+i, -1.f, 1.f, 0.f, "Pan "+i_s);

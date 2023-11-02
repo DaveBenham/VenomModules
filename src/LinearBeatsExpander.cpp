@@ -19,6 +19,8 @@ struct LinearBeatsExpander : VenomModule {
     }
     configInput(BYPASS_INPUT, "Disable linear beats CV");
     configSwitch(BYPASS_PARAM, 0.f, 1.f, 0.f, "Linear beats", {"Enabled", "Disabled"});
+    configLight(LEFT_LIGHT, "Left connection indicator");
+    configLight(RIGHT_LIGHT, "Right connection indicator");
   }
 
   void process(const ProcessArgs& args) override {

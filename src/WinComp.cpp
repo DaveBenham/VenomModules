@@ -121,6 +121,22 @@ struct WinComp : VenomModule {
     configOutput(GREQ_OUTPUT, "A>=B");
     configOutput(LS_OUTPUT, "A<B");
     configOutput(GR_OUTPUT, "A>B");
+    
+    configLight(OVERSAMPLE_LIGHT, "Oversample indicator");
+    configLight(MIN_ABS_LIGHT, "Minimum absolute value indicator");
+    configLight(MAX_ABS_LIGHT, "Maximum absolute value indicator");
+    configLight(CLAMP_ABS_LIGHT, "A Clamped absolute value indicator");
+    configLight(OVER_ABS_LIGHT, "A Overflow absolute value indicator");
+    configLight(MIN_INV_LIGHT, "Minimum inverted indicator");
+    configLight(MAX_INV_LIGHT, "Maximum inverted indicator");
+    configLight(CLAMP_INV_LIGHT, "A Clamped inverted indicator");
+    configLight(OVER_INV_LIGHT, "A Overflow inverted indicator");
+    configLight(EQ_LIGHT, "A=B (yellow mono, blue poly)");
+    configLight(NEQ_LIGHT, "A<>B indicator (yellow mono, blue poly)");
+    configLight(LSEQ_LIGHT, "A<=B indicator (yellow mono, blue poly)");
+    configLight(GREQ_LIGHT, "A>=B indicator (yellow mono, blue poly)");
+    configLight(GR_LIGHT, "A>B indicator (yellow mono, blue poly)");
+    configLight(LS_LIGHT, "A<B indicator (yellow mono, blue poly)");
 
     initializeOversample();
     lightDivider.setDivision(32);

@@ -181,6 +181,11 @@ struct RhythmExplorer : VenomModule {
 
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
+    for (int i=0; i<MAX_STEP_LENGTH; i++){
+      configLight(BAR_STEP_LIGHT+i, string::f("Bar beat %d indicator", i+1));
+      configLight(PHRASE_STEP_LIGHT+i, string::f("Phrase bar %d indicator", i+1));
+    }  
+
     configInput(CLOCK_INPUT,"24 PPQN Clock");
     configInput(NEW_SEED_TRIGGER_INPUT,"Dice Trigger");
     configInput(RESET_TRIGGER_INPUT,"Reset Trigger");

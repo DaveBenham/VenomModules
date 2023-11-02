@@ -14,6 +14,7 @@
 - Non-Octave Repeating Scale Intervallic Quantizer
 
 ### Enhancements
+- Add hover help text to all LED lights.
 - All modules: Polyphonic ports now use brass cores, while monophonic ports use steel.
 - Shaped VCA:
   - The response curve displayed range is now -100% exp to 100% log instead of -1 to 1

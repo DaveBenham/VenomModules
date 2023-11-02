@@ -9,6 +9,7 @@ struct MixOffset : MixExpanderModule {
   MixOffset() {
     venomConfig(OFFSET_PARAMS_LEN, OFFSET_INPUTS_LEN, OFFSET_OUTPUTS_LEN, EXP_LIGHTS_LEN);
     mixType = MIXOFFSET_TYPE;
+    configLight(EXP_LIGHT, "Left connection indicator");
     for (int i=0; i<4; i++) {
       std::string i_s = std::to_string(i+1);
       configParam(PRE_OFFSET_PARAM+i, -10.f, 10.f, 0.f, "Pre level "+i_s+" offset", " V");

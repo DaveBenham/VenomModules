@@ -12,6 +12,7 @@ struct MixSend : MixExpanderModule {
   MixSend() {
     venomConfig(SEND_PARAMS_LEN, SEND_INPUTS_LEN, SEND_OUTPUTS_LEN, SEND_LIGHTS_LEN);
     mixType = MIXSEND_TYPE;
+    configLight(EXP_LIGHT, "Left connection indicator");
     for (int i=0; i<4; i++) {
       std::string i_s = std::to_string(i+1);
       configParam(SEND_PARAM+i, 0.f, 1.f, 0.f, "Send level "+i_s);
