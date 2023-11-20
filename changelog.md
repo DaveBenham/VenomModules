@@ -20,8 +20,8 @@
   - The response curve displayed range is now -100% exp to 100% log instead of -1 to 1
   - Improved 4 quadrant logarithmic response with option for old behavior
 - Bernoulli Switch:
-  - Added "Normal Value" parameter that specifies what value is normaled to the A input, either the raw trig input, or the Scmitt trigger result
-  - Bernoulli Gate and Toggled Bernoulli Gate presets now send normaled true gates instead of the the raw trigger input signal, so those mode now truly behave like the Mutable Instruments Branches.
+  - Added "Normal Value" parameter that specifies what value is normaled to the A input, either the raw trig input, or the Schmitt trigger result
+  - Bernoulli Gate and Toggled Bernoulli Gate presets now send normaled Schmitt trigger gates instead of the the raw trigger input, so those modes now truly behave like the Mutable Instruments Branches.
 
 ### Bug Fixes
 - Bernoulli Switch: Fixed a number of bugs dealing with polyphony

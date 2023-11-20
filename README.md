@@ -1,9 +1,10 @@
 # Venom
-Venom modules version 2.5.0 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
+Venom modules version 2.5.0 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.
 
-Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
-
-Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
+[Color Coded Ports](#color-coded-ports)  
+[Themes](#themes)  
+[Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
+[Acknowledgments](#acknowledgments)  
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
 |----|----|----|----|----|----|----|----|
@@ -21,10 +22,12 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 |----|----|----|----|----|
 |![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WINCOMP module image](doc/WinComp.PNG)|
 
-## Color Code Ports
+## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
 
 Input ports are on the base faceplate color with base labels. Output ports are on a contrasting color with inverted labels.
+
+[Return to Table Of Contents](#venom)
 
 ## Themes
 The context menu of every module includes options to set the default theme and default dark theme for the Venom plugin, as well as a theme override for each module instance.
@@ -41,6 +44,7 @@ If you want the default theme to disregard the VCV Rack dark panel setting, then
 
 The factory default theme is ivory, and the factory default dark theme is coal.
 
+[Return to Table Of Contents](#venom)
 
 ## Parameter Locks and Custom Defaults
 Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu options to lock the paramenter as well as set a custom default value. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.
@@ -58,6 +62,15 @@ The parameter value cannot be changed by any means while the parameter is locked
 
 ### Custom Defaults
 A custom default value overrides the factory default whenever a parameter is initialized. An additional parameter menu option is added to restore the factory default whenever a custom default is in effect.
+
+[Return to Table Of Contents](#venom)
+
+## Acknowledgments
+Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
+
+Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
+
+[Return to Table Of Contents](#venom)
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](doc/BernoulliSwitch.png)  
@@ -117,10 +130,10 @@ By default Bernoulli Switch is configured for switching gates or CV signals, but
 
 ### Factory Presets
 The following factory presets are available that emulate the four configurations available to the Mutable Instruments Branches module:
-- Bernoulli Gate - Sends triggering gate to A or B
+- Bernoulli Gate - Sends 10V Schmitt trigger gate to A or B
 - Latched Bernoulli Gate - Sends constant 10V to either A or B
 - Latched Toggled Bernoulli Gate - Toggles constant 10V between A and B
-- Toggled Bernoulli Gate - Toggles triggering gate between A and B
+- Toggled Bernoulli Gate - Toggles 10V Schmitt trigger gate between A and B
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
