@@ -25,7 +25,7 @@
 
 ### Bug Fixes
 - Bernoulli Switch: Fixed a number of bugs dealing with polyphony
-- WinComp: Force minimum tolerance of 1e-6 to account for limitations of float
+- WinComp: Force minimum tolerance of 1e-6 (behind the scene) to account for limitations of float.
   
 ## 2.4.1 (2023-09-01)
 ### Enhancements
