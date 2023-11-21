@@ -70,6 +70,8 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 
 Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
 
+Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for advice on the NonOctave Repeating Scale Intervallic Quantizer, as well as help with compiling a representative set of scale presets.
+
 [Return to Table Of Contents](#venom)
 
 ## BERNOULLI SWITCH
@@ -635,6 +637,7 @@ The indicator is yellow when the selected note is >= the effective Scale Root, a
  - 0-9 = 0-9
  - A-Z = 10 - 35
  - a-z = 36 - 61
+ - <space> = 62 or higher
 
 ### IN input
 The polyphonic IN input provides the V/Oct frequency control voltage to be quantized.
