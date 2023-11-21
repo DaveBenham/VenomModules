@@ -5,7 +5,7 @@
 #include "Filter.hpp"
 
 #define LIGHT_OFF 0.02f
-#define FADE_RATE 400.f
+#define FADE_RATE 100.f
 
 struct BernoulliSwitch : VenomModule {
   #include "BernoulliSwitchExpander.hpp"

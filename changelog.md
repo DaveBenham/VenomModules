@@ -22,6 +22,7 @@
 - Bernoulli Switch:
   - Added "Normal Value" parameter that specifies what value is normaled to the A input, either the raw trig input, or the Schmitt trigger result
   - Bernoulli Gate and Toggled Bernoulli Gate presets now send normaled Schmitt trigger gates instead of the the raw trigger input, so those modes now truly behave like the Mutable Instruments Branches.
+  - Increased anti-pop crossfade time from 2.5 msec to 10 msec.
 
 ### Bug Fixes
 - Bernoulli Switch: Fixed a number of bugs dealing with polyphony
