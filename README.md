@@ -637,7 +637,7 @@ The indicator is yellow when the selected note is >= the effective Scale Root, a
  - 0-9 = 0-9
  - A-Z = 10 - 35
  - a-z = 36 - 61
- - <space> = 62 or higher
+ - \<space\> = 62 or higher
 
 ### IN input
 The polyphonic IN input provides the V/Oct frequency control voltage to be quantized.
