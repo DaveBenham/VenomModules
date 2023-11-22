@@ -1,0 +1,164 @@
+{
+  "plugin": "Venom",
+  "model": "NORS_IQ",
+  "version": "2.5.0beta-392b765",
+  "params": [
+    {
+      "value": 2.0,
+      "id": 0
+    },
+    {
+      "value": 0.98207807540893555,
+      "id": 1
+    },
+    {
+      "value": 1.0,
+      "id": 2
+    },
+    {
+      "value": 12.0,
+      "id": 3
+    },
+    {
+      "value": 0.0,
+      "id": 4
+    },
+    {
+      "value": 1.0,
+      "id": 5
+    },
+    {
+      "value": 1.0,
+      "id": 6
+    },
+    {
+      "value": 0.0,
+      "id": 7
+    },
+    {
+      "value": 0.020485877990722656,
+      "id": 8
+    },
+    {
+      "value": 0.055515684187412262,
+      "id": 9
+    },
+    {
+      "value": 0.055515684187412262,
+      "id": 10
+    },
+    {
+      "value": 0.020485877990722656,
+      "id": 11
+    },
+    {
+      "value": 0.055515684187412262,
+      "id": 12
+    },
+    {
+      "value": 0.020485877990722656,
+      "id": 13
+    },
+    {
+      "value": 0.055515684187412262,
+      "id": 14
+    },
+    {
+      "value": 0.053457640111446381,
+      "id": 15
+    },
+    {
+      "value": 0.055515684187412262,
+      "id": 16
+    },
+    {
+      "value": 0.055515684187412262,
+      "id": 17
+    },
+    {
+      "value": 0.020485877990722656,
+      "id": 18
+    },
+    {
+      "value": 0.055515684187412262,
+      "id": 19
+    },
+    {
+      "value": 0.0,
+      "id": 20
+    },
+    {
+      "value": 0.0,
+      "id": 21
+    }
+  ],
+  "data": {
+    "paramLock0": false,
+    "paramDflt0": 0.0,
+    "paramVal0": 2.0,
+    "paramLock1": false,
+    "paramDflt1": 1.0,
+    "paramVal1": 0.98207807540893555,
+    "paramLock2": false,
+    "paramDflt2": 12.0,
+    "paramVal2": 1.0,
+    "paramLock3": false,
+    "paramDflt3": 7.0,
+    "paramVal3": 12.0,
+    "paramLock4": false,
+    "paramDflt4": 0.0,
+    "paramVal4": 0.0,
+    "paramLock5": false,
+    "paramDflt5": 0.0,
+    "paramVal5": 1.0,
+    "paramLock6": false,
+    "paramDflt6": 1.0,
+    "paramVal6": 1.0,
+    "paramLock7": false,
+    "paramDflt7": 0.0,
+    "paramVal7": 0.0,
+    "paramLock8": false,
+    "paramDflt8": 1.0,
+    "paramVal8": 0.020485877990722656,
+    "paramLock9": false,
+    "paramDflt9": 1.0,
+    "paramVal9": 0.055515684187412262,
+    "paramLock10": false,
+    "paramDflt10": 1.0,
+    "paramVal10": 0.055515684187412262,
+    "paramLock11": false,
+    "paramDflt11": 1.0,
+    "paramVal11": 0.020485877990722656,
+    "paramLock12": false,
+    "paramDflt12": 1.0,
+    "paramVal12": 0.055515684187412262,
+    "paramLock13": false,
+    "paramDflt13": 1.0,
+    "paramVal13": 0.020485877990722656,
+    "paramLock14": false,
+    "paramDflt14": 1.0,
+    "paramVal14": 0.055515684187412262,
+    "paramLock15": false,
+    "paramDflt15": 1.0,
+    "paramVal15": 0.053457640111446381,
+    "paramLock16": false,
+    "paramDflt16": 1.0,
+    "paramVal16": 0.055515684187412262,
+    "paramLock17": false,
+    "paramDflt17": 1.0,
+    "paramVal17": 0.055515684187412262,
+    "paramLock18": false,
+    "paramDflt18": 0.0,
+    "paramVal18": 0.020485877990722656,
+    "paramLock19": false,
+    "paramDflt19": 0.0,
+    "paramVal19": 0.055515684187412262,
+    "paramLock20": false,
+    "paramDflt20": 0.0,
+    "paramVal20": 0.0,
+    "paramLock21": false,
+    "paramDflt21": 1.0,
+    "paramVal21": 0.0,
+    "currentTheme": 0
+  }
+}

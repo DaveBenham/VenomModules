@@ -36,7 +36,8 @@ struct ShapedVCA : VenomModule {
   enum LightId {
     LIGHTS_LEN
   };
-  
+
+  bool oldLog = false;
   int range = -1; // force initialization
   float levelOffset, levelOffsetVals[6] = {0.f, 0.f, 0.f, -1.f, -2.f, -10.f};
   float levelScale, levelScaleVals[6] = {1.f, 2.f, 10.f, 2.f, 4.f, 20.f};
@@ -57,7 +58,7 @@ struct ShapedVCA : VenomModule {
     configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level", "x", 0.f, 1.f, 0.f);
     configInput(LEVEL_INPUT, "Level CV");
     configParam(BIAS_PARAM, 0.f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
-    configParam(CURVE_PARAM, -1.f, 1.f, 0.f, "Response curve");
+    configParam<ShapeQuantity>(CURVE_PARAM, -1.f, 1.f, 0.f, "Response curve", "%", 0.f, 100.f);
     configInput(CURVE_INPUT, "Response curve");
     configInput(LEFT_INPUT, "Left");
     configInput(RIGHT_INPUT, "Right");
@@ -134,7 +135,13 @@ struct ShapedVCA : VenomModule {
         levelIn[s] += bias;
         if (!ringMod) levelIn[s] = clamp(levelIn[s]);
         shape = clamp(curveIn[s]/10.f + curve, -1.f, 1.f);
-        gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*levelIn[s]+1.f), simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
+        if (oldLog)
+          gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*levelIn[s]+1.f), simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
+        else {
+          float_4 absLevel = oldLog ? 1.f : simd::abs(levelIn[s]);
+          float_4 signLevel = oldLog ? 1.f : ifelse(levelIn[s]<0.f, -1.f, 1.f);
+          gain = crossfade(levelIn[s], ifelse(shape>0.f, signLevel*11.f*absLevel/(10.f*absLevel+1.f), simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
+        }
         leftOut[s] = leftIn[s] * gain * level;
         rightOut[s] = rightIn[s] * gain * level;
         if (clip == HARD_CLIP){
@@ -157,6 +164,21 @@ struct ShapedVCA : VenomModule {
     }
     outputs[LEFT_OUTPUT].setChannels(channels);
     outputs[RIGHT_OUTPUT].setChannels(channels);
+  }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "oldLog", json_boolean(oldLog));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "oldLog")))
+      oldLog = json_boolean_value(val);
+    else
+      oldLog = true;
   }
 
 };
@@ -215,15 +237,31 @@ struct ShapedVCAWidget : VenomWidget {
     addParam(createLockableParamCentered<ModeSwitch>(Vec(17.243f,41.f), module, ShapedVCA::MODE_PARAM));
     addParam(createLockableParamCentered<ClipSwitch>(Vec(27.758f,41.f), module, ShapedVCA::CLIP_PARAM));
     addParam(createLockableParamCentered<OverSwitch>(Vec(38.274f,41.f), module, ShapedVCA::OVER_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,106.5f), module, ShapedVCA::LEVEL_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,106.5f), module, ShapedVCA::LEVEL_INPUT));
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(22.5f,138.5f), module, ShapedVCA::BIAS_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f,172.f), module, ShapedVCA::CURVE_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,202.5f), module, ShapedVCA::CURVE_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,240.f), module, ShapedVCA::LEFT_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,270.f), module, ShapedVCA::RIGHT_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,309.f), module, ShapedVCA::LEFT_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,339.f), module, ShapedVCA::RIGHT_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,202.5f), module, ShapedVCA::CURVE_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,240.f), module, ShapedVCA::LEFT_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,270.f), module, ShapedVCA::RIGHT_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,309.f), module, ShapedVCA::LEFT_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,339.f), module, ShapedVCA::RIGHT_OUTPUT));
     addParam(createLockableParamCentered<OffsetSwitch>(Vec(37.531f,326.013f), module, ShapedVCA::OFFSET_PARAM));
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    ShapedVCA* module = dynamic_cast<ShapedVCA*>(this->module);
+
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolMenuItem("Old negative log behavior", "",
+      [=]() {
+        return module->oldLog;
+      },
+      [=](bool val) {
+        module->oldLog = val;
+      }
+    ));    
+
+    VenomWidget::appendContextMenu(menu);
   }
 
 };

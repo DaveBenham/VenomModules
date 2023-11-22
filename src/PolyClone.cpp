@@ -31,6 +31,9 @@ struct PolyClone : VenomModule {
     configInput(POLY_INPUT, "Poly");
     configOutput(POLY_OUTPUT, "Poly");
     configBypass(POLY_INPUT, POLY_OUTPUT);
+    for (int i=0; i<16; i++){
+      configLight(CHANNEL_LIGHTS+i*2, string::f("Channel %d clone indicator (yellow OK, red Error)", i+1));
+    }  
     lightDivider.setDivision(44);
     lights[CHANNEL_LIGHTS].setBrightness(1);
     lights[CHANNEL_LIGHTS+1].setBrightness(0);
@@ -103,10 +106,10 @@ struct PolyCloneWidget : VenomWidget {
     }
 
     y+=dy;
-    addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, PolyClone::POLY_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(x,y), module, PolyClone::POLY_INPUT));
 
     y+=dy*1.75f;
-    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, PolyClone::POLY_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, PolyClone::POLY_OUTPUT));
   }
 
 };

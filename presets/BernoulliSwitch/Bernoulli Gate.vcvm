@@ -1,7 +1,7 @@
 {
   "plugin": "Venom",
   "model": "BernoulliSwitch",
-  "version": "2.1.dev",
+  "version": "2.5.0beta",
   "params": [
     {
       "value": 0.5,
@@ -36,14 +36,48 @@
       "id": 7
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 8
+    },
+    {
+      "value": 1.0,
+      "id": 9
     }
   ],
   "data": {
+    "paramLock0": false,
+    "paramDflt0": 0.5,
+    "paramVal0": 0.5,
+    "paramLock1": false,
+    "paramDflt1": 0.0,
+    "paramVal1": 0.0,
+    "paramLock2": false,
+    "paramDflt2": 1.0,
+    "paramVal2": 1.0,
+    "paramLock3": false,
+    "paramDflt3": 1.0,
+    "paramVal3": 1.0,
+    "paramLock4": false,
+    "paramDflt4": 0.10000000149011612,
+    "paramVal4": 0.10000000149011612,
+    "paramLock5": false,
+    "paramDflt5": 0.0,
+    "paramVal5": 0.0,
+    "paramLock6": false,
+    "paramDflt6": 0.0,
+    "paramVal6": 0.0,
+    "paramLock7": false,
+    "paramDflt7": 1.0,
+    "paramVal7": 1.0,
+    "paramLock8": false,
+    "paramDflt8": 1.0,
+    "paramVal8": 0.0,
+    "paramLock9": false,
+    "paramDflt9": 0.0,
+    "paramVal9": 1.0,
+    "currentTheme": 0,
     "monitorChannel": 0,
     "inputPolyControl": false,
-    "deClick": false,
-    "currentTheme": 0
+    "audioProc": 0
   }
 }

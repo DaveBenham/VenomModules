@@ -114,7 +114,7 @@ struct HQ : VenomModule {
 
   HQ() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-    configSwitch(SERIES_PARAM, 0, 2, 0, "Harmonic Series", {"All", "Odd", "Even"});
+    configSwitch<FixedSwitchQuantity>(SERIES_PARAM, 0, 2, 0, "Harmonic Series", {"All", "Odd", "Even"});
     configParam<PartialQuantity>(PARTIAL_PARAM, 0.f, 1.f, 0.f, "Partial", "");
     configParam(CV_PARAM, -1.f, 1.f, 0.f, "CV", "%", 0.f, 100.f, 0.f);
     configInput(CV_INPUT, "CV");
@@ -259,10 +259,10 @@ struct HQWidget : VenomWidget {
     addParam(createLockableParam<CKSSThreeHorizontalLockable>(mm2px(Vec(2.9, 25.5)), module, HQ::SERIES_PARAM));
     addParam(createLockableParamCentered<RoundBlackKnobLockable>(mm2px(Vec(7.62, 42.9)), module, HQ::PARTIAL_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.62, 58)), module, HQ::CV_PARAM));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 68)), module, HQ::CV_INPUT));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 83)), module, HQ::ROOT_INPUT));
-    addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.62, 98)), module, HQ::IN_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(7.62, 113)), module, HQ::OUT_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.62, 68)), module, HQ::CV_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.62, 83)), module, HQ::ROOT_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.62, 98)), module, HQ::IN_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.62, 113)), module, HQ::OUT_OUTPUT));
   }
 
   void appendContextMenu(Menu* menu) override {

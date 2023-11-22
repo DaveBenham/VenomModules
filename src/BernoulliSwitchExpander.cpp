@@ -23,6 +23,7 @@ struct BernoulliSwitchExpander : VenomModule {
     configParam(SCALE_CV_A_PARAM, -1.f, 1.f, 0.f, "A scale CV");
     configInput(SCALE_CV_B_INPUT, "B Scale CV");
     configParam(SCALE_CV_B_PARAM, -1.f, 1.f, 0.f, "B scale CV");
+    configLight(EXPAND_LIGHT, "Left connection indicator");
   }
 
   void process(const ProcessArgs& args) override {

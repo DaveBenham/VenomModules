@@ -1,22 +1,33 @@
 # Venom
-Venom modules version 2.4.1 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.  
+Venom modules version 2.5.0 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.
 
-Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
+[Color Coded Ports](#color-coded-ports)  
+[Themes](#themes)  
+[Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
+[Acknowledgments](#acknowledgments)  
 
-Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
+|----|----|----|----|----|----|----|----|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|
-|----|----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)
+|[MIX EXPANDERS](#mix-expanders)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|
+|----|----|----|----|
+|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|
 
-|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
-|----|----|----|
-|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
+|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
+|----|----|----|----|
+|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
 |[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM<br />BLANK](#venom-blank)|[WINCOMP](#wincomp)|
 |----|----|----|----|----|
 |![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WINCOMP module image](doc/WinComp.PNG)|
 
+## Color Coded Ports
+All polyphonic ports use brass cores, while monophonic ports use steel cores.
+
+Input ports are on the base faceplate color with base labels. Output ports are on a contrasting color with inverted labels.
+
+[Return to Table Of Contents](#venom)
 
 ## Themes
 The context menu of every module includes options to set the default theme and default dark theme for the Venom plugin, as well as a theme override for each module instance.
@@ -33,6 +44,7 @@ If you want the default theme to disregard the VCV Rack dark panel setting, then
 
 The factory default theme is ivory, and the factory default dark theme is coal.
 
+[Return to Table Of Contents](#venom)
 
 ## Parameter Locks and Custom Defaults
 Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu options to lock the paramenter as well as set a custom default value. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.
@@ -51,8 +63,19 @@ The parameter value cannot be changed by any means while the parameter is locked
 ### Custom Defaults
 A custom default value overrides the factory default whenever a parameter is initialized. An additional parameter menu option is added to restore the factory default whenever a custom default is in effect.
 
+[Return to Table Of Contents](#venom)
+
+## Acknowledgments
+Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
+
+Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
+
+Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for advice on the NonOctave Repeating Scale Intervallic Quantizer, as well as help with compiling a representative set of scale presets.
+
+[Return to Table Of Contents](#venom)
+
 ## BERNOULLI SWITCH
-![Bernoulli Switch module image](doc/BernoulliSwitch.PNG)  
+![Bernoulli Switch module image](doc/BernoulliSwitch.png)  
 The Bernoulli Switch randomly routes two inputs to two outputs.
 
 ### General Operation
@@ -70,11 +93,16 @@ The actual routing operation is controlled by the unlabeled 3 position sliding s
 ### Triggers
 The module generally responds to a leading edge transition from low to high of the TRIG input or the manual TRIG button. The TRIG button works by adding 10V to the TRIG input.
 
-The RISE knob sets the threshold for a trigger transition to high, and the FALL knob sets the threshold for a transition to low. By default the RISE is set to 1V, and the FALL to 0.1V. If currently low, then a TRIG input >= the RISE threshold transistions to HIGH. The input remains high until the input falls below the FALL threshold, upon which it returns to a low state.
+Bernoulli Switch uses Schmitt trigger logic to determine when a trigger starts and stops. The RISE knob sets the threshold for a trigger transition to high, and the FALL knob sets the threshold for a transition to low. By default the RISE is set to 1V, and the FALL to 0.1V. If currently low, then a TRIG input >= the RISE threshold transistions to HIGH. The input remains high until the input falls below the FALL threshold, upon which it returns to a low state.
 
 If the RISE threshold is less than the FALL threshold, then the roles are reversed, and the Bernoulli Switch is triggered by a trailing transition from high to low. If using GATE mode, the routing will always have a swap configuration whenever the input is high, and the configuration may switch to no-swap upon transition to low.
 
 The TRIG button is not guaranteed to always trigger a coin toss - it depends on how the RISE and FALL are configured, as well as the current TRIG input value.
+
+### Normal value button
+The small color coded button next to the Trig input determines exactly what value is normalled to the A input.
+ - **Raw trigger input - red (default)**: The trigger input is passed unmodified
+ - **Schmitt trigger result - blue**: The Schmitt trigger gate is sent instead of the raw input. A low state is always 0V. Normally a high state is 10V. But the "high" gate will be -10V if the rise threshold is below the fall threshold.
 
 ### Polyphony
 Bernoulli Switch is fully polyphonic. There are two modes available from the context menu that determine how many virtual coin tosses are performed based on the number of channels on each input:
@@ -104,10 +132,10 @@ By default Bernoulli Switch is configured for switching gates or CV signals, but
 
 ### Factory Presets
 The following factory presets are available that emulate the four configurations available to the Mutable Instruments Branches module:
-- Bernoulli Gate - Sends triggering gate to A or B
+- Bernoulli Gate - Sends 10V Schmitt trigger gate to A or B
 - Latched Bernoulli Gate - Sends constant 10V to either A or B
 - Latched Toggled Bernoulli Gate - Toggles constant 10V between A and B
-- Toggled Bernoulli Gate - Toggles triggering gate between A and B
+- Toggled Bernoulli Gate - Toggles 10V Schmitt trigger gate between A and B
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
@@ -224,6 +252,59 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 [Return to Table Of Contents](#venom)
 
+## LINEAR BEATS
+![Linear Beats module image](doc/LinearBeats.png)  
+Only allow one trigger/gate to strike at a time across multiple incoming trigger/gate channels, thus converting coincident drum triggers into a linear drumming pattern.
+
+Lower lettered inputs (toward the top) take precedence over higher lettered inputs (toward the bottom). Linear Beats is polyphonic, and lower numbered polyphonic channels take precedence over higher numbered channels.
+
+A gate/trigger appearing at the input may or may not be passed through to the output depending on the channel mode, and whether or not a higher precedence channel transitioned to high at the same time. A lower precedence channel in Linear mode may strike a new gate while higher precedence gates are high as long as none of those higher precedence gate transitions are coincident.
+
+For example, in the image below the top oscilloscope shows gate patterns with coincident gates. The bottom oscilloscope shows the effect of Linear Beats - lower precedence gates with coincident transitions to high are removed.  
+![Linear Beats example image](doc/LinearBeatsExample.PNG)
+
+Each channel has four possible modes controlled by a color coded button:
+ - **Linear (green)** - Any gate will not pass through if a higher precedence gate transitioned to high at the same time. Any gate that does pass through will block lower precedence gates.
+ - **All (off, dark gray)** - All gates will pass through, regardless whether higher precedence channels transitioned to high at the same time. All gates will block lower precedence gates.
+ - **Non-blocking Linear (orange)** - Any gate will not pass through if a higher precedence gate transitioned to high at the same time. Gates that do pass through will ***not*** block lower precedence gates.
+ - **New All (white)** - All higher precedence gates are forgotten and a new linear drumming group is started. All gates will pass through and also will block lower precedence gates.
+ 
+There does not exist a Non-blocking All mode. If you want to allow gates through that do not block lower precedence channels, then simply put that channel toward the top and start a new linear drumming group with a New All mode below.
+
+A channel mode applies identically to all polyphonic channels on a given lettered channel.
+
+All inputs are Schmitt triggers that transition to high when the level rises to 1V or above, and transition to low when the level falls to 0.1V or lower. The outputs are 10V for high, and 0V for low.
+
+If Linear Beats is not clocked, then it is dependent on all trigger/gate transitions being exactly in sync down to the sample level.
+
+If the input gates are not guaranteed to be in sync, then you can add a clock input to effectively force all triggers/gates to be in sync with the timing "grid" of the clock. Inputs are only checked for transition to high or low whenever the clock transitions to high. The clock should be delayed at least as much as the most delayed input. If you want outgoing gates to be 50% duty cycle, then the clock should run at least twice as fast as your fastest incoming channel.
+
+If Linear Beats is bypassed, then all inputs are passed through unchanged to the outputs.
+
+[Return to Table Of Contents](#venom)
+
+
+## LINEAR BEATS EXPANDER
+![Linear Beats Expander module image](doc/LinearBeatsExpander.png)  
+Add bypass and input/output mutes to Linear Beats.
+
+The Linear Beats expander can be placed to the left or right of a Linear Beats module. Left expanders apply mutes to the inputs, so that muted channels never block lower precedence channels. Right expanders apply mutes to the outputs so that muted channels can still block lower precedence channels.
+
+If an expander is sandwiched between two Linear Beats, then it will preferentially connect to the right as an input mute.
+
+A single Linear Beats can make use of both input and output mutes simultaneously.
+
+Two small LEDs at the top of the expander indicate which direction, if any, the expander is connected. The LED glows yellow when connected.
+
+A channel is muted whenever the mute button glows red. Pressing a mute button is guaranteed to toggle the mute state. Each mute can also be controlled via CV. An "Expander CV toggles button on/off" context menu option ***on the main Linear Beats module*** controls how the CV operates.
+ - If enabled, then the corresponding button toggles on or off whenever the CV input transitions to high.
+ - If disabled (default), then the corresponding button is turned on (muted) when the CV transitions to high, and turned off (unmuted) when the CV transitions to low.
+
+In addition to mutes, the expander has a Disable button / CV input pair that turns off linear drumming, allowing all input triggers/gates to pass through, without syncing to any clock.  The Disable CV operates the same as for the mutes. If a Linear Beats has both an input and output expander, then disabling either side will disable the linear drumming.
+
+An expander is ignored if it is bypassed.
+
+[Return to Table Of Contents](#venom)
 
 ## MIX 4
 ![Mix 4 module image](doc/Mix4.png)  
@@ -300,8 +381,312 @@ All other behaviors are the same as for Mix 4.
 [Return to Table Of Contents](#venom)
 
 
+## MIX EXPANDERS
+![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)  
+A collection of expander modules that extend the functionality of the four Mix modules: Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+
+Mix expanders must be placed to the right of the main mix module. Multiple expanders can be used for one mix module as long as they form a contiguous chain to the right. Each expander has an LED in the upper left that glows yellow if successfully connected to a mix module.
+
+Bypassing an expander disables that expander without disrupting expanders to the right.
+
+All expanders except Offset are processed after the main Mix input channel Levels are applied, and before the main final Mix level is applied. When used with VCA Mix 4 or VCA Mix 4 Stereo, the expanders are processed after each channel has already been sent to the VCA channel output. Again, the Offset expander is an exception.
+
+The order of operations generally proceeds from left to right. The order typically does not affect the end result unless Aux Send modules are used. However, some expanders have restrictions on where they are placed, and/or how many can be used for a single mix module. Refer to each expander for details.
+
+CV inputs and outputs are generally all monophonic, with the effect applied equally to all polyphonic channels in the main mix module. The one exception is the Aux Send module, which fully supports polyphonic cables.
+
+Venom expanders are written so that communication between the parent module and the expander does not add any sample delays.
+
+Some of the expanders have hidden options that are only available in the main mix module context menu. These expander related menu options only appear when the relevant expander is connected to the mix module.
+
+#### Soft mute/solo &nbsp;(Mute and/or Solo and/or Send expander)
+ * If enabled (default), then mute/solo transitions are slewed to take 25 msec (or more if fades are applied).
+ * If disabled, then mute/solo transitions are immediate (unless fades are applied)
+
+#### Mute/solo CV toggles on/off &nbsp;(Mute expander)
+ * If disabled (default), then Mute CV and Solo CV function as a gate
+ * If enabled, then Mute CV and Solo CV function as a toggle
+
+#### Mono input pan law &nbsp;(Pan expander)
+Controls how left and right channels are attenuated/amplified as a mono input is panned. This affects the perceived loudness as a signal is panned left and right versus center.
+ * **0 dB (linear: center overpowered)**  
+   While panning left, the left gain is held constant while the right is attenuated. While panning right, the right gain is held constant while the left is attenuated. Mono signals sound softer when panned left or right compared to when panned center.
+ * **+1.5 dB side (compromise: center overpowered)**  
+   When panning left, the left channel is amplified slightly to +1.5 dB when panned full left. Likewise when panning right the right channel is amplified slightly. Mono signals still sound softer when panned left or right, but to a lesser degree.
+ * **+3 dB side (default - equal power)**  
+   While panning left, the left channel is amplified until it reaches +3 dB when panned full left. The right channel is similarly amplified when panning right. Mono signal loudness is perceived to be constant regardless whether panned left, center, or right.
+ * **+4.5 dB side (compromise: side overpowered)**  
+   When panning left, the left channel is amplified until it reaches +4.5 dB when panned hard left. The right channel is similarly amplified when panning right. Mono signals sound slightly louder when panned left or right compared to center.
+ * **+6 dB side (linear: side overpowered)**  
+   When panning left or right, one side is amplifed and the other attenuated in equal amounts, such that the net gain is always 1. Mono signals sound louder when panned left or right compared to center.
+ * **-1.5 dB center (compromise: center overpowered)**  
+   Same as +1.5 dB side except the center is attenuated rather than amplify the side.
+ * **-3 dB center (equeal power)**  
+   Same as +3 dB side except the center is attenuated rather than amplify the side.
+ * **-4.5 dB center (compromise: side overpowered)**  
+   Same as +4.5 dB side except the center is attenuated rather than amplify the side.
+ * **-6 dB center (linear: side overpowered)**  
+   Same as +6 dB side except the center is attenuated rather than ammplify the side.
+
+#### Stereo input pan law &nbsp;(Pan expander)
+Controls how left and right channels are attenuated/amplified as a stereo input is panned. All of the mono options are available, plus the following
+ * **True panning (transfer content)**  
+   Right channel input is mixed in with the left channel while panning left, and vice versa while panning right.
+ * **Follow mono law (default)**  
+   The mono pan law setting is used for stereo inputs as well
+
+### MIX OFFSET EXPANDER
+Gives the ability to add constant offset voltages immediately before and/or after a level gain is applied on the main mixer. Offsets are always the first expander to be applied, and so the Offset expander must be adjacent to the main mix module.
+
+Offsets are available for the individual numbered input channels, as well as the final mix output.
+
+The Pre offsets are applied immediately before each level gain.
+
+The Post offsets are applied immediately after each level gain.
+
+Unlike other expanders, offsets are included in VCA channel outputs when used with VCA Mix or VCA Mix Stereo.
+
+Offsets are often used for converting unipolar signals to bipolar, or vice-versa.
+
+Only one Offset expander can be used per mix module.
+
+### MIX MUTE EXPANDER
+
+Provides buttons and CV inputs to mute any of the four numbered channels, as well as the final mix. The channel is muted whenever the button is glowing bright red.
+
+The CV inputs function as Schmitt triggers, switching to high when the voltage rises to 1 volt or more, and switching to low when dropping to 0.1 volt or less.
+
+A context menu on the main Mix module determines whether the CV inputs function as gates or triggers. By default the CV functions as a gate, meaning the mute is turned on when the CV goes high, and turns off when the CV goes low. If configured as a trigger, then the mute state toggles on or off each time the CV transitions to high.
+
+Manual button presses can override the CV inputs - every button press is guaranteed to toggle the mute state.
+
+Mute states can be overriden by Solo expander buttons.
+
+Since Solo and Mute are applied at the same time, they must be adjacent if both expanders are used. It does not matter which appears first.
+
+Only one Mute expander can be used per mix module.
+
+### MIX SOLO EXPANDER
+
+Provides buttons and CV inputs to solo one or more of the numbered mix channels. If none of the solo buttons are lit, then the expander has no effect. If at least one solo button is lit (bright green), then all channels that are not lit are muted. Numbered channels on a Mute expander are ignored if at least one solo button is lit.
+
+The CV inputs function as Schmitt triggers, switching to high when the voltage rises to 1 volt or more, and switching to low when dropping to 0.1 volt or less.
+
+A context menu on the main Mix module determines whether the CV inputs function as gates or triggers. By default the CV functions as a gate, meaning the solo is turned on when the CV goes high, and turns off when the CV goes low. If configured as a trigger, then the solo state toggles on or off each time the CV transitions to high.
+
+Manual button presses can override the CV inputs - every button press is guaranteed to toggle the solo state.
+
+Since Solo and Mute are applied at the same time, they must be adjacent if both expanders are used. It does not matter which appears first.
+
+Only one Solo expander can be used per mix module.
+
+### MIX FADE EXPANDER
+
+Converts mute/unmute transitions from Mute and Solo expanders to timed fade transitions.
+
+A single Time control for each numbered Mix channel controls the fade in (rise) time and the fade out (fall) time. The fade time ranges from 0 to 30 seconds.
+
+Each channel also has a Shape control, with full counterclockwise (-100%) representing exponential, center (0) representing linear, and full clockwise (100%) representing logarithmic. Points in between are a proportional blend of linear and logorithmic/exponential.
+
+The fade level outputs provide CV representing the current fade level of each channel. The output is 0 V when fully muted, and 10 V when fully unmuted.
+
+Fade is actually an expander for the Mute and Solo expanders, and thus must appear adjacent and to the right of either a Mute or Solo expander.
+
+Only one Fade expander can be used per mix module. Fade and Fade 2 are mutually exclusive. Using Fade precludes the use of Fade 2.
+
+### MIX FADE 2 EXPANDER
+
+Fade 2 is identical to Fade except it gives independent control over the fade rise and fall times.
+
+Each Time control from Fade is replaced by a pair of Rise and Fall controls on Fade 2.
+
+Only one Fade 2 expander can be used per mix module. Fade 2 and Fade are mutually exclusive. Using Fade 2 precludes the use of Fade.
+
+### MIX PAN EXPANDER
+
+Allows panning of Mix input channels left and right via numbered knobs and inputs.
+
+Each knob ranges from -1 (full counterclockwise) for hard left, to 0 (noon) for center, to +1 (full clockwise) for hard right.
+
+Each CV input has an associated CV attenuverter. The CV is added to the knob value to determine the final pan level. Bipolar CV is expected, with -5V representing hard left and +5V representing hard right (assuming the knob is center panned). So -10V is guaranteed to result in pan hard left even if the knob is panned hard right. Similarly, +10V guarantees pan hard right even if the knob is panned hard left.
+
+Pan is only available to stereo mix modules Mix 4 Stereo and VCA Mix 4 Stereo. Only one Pan module can be used per mix module.
+
+### MIX AUX SEND EXPANDER
+
+Provides an auxilliary mix of the four mix inputs that can be sent to the Send output(s), and optionally returned to the Return input(s)
+
+Each numbered knob can attenuate the channel to between 0% and 100%, before the channels are mixed and send to the Send output(s).
+
+The Return input(s) are attenuated by the Return knob before being mixed in with the final Mix module mix. The return is mixed in prior to applying the final Level gain at the main Mix module.
+
+Both Send oututs and Return inputs support polyphonic cables.
+
+The Mute button sets the Send output(s) to constant 0V when lit.
+
+Both Left and Right Send and Return inputs and outputs are used when the main Mix module is stereo (Mix 4 Stereo, or VCA Mix 4 Stereo).
+
+If the main Mix module is not stereo (Mix 4, or VCA Mix 4), then the Right Send output is constant monophonic 0V, and any right Return is ignored.
+
+The position of the Send module in a chain of Mix expanders is important. Expanders to the left of the Send expander affect the Send output. Expanders to the right of the Send expander do not affect the Send output.
+
+Any number of Send modules can be used with a single mix module.
+
+[Return to Table Of Contents](#venom)
+
+## NON-OCTAVE REPEATING SCALE INTERVALLIC QUANTIZER
+![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)  
+Quantizer for any scale with up to 13 intervals between notes. The scale is defined by a root note for the scale, followed by a series of intervals. The first interval is added to the root to get the 2nd note in the scale. The second interval is added to the 2nd note to define the 3rd note, etc. The final interval defines the step from the Nth note of the scale to the root of the next pseudo-octave in the series. The total interval from one root to the next need not be an octave.
+
+The module is also convenient for defining extended chords based on intervals.
+
+### Interval Unit switch
+This switch controls what unit is used to display and or manually enter intervals.
+- **V/Oct**: 1 V = 1 octave.
+- **Cents** (default): 100 cents = one 12 Equal Tempered half step, and 1200 cents = one octave. The scale and/or interval need not have any relationship to 12 ET - the cents unit is just a convenient way to measure an interval.
+- **Ratio**: Interval frequency ratios are unitless, and are defined as the frequency of the high note / frequency of the low note. For example, a perfect fifth may be entered as 3/2, but the ratio will always be displayed relative to 1. So a perfect fifth would be displayed as 1.5:1
+
+### Equal Divs button
+Controls how intra-note intervals are defined.
+
+If On (default), then intra-note intervals are specified as an integral number of chromatic steps that are defined by an equal division (EDPO) of some larger interval (Pseud-Oct Interval).
+
+If the Equal Divs button is off, then the Pseud-Oct Interval and EDPO values are ignored, and intra-note intervals are specified directly as an interval.
+
+### Pseud-Oct Interval knob and input
+Defines the pseudo-octave interval that will be divided into equal divisions to define the chromatic interval for the scale. The default knob value is one octave. The interval unit is specified by the Interval Unit switch.
+
+The monophonic input always uses the V/Oct standard, regardless how the Interval Unit switch is configured.
+
+The effective pseudo-octave interval is the sum of the knob and input values, clamped to a value between 0 and 4 octaves. The effective value is displayed below the knob, using the units defined by the switch.
+
+The PseudoOctave Interval is ignored and nothing is displayed if the Equal Divs button is off.
+
+### EDPO (Equal Divisions per Pseudo Octave) knob and input
+Defines the number of equal divisions of the pseudo-octave interval, which in turn defines the scale's chromatic step interval. The default value is 12.
+
+The monophonic input is scaled at 10 divisions per volt.
+
+The effective number of divisions is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective value is displayed below the knob.
+
+The EDPO is ignored if the Equal Divs button is off.
+
+### Scale Length and input
+Defines the number of intervals or steps in the repeating scale (notes - 1). The final interval defines the jump from the Nth note in the scale to the root of the next pseudo-octave. The default value is 12.
+
+The monophonic input is scaled at 0.5 Volt per step.
+
+The effective scale length is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 13. The effective value is displayed below the knob.
+
+### Scale Root knob, input, and Root Unit switch
+Defines the root note of the repeating scale.
+
+The switch beside the knob defines what unit is used for display and manual entry.
+- **V/Oct**: 1 V = 1 octave, where 0 V represents the note C4
+- **Cents**: 100 cents = one 12 ET half step, where 0 cents represents the note C4
+- **Freq** (default): Measures the root note frequency in Hz.
+
+The knob default is always C4, regardless which unit is used.
+
+The monophonic input always uses the V/Oct standard.
+
+The effective Scale Root is the sum of the knob and input values, clamped to a value between -4V (C0) and 4V (C8). The effective value is displayed below the knob, using the units defined by the switch.
+
+### Round switch
+Determines how input voltages are quantized
+- **Up**: Input values between two notes are always rounded up to the higher note
+- **Nearest** (default): Input values between two notes are always rounded to the closest note, with values at the halfway point rounded up
+- **Down**: Input values between two notes are always rounded down to the lower note
+
+### Equi-likely button
+If enabled, then the notes of the scale are mapped to even divisions of the total scale interval, such that each note of the scale has equal probability when the input is fed random values.
+
+By default this mode is off.
+
+### Scale interval knobs and inputs 1 through 13, and Poly Interval input
+The 13 small knobs and monophonic inputs below the display area define the intervals used in the scale. Up to 13 channels in the Poly Interval input can also be used to modulate the 13 intervals.
+
+The method used to define the interval depends on the Equal Divs button.
+
+#### Equal Divs ON
+Each interval is defined as an integral number of chromatic steps as defined by the Pseudo-Octave Interval and the EDPO. The left most knob defines the interval between the root note and the 2nd note of the scale. The right-most active knob defines the interval between the Nth note of the scale and the root of the next pseudo-octave.
+
+Each knob defaults to 1, with a range of 1 to 100.
+
+The monophonic inputs are scaled at 10 chromatic steps per volt. 
+
+The effective count is the sum of the knob and input values, rounded and clamped to an integral value between 1 and 100. The effective count is displayed above the respective knob. Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
+
+#### Equal Divs OFF
+Each interval is specified directly.
+
+The knob value defaults to 0 (no change in pitch), with a range from 0 to 2 octaves. The unit used for manual entry and display is controled by the Interval Unit switch.
+
+The monophonic input is scaled at 1 volt per octave.
+
+The effective interval is the sum of the knob and the input values, clamped to a value between 0 and 2 octaves. The effective interval value is displayed above each respective knob. Inactive interval knobs, as defined by the Scale Length, do not have any value displayed above them.
+
+### Display Panel
+The display panel is divided into 3 sections. As already described above, the top section displays the effective values for the upper controls, and the bottom section displays the effective values for the 13 interval controls.
+
+The middle section indicates which note within the scale is selected. Each polyphonic channel has its own position within a 4 x 4 grid above each interval.
+
+The left most grid above the left most interval knob represents the root of the scale. The next grid represents the 2nd note, etc.
+
+The indicator is yellow when the selected note is >= the effective Scale Root, and red if < the Scale Root. The character within each indicator represents the distance away from the root (pseudo)octave. A value of 0 represents the scale containing the Scale Root. The (pseudo)octave indicators are coded as follows:
+ - 0-9 = 0-9
+ - A-Z = 10 - 35
+ - a-z = 36 - 61
+ - <space> = 62 or higher
+
+### IN input
+The polyphonic IN input provides the V/Oct frequency control voltage to be quantized.
+
+### Trig input
+If the polyphonic Trig input is patched, then input values are only quantized when a trigger is received. Each quantized value is held until the next trigger is received.
+
+If the Trig input is not patched, then input V/Oct values are continuously quantized.
+
+### Chromatic Scales
+Equal Division Chromatic scales with more than 13 intervals may be accomplished by setting the Scale Length to 1 and the first (and only) interval to 1.
+
+### OUT output
+The polyphonic OUT output produces the quantized V/Oct values.
+
+### P-OCT (Pseudo-Octave) output
+This polyphonic output produces integral voltages that represent the pseudo-octave of each quantized note. A value of 0 represents the scale pseudo-octave containing the effective Scale Root. A value of 1 represents the next scale pseudo-octave up. A value of -1 represents the first pseudo-octave below the effective Scale Root. And so on...
+
+This value will not have much meaning if using a chromatic scale with Scale Length = 1.
+
+### Trig output
+If the Trig input is not patched, then a 1ms 10V trigger is issued every time a new note is quantized.
+
+If the Trig input is patched, then the Trig input is passed through directly to the Trig output.
+
+### Polyphony channel count
+The polyphony channel count for the three outputs above are computed as the maximum number of channels found between the IN and Trig inputs.
+
+If one input is monophonic, and the other polyphonic, then the monophonic values are replicated to match the channel count of the polyphonic input.
+
+If both inputs are polyphonic, but one input has fewer channels than the other, then missing channels are treated as constant 0V.
+
+### Scale output
+This polyphonic output produces all the V/Oct values for the scale starting at the Scale Root, through the first note of the next scale one scale pseudo-octave up. The number of channels will be the Scale Length + 1.
+
+This output can also be used as an extended chord rooted at the Scale Root. Simply define the intervals between the notes in your chord, patch the root of the chord to the Scale Root input, and leave the IN input unpatched.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If the module is bypassed then the Trig input is passed unchanged to the Trig output. All other bypassed outputs are monophonic constant 0 volts.
+
+[Return to Table Of Contents](#venom)
+
+
 ## POLY CLONE
-![Poly Clone module image](doc/PolyClone.png)
+![Poly Clone module image](doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
 ### CLONE knob
@@ -809,7 +1194,7 @@ This color coded switch establishes how the output is clipped
 - yellow = hard clipped at +/- 10 Volts
 - orange = soft clipped at +/- 10 Volts using an approximated tanh algorithm to provide saturation.
 
-It is highly recommended that hard or soft clipping be applied if performing ring modulation with a logarithmic response curve.
+It is highly recommended that hard or soft clipping be applied if performing ring modulation with a logarithmic response curve using the old algorithm.
 
 ### O (Oversampling) button
 This color coded switch establishes the amount of oversampling used to mitigate audio aliasing that may be introduced by clipping or non-linear response curves.
@@ -838,15 +1223,21 @@ The Level input is normaled to 10V so that unpatched level input results in the 
 
 The Bias knob can add from 0 to 5 volts to the Level CV input. It is useful for converting a bipolar Level input to unipolar so it can be wave shaped by the Curve response. It is also useful for cross fading between ring modulation and amplitude modulation when the VCA Mode is set to bipolar.
 
-### Curve knob
-Controls the response curve of the level CV input, with full clockwise (1) giving an approximated logarithmic response, noon (0) a linear response, and full counterclockwise (-1) an exponential response. Intermediate values cross fade between the extremes.
+### Response Curve knob
+Controls the response curve of the level CV input, with full clockwise (100%) giving an approximated logarithmic response, noon (0) a linear response, and full counterclockwise (-100%) an exponential response. Intermediate values cross fade between the extremes and linear.
 
 The default value is 0 = linear response curve.
 
 ### Curve CV input
-The Curve CV input is divided by 10 and then summed with the Curve knob value to establish the effective response curve. The final effective curve level is clamped to +/- 1.
+The Curve CV input is multiplied by 10 and then summed with the Curve knob value to establish the effective response curve. The final effective curve level is clamped to +/- 100%.
 
 The Curve CV input is normaled to 0V.
+
+### Logarithm algorithm
+
+Logarithms aren't defined for negative values, but ring modulation needs to support negative values. So to make logarithmic responses work with ring modulation, the approximated logarithm of the absolute value is used and then multiplied by the sign of the original value (1 or -1).
+
+The original version of Shaped VCA used a different algorithm that worked, but gave some wicked high voltage spikes that required clipping. The old algorithm is probably not what is wanted, but to support any old patches that relied on the old behavior, there is a context menu option to force the use of the old logarithm algorithm. Pre-existing patches prior to version 2.5.0 automatically default to the old algorithm.
 
 ### Left and Right inputs
 

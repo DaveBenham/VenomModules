@@ -62,6 +62,9 @@ struct PolyUnison : VenomModule {
     configInput(POLY_INPUT, "Poly");
     configOutput(POLY_OUTPUT, "Poly");
     configBypass(POLY_INPUT, POLY_OUTPUT);
+    for (int i=0; i<16; i++){
+      configLight(CHANNEL_LIGHTS+i*2, string::f("Channel %d clone indicator (yellow OK, red Error)", i+1));
+    }  
     lightDivider.setDivision(44);
     lights[CHANNEL_LIGHTS].setBrightness(1);
     lights[CHANNEL_LIGHTS+1].setBrightness(0);
@@ -173,8 +176,8 @@ struct PolyUnisonWidget : VenomWidget {
       }
     }
 
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5,301.712), module, PolyUnison::POLY_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5,340.434), module, PolyUnison::POLY_OUTPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5,301.712), module, PolyUnison::POLY_INPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5,340.434), module, PolyUnison::POLY_OUTPUT));
   }
 
 };

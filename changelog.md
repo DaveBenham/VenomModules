@@ -1,5 +1,33 @@
 # Venom Modules Changelog
 
+## 2.5.0 (2023-11-22)
+### New Modules
+- Linear Beats
+- Linear Beats Expander
+- Mix Offset Expander
+- Mix Mute Expander
+- Mix Solo Expander
+- Mix Fade Expander
+- Mix Fade 2 Expander
+- Mix Pan Expander
+- Mix Aux Send Expander
+- Non-Octave Repeating Scale Intervallic Quantizer
+
+### Enhancements
+- Add hover help text to all LED lights.
+- All modules: Polyphonic ports now use brass cores, while monophonic ports use steel.
+- Shaped VCA:
+  - The response curve displayed range is now -100% exp to 100% log instead of -1 to 1
+  - Improved 4 quadrant logarithmic response with option for old behavior
+- Bernoulli Switch:
+  - Added "Normal Value" parameter that specifies what value is normaled to the A input, either the raw trig input, or the Schmitt trigger result
+  - Bernoulli Gate and Toggled Bernoulli Gate presets now send normaled Schmitt trigger gates instead of the the raw trigger input, so those modes now truly behave like the Mutable Instruments Branches.
+  - Increased anti-pop crossfade time from 2.5 msec to 10 msec.
+
+### Bug Fixes
+- Bernoulli Switch: Fixed a number of bugs dealing with polyphony
+- WinComp: Force minimum tolerance of 1e-6 (behind the scene) to account for limitations of float.
+  
 ## 2.4.1 (2023-09-01)
 ### Enhancements
 - Venom Default Dark Theme option has been added to all module context menus

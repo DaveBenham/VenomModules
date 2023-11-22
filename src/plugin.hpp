@@ -14,8 +14,18 @@ extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
 extern Model* modelCloneMerge;
 extern Model* modelHQ;
+extern Model* modelLinearBeats;
+extern Model* modelLinearBeatsExpander;
 extern Model* modelMix4;
 extern Model* modelMix4Stereo;
+extern Model* modelMixFade;
+extern Model* modelMixFade2;
+extern Model* modelMixMute;
+extern Model* modelMixOffset;
+extern Model* modelMixPan;
+extern Model* modelMixSend;
+extern Model* modelMixSolo;
+extern Model* modelNORS_IQ;
 extern Model* modelPolyClone;
 extern Model* modelPolyUnison;
 extern Model* modelRecurse;
@@ -64,6 +74,7 @@ struct VenomModule : Module {
   bool drawn = false;
   bool paramsInitialized = false;
   bool extProcNeeded = true;
+  std::string moduleName = "";
 
   std::string currentThemeStr(bool dark=false){
     return modThemes[currentTheme==0 ? (dark ? defaultDarkTheme : defaultTheme)+1 : currentTheme];
@@ -216,6 +227,8 @@ struct VenomWidget : ModuleWidget {
 
   void setVenomPanel(std::string name){
     moduleName = name;
+    VenomModule* mod = dynamic_cast<VenomModule*>(this->module);
+    if (mod) mod->moduleName = name;
     setPanel(createPanel(
       asset::plugin( pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr() : themes[getDefaultTheme()])),
       asset::plugin( pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr(true) : themes[getDefaultDarkTheme()]))
@@ -315,13 +328,6 @@ struct RotarySwitch : TBase {
   void onChange(const event::Change &e) override {
     SvgKnob::onChange(e);
     this->getParamQuantity()->setValue(roundf(this->getParamQuantity()->getValue()));
-  }
-};
-
-struct CKSSNarrow : app::SvgSwitch {
-  CKSSNarrow() {
-    addFrame(Svg::load(asset::plugin(pluginInstance, "res/components/SwitchNarrow_0.svg")));
-    addFrame(Svg::load(asset::plugin(pluginInstance, "res/components/SwitchNarrow_2.svg")));
   }
 };
 
@@ -551,6 +557,13 @@ struct TrimpotLockable : Trimpot {
   }
 };
 
+struct CKSSLockable : CKSS {
+  void appendContextMenu(Menu* menu) override {
+    if (module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
 struct CKSSThreeLockable : CKSSThree {
   void appendContextMenu(Menu* menu) override {
     if (module)
@@ -565,24 +578,47 @@ struct CKSSThreeHorizontalLockable : CKSSThreeHorizontal {
   }
 };
 
-template <typename TLight>
-struct VCVLightButtonLockable : VCVButton {
-  app::ModuleLightWidget* light;
-
-  VCVLightButtonLockable() {
-    light = new TLight;
-    // Move center of light to center of box
-    light->box.pos = box.size.div(2).minus(light->box.size.div(2));
-    addChild(light);
-  }
-
-  app::ModuleLightWidget* getLight() {
-    return light;
-  }
-
+template <typename TLightBase = WhiteLight>
+struct VCVLightBezelLockable : VCVLightBezel<TLightBase> {
   void appendContextMenu(Menu* menu) override {
-    if (module)
+    if (this->module)
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
+template <typename TLightBase = WhiteLight>
+struct VCVLightBezelLatchLockable : VCVLightBezelLatch<TLightBase> {
+  void appendContextMenu(Menu* menu) override {
+    if (this->module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+template <typename TLight = WhiteLight>
+struct VCVLightButtonLockable : VCVLightButton<TLight> {
+  void appendContextMenu(Menu* menu) override {
+    if (this->module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+template <typename TLight = WhiteLight>
+struct VCVLightButtonLatchLockable : VCVLightLatch<TLight> {
+  void appendContextMenu(Menu* menu) override {
+    if (this->module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+struct ShapeQuantity : ParamQuantity {
+  std::string getUnit() override {
+    float val = this->getValue();
+    return val > 0.f ? "% log" : val < 0.f ? "% exp" : " = linear";
+  }  
+};
+
+struct PolyPJ301MPort : app::SvgPort {
+  PolyPJ301MPort() {
+    setSvg(Svg::load(asset::plugin( pluginInstance, "res/PJ301M-poly.svg")));
+  }
+};

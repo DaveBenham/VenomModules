@@ -181,6 +181,11 @@ struct RhythmExplorer : VenomModule {
 
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
+    for (int i=0; i<MAX_STEP_LENGTH; i++){
+      configLight(BAR_STEP_LIGHT+i, string::f("Bar beat %d indicator", i+1));
+      configLight(PHRASE_STEP_LIGHT+i, string::f("Phrase bar %d indicator", i+1));
+    }  
+
     configInput(CLOCK_INPUT,"24 PPQN Clock");
     configInput(NEW_SEED_TRIGGER_INPUT,"Dice Trigger");
     configInput(RESET_TRIGGER_INPUT,"Reset Trigger");
@@ -815,13 +820,13 @@ struct RhythmExplorerWidget : VenomWidget {
     y += dy;
     addParam(createLightParamCentered<VCVLightBezelLatch<MediumSimpleLight<WhiteLight>>>(Vec(x, y), module, RhythmExplorer::MUTE_POLY_PARAM, RhythmExplorer::MUTE_POLY_LIGHT));
     y += dy;
-    addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::DENSITY_POLY_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(x,y), module, RhythmExplorer::DENSITY_POLY_INPUT));
     y += dy;
-    addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::MODE_POLY_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(x,y), module, RhythmExplorer::MODE_POLY_INPUT));
     y += dy;
-    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::CLOCK_POLY_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, RhythmExplorer::CLOCK_POLY_OUTPUT));
     y += dy;
-    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_POLY_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_POLY_OUTPUT));
     x += dx * 1.5f;
     y = yStart;
     addParam(createLightParamCentered<VCVLightLatch<MediumSimpleLight<WhiteLight>>>(Vec(x,y), module, RhythmExplorer::LOCK_PARAM, RhythmExplorer::LOCK_LIGHT));
