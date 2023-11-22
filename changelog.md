@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.5.0 (2023-??-??)
+## 2.5.0 (2023-11-22)
 ### New Modules
 - Linear Beats
 - Linear Beats Expander
