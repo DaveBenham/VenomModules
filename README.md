@@ -1426,10 +1426,10 @@ A glowing red light in the lower right corner indicates the output has the inver
 
 ### Gate Outputs
 
-- **A==B** = This gate is high if A is within B +/- TOL. OVER will be 0V when A==B is high. Computed as |A-B| <= |TOL|
+- **A=B** = This gate is high if A is within B +/- TOL. OVER will be 0V when A=B is high. Computed as |A-B| <= |TOL|
 - **A<>B** = This gate is high if A is not within B +/- TOL. OVER will be non-zero when A<>B is high. Computed as |A-B| > |TOL|
-- **A<=B** = This gate is high if A is less than or equal to B +/- TOL. Computed as A < B + |TOL|
-- **A>=B** = This gate is high if A is greater than or equal to B +/- TOL. Computed as A > B - |TOL|
+- **A<=B** = This gate is high if A is less than or equal to B +/- TOL. Computed as A <= B + |TOL|
+- **A>=B** = This gate is high if A is greater than or equal to B +/- TOL. Computed as A >= B - |TOL|
 - **A<B** = This gate is high if A is less than B +/- TOL. Computed as A < B - |TOL|
 - **A>B** = This gate is high if A is greater than B +/- TOL. Computed as A > B + |TOL|
 
