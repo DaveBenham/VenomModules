@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.5.0",
+  "version": "2.6.0dev",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -77,6 +77,17 @@
       "tags": [
         "Logic",
         "Expander"
+      ]
+    },
+    {
+      "slug": "Logic",
+      "name": "Logic",
+      "description": "Flexible logic gate processor suitable for both CV and audio applications",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#logic",
+      "tags": [
+        "Logic",
+        "Polyphonic",
+        "Utility"
       ]
     },
     {

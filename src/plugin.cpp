@@ -80,6 +80,7 @@ void init(Plugin* p) {
   p->addModel(modelHQ);
   p->addModel(modelLinearBeats);
   p->addModel(modelLinearBeatsExpander);
+  p->addModel(modelLogic);
   p->addModel(modelMix4);
   p->addModel(modelMix4Stereo);
   p->addModel(modelMixFade);

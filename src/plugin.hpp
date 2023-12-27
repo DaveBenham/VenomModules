@@ -16,6 +16,7 @@ extern Model* modelCloneMerge;
 extern Model* modelHQ;
 extern Model* modelLinearBeats;
 extern Model* modelLinearBeatsExpander;
+extern Model* modelLogic;
 extern Model* modelMix4;
 extern Model* modelMix4Stereo;
 extern Model* modelMixFade;
