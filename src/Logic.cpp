@@ -158,13 +158,13 @@ struct Logic : VenomModule {
         highThresh = lowThresh;
         lowThresh = temp;
       }
-      float_4 outCnt[endChannel]{}, outState[endChannel][4]{}, outVal[endChannel][4]{};
+      float_4 outCnt[CHANNEL_COUNT]{}, outState[CHANNEL_COUNT][4]{}, outVal[CHANNEL_COUNT][4]{};
       for (int o=0; o<oversample; o++){
         if (oversample>1) {
           highThresh = highUpSample.process(o>1 ? 0.f : highThresh * oversample);
           lowThresh = lowUpSample.process(o>1 ? 0.f : lowThresh * oversample);
         }
-        float_4 outSum[endChannel][4]{};
+        float_4 outSum[CHANNEL_COUNT][4]{};
         for (int c=0; c<endChannel; c++){
           if (aChannels[c]>0){
             if (o==0) outCnt[channelMap[c]] += (merge ? aChannels[c] : 1);
