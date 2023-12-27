@@ -5,7 +5,6 @@
 #include "plugin.hpp"
 
 #define CHANNEL_COUNT 9
-#define MAXOVER 32
 #define LIGHT_OFF 0.02f
 #define LIGHT_DIM 0.1f
 #define LIGHT_FADE 5e-6f
@@ -56,7 +55,7 @@ struct Logic : VenomModule {
   OversampleFilter   highUpSample, lowUpSample;
   OversampleFilter_4 aUpSample[CHANNEL_COUNT][4], bUpSample[CHANNEL_COUNT][4], outDownSample[CHANNEL_COUNT][4];
   DCBlockFilter_4 dcBlock[CHANNEL_COUNT][4];
-  simd::int32_4 aState[CHANNEL_COUNT][4]{}, bState[CHANNEL_COUNT][4]{};
+  simd::float_4 aState[CHANNEL_COUNT][4]{}, bState[CHANNEL_COUNT][4]{};
   
   Logic() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -159,14 +158,13 @@ struct Logic : VenomModule {
         highThresh = lowThresh;
         lowThresh = temp;
       }
-      int32_4 outCnt[endChannel]{}, outState[endChannel][4]{};
-      float_4 outVal[endChannel][4]{};
+      float_4 outCnt[endChannel]{}, outState[endChannel][4]{}, outVal[endChannel][4]{};
       for (int o=0; o<oversample; o++){
         if (oversample>1) {
           highThresh = highUpSample.process(o>1 ? 0.f : highThresh * oversample);
           lowThresh = lowUpSample.process(o>1 ? 0.f : lowThresh * oversample);
         }
-        int32_4 outSum[endChannel][4]{};
+        float_4 outSum[endChannel][4]{};
         for (int c=0; c<endChannel; c++){
           if (aChannels[c]>0){
             if (o==0) outCnt[channelMap[c]] += (merge ? aChannels[c] : 1);
@@ -178,8 +176,8 @@ struct Logic : VenomModule {
               if (oversample>1) {
                 in = aUpSample[c][pi].process(o ? float_4::zero() : in * oversample);
               }
-              aState[c][pi] = static_cast<int32_4>(simd::ifelse(in>float_4(highThresh), 1.f, aState[c][pi]));
-              aState[c][pi] = static_cast<int32_4>(simd::ifelse(in<=float_4(lowThresh), 0.f, aState[c][pi]));
+              aState[c][pi] = simd::ifelse(in>float_4(highThresh), 1.f, aState[c][pi]);
+              aState[c][pi] = simd::ifelse(in<=float_4(lowThresh), 0.f, aState[c][pi]);
               if (merge){
                 for (int i=p; i<aChannels[c]; i++){
                   outSum[channelMap[c]][0][0] += aState[c][pi][i];
@@ -199,8 +197,8 @@ struct Logic : VenomModule {
               if (oversample>1) {
                 in = bUpSample[c][pi].process(o ? float_4::zero() : in * oversample);
               }
-              bState[c][pi] = static_cast<int32_4>(simd::ifelse(in>float_4(highThresh), 1.f, bState[c][pi]));
-              bState[c][pi] = static_cast<int32_4>(simd::ifelse(in<=float_4(lowThresh), 0.f, bState[c][pi]));
+              bState[c][pi] = simd::ifelse(in>float_4(highThresh), 1.f, bState[c][pi]);
+              bState[c][pi] = simd::ifelse(in<=float_4(lowThresh), 0.f, bState[c][pi]);
               if (merge){
                 for (int i=p; i<bChannels[c]; i++){
                   outSum[channelMap[c]][0][0] += bState[c][pi][i];
@@ -225,28 +223,28 @@ struct Logic : VenomModule {
             for (int p=0, pi=0; p<polyCount[c]; p+=4, pi++) {
               switch(op) {
                 case OP_AND:
-                  outState[c][pi] = static_cast<int32_4>(simd::ifelse(outSum[c][pi]==outCnt[c], 1.f, 0.f));
+                  outState[c][pi] = simd::ifelse(outSum[c][pi]==outCnt[c], 1.f, 0.f);
                   break;
                 case OP_OR:
-                  outState[c][pi] = static_cast<int32_4>(simd::ifelse(outSum[c][pi]>0.f, 1.f, 0.f));
+                  outState[c][pi] = simd::ifelse(outSum[c][pi]>0.f, 1.f, 0.f);
                   break;
                 case OP_XOR_1:
-                  outState[c][pi] = static_cast<int32_4>(simd::ifelse(outSum[c][pi]==1.f, 1.f, 0.f));
+                  outState[c][pi] = simd::ifelse(outSum[c][pi]==1.f, 1.f, 0.f);
                   break;
                 case OP_XOR_ODD:
-                  outState[c][pi] = static_cast<int32_4>(simd::ifelse((outSum[c][pi]&1)==1, 1.f, 0.f));
+                  outState[c][pi] = simd::ifelse((static_cast<int32_4>(outSum[c][pi])&1)==1, 1.f, 0.f);
                   break;
                 case OP_NAND:
-                  outState[c][pi] = static_cast<int32_4>(simd::ifelse(outSum[c][pi]!=outCnt[c], 1.f, 0.f));
+                  outState[c][pi] = simd::ifelse(outSum[c][pi]!=outCnt[c], 1.f, 0.f);
                   break;
                 case OP_NOR:
-                  outState[c][pi] = static_cast<int32_4>(simd::ifelse(outSum[c][pi]==0.f, 1.f, 0.f));
+                  outState[c][pi] = simd::ifelse(outSum[c][pi]==0.f, 1.f, 0.f);
                   break;
                 case OP_XNOR_1:
-                  outState[c][pi] = static_cast<int32_4>(simd::ifelse(outSum[c][pi]!=1.f, 1.f, 0.f));
+                  outState[c][pi] = simd::ifelse(outSum[c][pi]!=1.f, 1.f, 0.f);
                   break;
                 case OP_XNOR_ODD:
-                  outState[c][pi] = static_cast<int32_4>(simd::ifelse((outSum[c][pi]&1)==0, 1.f, 0.f));
+                  outState[c][pi] = simd::ifelse((static_cast<int32_4>(outSum[c][pi])&1)==0, 1.f, 0.f);
                   break;
               }
               outVal[c][pi] = simd::ifelse(outState[c][pi]==0, lowValues[range], highValues[range]);
