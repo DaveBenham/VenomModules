@@ -356,7 +356,7 @@ There are nine rows, each consisting of two inputs, a Reuse button to recycle a 
 #### A and B inputs
 Provide up to two inputs for each row. An input is ignored if it is not patched.
 
-#### Reuse button
+#### REUSE button
 This button allows any of the logic outputs from rows above to be used as an additional input for the row, without introducing a sample delay. If set to None (three dashes), then the button is ignored. The first row doesn't have any row above, so its value is fixed at None.
 
 If the output selected for reuse is deferred, then it is ignored as an input.
