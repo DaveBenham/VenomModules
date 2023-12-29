@@ -27,6 +27,7 @@ extern Model* modelMixPan;
 extern Model* modelMixSend;
 extern Model* modelMixSolo;
 extern Model* modelNORS_IQ;
+extern Model* modelNORS_IQIntervals;
 extern Model* modelPolyClone;
 extern Model* modelPolyUnison;
 extern Model* modelRecurse;

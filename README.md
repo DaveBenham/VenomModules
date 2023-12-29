@@ -6,17 +6,17 @@ Venom modules version 2.5.0 for VCV Rack 2 are copyright 2023 Dave Benham and li
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Acknowledgments](#acknowledgments)  
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
-|----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
+|----|----|----|----|----|----|----|----|----|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
 
-|[MIX EXPANDERS](#mix-expanders)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|
+|[MIX EXPANDERS](#mix-expanders)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ INTERVALS](#norsiq-intervals)|[POLY<br />CLONE](#poly-clone)|
 |----|----|----|----|
-|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|
+|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Intervals module image](doc/NORS_IQIntervals.png)|![Poly Clone module image](doc/PolyClone.png)|
 
-|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
-|----|----|----|----|
-|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
+|[POLY<br />UNISON](#poly-unison)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
+|----|----|----|----|----|
+|![Poly Unison module image](doc/PolyUnison.PNG)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
 |[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM<br />BLANK](#venom-blank)|[WINCOMP](#wincomp)|
 |----|----|----|----|----|
@@ -309,6 +309,11 @@ A channel is muted whenever the mute button glows red. Pressing a mute button is
 In addition to mutes, the expander has a Disable button / CV input pair that turns off linear drumming, allowing all input triggers/gates to pass through, without syncing to any clock.  The Disable CV operates the same as for the mutes. If a Linear Beats has both an input and output expander, then disabling either side will disable the linear drumming.
 
 An expander is ignored if it is bypassed.
+
+[Return to Table Of Contents](#venom)
+
+## LOGIC
+![Logic module image](doc/Logic.png)  
 
 [Return to Table Of Contents](#venom)
 
@@ -690,6 +695,11 @@ If the module is bypassed then the Trig input is passed unchanged to the Trig ou
 
 [Return to Table Of Contents](#venom)
 
+
+## NORSIQ INTERVALS
+![NORSIQ Intervals module image](doc/NORSE_IQIntervals.png)  
+
+[Return to Table Of Contents](#venom)
 
 ## POLY CLONE
 ![Poly Clone module image](doc/PolyClone.png)  

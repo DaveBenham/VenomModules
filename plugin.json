@@ -216,6 +216,16 @@
       ]
     },
     {
+      "slug": "NORS_IQIntervals",
+      "name": "NORS_IQ Interval Generator",
+      "description": "Convert a polyphonic chord into CV to generate a scale with the Non-Octave_Repeating Scale Intervallic Quantizer",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#nors_iq_interval_generator",
+      "tags": [
+        "Quantizer",
+        "Polyphonic"
+      ]
+    },
+    {
       "slug": "PolyClone",
       "name": "Poly Clone",
       "description": "Clone each channel of a polyphonic input and merge the results into a single polyphonic output",
