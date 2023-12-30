@@ -65,9 +65,9 @@ struct Logic : VenomModule {
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 0.f, "Oversampling", {"Off", "x2", "x4", "x8", "x16", "x32"});
     configSwitch<FixedSwitchQuantity>(DC_PARAM, 0.f, 1.f, 0.f, "DC block", {"Off", "On"});
 
-    configParam(HIGH_PARAM, -10.f, 10.f, 2.f, "Rise threshold", "V");
+    configParam(HIGH_PARAM, -10.f, 10.f, 2.f, "High threshold", "V");
     configInput(HIGH_INPUT,"Rise threshold");
-    configParam(LOW_PARAM, -10.f, 10.f, 0.1f, "Fall threshold", "V");
+    configParam(LOW_PARAM, -10.f, 10.f, 0.1f, "Low threshold", "V");
     configInput(LOW_INPUT,"Fall threshold");
 
     std::vector<std::string> recycleLabels = {"None"};
@@ -161,8 +161,8 @@ struct Logic : VenomModule {
       float_4 outCnt[CHANNEL_COUNT]{}, outState[CHANNEL_COUNT][4]{}, outVal[CHANNEL_COUNT][4]{};
       for (int o=0; o<oversample; o++){
         if (oversample>1) {
-          highThresh = highUpSample.process(o>1 ? 0.f : highThresh * oversample);
-          lowThresh = lowUpSample.process(o>1 ? 0.f : lowThresh * oversample);
+          highThresh = highUpSample.process(o ? 0.f : highThresh * oversample);
+          lowThresh = lowUpSample.process(o ? 0.f : lowThresh * oversample);
         }
         float_4 outSum[CHANNEL_COUNT][4]{};
         for (int c=0; c<endChannel; c++){
@@ -264,8 +264,12 @@ struct Logic : VenomModule {
         }
         outputs[GATE_OUTPUT+c].setChannels(polyCount[c]);
       }
+      outputs[GATE_OUTPUT+7].setVoltage(lowThresh);
+      outputs[GATE_OUTPUT+8].setVoltage(highThresh);
+      outputs[GATE_OUTPUT+7].setChannels(1);
+      outputs[GATE_OUTPUT+8].setChannels(1);
     }
-    for (int c=endChannel; c<CHANNEL_COUNT; c++) {
+    for (int c=endChannel; c<CHANNEL_COUNT-2; c++) {
       outputs[GATE_OUTPUT+c].setVoltage(0.f);
       outputs[GATE_OUTPUT+c].setChannels(0);
     }
