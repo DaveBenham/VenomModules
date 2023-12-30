@@ -6,7 +6,7 @@
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
 
-struct NORS_IQIntervals : VenomModule {
+struct NORSIQChord2Scale : VenomModule {
 
   enum ParamId {
     FOLD_PARAM,
@@ -31,7 +31,7 @@ struct NORS_IQIntervals : VenomModule {
 
   dsp::SchmittTrigger trigIn;
   
-  NORS_IQIntervals() {
+  NORSIQChord2Scale() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch<FixedSwitchQuantity>(FOLD_PARAM, 0.f, 1.f, 0.f, "Fold at octaves", {"Off", "On"});
     configInput(TRIG_INPUT, "Trigger");
@@ -77,26 +77,26 @@ struct NORS_IQIntervals : VenomModule {
   
 };
 
-struct NORS_IQIntervalsWidget : VenomWidget {
-  NORS_IQIntervalsWidget(NORS_IQIntervals* module) {
+struct NORSIQChord2ScaleWidget : VenomWidget {
+  NORSIQChord2ScaleWidget(NORSIQChord2Scale* module) {
     setModule(module);
-    setVenomPanel("NORS_IQIntervals");
-    addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(22.5f, 75.f), module, NORS_IQIntervals::FOLD_PARAM, NORS_IQIntervals::FOLD_LIGHT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,120.f), module, NORS_IQIntervals::TRIG_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,160.f), module, NORS_IQIntervals::CHORD_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,215.f), module, NORS_IQIntervals::TRIG_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,255.f), module, NORS_IQIntervals::ROOT_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,295.f), module, NORS_IQIntervals::LENGTH_OUTPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,335.f), module, NORS_IQIntervals::INTERVALS_OUTPUT));
+    setVenomPanel("NORSIQChord2Scale");
+    addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(22.5f, 85.f), module, NORSIQChord2Scale::FOLD_PARAM, NORSIQChord2Scale::FOLD_LIGHT));
+    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,125.f), module, NORSIQChord2Scale::TRIG_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,165.f), module, NORSIQChord2Scale::CHORD_INPUT));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,215.f), module, NORSIQChord2Scale::TRIG_OUTPUT));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,255.f), module, NORSIQChord2Scale::ROOT_OUTPUT));
+    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,295.f), module, NORSIQChord2Scale::LENGTH_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,335.f), module, NORSIQChord2Scale::INTERVALS_OUTPUT));
   }
 
   void step() override {
     VenomWidget::step();
-    NORS_IQIntervals* mod = dynamic_cast<NORS_IQIntervals*>(this->module);
+    NORSIQChord2Scale* mod = dynamic_cast<NORSIQChord2Scale*>(this->module);
     if(mod) {
-      mod->lights[NORS_IQIntervals::FOLD_LIGHT].setBrightness(mod->params[NORS_IQIntervals::FOLD_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
+      mod->lights[NORSIQChord2Scale::FOLD_LIGHT].setBrightness(mod->params[NORSIQChord2Scale::FOLD_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
     }
   }
 };
 
-Model* modelNORS_IQIntervals = createModel<NORS_IQIntervals, NORS_IQIntervalsWidget>("NORS_IQIntervals");
+Model* modelNORSIQChord2Scale = createModel<NORSIQChord2Scale, NORSIQChord2ScaleWidget>("NORSIQChord2Scale");

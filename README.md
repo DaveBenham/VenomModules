@@ -14,9 +14,9 @@ Venom modules version 2.5.0 for VCV Rack 2 are copyright 2023 Dave Benham and li
 |----|----|----|----|
 |![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
 
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />INTERVALS](#norsiq-intervals)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|
+|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|
 |----|----|----|----|
-|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Intervals module image](doc/NORS_IQIntervals.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|
+|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|
 
 |[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|----|----|----|
@@ -770,15 +770,15 @@ If the module is bypassed then the Trig input is passed unchanged to the Trig ou
 [Return to Table Of Contents](#venom)
 
 
-## NORSIQ INTERVALS
-![NORSIQ Intervals module image](doc/NORS_IQIntervals.png)  
+## NORSIQ Chord To Scale
+![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)  
 Converts up to 14 channels of a polyphonic "chord" input into a set of CV outputs that define a scale for the Non-Octave-Repeating Scale Intervallic Quantizer (NORSIQ).
 
 ### General Operation
 Polyphonic V/Oct channels at the CHORD input are sorted, and the lowest note defines the scale root, the number of channels determines the scale length, and the intervals between the sorted notes define the intervals for the NORSIQ. The computation of the defining scale CV may be continuous, or it may be held constant until a trigger is received.
 
 #### NORSIQ configuration
-The NORSIQ module must be configured properly for the CV from the NORSIQ INTERVALS module to define the correct scale:
+The NORSIQ module must be configured properly for the CV from the NORSIQ Chord To Scale module to define the correct scale:
 - The EQUAL DIVS button must be off so that intervals can be defined directly.
 - All 14 Interval knobs must be fully counter-clockwise (0V, 0 cents, or 1:1 ratio)
 - The SCALE LENGTH knob must be fully counter-clockwise (1)
@@ -786,7 +786,7 @@ The NORSIQ module must be configured properly for the CV from the NORSIQ INTERVA
   
 The PSEUD-OCT INTERVAL and EDPO knobs and inputs are ignored. The INTERVAL UNIT, ROOT UNIT, ROUND, and EQUI LIKELY contols may configured as you see fit.
 
-The NORSIQ has a "NORSIQ Intervals module configuration" factory preset that quickly sets the appropriate configuration.
+The NORSIQ has a "NORSIQ Chord To Scale module configuration" factory preset that quickly sets the appropriate configuration.
 
 ### OCTAVE FOLD button
 Controls where the scale repeats
@@ -818,7 +818,7 @@ This polyphonic output must be patched to the NORSIQ POLY INTERVALS input to def
 
 ### Bypass
 
-All outputs are constant monophonic 0V if NORSIQ INTERVALS is bypassed.
+All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 
 
 [Return to Table Of Contents](#venom)

@@ -345,10 +345,10 @@ struct LogicWidget : VenomWidget {
     setModule(module);
     setVenomPanel("Logic");
 
-    addParam(createLockableParam<MergeSwitch>(Vec(47.549,28.210), module, Logic::MERGE_PARAM));
-    addParam(createLockableParam<OverSwitch>(Vec(70.216,28.210), module, Logic::OVER_PARAM));
-    addParam(createLockableParam<RangeSwitch>(Vec(92.883,28.210), module, Logic::RANGE_PARAM));
-    addParam(createLockableParam<DCSwitch>(Vec(115.549,28.210), module, Logic::DC_PARAM));
+    addParam(createLockableParamCentered<MergeSwitch>(Vec(51.33,33.), module, Logic::MERGE_PARAM));
+    addParam(createLockableParamCentered<OverSwitch>(Vec(73.999,33.), module, Logic::OVER_PARAM));
+    addParam(createLockableParamCentered<RangeSwitch>(Vec(96.663,33.), module, Logic::RANGE_PARAM));
+    addParam(createLockableParamCentered<DCSwitch>(Vec(119.33,33.), module, Logic::DC_PARAM));
     
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(35.718,61.5), module, Logic::HIGH_PARAM));
     addInput(createInputCentered<PJ301MPort>(Vec(66.265,61.5), module, Logic::HIGH_INPUT));
