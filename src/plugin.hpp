@@ -10,6 +10,7 @@ using namespace rack;
 extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
+extern Model* modelBenjolinOsc;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
 extern Model* modelCloneMerge;

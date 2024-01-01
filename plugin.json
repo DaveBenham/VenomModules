@@ -14,6 +14,18 @@
   "changelogUrl": "https://github.com/DaveBenham/VenomModules/blob/main/changelog.md",
   "modules": [
     {
+      "slug": "BenjolinOsc",
+      "name": "Benjolin Oscillator",
+      "description": "Complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#benjolin-oscillator",
+      "tags": [
+        "Low-frequency oscillator",
+        "Oscillator",
+        "Random",
+        "Sequencer"
+      ]
+    },
+    {
       "slug": "BernoulliSwitch",
       "name": "Bernoulli Switch",
       "description": "Randomly route two inputs to two outputs, with built in scaling and offset capabilities",
