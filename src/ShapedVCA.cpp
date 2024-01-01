@@ -51,10 +51,10 @@ struct ShapedVCA : VenomModule {
 
   ShapedVCA() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-    configSwitch(RANGE_PARAM, 0.f, 5.f, 0.f, "Level Range", {"0-1", "0-2", "0-10", "+/- 1", "+/- 2", "+/- 10"});
-    configSwitch(MODE_PARAM, 0.f, 1.f, 0.f, "VCA Mode", {"Unipolar clipped CV (2 quadrant)", "Bipolar unclipped CV (4 quadrant)"});
-    configSwitch(CLIP_PARAM, 0.f, 2.f, 0.f, "Output Clipping", {"Off", "Hard clip", "Soft clip"});
-    configSwitch(OVER_PARAM, 0.f, 4.f, 0.f, "Oversample", {"Off", "x4", "x8", "x16", "x32"});
+    configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 5.f, 0.f, "Level Range", {"0-1", "0-2", "0-10", "+/- 1", "+/- 2", "+/- 10"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 1.f, 0.f, "VCA Mode", {"Unipolar clipped CV (2 quadrant)", "Bipolar unclipped CV (4 quadrant)"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 2.f, 0.f, "Output Clipping", {"Off", "Hard clip", "Soft clip"});
+    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 4.f, 0.f, "Oversample", {"Off", "x4", "x8", "x16", "x32"});
     configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level", "x", 0.f, 1.f, 0.f);
     configInput(LEVEL_INPUT, "Level CV");
     configParam(BIAS_PARAM, 0.f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
@@ -64,7 +64,7 @@ struct ShapedVCA : VenomModule {
     configInput(RIGHT_INPUT, "Right");
     configOutput(LEFT_OUTPUT, "Left");
     configOutput(RIGHT_OUTPUT, "Right");
-    configSwitch(OFFSET_PARAM, 0.f, 2.f, 0.f, "Output offset", {"None", "-5 V", "+5 V"});
+    configSwitch<FixedSwitchQuantity>(OFFSET_PARAM, 0.f, 2.f, 0.f, "Output offset", {"None", "-5 V", "+5 V"});
     configBypass(LEFT_INPUT, LEFT_OUTPUT);
     configBypass(inputs[RIGHT_INPUT].isConnected() ? RIGHT_INPUT : LEFT_INPUT, RIGHT_OUTPUT);
   }
