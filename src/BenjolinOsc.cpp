@@ -2,6 +2,7 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
+#include "Filter.hpp"
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
@@ -44,12 +45,26 @@ struct BenjolinOsc : VenomModule {
     DOUBLE_LIGHT,
     LIGHTS_LEN
   };
+  
+  int oversample = -1;
+  std::vector<int> oversampleValues = {1,2,4,8,16,32};
+  OversampleFilter_4 upSample, downSampleA, downSampleB;
+  dsp::SchmittTrigger clockTrig;
+  simd::float_4 osc{0.f,0.f,1.f,1.f}, triMask{1.f,1.f,0.f,0.f}, dir{1.f,1.f,0.f,0.f},
+                in{}, outA, outB{};
+  float *tri1=&osc[0], *tri2=&osc[1], *pul1=&osc[2], *pul2=&osc[3], *dir1=&dir[0], *dir2=&dir[1],
+        *tri1Out=&outA[0], *tri2Out=&outA[1], *pul1Out=&outA[2], *pul2Out=&outA[3], 
+        *xorOut=&outB[0], *pwmOut=&outB[1], *rungOut=&outB[2],
+        *cv1In=&in[0], *cv2In=&in[1], *clockIn=&in[2],
+        xorVal, rung;
+  unsigned char asr = 37;
+  bool chaosIn=false, dblIn=false;
  
   BenjolinOsc() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 0.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
-    configParam(FREQ1_PARAM, -1.f, 1.f, 0.f, "Oscillator 1 frequency");
-    configParam(FREQ2_PARAM, -1.f, 1.f, 0.f, "Oscillator 2 frequency");
+    configParam(FREQ1_PARAM, -9.3f, 9.0f, 0.f, "Oscillator 1 frequency");
+    configParam(FREQ2_PARAM, -9.3f, 9.0f, 0.f, "Oscillator 2 frequency");
     configParam(RUNG1_PARAM, -1.f, 1.f, 0.f, "Oscillator 1 rungler modulation amount");
     configParam(RUNG2_PARAM, -1.f, 1.f, 0.f, "Oscillator 2 rungler modulation amount");
     configParam(CV1_PARAM, -1.f, 1.f, 0.f, "Oscillator 1 CV modulation amount");
@@ -71,8 +86,102 @@ struct BenjolinOsc : VenomModule {
     configOutput(RUNG_OUTPUT,"Rungler");
   }
 
+  void onSampleRateChange() override {
+    float rate = APP->engine->getSampleRate();
+    int maxOver;
+    if (rate>384000.f)
+      maxOver = 1;
+    else if (rate>192000.f)
+      maxOver = 2;
+    else if (rate>96000.f)
+      maxOver = 3;
+    else if (rate>48000.f)
+      maxOver = 4;
+    else
+      maxOver = 5;
+    if (params[OVER_PARAM].getValue()>maxOver)
+      params[OVER_PARAM].setValue(maxOver);
+    paramQuantities[OVER_PARAM]->maxValue = maxOver;
+  }
+
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+    if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
+      oversample = oversampleValues[params[OVER_PARAM].getValue()];
+      upSample.setOversample(oversample);
+      downSampleA.setOversample(oversample);
+      downSampleB.setOversample(oversample);
+    }
+    simd::float_4 k = triMask * 60.f * args.sampleTime / oversample;
+    bool cv1Connected = inputs[CV1_INPUT].isConnected(),
+         cv2Connected = inputs[CV2_INPUT].isConnected(),
+         clockConnected = inputs[CLOCK_INPUT].isConnected(),
+         chaos = params[CHAOS_PARAM].getValue(),
+         dbl = params[DOUBLE_PARAM].getValue();
+    int trig;
+    *cv1In = inputs[CV1_INPUT].getVoltage();
+    *cv2In = inputs[CV2_INPUT].getVoltage();
+    *clockIn = inputs[CLOCK_INPUT].getVoltage();
+    if ((inputs[CHAOS_INPUT].getVoltage()>=2.f) != chaosIn) {
+      chaosIn = !chaosIn;
+      if (chaosIn) {
+        chaos = !chaos;
+        params[CHAOS_PARAM].setValue(chaos);
+      }
+    }
+    if ((inputs[DOUBLE_INPUT].getVoltage()>=2.f) != dblIn) {
+      dblIn = !dblIn;
+      if (dblIn) {
+        dbl = !dbl;
+        params[DOUBLE_PARAM].setValue(dbl);
+      }
+    }
+    for (int o=0; o<oversample; o++){
+      if (oversample>1 && (cv1Connected || cv2Connected || clockConnected)){
+        in = upSample.process(o ? simd::float_4::zero() : in * oversample);
+      }
+      simd::float_4 freq = {
+        params[FREQ1_PARAM].getValue() + (cv1Connected ? *cv1In : *tri2) * 0.9f * params[CV1_PARAM].getValue() + rung * 0.9f * params[RUNG1_PARAM].getValue(),
+        params[FREQ2_PARAM].getValue() + (cv2Connected ? *cv2In : *tri1) * 0.9f * params[CV2_PARAM].getValue() + rung * 0.9f * params[RUNG2_PARAM].getValue(),
+        0.f,0.f
+      };
+      simd::ifelse(freq<-9.3f, -9.3f, freq);
+      osc += simd::pow(2.f, freq) * k * dir;
+      if (*tri1 > 1.f || *tri1 < -1.f) {
+        *tri1 = *dir1 + *dir1 - *tri1;
+        *dir1 *= -1.f;
+      }  
+      if (*tri2 > 1.f || *tri2 < -1.f) {
+        *tri2 = *dir2 + *dir2 - *tri2;
+        *dir2 *= -1.f;
+      }
+      if (*pul1 != math::sgn(*tri1)) *pul1*=-1.f;
+      if (*pul2 != math::sgn(*tri2)) *pul2*=-1.f;
+      *pwmOut = *tri2>*tri1 ? 5.f : -5.f;
+      trig = clockTrig.processEvent( clockConnected ? *clockIn : *pul2, -1.f, 1.f);
+      if (trig>0 || (trig && dbl)){
+        float ptrn = chaos ? 0.5f : params[PATTERN_PARAM].getValue();
+        unsigned char data = (ptrn>=*tri1 || ptrn>=10.f) ^ (chaos ? ((asr&32)>>5)^((asr&64)>>6) : (asr&128)>>7);
+        asr = (asr<<1)|data;
+        xorVal = asr&1 ? 5.f : -5.f;
+        rung = (((asr&2)>>1)+((asr&8)>>2)+((asr&64)>>4)) * 1.428571f - 5.f;
+      }
+      *xorOut = xorVal;
+      *rungOut = rung;
+      if (oversample>1) {
+        outA = downSampleA.process(osc*5.f);
+        outB = downSampleB.process(outB);
+      }
+      else
+        outA = osc*5.f;
+    }
+    outputs[TRI1_OUTPUT].setVoltage(*tri1Out);
+    outputs[TRI2_OUTPUT].setVoltage(*tri2Out);
+    outputs[PULSE1_OUTPUT].setVoltage(*pul1Out);
+    outputs[PULSE2_OUTPUT].setVoltage(*pul2Out);
+    outputs[XOR_OUTPUT].setVoltage(*xorOut);
+    outputs[PWM_OUTPUT].setVoltage(*pwmOut);
+    outputs[RUNG_OUTPUT].setVoltage(*rungOut);
   }
 };
 
