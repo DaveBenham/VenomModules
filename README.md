@@ -80,7 +80,85 @@ Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for 
 
 ## BENJOLIN OSCILLATOR
 ![Benjolin Oscillator module image](doc/BenjolinOsc.png)  
-A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. Patch in a resonant state variable filter, and you have a complete functional Benjolin.
+A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. Connect a resonant state variable filter, and you have a complete functional Benjolin.
+
+The module is arranged in three vertical sections: OSC1, OSC2, and RUNGLER.
+
+The oscillators are digital with triangle and pulse outputs, and a frequency range of approximately 30 seconds / cycle, up to approximately 7.6 kHz. The oscillators are intentionally close to, but not exactly 1V/Octave.
+
+## OSC1 (Oscillator 1)
+### FREQ1 (Oscillator 1 Frequency) knob
+Sets the base frequency of oscillator one. Full counterclockwise is roughly 30 seconds per cycle. The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory until about noon (the default) where it begins to transition to audio rates at 20Hz. Fully clockwise is around 7.6 kHz. The oscillator can be modulated above the knob maximum.
+
+### RUNG1 (Rungler 1) knob
+Controls how much the rungler signal modulates oscillator 1 frequency. The knob is a bipolar attenuverter ranging from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
+
+### CV1 (Control Voltage 1) knob and input
+Bipolar input with a bipolar attenuverter to modulate oscillator 1 frequency. The attenuverter ranges from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
+
+The CV1 input is normalled to the Oscillator 2 triangle output.
+
+### TRI1 (Triangle 1) output
+Triangle waveform bipolar output for oscillator one, ranging from -5 to 5 volts.
+
+### PULSE1 output
+Pulse waveform bipolar output for oscillator one, ranging from -5 to 5 volts.
+
+## OSC2 (Oscillator 2)
+### FREQ2 (Oscillator 2 Frequency) knob
+Sets the base frequency of oscillator two. Full counterclockwise is roughly 30 seconds per cycle. The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory until about noon (the default) where it begins to transition to audio rates at 20Hz. Fully clockwise is around 7.6 kHz. The oscillator can be modulated above the knob maximum.
+
+### RUNG2 (Rungler 2) knob
+Controls how much the rungler signal modulates oscillator 2 frequency. The knob is a bipolar attenuverter ranging from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
+
+### CV2 (Control Voltage 2) knob and input
+Bipolar input with a bipolar attenuverter to modulate oscillator 2 frequency. The attenuverter ranges from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
+
+The CV2 input is normalled to the Oscillator 1 triangle output.
+
+### TRI2 (Triangle 2) output
+Triangle waveform bipolar output for oscillator two, ranging from -5 to 5 volts.
+
+### PULSE2 output
+Pulse waveform bipolar output for oscillator two, ranging from -5 to 5 volts.
+
+## RUNGLER
+The rungler consists of a sample and hold 8 step arithmetic shift register (ASR) driven by a clock and a data input along with comparators, logic gates, and a digital to analog converter. The rungler produces multiple output signals - XOR, PWM and Rungler. When a bit falls off the shift register, it is XORed with the data input and fed back into position one of the ASR. Depending on the incoming data, the rungler output may be chaotic, or it may have a readily recognized pattern.
+
+The rungler data input is always derived from the oscillator 1 triangle output. The clock input defaults to the oscillator 2 pulse output, but may be overridden at the clock input.
+
+### PATTERN knob
+Controls whether the rungler repeats a pattern or is chaotic. When fully anticlockwise, the rungler produces an 8 step pattern. When fully clockwise it produces a 16 step pattern, with the first 8 steps being a mirror image of the second 8 steps. At noon the rungler output is chaotic.
+
+Below is a technical discussion of how it works.
+
+The Pattern knob range is from -1 to 1, with a default of 0 at noon. The raw internal triangle signal also ranges from -1 to 1. If the Pattern value is greater than the instantaneous incoming triangle value, then the rungler input is high (1), else the input is low (0). The input is XORed with the recycled ASR bit. So a high input inverts the recycled bit, and a low input preserves the recycled bit.
+
+When the Pattern knob is fully counterclockwise, the input is guaranteed to be zero, the recycled bit is preserved, and an 8 step pattern is established.
+
+When the Pattern knob is fully clockwise, the input is guaranteed to be 1, the recycled bit is inverted, and a 16 step pattern is established.
+
+At noon there is a roughly 50-50 chance of 0 or 1, so the rungler output is at its most chaotic, typically with no recognizeable pattern.
+
+### CHAOS button and input
+If enabled, the Pattern knob is ignored, and the rungler output is always chaotic. Each press of the button toggles the state of the chaos button. A leading edge of a trigger at the input will also toggle the button state.
+
+The Chaos button works by converting the 8 step ASR into a 128 step linear ASR, and by ignoring the Pattern button and always comparing against 0, so there is always a 50% chance of inversion of the recycled bit.
+
+If Chaos is off, then the rungler may fall into a pattern over time, even if the Pattern knob is at noon. The Chaos button is useful for re-introducing chaos into the output.
+
+### DOUBLE button and input
+If enabled, the Rungler is triggered at double the rate. Normally the Rungler is triggered by the leading edge of a clock gate. When in Double mode the Rungler is triggered by both the leading and trailing edges of a clock gate.
+
+Each press of the Double button toggles the state of the button. A leading edge of a trigger at the input will also toggle the button state.
+
+### CLOCK input
+
+### XOR output
+
+### PWM output
+
+### RUNG (Rungler) output
 
 [Return to Table Of Contents](#venom)
 
