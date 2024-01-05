@@ -82,13 +82,19 @@ Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for 
 ![Benjolin Oscillator module image](doc/BenjolinOsc.png)  
 A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. Connect a resonant state variable filter, and you have a complete functional Benjolin.
 
+The Benjolin was invented by Rob Horkijk in 2009. It is a non-traditional / experimental electronic musical instrument that uses a small number of simple circuits and a minimal number of knobs to create an astonishing range of sounds and patterns. Extensive use of feedback and cross-modulation makes the Benjolin a chaotic sound source, with the ability to create stable patterns as well.
+
+I would like to create a complete Benjolin module, but I do not have the kowledge to create a resonant filter worthy of the Benjolin. So this module only includes the two oscillators and the Rungler. A separate filter module can be used in a patch to create a fully functioning Benjolin.
+
+There have been many variations of the Rungler. This module is based on the Eurorack version 2 of the Benjolin created by After Later Audio in collaboration with Rob Hordijk.
+
 The module is arranged in three vertical sections: OSC1, OSC2, and RUNGLER.
 
-The oscillators are digital with triangle and pulse outputs, and a frequency range of approximately 30 seconds / cycle, up to approximately 7.6 kHz. The oscillators are intentionally close to, but not exactly 1V/Octave.
+The oscillators are digital with triangle and pulse outputs. They are intentionally not exactly 1V/Octave.
 
 ### OSC1 (Oscillator 1)
-#### FREQ1 (Oscillator 1 Frequency) knob
-Sets the base frequency of oscillator one. Full counterclockwise is roughly 30 seconds per cycle. The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory until about noon (the default) where it begins to transition to audio rates at 20Hz. Fully clockwise is around 7.6 kHz. The oscillator can be modulated above the knob maximum.
+#### FREQ1 knob
+Sets the base frequency of oscillator one. Fully counterclockwise is roughly 0.03 Hz (30 seconds per cycle). The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory up through noon at about 15 Hz. A bit above that and it transitions to audio rates, with a maximum fully clockwise frequency of around 7.8 kHz. The oscillator can be modulated above the knob maximum.
 
 #### RUNG1 (Rungler 1) knob
 Controls how much the rungler signal modulates oscillator 1 frequency. The knob is a bipolar attenuverter ranging from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
@@ -106,7 +112,7 @@ Pulse waveform bipolar output for oscillator one, ranging from -5 to 5 volts.
 
 ### OSC2 (Oscillator 2)
 #### FREQ2 (Oscillator 2 Frequency) knob
-Sets the base frequency of oscillator two. Full counterclockwise is roughly 30 seconds per cycle. The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory until about noon (the default) where it begins to transition to audio rates at 20Hz. Fully clockwise is around 7.6 kHz. The oscillator can be modulated above the knob maximum.
+Sets the base frequency of oscillator two. Fully counterclockwise is roughly 0.03 Hz (30 seconds per cycle). The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory up through noon at about 15 Hz. A bit above that and it transitions to audio rates, with a maximum fully clockwise frequency of around 7.8 kHz. The oscillator can be modulated above the knob maximum.
 
 #### RUNG2 (Rungler 2) knob
 Controls how much the rungler signal modulates oscillator 2 frequency. The knob is a bipolar attenuverter ranging from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
@@ -122,13 +128,23 @@ Triangle waveform bipolar output for oscillator two, ranging from -5 to 5 volts.
 #### PULSE2 output
 Pulse waveform bipolar output for oscillator two, ranging from -5 to 5 volts.
 
-### RUNGLER
-The rungler consists of a sample and hold 8 step arithmetic shift register (ASR) driven by a clock and a data input along with comparators, logic gates, and a digital to analog converter. The rungler produces multiple output signals - XOR, PWM and Rungler. When a bit falls off the shift register, it is XORed with the data input and fed back into position one of the ASR. Depending on the incoming data, the rungler output may be chaotic, or it may have a readily recognized pattern.
+### OVERSAMPLE switch
+This small color coded switch controls how much oversampling is applied to reduce aliasing artifacts in the outputs.- Off (gray)
+- x2 (yellow)
+- x4 (green)
+- x8 (light blue - default)
+- x16 (dark blue)
+- x32 (purple)
 
-The rungler data input is always derived from the oscillator 1 triangle output. The clock input defaults to the oscillator 2 pulse output, but may be overridden at the clock input.
+Aliasing might not be noticeable with chaotic and/or low frequency outputs. But the aliasing can become painfully obvious when producing high frequency coherant output unless oversampling is used. But oversampling is rather CPU intensive, so you want to use the minimum amount that gives good results. An oversample value of x8 uses reasonable CPU, and provides clean output in all but the most extreme cases.
+
+Due to float arithmetic limitations, the oscillators would stall at the lowest frequency if the VCV sample rate is set above 48 kHz and high oversample rates are used. To compensate, the maximum allowed oversampling is reduced as the VCV sample rate increases. This enables the oscillators to cover their full range regardless what VCV sample rate is used.
+
+### RUNGLER
+The Rungler consists of a sample and hold 8 step arithmetic shift register (ASR) driven by a clock and a data input, along with comparators, logic gates, and a digital to analog converter. The rungler data input is always derived from the oscillator 1 triangle output. The clock input defaults to the oscillator 2 pulse output, but may be overridden at the clock input. When a bit shifts out of the shift register, it is XORed with the data input and fed back into position one of the ASR. Depending on the incoming data, the rungler output may be chaotic, or it may have a readily recognized pattern.  The rungler produces multiple output signals.
 
 #### PATTERN knob
-Controls whether the rungler repeats a pattern or is chaotic. When fully anticlockwise, the rungler produces an 8 step pattern. When fully clockwise it produces a 16 step pattern, with the first 8 steps being a mirror image of the second 8 steps. At noon the rungler output is chaotic.
+Controls whether the Rungler repeats a pattern or is chaotic. When fully anticlockwise, the Rungler produces an 8 step pattern. When fully clockwise it produces a 16 step pattern, with the first 8 steps being a mirror image of the second 8 steps. At noon the rungler output is chaotic.
 
 Below is a technical discussion of how it works.
 
@@ -154,11 +170,28 @@ Each press of the Double button toggles the state of the button. A leading edge 
 
 #### CLOCK input
 
+This is the input that triggers the Rungler. It expects a bipolar clock input, with a high state detected above +1V, and a low state below -1V.
+
+The Clock input is normaled to the Oscillator 2 pulse output.
+
 #### XOR output
+
+This is simply the first bit of the Rungler ASR, scaled and offset to be bipolar +/-5V.
 
 #### PWM output
 
+Although this is under the Rungler section, it actually has nothing to do with the Rungler. This bipolar +/-5V output is produced by a comparator that outputs 5V when the TRI2 signal is greater than TRI1, and -5V otherwise. This is the signal that traditionally gets sent to the Benjolin filter input. It was called PWM by Rob Hordijk because it is a series of variable width pulses.
+
 #### RUNG (Rungler) output
+
+This output is also bipolar varying between +/-5V. It is a stepped voltage signal with 8 possible values created by the digital to analog converter in the Rungler.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are constant monophonic 0V when the Benjolin Oscillator is bypassed.
 
 [Return to Table Of Contents](#venom)
 
