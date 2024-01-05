@@ -80,13 +80,13 @@ Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for 
 
 ## BENJOLIN OSCILLATOR
 ![Benjolin Oscillator module image](doc/BenjolinOsc.png)  
-A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. Connect a resonant state variable filter, and you have a complete functional Benjolin.
+A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. It produces 7 outputs: 4 basic wave shapes (discounting FM), two varying width pulse outputs, and a stepped voltage output similar to a random sample & hold. Frequency range is very wide, from slow LFO rates to high audio rates. Connect a resonant filter with excellent ping characteristics, and you have a complete functional Benjolin.
 
 The Benjolin was invented by Rob Horkijk in 2009. It is a non-traditional / experimental electronic musical instrument that uses a small number of simple circuits and a minimal number of knobs to create an astonishing range of sounds and patterns. Extensive use of feedback and cross-modulation makes the Benjolin a chaotic sound source, with the ability to create stable patterns as well.
 
-I would like to create a complete Benjolin module, but I do not have the kowledge to create a resonant filter worthy of the Benjolin. So this module only includes the two oscillators and the Rungler. A separate filter module can be used in a patch to create a fully functioning Benjolin.
+There have been many variations of the Benjolin, but the basic functional architecture is always the same - two oscillators, a specialized shift register construct called the Rungler, and a resonant state variable filter. This module is based on the Eurorack version 2 of the Benjolin created by After Later Audio in collaboration with Rob Hordijk.
 
-There have been many variations of the Rungler. This module is based on the Eurorack version 2 of the Benjolin created by After Later Audio in collaboration with Rob Hordijk.
+Some day I would like to create a complete Benjolin module, but I do not yet have the kowledge to program a resonant filter worthy of the Benjolin. So this module only includes the two oscillators and the Rungler. A complete fully functioning Benjolin patch can be created by pairing the Benjolin Oscillator with a resonant filter module.
 
 The module is arranged in three vertical sections: OSC1, OSC2, and RUNGLER.
 
@@ -112,7 +112,7 @@ Pulse waveform bipolar output for oscillator one, ranging from -5 to 5 volts.
 
 ### OSC2 (Oscillator 2)
 #### FREQ2 (Oscillator 2 Frequency) knob
-Sets the base frequency of oscillator two. Fully counterclockwise is roughly 0.03 Hz (30 seconds per cycle). The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory up through noon at about 15 Hz. A bit above that and it transitions to audio rates, with a maximum fully clockwise frequency of around 7.8 kHz. The oscillator can be modulated above the knob maximum.
+Sets the base frequency of oscillator two. Fully counterclockwise is roughly 0.03 Hz (around 30 seconds per cycle). The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory up through noon at about 15 Hz. A bit above that and it transitions to audio rates, with a maximum fully clockwise frequency of around 7.8 kHz. The oscillator can be modulated above the knob maximum.
 
 #### RUNG2 (Rungler 2) knob
 Controls how much the rungler signal modulates oscillator 2 frequency. The knob is a bipolar attenuverter ranging from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
@@ -136,12 +136,12 @@ This small color coded switch controls how much oversampling is applied to reduc
 - x16 (dark blue)
 - x32 (purple)
 
-Aliasing might not be noticeable with chaotic and/or low frequency outputs. But the aliasing can become painfully obvious when producing high frequency coherant output unless oversampling is used. But oversampling is rather CPU intensive, so you want to use the minimum amount that gives good results. An oversample value of x8 uses reasonable CPU, and provides clean output in all but the most extreme cases.
+Aliasing might not be noticeable with chaotic and/or low frequency outputs. But the aliasing can become painfully obvious when producing high frequency coherant output unless oversampling is used. But oversampling is rather CPU intensive, so you want to use the minimum amount that gives good results. An oversample value of x8 uses reasonable CPU with VCV running at 48 kHz, and provides clean output in all but the most extreme cases.
 
 Due to float arithmetic limitations, the oscillators would stall at the lowest frequency if the VCV sample rate is set above 48 kHz and high oversample rates are used. To compensate, the maximum allowed oversampling is reduced as the VCV sample rate increases. This enables the oscillators to cover their full range regardless what VCV sample rate is used.
 
 ### RUNGLER
-The Rungler consists of a sample and hold 8 step arithmetic shift register (ASR) driven by a clock and a data input, along with comparators, logic gates, and a digital to analog converter. The rungler data input is always derived from the oscillator 1 triangle output. The clock input defaults to the oscillator 2 pulse output, but may be overridden at the clock input. When a bit shifts out of the shift register, it is XORed with the data input and fed back into position one of the ASR. Depending on the incoming data, the rungler output may be chaotic, or it may have a readily recognized pattern.  The rungler produces multiple output signals.
+The Rungler consists of a sample and hold 8 step arithmetic shift register (ASR) driven by a clock and a data input, along with comparators, logic gates, and a digital to analog converter. The rungler data input is always derived from the oscillator 1 triangle output. The clock input defaults to the oscillator 2 pulse output, but may be overridden at the clock input. When a bit shifts out of the shift register, it is XORed with the data input and fed back into the low bit of the ASR. The Rungler produces multiple output signals. Depending on configuration and the incoming data, the rungler output may be chaotic, or it may have a readily recognized pattern.
 
 #### PATTERN knob
 Controls whether the Rungler repeats a pattern or is chaotic. When fully anticlockwise, the Rungler produces an 8 step pattern. When fully clockwise it produces a 16 step pattern, with the first 8 steps being a mirror image of the second 8 steps. At noon the rungler output is chaotic.
@@ -157,7 +157,7 @@ When the Pattern knob is fully clockwise, the input is guaranteed to be 1, the r
 At noon there is a roughly 50-50 chance of 0 or 1, so the rungler output is at its most chaotic, typically with no recognizeable pattern.
 
 #### CHAOS button and input
-If enabled, the Pattern knob is ignored, and the rungler output is always chaotic. Each press of the button toggles the state of the chaos button. A leading edge of a trigger at the input will also toggle the button state.
+If enabled, the Pattern knob is ignored, and the rungler output is always chaotic. Each press of the button toggles the state of the chaos button. The leading edge of a trigger at the input will also toggle the button state.
 
 The Chaos button works by converting the 8 step ASR into a 128 step linear ASR, and by ignoring the Pattern button and always comparing against 0, so there is always a 50% chance of inversion of the recycled bit.
 
@@ -166,7 +166,7 @@ If Chaos is off, then the rungler may fall into a pattern over time, even if the
 #### DOUBLE button and input
 If enabled, the Rungler is triggered at double the rate. Normally the Rungler is triggered by the leading edge of a clock gate. When in Double mode the Rungler is triggered by both the leading and trailing edges of a clock gate.
 
-Each press of the Double button toggles the state of the button. A leading edge of a trigger at the input will also toggle the button state.
+Each press of the Double button toggles the state of the button. The leading edge of a trigger at the input will also toggle the button state.
 
 #### CLOCK input
 
@@ -180,7 +180,7 @@ This is simply the first bit of the Rungler ASR, scaled and offset to be bipolar
 
 #### PWM output
 
-Although this is under the Rungler section, it actually has nothing to do with the Rungler. This bipolar +/-5V output is produced by a comparator that outputs 5V when the TRI2 signal is greater than TRI1, and -5V otherwise. This is the signal that traditionally gets sent to the Benjolin filter input. It was called PWM by Rob Hordijk because it is a series of variable width pulses.
+Although this is under the Rungler section, it actually has nothing to do with the Rungler. This bipolar +/-5V output is produced by a comparator that outputs 5V when the TRI2 signal is greater than TRI1, and -5V otherwise. This is the signal that traditionally gets sent to the Benjolin filter input. It was called PWM by Rob Hordijk because it produces a series of variable width pulses, remaniscent of a pulse wave with pulse width modulation.
 
 #### RUNG (Rungler) output
 
@@ -257,6 +257,9 @@ The following factory presets are available that emulate the four configurations
 - Latched Bernoulli Gate - Sends constant 10V to either A or B
 - Latched Toggled Bernoulli Gate - Toggles constant 10V between A and B
 - Toggled Bernoulli Gate - Toggles 10V Schmitt trigger gate between A and B
+
+### Patching a Complete Benjolin
+A fully functioning Benjolin can be created by pairing the Benjolin Oscillator with a resonant filter. I find the Vult Unstabile filter gives exceptional results. For a minimal setup, patch the Benjolin Oscillator PWM output to the filter input, and the Rungler output to the filter cutoff. Ideally the resonance and cutoff should be constrained such that the filter does not self resonate unless provided feedback from the band pass output. So a more elaborate patch may be desired. Another thing to consider is a crossfade module to allow mixing in a variable amount of external (or self patched) audio input with the PWM input. Also good to have is a mixer for the cutoff input that combines the Rungler signal with external (or self patched) CV input.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
