@@ -80,7 +80,7 @@ Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for 
 
 ## BENJOLIN OSCILLATOR
 ![Benjolin Oscillator module image](doc/BenjolinOsc.png)  
-A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. It produces 7 outputs: 4 basic wave shapes (discounting FM), two varying width pulse outputs, and a stepped voltage output similar to a random sample & hold. Frequency range is very wide, from slow LFO rates to high audio rates. Connect a resonant filter with excellent ping characteristics, and you have a complete functional Benjolin.
+A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. It produces 7 outputs: two pairs of triangle and pulse waves with exponential FM, two varying width pulse outputs, and a stepped voltage output similar to a random sample & hold. Frequency range is very wide, from slow LFO rates to high audio rates. Connect a resonant filter with excellent ping characteristics, and you have a complete functional Benjolin.
 
 The Benjolin was invented by Rob Horkijk in 2009. It is a non-traditional / experimental electronic musical instrument that uses a small number of simple circuits and a minimal number of knobs to create an astonishing range of sounds and patterns. Extensive use of feedback and cross-modulation makes the Benjolin a chaotic sound source, with the ability to create stable patterns as well.
 
@@ -129,7 +129,8 @@ Triangle waveform bipolar output for oscillator two, ranging from -5 to 5 volts.
 Pulse waveform bipolar output for oscillator two, ranging from -5 to 5 volts.
 
 ### OVERSAMPLE switch
-This small color coded switch controls how much oversampling is applied to reduce aliasing artifacts in the outputs.- Off (gray)
+This small color coded switch controls how much oversampling is applied to reduce aliasing artifacts in the outputs.
+- Off (gray)
 - x2 (yellow)
 - x4 (green)
 - x8 (light blue - default)
@@ -185,6 +186,11 @@ Although this is under the Rungler section, it actually has nothing to do with t
 #### RUNG (Rungler) output
 
 This output is also bipolar varying between +/-5V. It is a stepped voltage signal with 8 possible values created by the digital to analog converter in the Rungler.
+
+### Patching a Complete Benjolin
+A minimal complete Benjolin can be patched simply by pairing the Benjolin Oscillator with a resonant filter with good ping characteristics. I find the Vult Stabile filter works extremely well. Simply patch the PWM output to the filter input, and the Rungler output to the filter cuttoff input.
+
+A Benjolin should not self oscillate unless given feedback from the filter band pass output. So ideally the cutoff frequency and resonance amount should be constrained so as to prevent self oscillation. Other things to consider are a crossfade module to allow a mix of PWM and external CV (or self patched CV) as input to the filter. Also a mixer would be good to allow a mix of external (or self patched) CV and Rungler input to the Cutoff frequency.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
