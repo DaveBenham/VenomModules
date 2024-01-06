@@ -88,20 +88,33 @@ struct BenjolinOsc : VenomModule {
 
   void onSampleRateChange() override {
     float rate = APP->engine->getSampleRate();
+    std::vector< std::string > labels;
     int maxOver;
-    if (rate>384000.f)
+    if (rate>384000.f) {
       maxOver = 1;
-    else if (rate>192000.f)
+      labels = {"Off", "x2"};
+    }
+    else if (rate>192000.f) {
       maxOver = 2;
-    else if (rate>96000.f)
+      labels = {"Off", "x2", "x4"};
+    }
+    else if (rate>96000.f) {
       maxOver = 3;
-    else if (rate>48000.f)
+      labels = {"Off", "x2", "x4", "x8"};
+    }
+    else if (rate>48000.f) {
       maxOver = 4;
-    else
+      labels = {"Off", "x2", "x4", "x8", "x16"};
+    }
+    else {
       maxOver = 5;
+      labels = {"Off", "x2", "x4", "x8", "x16", "x32"};
+    }
     if (params[OVER_PARAM].getValue()>maxOver)
       params[OVER_PARAM].setValue(maxOver);
-    paramQuantities[OVER_PARAM]->maxValue = maxOver;
+    SwitchQuantity *switchQuant = static_cast<SwitchQuantity*>(paramQuantities[OVER_PARAM]);
+    switchQuant->maxValue = maxOver;
+    switchQuant->labels = labels;
   }
 
   void process(const ProcessArgs& args) override {
