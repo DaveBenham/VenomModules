@@ -142,14 +142,14 @@ Aliasing might not be noticeable with chaotic and/or low frequency outputs. But 
 Due to float arithmetic limitations, the oscillators would stall at the lowest frequency if the VCV sample rate is set above 48 kHz and high oversample rates are used. To compensate, the maximum allowed oversampling is reduced as the VCV sample rate increases. This enables the oscillators to cover their full range regardless what VCV sample rate is used.
 
 ### RUNGLER
-The Rungler consists of an eight step arithmetic shift register (ASR) driven by a clock and a data input, along with comparators, logic gates, and a digital to analog converter. The rungler data input is always derived from the oscillator 1 triangle output. The clock input defaults to the oscillator 2 pulse output, but may be overridden at the clock input. When a bit shifts out of the shift register, it is XORed with the data input and fed back into the low bit of the ASR. The Rungler produces multiple output signals. Depending on configuration and the incoming data, the rungler output may be chaotic, or it may have a readily recognized pattern.
+The Rungler consists of an eight step shift register driven by a clock and a data input, along with comparators, logic gates, and a digital to analog converter. The rungler data input is always derived from the oscillator 1 triangle output. The clock input defaults to the oscillator 2 pulse output, but may be overridden at the clock input. When a bit shifts out of the shift register, it is XORed with the data input and fed back into the low bit of the ASR. The Rungler produces multiple output signals. Depending on configuration and the incoming data, the rungler output may be chaotic, or it may have a readily recognized pattern.
 
 #### PATTERN knob
 Controls whether the Rungler repeats a pattern or is chaotic. When fully anticlockwise, the Rungler produces an 8 step pattern. When fully clockwise it produces a 16 step pattern, with the first 8 steps being a mirror image of the second 8 steps. At noon the rungler output is chaotic.
 
 Below is a technical discussion of how it works.
 
-The Pattern knob range is from -1 to 1, with a default of 0 at noon. The raw internal triangle signal also ranges from -1 to 1. If the Pattern value is greater than the instantaneous incoming triangle value, then the rungler input is high (1), else the input is low (0). The input is XORed with the recycled ASR bit. So a high input inverts the recycled bit, and a low input preserves the recycled bit.
+The Pattern knob range is from -1 to 1, with a default of 0 at noon. The raw internal triangle signal also ranges from -1 to 1. If the Pattern value is greater than the instantaneous incoming triangle value, then the rungler input is high (1), else the input is low (0). The input is XORed with the recycled shift register bit. So a high input inverts the recycled bit, and a low input preserves the recycled bit.
 
 When the Pattern knob is fully counterclockwise, the input is guaranteed to be zero, the recycled bit is preserved, and an 8 step pattern is established.
 
@@ -160,7 +160,7 @@ At noon there is a roughly 50-50 chance of 0 or 1, so the rungler output is at i
 #### CHAOS button and input
 If enabled, the Pattern knob is ignored, and the rungler output is always chaotic. Each press of the button toggles the state of the chaos button. The leading edge of a trigger at the input will also toggle the button state.
 
-The Chaos button works by converting the 8 step ASR into a 128 step linear ASR, and by ignoring the Pattern button and always comparing against 0, so there is always a 50% chance of inversion of the recycled bit.
+The Chaos button works by converting the 8 step shift register into a 127 step linear feedback shift register, and by ignoring the Pattern button and always comparing against 0, so there is always a 50% chance of inversion of the recycled bit.
 
 If Chaos is off, then the rungler may fall into a pattern over time, even if the Pattern knob is at noon. The Chaos button is useful for re-introducing chaos into the output.
 
@@ -177,7 +177,7 @@ The Clock input is normaled to the Oscillator 2 pulse output.
 
 #### XOR output
 
-This is simply the first bit of the Rungler ASR, scaled and offset to be bipolar +/-5V.
+This is simply the first bit of the Rungler shift register, scaled and offset to be bipolar +/-5V.
 
 #### PWM output
 
