@@ -15,10 +15,10 @@ struct LinearBeatsExpander : VenomModule {
     venomConfig(EXP_PARAMS_LEN, EXP_INPUTS_LEN, EXP_OUTPUTS_LEN, EXP_LIGHTS_LEN);
     for (int i=0; i<9; i++) {
       configInput(MUTE_INPUT+i, label[i]+" mute CV");
-      configSwitch(MUTE_PARAM+i, 0.f, 1.f, 0.f, label[i]+" mute", {"Unmuted", "Muted"});
+      configSwitch<FixedSwitchQuantity>(MUTE_PARAM+i, 0.f, 1.f, 0.f, label[i]+" mute", {"Unmuted", "Muted"});
     }
     configInput(BYPASS_INPUT, "Disable linear beats CV");
-    configSwitch(BYPASS_PARAM, 0.f, 1.f, 0.f, "Linear beats", {"Enabled", "Disabled"});
+    configSwitch<FixedSwitchQuantity>(BYPASS_PARAM, 0.f, 1.f, 0.f, "Linear beats", {"Enabled", "Disabled"});
     configLight(LEFT_LIGHT, "Left connection indicator");
     configLight(RIGHT_LIGHT, "Right connection indicator");
   }

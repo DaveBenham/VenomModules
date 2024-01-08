@@ -53,10 +53,10 @@ struct Reformation : VenomModule {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(DRIVE_PARAM, 1.f, 10.f, 2.f, "Drive");
     configParam(LEVEL_PARAM, 0.f, 1.f, 0.5f, "Level");
-    configSwitch(IN_PARAM, 0.f, 1.f, 0.f, "Input polarity", {"Unipolar", "Bipolar"});
-    configSwitch(OUT_PARAM, 0.f, 1.f, 0.f, "Output polarity", {"Unipolar", "Bipolar"});
-    configSwitch(CLIP_PARAM, 0.f, 2.f, 1.f, "Clipping", {"Off", "Hard CV clipping", "Soft audio clipping"});
-    configSwitch(OVER_PARAM, 0.f, 2.f, 0.f, "Oversampling", {"Off", "x4", "x8"});
+    configSwitch<FixedSwitchQuantity>(IN_PARAM, 0.f, 1.f, 0.f, "Input polarity", {"Unipolar", "Bipolar"});
+    configSwitch<FixedSwitchQuantity>(OUT_PARAM, 0.f, 1.f, 0.f, "Output polarity", {"Unipolar", "Bipolar"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 2.f, 1.f, "Clipping", {"Off", "Hard CV clipping", "Soft audio clipping"});
+    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 2.f, 0.f, "Oversampling", {"Off", "x4", "x8"});
     for (int i=0; i<MAP_COUNT; i++) {
       configParam(MAP_PARAM+i, 0.f, 1.f, mapDefault[i], mapLabel[i] + " way point");
       lights[MAP_LIGHT+i].setBrightness(1.f);
