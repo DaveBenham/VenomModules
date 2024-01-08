@@ -160,7 +160,7 @@ At noon there is a roughly 50-50 chance of 0 or 1, so the rungler output is at i
 #### CHAOS button and input
 If enabled, the Pattern knob is ignored, and the rungler output is always chaotic. Each press of the button toggles the state of the chaos button. The leading edge of a trigger at the input will also toggle the button state.
 
-The Chaos button works by converting the 8 step shift register into a 127 step linear feedback shift register, and by ignoring the Pattern button and always comparing against 0, so there is always a 50% chance of inversion of the recycled bit.
+The Chaos button works by converting the 8 step shift register into a 127 step linear feedback shift register, and by ignoring the Pattern knob and always comparing against 0, so there is always a 50% chance of inversion of the recycled bit.
 
 If Chaos is off, then the rungler may fall into a pattern over time, even if the Pattern knob is at noon. The Chaos button is useful for re-introducing chaos into the output.
 
