@@ -264,10 +264,6 @@ struct Logic : VenomModule {
         }
         outputs[GATE_OUTPUT+c].setChannels(polyCount[c]);
       }
-      outputs[GATE_OUTPUT+7].setVoltage(lowThresh);
-      outputs[GATE_OUTPUT+8].setVoltage(highThresh);
-      outputs[GATE_OUTPUT+7].setChannels(1);
-      outputs[GATE_OUTPUT+8].setChannels(1);
     }
     for (int c=endChannel; c<CHANNEL_COUNT-2; c++) {
       outputs[GATE_OUTPUT+c].setVoltage(0.f);
