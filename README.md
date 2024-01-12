@@ -264,9 +264,6 @@ The following factory presets are available that emulate the four configurations
 - Latched Toggled Bernoulli Gate - Toggles constant 10V between A and B
 - Toggled Bernoulli Gate - Toggles 10V Schmitt trigger gate between A and B
 
-### Patching a Complete Benjolin
-A fully functioning Benjolin can be created by pairing the Benjolin Oscillator with a resonant filter. I find the Vult Unstabile filter gives exceptional results. For a minimal setup, patch the Benjolin Oscillator PWM output to the filter input, and the Rungler output to the filter cutoff. Ideally the resonance and cutoff should be constrained such that the filter does not self resonate unless provided feedback from the band pass output. So a more elaborate patch may be desired. Another thing to consider is a crossfade module to allow mixing in a variable amount of external (or self patched) audio input with the PWM input. Also good to have is a mixer for the cutoff input that combines the Rungler signal with external (or self patched) CV input.
-
 ### Standard Venom Context Menus
 [Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
