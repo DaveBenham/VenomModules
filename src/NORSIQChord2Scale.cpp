@@ -82,12 +82,12 @@ struct NORSIQChord2ScaleWidget : VenomWidget {
     setModule(module);
     setVenomPanel("NORSIQChord2Scale");
     addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(22.5f, 85.f), module, NORSIQChord2Scale::FOLD_PARAM, NORSIQChord2Scale::FOLD_LIGHT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f,125.f), module, NORSIQChord2Scale::TRIG_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,165.f), module, NORSIQChord2Scale::CHORD_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,215.f), module, NORSIQChord2Scale::TRIG_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,255.f), module, NORSIQChord2Scale::ROOT_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(22.5f,295.f), module, NORSIQChord2Scale::LENGTH_OUTPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,335.f), module, NORSIQChord2Scale::INTERVALS_OUTPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f,125.f), module, NORSIQChord2Scale::TRIG_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f,165.f), module, NORSIQChord2Scale::CHORD_INPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(22.5f,215.f), module, NORSIQChord2Scale::TRIG_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(22.5f,255.f), module, NORSIQChord2Scale::ROOT_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(22.5f,295.f), module, NORSIQChord2Scale::LENGTH_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.5f,335.f), module, NORSIQChord2Scale::INTERVALS_OUTPUT));
   }
 
   void step() override {

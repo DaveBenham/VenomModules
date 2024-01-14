@@ -40,11 +40,11 @@ struct MixMuteWidget : MixExpanderWidget {
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 103.775f), module, MixModule::MUTE_PARAM+2, MixModule::MUTE_LIGHT+2));
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 134.514f), module, MixModule::MUTE_PARAM+3, MixModule::MUTE_LIGHT+3));
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 168.254f), module, MixModule::MUTE_MIX_PARAM, MixModule::MUTE_MIX_LIGHT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 209.778f), module, MixModule::MUTE_INPUT+0));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 241.320f), module, MixModule::MUTE_INPUT+1));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 273.239f), module, MixModule::MUTE_INPUT+2));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 305.158f), module, MixModule::MUTE_INPUT+3));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 340.434f), module, MixModule::MUTE_MIX_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 209.778f), module, MixModule::MUTE_INPUT+0));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 241.320f), module, MixModule::MUTE_INPUT+1));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 273.239f), module, MixModule::MUTE_INPUT+2));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 305.158f), module, MixModule::MUTE_INPUT+3));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 340.434f), module, MixModule::MUTE_MIX_INPUT));
   }
 
   void step() override {

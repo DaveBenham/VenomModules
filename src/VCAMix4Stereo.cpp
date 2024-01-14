@@ -515,11 +515,11 @@ struct VCAMix4StereoWidget : MixBaseWidget {
     setModule(module);
     setVenomPanel("VCAMix4Stereo");
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240, 42.295), module, VCAMix4Stereo::CV_INPUTS+0));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240, 73.035), module, VCAMix4Stereo::CV_INPUTS+1));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240,103.775), module, VCAMix4Stereo::CV_INPUTS+2));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240,134.515), module, VCAMix4Stereo::CV_INPUTS+3));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240,168.254), module, VCAMix4Stereo::MIX_CV_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(51.240, 42.295), module, VCAMix4Stereo::CV_INPUTS+0));
+    addInput(createInputCentered<PolyPort>(Vec(51.240, 73.035), module, VCAMix4Stereo::CV_INPUTS+1));
+    addInput(createInputCentered<PolyPort>(Vec(51.240,103.775), module, VCAMix4Stereo::CV_INPUTS+2));
+    addInput(createInputCentered<PolyPort>(Vec(51.240,134.515), module, VCAMix4Stereo::CV_INPUTS+3));
+    addInput(createInputCentered<PolyPort>(Vec(51.240,168.254), module, VCAMix4Stereo::MIX_CV_INPUT));
 
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(83.582, 42.295), module, VCAMix4Stereo::LEVEL_PARAMS+0));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(83.582, 73.035), module, VCAMix4Stereo::LEVEL_PARAMS+1));
@@ -533,29 +533,29 @@ struct VCAMix4StereoWidget : MixBaseWidget {
     addParam(createLockableParamCentered<ClipSwitch>(Vec(114.282,151.7195), module, VCAMix4Stereo::CLIP_PARAM));
     addParam(createLockableParamCentered<ExcludeSwitch>(Vec(20.718,151.7195), module, VCAMix4Stereo::EXCLUDE_PARAM));
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(20.718,209.400), module, VCAMix4Stereo::LEFT_INPUTS+0));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(20.718,241.320), module, VCAMix4Stereo::LEFT_INPUTS+1));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(20.718,273.240), module, VCAMix4Stereo::LEFT_INPUTS+2));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(20.718,305.160), module, VCAMix4Stereo::LEFT_INPUTS+3));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(20.718,340.434), module, VCAMix4Stereo::LEFT_CHAIN_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(20.718,209.400), module, VCAMix4Stereo::LEFT_INPUTS+0));
+    addInput(createInputCentered<PolyPort>(Vec(20.718,241.320), module, VCAMix4Stereo::LEFT_INPUTS+1));
+    addInput(createInputCentered<PolyPort>(Vec(20.718,273.240), module, VCAMix4Stereo::LEFT_INPUTS+2));
+    addInput(createInputCentered<PolyPort>(Vec(20.718,305.160), module, VCAMix4Stereo::LEFT_INPUTS+3));
+    addInput(createInputCentered<PolyPort>(Vec(20.718,340.434), module, VCAMix4Stereo::LEFT_CHAIN_INPUT));
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240,209.400), module, VCAMix4Stereo::RIGHT_INPUTS+0));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240,241.320), module, VCAMix4Stereo::RIGHT_INPUTS+1));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240,273.240), module, VCAMix4Stereo::RIGHT_INPUTS+2));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240,305.160), module, VCAMix4Stereo::RIGHT_INPUTS+3));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(51.240,340.434), module, VCAMix4Stereo::RIGHT_CHAIN_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(51.240,209.400), module, VCAMix4Stereo::RIGHT_INPUTS+0));
+    addInput(createInputCentered<PolyPort>(Vec(51.240,241.320), module, VCAMix4Stereo::RIGHT_INPUTS+1));
+    addInput(createInputCentered<PolyPort>(Vec(51.240,273.240), module, VCAMix4Stereo::RIGHT_INPUTS+2));
+    addInput(createInputCentered<PolyPort>(Vec(51.240,305.160), module, VCAMix4Stereo::RIGHT_INPUTS+3));
+    addInput(createInputCentered<PolyPort>(Vec(51.240,340.434), module, VCAMix4Stereo::RIGHT_CHAIN_INPUT));
 
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(83.582,209.400), module, VCAMix4Stereo::LEFT_OUTPUTS+0));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(83.582,241.320), module, VCAMix4Stereo::LEFT_OUTPUTS+1));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(83.582,273.240), module, VCAMix4Stereo::LEFT_OUTPUTS+2));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(83.582,305.160), module, VCAMix4Stereo::LEFT_OUTPUTS+3));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(83.582,340.434), module, VCAMix4Stereo::LEFT_MIX_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(83.582,209.400), module, VCAMix4Stereo::LEFT_OUTPUTS+0));
+    addOutput(createOutputCentered<PolyPort>(Vec(83.582,241.320), module, VCAMix4Stereo::LEFT_OUTPUTS+1));
+    addOutput(createOutputCentered<PolyPort>(Vec(83.582,273.240), module, VCAMix4Stereo::LEFT_OUTPUTS+2));
+    addOutput(createOutputCentered<PolyPort>(Vec(83.582,305.160), module, VCAMix4Stereo::LEFT_OUTPUTS+3));
+    addOutput(createOutputCentered<PolyPort>(Vec(83.582,340.434), module, VCAMix4Stereo::LEFT_MIX_OUTPUT));
 
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(114.282,209.400), module, VCAMix4Stereo::RIGHT_OUTPUTS+0));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(114.282,241.320), module, VCAMix4Stereo::RIGHT_OUTPUTS+1));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(114.282,273.240), module, VCAMix4Stereo::RIGHT_OUTPUTS+2));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(114.282,305.160), module, VCAMix4Stereo::RIGHT_OUTPUTS+3));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(114.282,340.434), module, VCAMix4Stereo::RIGHT_MIX_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(114.282,209.400), module, VCAMix4Stereo::RIGHT_OUTPUTS+0));
+    addOutput(createOutputCentered<PolyPort>(Vec(114.282,241.320), module, VCAMix4Stereo::RIGHT_OUTPUTS+1));
+    addOutput(createOutputCentered<PolyPort>(Vec(114.282,273.240), module, VCAMix4Stereo::RIGHT_OUTPUTS+2));
+    addOutput(createOutputCentered<PolyPort>(Vec(114.282,305.160), module, VCAMix4Stereo::RIGHT_OUTPUTS+3));
+    addOutput(createOutputCentered<PolyPort>(Vec(114.282,340.434), module, VCAMix4Stereo::RIGHT_MIX_OUTPUT));
   }
 
 };

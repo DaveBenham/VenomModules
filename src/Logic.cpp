@@ -351,17 +351,17 @@ struct LogicWidget : VenomWidget {
     addParam(createLockableParamCentered<DCSwitch>(Vec(119.33,33.), module, Logic::DC_PARAM));
     
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(35.718,61.5), module, Logic::HIGH_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(66.265,61.5), module, Logic::HIGH_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(66.265,61.5), module, Logic::HIGH_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(98.582,61.5), module, Logic::LOW_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(129.198,61.5), module, Logic::LOW_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(129.198,61.5), module, Logic::LOW_INPUT));
 
     float y = 101.5f;
     for(int i = 0; i < CHANNEL_COUNT; i++, y += 30.0f){
-      addInput(createInputCentered<PolyPJ301MPort>(Vec(20.718,y), module, Logic::A_INPUT+i));
-      addInput(createInputCentered<PolyPJ301MPort>(Vec(51.109,y), module, Logic::B_INPUT+i));
+      addInput(createInputCentered<PolyPort>(Vec(20.718,y), module, Logic::A_INPUT+i));
+      addInput(createInputCentered<PolyPort>(Vec(51.109,y), module, Logic::B_INPUT+i));
       addParam(createParamCentered<RecycleSwitch>(Vec(82.000,y), module, Logic::RECYCLE_PARAM+i));
       addParam(createParamCentered<OpSwitch>(Vec(113.391,y), module, Logic::OP_PARAM+i));
-      addOutput(createOutputCentered<PolyPJ301MPort>(Vec(144.282,y), module, Logic::GATE_OUTPUT+i));
+      addOutput(createOutputCentered<PolyPort>(Vec(144.282,y), module, Logic::GATE_OUTPUT+i));
     }
   }
 

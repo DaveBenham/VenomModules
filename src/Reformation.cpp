@@ -240,14 +240,14 @@ struct ReformationWidget : VenomWidget {
     for (int i=0; i<MAP_COUNT; i++, x+=30.f){
       addParam(createLockableLightParamCentered<VCVLightSliderLockable<YellowLight>>(Vec(x,133.5f), module, Reformation::MAP_PARAM+i, Reformation::MAP_LIGHT+i));
       addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(x, 192.f), module, Reformation::CV1_PARAM+i));
-      addInput(createInputCentered<PolyPJ301MPort>(Vec(x,224.5f), module, Reformation::CV1_INPUT+i));
+      addInput(createInputCentered<PolyPort>(Vec(x,224.5f), module, Reformation::CV1_INPUT+i));
       addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(x, 257.f), module, Reformation::CV2_PARAM+i));
-      addInput(createInputCentered<PolyPJ301MPort>(Vec(x,289.5f), module, Reformation::CV2_INPUT+i));
+      addInput(createInputCentered<PolyPort>(Vec(x,289.5f), module, Reformation::CV2_INPUT+i));
     }
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(33.f,340.5f), module, Reformation::IN_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(66.f,340.5f), module, Reformation::DRIVE_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(99.f,340.5f), module, Reformation::LEVEL_INPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(132.f,340.5f), module, Reformation::OUT_OUTPUT));
+    addInput(createInputCentered<PolyPort>(Vec(33.f,340.5f), module, Reformation::IN_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(66.f,340.5f), module, Reformation::DRIVE_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(99.f,340.5f), module, Reformation::LEVEL_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(132.f,340.5f), module, Reformation::OUT_OUTPUT));
   }
 
 };

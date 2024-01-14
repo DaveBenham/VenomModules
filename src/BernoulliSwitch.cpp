@@ -322,12 +322,12 @@ struct BernoulliSwitchWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.297, 72.75)), module, BernoulliSwitch::SCALE_A_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 72.75)), module, BernoulliSwitch::SCALE_B_PARAM));
 
-    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 87.10)), module, BernoulliSwitch::A_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 87.10)), module, BernoulliSwitch::B_INPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 101.55)), module, BernoulliSwitch::A_OUTPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 101.55)), module, BernoulliSwitch::B_OUTPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 116.0)), module, BernoulliSwitch::TRIG_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 116.0)), module, BernoulliSwitch::PROB_INPUT));
+    addInput(createInputCentered<PolyPort>(mm2px(Vec(7.297, 87.10)), module, BernoulliSwitch::A_INPUT));
+    addInput(createInputCentered<PolyPort>(mm2px(Vec(18.134, 87.10)), module, BernoulliSwitch::B_INPUT));
+    addOutput(createOutputCentered<PolyPort>(mm2px(Vec(7.297, 101.55)), module, BernoulliSwitch::A_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(mm2px(Vec(18.134, 101.55)), module, BernoulliSwitch::B_OUTPUT));
+    addInput(createInputCentered<PolyPort>(mm2px(Vec(7.297, 116.0)), module, BernoulliSwitch::TRIG_INPUT));
+    addInput(createInputCentered<PolyPort>(mm2px(Vec(18.134, 116.0)), module, BernoulliSwitch::PROB_INPUT));
     addParam(createLockableParamCentered<NormalSwitch>(Vec(5.1615,325.3265), module, BernoulliSwitch::NORMAL_PARAM));
 
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(12.7155, 83.9)), module, BernoulliSwitch::POLY_SENSE_ALL_LIGHT));

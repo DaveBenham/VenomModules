@@ -2,7 +2,8 @@
 Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
-[Themes](#themes)  
+[Themes](#themes)
+[Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Acknowledgments](#acknowledgments)  
 
@@ -49,6 +50,13 @@ If you want the default theme to disregard the VCV Rack dark panel setting, then
 The factory default theme is ivory, and the factory default dark theme is coal.
 
 [Return to Table Of Contents](#venom)
+
+## Custom Names
+Nearly every input or output port, and every parameter (module knob, switch, or button etc.) within the Venom plugin has its own context menu option to set a custom name.
+
+If a parameter or port is given a custom name, then an additional option is added to restore the factory default name.
+
+Custom names are saved with the patch and with presets, and restored upon patch or preset load. Custom names are also preserved when duplicating a module.
 
 ## Parameter Locks and Custom Defaults
 Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu options to lock the paramenter as well as set a custom default value. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.

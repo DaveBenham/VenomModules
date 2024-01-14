@@ -81,11 +81,11 @@ struct CloneMergeWidget : VenomWidget {
 
     y+=dy*1.25f;
     for (int i=0; i<8; i++, y+=dy) {
-      addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, CloneMerge::MONO_INPUTS + i));
+      addInput(createInputCentered<MonoPort>(Vec(x,y), module, CloneMerge::MONO_INPUTS + i));
       addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(x+dy*0.5f, y-dy*0.3f), module, CloneMerge::MONO_LIGHTS + i*2));
     }
     y+=dy*0.33f;
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, CloneMerge::POLY_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(x,y), module, CloneMerge::POLY_OUTPUT));
   }
 
 };

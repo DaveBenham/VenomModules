@@ -8,6 +8,7 @@
 
 ### Enhancements
 - Improved discrimination of DC offset removal by lowering cutoff frequency to 2 Hz
+- All Venom parameters and input/output ports have user configurable names (except Rhythm Explorer)
 
 ### Bug Fixes
 - Fixed locked switch context menu

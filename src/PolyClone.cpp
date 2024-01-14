@@ -106,10 +106,10 @@ struct PolyCloneWidget : VenomWidget {
     }
 
     y+=dy;
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(x,y), module, PolyClone::POLY_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(x,y), module, PolyClone::POLY_INPUT));
 
     y+=dy*1.75f;
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, PolyClone::POLY_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(x,y), module, PolyClone::POLY_OUTPUT));
   }
 
 };

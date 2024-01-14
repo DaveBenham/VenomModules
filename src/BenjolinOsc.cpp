@@ -51,12 +51,12 @@ struct BenjolinOsc : VenomModule {
   OversampleFilter_4 upSample, downSampleA, downSampleB;
   dsp::SchmittTrigger clockTrig;
   simd::float_4 osc{0.f,0.f,1.f,1.f}, triMask{1.f,1.f,0.f,0.f}, dir{1.f,1.f,0.f,0.f},
-                in{}, outA, outB{};
+                in{}, outA{}, outB{};
   float *tri1=&osc[0], *tri2=&osc[1], *pul1=&osc[2], *pul2=&osc[3], *dir1=&dir[0], *dir2=&dir[1],
         *tri1Out=&outA[0], *tri2Out=&outA[1], *pul1Out=&outA[2], *pul2Out=&outA[3], 
         *xorOut=&outB[0], *pwmOut=&outB[1], *rungOut=&outB[2],
         *cv1In=&in[0], *cv2In=&in[1], *clockIn=&in[2],
-        xorVal, rung;
+        xorVal=0, rung=0;
   unsigned char asr = 37;
   bool chaosIn=false, dblIn=false;
  
@@ -224,18 +224,18 @@ struct BenjolinOscWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(63.288,202.602), module, BenjolinOsc::CV2_PARAM));
     addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(101.712,202.602), module, BenjolinOsc::CHAOS_PARAM, BenjolinOsc::CHAOS_LIGHT));
     addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(140.135,202.602), module, BenjolinOsc::DOUBLE_PARAM, BenjolinOsc::DOUBLE_LIGHT));
-    addInput(createInputCentered<PJ301MPort>(Vec(24.865,235.665), module, BenjolinOsc::CV1_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(63.288,235.665), module, BenjolinOsc::CV2_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(101.712,235.665), module, BenjolinOsc::CHAOS_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(140.135,235.665), module, BenjolinOsc::DOUBLE_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(24.865,288.931), module, BenjolinOsc::TRI1_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(63.288,288.931), module, BenjolinOsc::TRI2_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(101.712,288.931), module, BenjolinOsc::XOR_OUTPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(140.135,288.931), module, BenjolinOsc::CLOCK_INPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(24.865,330.368), module, BenjolinOsc::PULSE1_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(63.288,330.368), module, BenjolinOsc::PULSE2_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(101.712,330.368), module, BenjolinOsc::PWM_OUTPUT));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(140.135,330.368), module, BenjolinOsc::RUNG_OUTPUT));
+    addInput(createInputCentered<MonoPort>(Vec(24.865,235.665), module, BenjolinOsc::CV1_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(63.288,235.665), module, BenjolinOsc::CV2_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(101.712,235.665), module, BenjolinOsc::CHAOS_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(140.135,235.665), module, BenjolinOsc::DOUBLE_INPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(24.865,288.931), module, BenjolinOsc::TRI1_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(63.288,288.931), module, BenjolinOsc::TRI2_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(101.712,288.931), module, BenjolinOsc::XOR_OUTPUT));
+    addInput(createInputCentered<MonoPort>(Vec(140.135,288.931), module, BenjolinOsc::CLOCK_INPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(24.865,330.368), module, BenjolinOsc::PULSE1_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(63.288,330.368), module, BenjolinOsc::PULSE2_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(101.712,330.368), module, BenjolinOsc::PWM_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(140.135,330.368), module, BenjolinOsc::RUNG_OUTPUT));
   }
 
   void step() override {
