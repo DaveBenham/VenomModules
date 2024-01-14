@@ -57,7 +57,7 @@ struct BenjolinOsc : VenomModule {
         *xorOut=&outB[0], *pwmOut=&outB[1], *rungOut=&outB[2],
         *cv1In=&in[0], *cv2In=&in[1], *clockIn=&in[2],
         xorVal=0, rung=0;
-  unsigned char asr = 37;
+  unsigned char asr = rack::random::uniform()*126+1;
   bool chaosIn=false, dblIn=false;
  
   BenjolinOsc() {
