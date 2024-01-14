@@ -1193,12 +1193,6 @@ The Input is passed unchanged to the Output when REFORMATION is bypassed.
 ![Rhythm Explorer module image](doc/RhythmExplorer.PNG)  
 Rhythm Explorer is a trigger sequencer that randomly generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
 
-*NOTE - the following polyphonic ports are missing their brass core:*
-- *RAND*
-- *OR (potentially polyphonic)* 
-- *XOR ODD (potentially polyphonic)*
-- *XOR 1 (potentially polyphonic)*
-
 ### Basic Operation
 Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 ppqn clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
 
