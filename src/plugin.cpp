@@ -79,6 +79,7 @@ void init(Plugin* p) {
   p->addModel(modelBernoulliSwitchExpander);
   p->addModel(modelCloneMerge);
   p->addModel(modelHQ);
+  p->addModel(modelKnob5);
   p->addModel(modelLinearBeats);
   p->addModel(modelLinearBeatsExpander);
   p->addModel(modelLogic);
@@ -95,6 +96,7 @@ void init(Plugin* p) {
   p->addModel(modelNORSIQChord2Scale);
   p->addModel(modelPolyClone);
   p->addModel(modelPolyUnison);
+  p->addModel(modelPush5);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);
   p->addModel(modelReformation);

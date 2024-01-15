@@ -384,7 +384,7 @@ struct WinComp : VenomModule {
 
 struct WinCompWidget : VenomWidget {
 
-  struct AbsInvPort : PolyPJ301MPort {
+  struct AbsInvPort : PolyPort {
     int modId;
     void appendContextMenu(Menu* menu) override {
       WinComp* module = dynamic_cast<WinComp*>(this->module);
@@ -392,6 +392,7 @@ struct WinCompWidget : VenomWidget {
       menu->addChild(new MenuSeparator);
       menu->addChild(createBoolPtrMenuItem("Absolute value", "", &module->absPort[modId]));
       menu->addChild(createBoolPtrMenuItem("Invert", "", &module->invPort[modId]));
+      PolyPort::appendContextMenu(menu);
     }
   };
   

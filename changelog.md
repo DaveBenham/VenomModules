@@ -3,8 +3,10 @@
 ## 2.6.0
 ### New Modules
 - Benjolin Oscillator
+- Knob 5
 - Logic
 - NORSIQ Chord To Scale
+- Push 5
 
 ### Enhancements
 - Improved discrimination of DC offset removal by lowering cutoff frequency to 2 Hz

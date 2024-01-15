@@ -71,6 +71,17 @@
       ]
     },
     {
+      "slug": "Knob5",
+      "name": "Knob 5",
+      "description": "5 configurable constant voltage knobs",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#knob-5",
+      "tags": [
+        "Controller",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "LinearBeats",
       "name": "Linear Beats",
       "description": "Convert multiple trigger/gate channels into a linear drumming pattern",
@@ -255,6 +266,17 @@
       "tags": [
         "Polyphonic",
         "Tuner",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "Push5",
+      "name": "Push 5",
+      "description": "5 configurable push buttons",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#push-5",
+      "tags": [
+        "Controller",
+        "Polyphonic",
         "Utility"
       ]
     },

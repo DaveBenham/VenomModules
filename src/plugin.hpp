@@ -15,6 +15,7 @@ extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
 extern Model* modelCloneMerge;
 extern Model* modelHQ;
+extern Model* modelKnob5;
 extern Model* modelLinearBeats;
 extern Model* modelLinearBeatsExpander;
 extern Model* modelLogic;
@@ -31,6 +32,7 @@ extern Model* modelNORS_IQ;
 extern Model* modelNORSIQChord2Scale;
 extern Model* modelPolyClone;
 extern Model* modelPolyUnison;
+extern Model* modelPush5;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
 extern Model* modelReformation;
@@ -123,6 +125,12 @@ struct VenomModule : Module {
   void appendParamMenu(Menu* menu, int parmId) {
     ParamQuantity* q = paramQuantities[parmId];
     ParamExtension* e = &paramExtensions[parmId];
+    PortInfo* pi = NULL;
+    PortExtension* pe = NULL;
+    if (e->nameLink >= 0){
+      pi = e->inputLink ? inputInfos[e->nameLink] : outputInfos[e->nameLink];
+      pe = e->inputLink ? &inputExtensions[e->nameLink] : &outputExtensions[e->nameLink];
+    }
     menu->addChild(new MenuSeparator);
     menu->addChild(createSubmenuItem("Parameter name", "",
       [=](Menu *menu){
@@ -131,19 +139,23 @@ struct VenomModule : Module {
         editField->setText(rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name);
         editField->changeHandler = [=](std::string text) {
           q->name = text + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+          if (pi) pi->name = text;
         };
         menu->addChild(editField);
       }
     ));
     if (!e->factoryName.size())
-      e->factoryName =(rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name);
+      e->factoryName = (rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name);
     else if (e->factoryName != (rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name)) {
       menu->addChild(createMenuItem("Restore factory name: "+e->factoryName, "",
         [=]() {
           q->name = e->factoryName + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+          if (pi) pi->name = e->factoryName;
         }
       ));
     }  
+    if (pe && !pe->factoryName.size())
+      pe->factoryName = e->factoryName;
     menu->addChild(createBoolMenuItem("Lock parameter", "",
       [=]() {
         return e->locked;
@@ -158,18 +170,25 @@ struct VenomModule : Module {
         else q->defaultValue = q->getImmediateValue();
       }
     ));
-    if (e->factoryDflt != (e->locked ? e->dflt : q->defaultValue))
+    if (e->factoryDflt != (e->locked ? e->dflt : q->defaultValue)){
       menu->addChild(createMenuItem("Restore factory default", "",
         [=]() {
           if (e->locked) e->dflt = e->factoryDflt;
           else q->defaultValue = e->factoryDflt;
         }
       ));
+    }
   }
   
   void appendPortMenu(Menu *menu, engine::Port::Type type, int portId){
     PortInfo* pi = (type==engine::Port::INPUT ? inputInfos[portId] : outputInfos[portId]);
     PortExtension* e = (type==engine::Port::INPUT ? &inputExtensions[portId] : &outputExtensions[portId]);
+    ParamQuantity* q = NULL;
+    ParamExtension* qe = NULL;
+    if (e->nameLink >= 0){
+      q = paramQuantities[e->nameLink];
+      qe = &paramExtensions[e->nameLink];
+    }
     menu->addChild(new MenuSeparator);
     menu->addChild(createSubmenuItem("Port name", "",
       [=](Menu *menu){
@@ -178,16 +197,20 @@ struct VenomModule : Module {
         editField->setText(pi->name);
         editField->changeHandler = [=](std::string text) {
           pi->name = text;
+          if (q) q->name = text + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
         };
         menu->addChild(editField);
       }
     ));
+    if (qe && !qe->factoryName.size())
+      qe->factoryName = pi->name;
     if (!e->factoryName.size())
       e->factoryName = pi->name;
     else if (e->factoryName != pi->name) {
       menu->addChild(createMenuItem("Restore factory name: "+e->factoryName, "",
         [=]() {
           pi->name = e->factoryName;
+          if (q) q->name = e->factoryName + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
         }
       ));
     }  
@@ -198,6 +221,8 @@ struct VenomModule : Module {
     bool initLocked;
     bool lockable;
     bool initDfltValid;
+    bool inputLink;
+    int  nameLink;
     float min, max, dflt, initDflt, factoryDflt;
     std::string factoryName;
     ParamExtension(){
@@ -206,13 +231,17 @@ struct VenomModule : Module {
       lockable = false;
       initDfltValid = false;
       factoryName = "";
+      inputLink = false;
+      nameLink = -1;
     }
   };
   
   struct PortExtension {
+    int nameLink;
     std::string factoryName;
     PortExtension(){
       factoryName = "";
+      nameLink = -1;
     }
   };
 
