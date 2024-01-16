@@ -7,17 +7,17 @@ Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023 Dave Benham and li
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Acknowledgments](#acknowledgments)  
 
-|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|
-|----|----|----|----|----|----|----|
-|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|
+|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|
+|----|----|----|----|----|----|----|----|
+|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|
 
 |[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
 |----|----|----|----|
 |![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
 
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|
-|----|----|----|----|
-|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|
+|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|
+|----|----|----|----|----|
+|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|
 
 |[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|----|----|----|
@@ -386,6 +386,10 @@ The final computed partial is converted into a delta V/Oct and added to the ROOT
 The IN input is passed unchanged to the OUT output when the Harmonic Quantizer is bypassed.
 
 [Return to Table Of Contents](#venom)
+
+## KNOB 5
+![Knob 5 module image](doc/Knob5.png)  
+Five independently configurable constant voltage knobs.
 
 ## LINEAR BEATS
 ![Linear Beats module image](doc/LinearBeats.png)  
@@ -917,7 +921,7 @@ The NORSIQ module must be configured properly for the CV from the NORSIQ Chord T
   
 The PSEUD-OCT INTERVAL and EDPO knobs and inputs are ignored. The INTERVAL UNIT, ROOT UNIT, ROUND, and EQUI LIKELY contols may configured as you see fit.
 
-The NORSIQ has a "NORSIQ Chord To Scale module configuration" factory preset that quickly sets the appropriate configuration.
+The NORSIQ has a "NORSIQ Chord To Scale configuration" factory preset that quickly sets the appropriate configuration with some parameters locked to make sure it works properly.
 
 ### OCTAVE FOLD button
 Controls where the scale repeats
@@ -1028,6 +1032,63 @@ If Poly Unison is bypassed then the input is passed unchanged to the output.
 
 [Return to Table Of Contents](#venom)
 
+## PUSH 5
+![Push 5 module image](doc/Push5.png)  
+Five independently configurable push buttons.
+
+### Individual Button configuration
+Each button has custom menu options that allow you to tailor the button to your needs
+
+#### Button Mode
+- **Trigger** - A 1 msec On value trigger is output each time the button is pressed
+- **Gate (default)** - The On value is output while the button is pressed
+- **Toggle** - The button changes state each time the button is pressed
+
+#### On value
+- **10 V (default)**
+- **5 V**
+- **1 V**
+- **0 V**
+- **-1 V**
+- **-5 V**
+- **-10 V**
+
+#### Off value
+Same values as On except the default is 0 V.
+
+#### On Color
+- **Red**
+- **Yellow**
+- **Blue**
+- **Green**
+- **Purple**
+- **Orange**
+- **White (default)**
+- **Dim Red**
+- **Dim Yellow**
+- **Dim Blue**
+- **Dim Green**
+- **Dim Purple**
+- **Dim Orange**
+- **Dim Gray**
+- **Off**
+
+#### Off Color
+Same values as Off except the default is Dim Gray
+
+### Global Button configuration
+The module context menu includes options that configure all buttons simultaneously. The options and values are the same as for individual buttons.
+
+If all buttons currently share the same value, then the current value is displayed in the menu. If at least one button is different then the current value is empty.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus. However, the rename function is modified slightly. Renameing a button will automatically rename the corresponding output port, and vice versa.
+
+### Bypass
+
+All outputs are constant monophonic 0 V when PUSH 5 is bypassed.
+
+[Return to Table Of Contents](#venom)
 
 ## RECURSE
 ![RECURSE module image](doc/Recurse.PNG)  
