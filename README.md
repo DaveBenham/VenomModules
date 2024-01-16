@@ -391,6 +391,33 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 ![Knob 5 module image](doc/Knob5.png)  
 Five independently configurable constant voltage knobs.
 
+### Individual Button configuration
+Each knob has a custom menu option to tailor the knob to your needs.
+
+#### Knob Range
+- **0-1 V**
+- **0-2 V**
+- **0-5 V**
+- **0-10 V**
+- **+/- 1 V**
+- **+/- 2 V**
+- **+/- 5 V**
+- **+/- 10 V (default)**
+ 
+### Global Knob configuration
+The module context menu include an option to configure all buttons simultaneously. The range values are the same as for individual knobs.
+
+If all knobs currently share the same value, then the current value is displayed in the menu. If at least one button is different, then the current value is empty.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus. However, the rename function is modified slightly. Renameing a knob will automatically rename the corresponding output port, and vice versa.
+
+### Bypass
+
+All outputs are constant monophonic 0 V when PUSH 5 is bypassed.
+
+[Return to Table Of Contents](#venom)
+
 ## LINEAR BEATS
 ![Linear Beats module image](doc/LinearBeats.png)  
 Only allow one trigger/gate to strike at a time across multiple incoming trigger/gate channels, thus converting coincident drum triggers into a linear drumming pattern.
@@ -1040,9 +1067,9 @@ Five independently configurable push buttons.
 Each button has custom menu options that allow you to tailor the button to your needs
 
 #### Button Mode
-- **Trigger** - A 1 msec On value trigger is output each time the button is pressed
-- **Gate (default)** - The On value is output while the button is pressed
-- **Toggle** - The button changes state each time the button is pressed
+- **Trigger** - A 1 msec On value trigger is output each time the button is pressed.
+- **Gate (default)** - The On value is output while the button is pressed.
+- **Toggle** - The button changes state each time the button is pressed. Toggle button states are stored with patches, selection sets, and presets, and are restored when the patch, selection set, preset is loaded.
 
 #### On value
 - **10 V (default)**
