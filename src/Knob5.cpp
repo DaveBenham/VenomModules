@@ -120,6 +120,7 @@ struct Knob5 : VenomModule {
       }
     }
   }
+
 };
 
 struct Knob5Widget : VenomWidget {
@@ -148,16 +149,16 @@ struct Knob5Widget : VenomWidget {
 
   void appendContextMenu(Menu* menu) override {
     Knob5* module = dynamic_cast<Knob5*>(this->module);
-    int current=module->knobRange[0];
-    for (int i=1; i<5; i++){
-      if (current != module->knobRange[i])
-        current = 8;
-    }
     menu->addChild(new MenuSeparator);
     menu->addChild(createIndexSubmenuItem(
       "Configure all knob ranges",
       {"0-1 V","0-2 V","0-5 V","0-10 V","+/- 1 V","+/- 2 V","+/- 5 V","+/- 10 V"},
       [=]() {
+        int current = module->knobRange[0];
+        for (int i=1; i<5; i++){
+          if (current != module->knobRange[i])
+            current = 8;
+        }
         return current;
       },
       [=](int range) {

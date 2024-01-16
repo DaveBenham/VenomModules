@@ -147,14 +147,69 @@ struct Push5 : VenomModule {
         case 2: //toggle
           if (val && !e->buttonOn){
             e->lightOn = !e->lightOn;
-            outputs[i].setVoltage(e->lightOn ? buttonVals[e->onVal] : buttonVals[e->offVal]);
           }
+          outputs[i].setVoltage(e->lightOn ? buttonVals[e->onVal] : buttonVals[e->offVal]);
           break;
       }
       e->buttonOn = val;
     }
   }
   
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    for (int i=0; i<5; i++){
+      ButtonExtension *e = buttonExtension+i;
+      std::string iStr = std::to_string(i);
+      std::string nm = "mode"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(e->mode));
+      nm = "onVal"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(e->onVal));
+      nm = "offVal"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(e->offVal));
+      nm = "onColor"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(e->onColor));
+      nm = "offColor"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(e->offColor));
+      nm = "lightOn"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_boolean(e->mode==2 ? e->lightOn : false));
+    }
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    for (int i=0; i<5; i++){
+      ButtonExtension *e = buttonExtension+i;
+      std::string iStr = std::to_string(i);
+      std::string nm = "mode"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        e->mode = json_integer_value(val);
+        if (e->mode) e->trigGenerator.reset();
+      }
+      nm = "onVal"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        e->onVal = json_integer_value(val);
+      }
+      nm = "offVal"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        e->offVal = json_integer_value(val);
+      }
+      nm = "onColor"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        e->onColor = json_integer_value(val);
+      }
+      nm = "offColor"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        e->offColor = json_integer_value(val);
+      }
+      nm = "lightOn"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        e->lightOn = json_boolean_value(val);
+      }
+    }
+  }
+
 };
 
 struct Push5Widget : VenomWidget {
@@ -181,6 +236,110 @@ struct Push5Widget : VenomWidget {
       addOutput(createOutputCentered<MonoPort>(Vec(22.5f, y), module, Push5::OUTPUT+i));
     }
   }
+
+  void appendContextMenu(Menu *menu) override {
+    Push5 *module = static_cast<Push5*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createMenuLabel("Configure all buttons:"));
+    menu->addChild(createIndexSubmenuItem(
+      "Button mode",
+      {"Trigger","Gate","Toggle"},
+      [=]() {
+        int current = module->buttonExtension[0].mode;
+        for (int i=1; i<5; i++){
+          if (module->buttonExtension[i].mode != current)
+            current = 3;
+        }
+        return current;
+      },
+      [=](int mode) {
+        if (mode<3){
+          for (int i=0; i<5; i++){
+            if (mode) module->buttonExtension[i].trigGenerator.reset();
+            module->buttonExtension[i].mode = mode;
+          }
+        }
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "On value",
+      {"10 V","5 V","1 V","0 V","-1 V","-5 V","-10 V"},
+      [=]() {
+        int current = module->buttonExtension[0].onVal;
+        for (int i=1; i<5; i++){
+          if (module->buttonExtension[i].onVal != current)
+            current = 7;
+        }
+        return current;
+      },
+      [=](int val) {
+        if (val<7){
+          for (int i=0; i<5; i++){
+            module->buttonExtension[i].onVal = val;
+          }
+        }
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "Off value",
+      {"10 V","5 V","1 V","0 V","-1 V","-5 V","-10 V"},
+      [=]() {
+        int current = module->buttonExtension[0].offVal;
+        for (int i=1; i<5; i++){
+          if (module->buttonExtension[i].offVal != current)
+            current = 7;
+        }
+        return current;
+      },
+      [=](int val) {
+        if (val<7){
+          for (int i=0; i<5; i++){
+            module->buttonExtension[i].offVal = val;
+          }
+        }
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "On Color",
+      {"Red","Yellow","Blue","Green","Purple","Orange","White",
+       "Dim Red","Dim Yellow","Dim Blue","Dim Green","Dim Purple","Dim Orange","Dim Gray","Off"},
+      [=]() {
+        int current = module->buttonExtension[0].onColor;
+        for (int i=1; i<5; i++){
+          if (module->buttonExtension[i].onColor != current)
+            current = 15;
+        }
+        return current;
+      },
+      [=](int val) {
+        if (val<15){
+          for (int i=0; i<5; i++){
+            module->buttonExtension[i].onColor = val;
+          }
+        }
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "Off Color",
+      {"Red","Yellow","Blue","Green","Purple","Orange","White",
+       "Dim Red","Dim Yellow","Dim Blue","Dim Green","Dim Purple","Dim Orange","Dim Gray","Off"},
+      [=]() {
+        int current = module->buttonExtension[0].offColor;
+        for (int i=1; i<5; i++){
+          if (module->buttonExtension[i].offColor != current)
+            current = 15;
+        }
+        return current;
+      },
+      [=](int val) {
+        if (val<15){
+          for (int i=0; i<5; i++){
+            module->buttonExtension[i].offColor = val;
+          }
+        }
+      }
+    ));
+  }  
 
   void step() override {
     VenomWidget::step();
