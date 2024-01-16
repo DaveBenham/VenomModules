@@ -1,0 +1,210 @@
+{
+  "plugin": "Venom",
+  "model": "NORS_IQ",
+  "version": "2.6.0dev",
+  "params": [
+    {
+      "value": 1.0,
+      "id": 0
+    },
+    {
+      "value": 0.0048192772082984447,
+      "id": 1
+    },
+    {
+      "value": 1.0,
+      "id": 2
+    },
+    {
+      "value": 1.0,
+      "id": 3
+    },
+    {
+      "value": 0.0,
+      "id": 4
+    },
+    {
+      "value": 1.0,
+      "id": 5
+    },
+    {
+      "value": 1.0,
+      "id": 6
+    },
+    {
+      "value": 0.0,
+      "id": 7
+    },
+    {
+      "value": 0.0,
+      "id": 8
+    },
+    {
+      "value": 0.0,
+      "id": 9
+    },
+    {
+      "value": 0.0,
+      "id": 10
+    },
+    {
+      "value": 0.0,
+      "id": 11
+    },
+    {
+      "value": 0.0,
+      "id": 12
+    },
+    {
+      "value": 0.0,
+      "id": 13
+    },
+    {
+      "value": 0.0,
+      "id": 14
+    },
+    {
+      "value": 0.0,
+      "id": 15
+    },
+    {
+      "value": 0.0,
+      "id": 16
+    },
+    {
+      "value": 0.0,
+      "id": 17
+    },
+    {
+      "value": 0.0,
+      "id": 18
+    },
+    {
+      "value": 0.0,
+      "id": 19
+    },
+    {
+      "value": 0.0,
+      "id": 20
+    },
+    {
+      "value": 0.0,
+      "id": 21
+    }
+  ],
+  "data": {
+    "paramLock0": false,
+    "paramDflt0": 1.0,
+    "paramVal0": 1.0,
+    "paramName0": "Interval unit",
+    "paramLock1": true,
+    "paramDflt1": 1.0,
+    "paramVal1": 0.0048192772082984447,
+    "paramName1": "Pseudo-octave interval",
+    "paramLock2": true,
+    "paramDflt2": 12.0,
+    "paramVal2": 1.0,
+    "paramName2": "Equal divisions per pseudo-octave",
+    "paramLock3": true,
+    "paramDflt3": 12.0,
+    "paramVal3": 1.0,
+    "paramName3": "Scale length",
+    "paramLock4": false,
+    "paramDflt4": 0.0,
+    "paramVal4": 0.0,
+    "paramName4": "Scale root",
+    "paramLock5": false,
+    "paramDflt5": 2.0,
+    "paramVal5": 1.0,
+    "paramName5": "Scale root unit",
+    "paramLock6": false,
+    "paramDflt6": 1.0,
+    "paramVal6": 1.0,
+    "paramName6": "Round algorithm",
+    "paramLock7": false,
+    "paramDflt7": 0.0,
+    "paramVal7": 0.0,
+    "paramName7": "Equi-likely",
+    "paramLock8": true,
+    "paramDflt8": 0.0,
+    "paramVal8": 0.0,
+    "paramName8": "Interval 1",
+    "paramLock9": true,
+    "paramDflt9": 0.0,
+    "paramVal9": 0.0,
+    "paramName9": "Interval 2",
+    "paramLock10": true,
+    "paramDflt10": 0.0,
+    "paramVal10": 0.0,
+    "paramName10": "Interval 3",
+    "paramLock11": true,
+    "paramDflt11": 0.0,
+    "paramVal11": 0.0,
+    "paramName11": "Interval 4",
+    "paramLock12": true,
+    "paramDflt12": 0.0,
+    "paramVal12": 0.0,
+    "paramName12": "Interval 5",
+    "paramLock13": true,
+    "paramDflt13": 0.0,
+    "paramVal13": 0.0,
+    "paramName13": "Interval 6",
+    "paramLock14": true,
+    "paramDflt14": 0.0,
+    "paramVal14": 0.0,
+    "paramName14": "Interval 7",
+    "paramLock15": true,
+    "paramDflt15": 0.0,
+    "paramVal15": 0.0,
+    "paramName15": "Interval 8",
+    "paramLock16": true,
+    "paramDflt16": 0.0,
+    "paramVal16": 0.0,
+    "paramName16": "Interval 9",
+    "paramLock17": true,
+    "paramDflt17": 0.0,
+    "paramVal17": 0.0,
+    "paramName17": "Interval 10",
+    "paramLock18": true,
+    "paramDflt18": 0.0,
+    "paramVal18": 0.0,
+    "paramName18": "Interval 11",
+    "paramLock19": true,
+    "paramDflt19": 0.0,
+    "paramVal19": 0.0,
+    "paramName19": "Interval 12",
+    "paramLock20": true,
+    "paramDflt20": 0.0,
+    "paramVal20": 0.0,
+    "paramName20": "Interval 13",
+    "paramLock21": true,
+    "paramDflt21": 1.0,
+    "paramVal21": 0.0,
+    "paramName21": "Equal Interval Divisions",
+    "inputName0": "Interval 1 CV",
+    "inputName1": "Interval 2 CV",
+    "inputName2": "Interval 3 CV",
+    "inputName3": "Interval 4 CV",
+    "inputName4": "Interval 5 CV",
+    "inputName5": "Interval 6 CV",
+    "inputName6": "Interval 7 CV",
+    "inputName7": "Interval 8 CV",
+    "inputName8": "Interval 9 CV",
+    "inputName9": "Interval 10 CV",
+    "inputName10": "Interval 11 CV",
+    "inputName11": "Interval 12 CV",
+    "inputName12": "Interval 13 CV",
+    "inputName13": "Pseudo-octave interval CV",
+    "inputName14": "Equal divisions per pseudo-octave CV",
+    "inputName15": "Scale length CV",
+    "inputName16": "Scale root CV",
+    "inputName17": "V/Oct",
+    "inputName18": "Trigger",
+    "inputName19": "Polyphonic intervals",
+    "outputName0": "V/Oct",
+    "outputName1": "Trigger",
+    "outputName2": "Scale",
+    "outputName3": "Pseudo-octave",
+    "currentTheme": 0
+  }
+}
