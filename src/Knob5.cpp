@@ -20,6 +20,7 @@ struct Knob5 : VenomModule {
   };
   
   int knobRange[5]{7,7,7,7,7};
+  int poly[5]{1,1,1,1,1};
   
   void setRange(int paramId, int range){
     ParamQuantity *q = paramQuantities[paramId];
@@ -79,6 +80,16 @@ struct Knob5 : VenomModule {
         setRange(paramId, range);
       }
     ));
+    menu->addChild(createIndexSubmenuItem(
+      "Polyphony channels",
+      {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
+      [=]() {
+        return poly[paramId]-1;
+      },
+      [=](int val) {
+        poly[paramId] = val+1;
+      }
+    ));
   }  
   
   Knob5() {
@@ -97,15 +108,21 @@ struct Knob5 : VenomModule {
     VenomModule::process(args);
     for (int i=0; i<5; i++){
       ParamQuantity *q = paramQuantities[i];
-      outputs[i].setVoltage(params[i].getValue() * q->displayMultiplier + q->displayOffset);
+      float out = params[i].getValue() * q->displayMultiplier + q->displayOffset;
+      for (int c=0; c<poly[i]; c++)
+        outputs[i].setVoltage(out,c);
+      outputs[i].setChannels(poly[i]);
     }
   }
   
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     for (int i=0; i<5; i++){
-      std::string nm = "knobRange"+std::to_string(i);
+      std::string iStr = std::to_string(i);
+      std::string nm = "knobRange"+iStr;
       json_object_set_new(rootJ, nm.c_str(), json_integer(knobRange[i]));
+      nm = "poly"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(poly[i]));
     }
     return rootJ;
   }
@@ -114,9 +131,14 @@ struct Knob5 : VenomModule {
     VenomModule::dataFromJson(rootJ);
     json_t* val;
     for (int i=0; i<5; i++){
-      std::string nm = "knobRange"+std::to_string(i);
+      std::string iStr = std::to_string(i);
+      std::string nm = "knobRange"+iStr;
       if ((val = json_object_get(rootJ, nm.c_str()))){
         setRange(i, json_integer_value(val));
+      }
+      nm = "poly"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        poly[i] = json_integer_value(val);
       }
     }
   }
@@ -143,7 +165,7 @@ struct Knob5Widget : VenomWidget {
     }
     y = 209.5f;
     for (int i=0; i<5; i++, y+=32.f){
-      addOutput(createOutputCentered<MonoPort>(Vec(22.5f, y), module, Knob5::OUTPUT+i));
+      addOutput(createOutputCentered<PolyPort>(Vec(22.5f, y), module, Knob5::OUTPUT+i));
     }
   }
 
@@ -165,6 +187,25 @@ struct Knob5Widget : VenomWidget {
         if (range<8) {
           for (int i=0; i<5; i++){
             module->setRange(i, range);
+          }
+        }
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "Polyphony channels",
+      {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
+      [=]() {
+        int current = module->poly[0];
+        for (int i=1; i<5; i++){
+          if (module->poly[i] != current)
+            current = 17;
+        }
+        return current-1;
+      },
+      [=](int val) {
+        if (val<16){
+          for (int i=0; i<5; i++){
+            module->poly[i] = val+1;
           }
         }
       }

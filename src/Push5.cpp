@@ -26,6 +26,7 @@ struct Push5 : VenomModule {
     int offColor;
     int onVal;
     int offVal;
+    int poly;
     bool lightOn;
     bool buttonOn;
     dsp::PulseGenerator trigGenerator;
@@ -35,6 +36,7 @@ struct Push5 : VenomModule {
       offColor=13;
       onVal=0;
       offVal=3;
+      poly=1;
       lightOn=false;
       buttonOn=false;
     }
@@ -116,6 +118,16 @@ struct Push5 : VenomModule {
         e->offColor = val;
       }
     ));
+    menu->addChild(createIndexSubmenuItem(
+      "Polyphony channels",
+      {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
+      [=]() {
+        return e->poly-1;
+      },
+      [=](int val) {
+        e->poly = val+1;
+      }
+    ));
   }  
   
   Push5() {
@@ -132,26 +144,30 @@ struct Push5 : VenomModule {
     for (int i=0; i<5; i++){
       ButtonExtension *e = buttonExtension+i;
       float val = params[i].getValue();
+      float out = 0.f;
       switch (e->mode){
         case 0: //trigger
           if (val>0 && !e->lightOn && e->trigGenerator.remaining<=0.f){
             e->trigGenerator.trigger();
           }
           e->lightOn = val;
-          outputs[i].setVoltage(e->trigGenerator.process(args.sampleTime) ? buttonVals[e->onVal] : buttonVals[e->offVal]);
+          out = e->trigGenerator.process(args.sampleTime) ? buttonVals[e->onVal] : buttonVals[e->offVal];
           break;
         case 1: //gate
           e->lightOn = val;
-          outputs[i].setVoltage(val ? buttonVals[e->onVal] : buttonVals[e->offVal]);
+          out = val ? buttonVals[e->onVal] : buttonVals[e->offVal];
           break;
         case 2: //toggle
           if (val && !e->buttonOn){
             e->lightOn = !e->lightOn;
           }
-          outputs[i].setVoltage(e->lightOn ? buttonVals[e->onVal] : buttonVals[e->offVal]);
+          out = e->lightOn ? buttonVals[e->onVal] : buttonVals[e->offVal];
           break;
       }
       e->buttonOn = val;
+      for (int c=0; c<e->poly; c++)
+        outputs[i].setVoltage(out,c);
+      outputs[i].setChannels(e->poly);
     }
   }
   
@@ -172,6 +188,8 @@ struct Push5 : VenomModule {
       json_object_set_new(rootJ, nm.c_str(), json_integer(e->offColor));
       nm = "lightOn"+iStr;
       json_object_set_new(rootJ, nm.c_str(), json_boolean(e->mode==2 ? e->lightOn : false));
+      nm = "poly"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(e->poly));
     }
     return rootJ;
   }
@@ -207,6 +225,10 @@ struct Push5 : VenomModule {
       if ((val = json_object_get(rootJ, nm.c_str()))){
         e->lightOn = json_boolean_value(val);
       }
+      nm = "poly"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        e->poly = json_integer_value(val);
+      }
     }
   }
 
@@ -233,7 +255,7 @@ struct Push5Widget : VenomWidget {
     }
     y = 209.5f;
     for (int i=0; i<5; i++, y+=32.f){
-      addOutput(createOutputCentered<MonoPort>(Vec(22.5f, y), module, Push5::OUTPUT+i));
+      addOutput(createOutputCentered<PolyPort>(Vec(22.5f, y), module, Push5::OUTPUT+i));
     }
   }
 
@@ -339,6 +361,26 @@ struct Push5Widget : VenomWidget {
         }
       }
     ));
+    menu->addChild(createIndexSubmenuItem(
+      "Polyphony channels",
+      {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
+      [=]() {
+        int current = module->buttonExtension[0].poly;
+        for (int i=1; i<5; i++){
+          if (module->buttonExtension[i].poly != current)
+            current = 17;
+        }
+        return current-1;
+      },
+      [=](int val) {
+        if (val<16){
+          for (int i=0; i<5; i++){
+            module->buttonExtension[i].poly = val+1;
+          }
+        }
+      }
+    ));
+    VenomWidget::appendContextMenu(menu);
   }  
 
   void step() override {
