@@ -419,7 +419,7 @@ If all knobs currently share the same value, then the current value is displayed
 
 ### Bypass
 
-All outputs are constant monophonic 0 V when PUSH 5 is bypassed.
+All outputs are constant monophonic 0 V when KNOB 5 is bypassed.
 
 [Return to Table Of Contents](#venom)
 
