@@ -395,6 +395,7 @@ Five independently configurable constant voltage knobs.
 Each knob has a custom menu option to tailor the knob to your needs.
 
 #### Knob Range
+Determines the minimum and maximum voltage of the knob.
 - **0-1 V**
 - **0-2 V**
 - **0-5 V**
@@ -403,9 +404,13 @@ Each knob has a custom menu option to tailor the knob to your needs.
 - **+/- 2 V**
 - **+/- 5 V**
 - **+/- 10 V (default)**
+
+#### Polyphony channels
+Determines the number of polyphonic channels to output. All channels will be identical. The default is 1 (mono).
+
  
 ### Global Knob configuration
-The module context menu include an option to configure all buttons simultaneously. The range values are the same as for individual knobs.
+The module context menu include an option to configure all buttons simultaneously. The option values are the same as for individual knobs.
 
 If all knobs currently share the same value, then the current value is displayed in the menu. If at least one button is different, then the current value is empty.
 
@@ -1102,6 +1107,9 @@ Same values as On except the default is 0 V.
 
 #### Off Color
 Same values as Off except the default is Dim Gray
+
+#### Polyphony channels
+Determines the number of channels to output. All channels will be identical. The default is 1 (mono).
 
 ### Global Button configuration
 The module context menu includes options that configure all buttons simultaneously. The options and values are the same as for individual buttons.
