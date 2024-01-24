@@ -26,6 +26,7 @@ struct PolySHASR : VenomModule {
     LIGHTS_LEN
   };
   
+  bool saveHolds = false;
   int oversample = -1;
   int oversampleValues[6] {1,2,4,8,16,32};
   float rangeScale[6] {1.f,5.f,10.f,2.f,10.f,20.f};
@@ -115,6 +116,43 @@ struct PolySHASR : VenomModule {
     }
   }
 
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "saveHolds", json_boolean(saveHolds));
+    if (saveHolds){
+      for (int i=0; i<CHANNEL_COUNT; i++){
+        std::string nm = "outCnt"+std::to_string(i);
+        json_object_set_new(rootJ, nm.c_str(), json_integer(outCnt[i]));
+        std::string rootNm = "out"+std::to_string(i)+"-";
+        for (int p=0; p<outCnt[i]; p++){
+          nm = rootNm+std::to_string(p);
+          json_object_set_new(rootJ, nm.c_str(), json_real(out[i][p/4][p%4]));
+        }
+      }
+    }
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "saveHolds")))
+      saveHolds = json_boolean_value(val);
+    if (saveHolds){
+      for (int i=0; i<CHANNEL_COUNT; i++){
+        std::string nm = "outCnt"+std::to_string(i);
+        if ((val = json_object_get(rootJ, nm.c_str())))
+          outCnt[i] = json_integer_value(val);
+        std::string rootNm = "out"+std::to_string(i)+"-";
+        for (int p=0; p<outCnt[i]; p++){
+          nm = rootNm+std::to_string(p);
+          if ((val = json_object_get(rootJ, nm.c_str())))
+            out[i][p/4][p%4] = json_real_value(val);
+        }
+      }
+    }
+  }
+
 };
 
 struct PolySHASRWidget : VenomWidget {
@@ -153,6 +191,19 @@ struct PolySHASRWidget : VenomWidget {
       addOutput(createOutputCentered<PolyPort>(Vec(84.5,y), module, PolySHASR::OUTPUT+i));
       y+=31.f;
     }
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    PolySHASR* module = dynamic_cast<PolySHASR*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolMenuItem("Save held values", "",
+      [=]() {
+        return module->saveHolds;
+      },
+      [=](bool val){
+        module->saveHolds = val;
+      }
+    ));
   }
 
 };
