@@ -15,9 +15,9 @@ Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 |----|----|----|----|
 |![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
 
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|
-|----|----|----|----|----|
-|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|
+|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample-&-hold-analog-shift-register)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|
+|----|----|----|----|----|----|
+|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|
 
 |[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|----|----|----|
@@ -1015,6 +1015,19 @@ All of the replicated channels are merged into the single polyphonic output. The
 ### Bypass
 
 If Clone Merge is bypassed then the input is passed unchanged to the output.
+
+[Return to Table Of Contents](#venom)
+
+## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
+![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
+Ten channel sample and hold combined with a shift register
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly S&H ASR is bypassed then all outputs are monophonic constant 0 V.
 
 [Return to Table Of Contents](#venom)
 

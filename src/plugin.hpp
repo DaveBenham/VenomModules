@@ -31,6 +31,7 @@ extern Model* modelMixSolo;
 extern Model* modelNORS_IQ;
 extern Model* modelNORSIQChord2Scale;
 extern Model* modelPolyClone;
+extern Model* modelPolySHASR;
 extern Model* modelPolyUnison;
 extern Model* modelPush5;
 extern Model* modelRecurse;

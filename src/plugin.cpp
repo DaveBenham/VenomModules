@@ -95,6 +95,7 @@ void init(Plugin* p) {
   p->addModel(modelNORS_IQ);
   p->addModel(modelNORSIQChord2Scale);
   p->addModel(modelPolyClone);
+  p->addModel(modelPolySHASR);
   p->addModel(modelPolyUnison);
   p->addModel(modelPush5);
   p->addModel(modelRecurse);

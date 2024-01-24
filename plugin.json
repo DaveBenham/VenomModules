@@ -259,6 +259,17 @@
       ]
     },
     {
+      "slug": "PolySHASR",
+      "name": "Poly Sample & Hold Analog Shift Register",
+      "description": "Ten channel polyphonic sample and hold combined with a shift register",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-unison",
+      "tags": [
+        "Polyphonic",
+        "Random",
+        "Sample and hold"
+      ]
+    },
+    {
       "slug": "PolyUnison",
       "name": "Poly Unison",
       "description": "Replicate each channel of a polyphonic input with a variable detune spread, and merge the results into a single polyphonic output",
