@@ -1020,7 +1020,29 @@ If Clone Merge is bypassed then the input is passed unchanged to the output.
 
 ## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
 ![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
-Ten channel sample and hold combined with a shift register
+Ten row polyphonic sample and hold combined with a shift register.
+
+Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Sample & Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
+
+If no input is provided, then random values are sampled.
+
+### OVER (Oversample) button
+This color coded button controls how much oversampling is applied to minimize aliasing when triggering the sample & hold at audio rates. Oversampling is CPU expensive, so should only be applied when needed.
+- **Off (gray - default)**
+- **2x (yellow)**
+- **4x (green)**
+- **8x (light blue)**
+- **16x (dark blue)**
+- **32x (purple)**
+
+### RND (Random Range) button
+This color coded button controls the output range of the internal random number generator
+- **0-1 V (yellow)**
+- **0-5 V (green)**
+- **0-10 V (dark blue - default)**
+- **+/- 1 V (pink)**
+- **+/- 5 V (orange)**
+- **+/- 10 V (purple)**
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
