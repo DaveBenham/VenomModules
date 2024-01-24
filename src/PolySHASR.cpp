@@ -75,7 +75,7 @@ struct PolySHASR : VenomModule {
             if (oversample>1)
               trigIn = trigUpSample[c][pi].process(o ? float_4::zero() : trigIn * oversample);
             oldState = trigState[c][pi];
-            trigState[c][pi] = simd::ifelse(trigIn>2.f, 2.f, simd::ifelse(trigIn<=0.1f, 0.f, trigState[c][pi]));
+            trigState[c][pi] = simd::ifelse(trigIn>2.f, 1.f, simd::ifelse(trigIn<=0.1f, 0.f, trigState[c][pi]));
             trig[c][pi] = simd::ifelse(oldState>float_4::zero(), 0.f, simd::ifelse(trigState[c][pi]>float_4::zero(), 1.f, 0.f));
           }  
         } else if (c) {
