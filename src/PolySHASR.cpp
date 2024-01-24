@@ -11,6 +11,8 @@ struct PolySHASR : VenomModule {
   enum ParamId {
     OVER_PARAM,
     RANGE_PARAM,
+    TRIG_PARAM,
+    CLEAR_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -26,11 +28,12 @@ struct PolySHASR : VenomModule {
     LIGHTS_LEN
   };
   
-  bool saveHolds = false;
+  bool saveHolds = true;
   int oversample = -1;
   int oversampleValues[6] {1,2,4,8,16,32};
   float rangeScale[6] {1.f,5.f,10.f,2.f,10.f,20.f};
   float rangeOffset[6] {0.f,0.f,0.f,-1.f,-5.f,-10.f};
+  float clearState = 0.f, trigBtnState = 0.f;
   simd::float_4 trigState[CHANNEL_COUNT][4]{}, out[CHANNEL_COUNT][4]{}, finalOut[CHANNEL_COUNT][4]{};
   int outCnt[CHANNEL_COUNT]{};
   
@@ -38,13 +41,15 @@ struct PolySHASR : VenomModule {
 
   PolySHASR() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    configButton(TRIG_PARAM, "Manual row 1 trigger");
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 0.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
     configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 5.f, 2.f, "Random range", {"0-1", "0-5", "0-10", "+/- 1", "+/- 5", "+/- 10"});
+    configButton(CLEAR_PARAM, "Clear all");
     for (int i=0; i<CHANNEL_COUNT; i++){
       std::string iStr = std::to_string(i);
       configInput(TRIG_INPUT+i, "Trigger "+iStr);
       configInput(DATA_INPUT+i, "Data "+iStr);
-      configOutput(OUTPUT+i, "Sample & Hold "+iStr);
+      configOutput(OUTPUT+i, "Hold "+iStr);
     }
   }
 
@@ -64,11 +69,22 @@ struct PolySHASR : VenomModule {
     int range = params[RANGE_PARAM].getValue();
     float scale = rangeScale[range], offset = rangeOffset[range];
     int trigCnt[CHANNEL_COUNT]{};
+    if (!clearState && params[CLEAR_PARAM].getValue()){
+      for (int c=0; c<CHANNEL_COUNT; c++){
+        for (int pi=0; pi<4; pi++){
+          out[c][pi] = float_4::zero();
+          finalOut[c][pi] = float_4::zero();
+        }
+      }
+    }
+    clearState = params[CLEAR_PARAM].getValue();
     for (int o=0; o<oversample; o++){
       float_4 trig[CHANNEL_COUNT][4]{};
       for (int c=0; c<CHANNEL_COUNT; c++){
-        if (inputs[TRIG_INPUT+c].isConnected()){
-          if (!o) trigCnt[c] = inputs[TRIG_INPUT+c].getChannels();
+        if (!c || inputs[TRIG_INPUT+c].isConnected()){
+          if (!o) {
+           trigCnt[c] = inputs[TRIG_INPUT+c].getChannels();
+          }
           for (int p=0, pi=0; p<trigCnt[c]; p+=4, pi++){
             float_4 trigIn{}, oldState{};
             if (!o) 
@@ -78,7 +94,13 @@ struct PolySHASR : VenomModule {
             oldState = trigState[c][pi];
             trigState[c][pi] = simd::ifelse(trigIn>2.f, 1.f, simd::ifelse(trigIn<=0.1f, 0.f, trigState[c][pi]));
             trig[c][pi] = simd::ifelse(oldState>float_4::zero(), 0.f, simd::ifelse(trigState[c][pi]>float_4::zero(), 1.f, 0.f));
-          }  
+          }
+          if (!c && !trigBtnState && params[TRIG_PARAM].getValue()){
+            for (int p=0; p<trigCnt[0]; p++){
+              trig[c][p/4][p%4] = 1.f;
+            }
+          }
+          trigBtnState = params[TRIG_PARAM].getValue();
         } else if (c) {
           trigCnt[c] = trigCnt[c-1];
           for (int p=0, pi=0; p<trigCnt[c]; p+=4, pi++)
@@ -182,8 +204,10 @@ struct PolySHASRWidget : VenomWidget {
   PolySHASRWidget(PolySHASR* module) {
     setModule(module);
     setVenomPanel("PolySHASR");
-    addParam(createLockableParamCentered<OverSwitch>(Vec(36.5,34.5), module, PolySHASR::OVER_PARAM));
-    addParam(createLockableParamCentered<RangeSwitch>(Vec(68.5,34.5), module, PolySHASR::RANGE_PARAM));
+    addParam(createLockableParamCentered<GlowingTinyButtonLockable>(Vec(14.5, 34.5), module, PolySHASR::TRIG_PARAM));
+    addParam(createLockableParamCentered<OverSwitch>(Vec(39.833,34.5), module, PolySHASR::OVER_PARAM));
+    addParam(createLockableParamCentered<RangeSwitch>(Vec(65.167,34.5), module, PolySHASR::RANGE_PARAM));
+    addParam(createLockableParamCentered<GlowingTinyButtonLockable>(Vec(90.5, 34.5), module, PolySHASR::CLEAR_PARAM));
     float y=66.5f;
     for (int i=0; i<CHANNEL_COUNT; i++){
       addInput(createInputCentered<PolyPort>(Vec(20.5,y), module, PolySHASR::TRIG_INPUT+i));
@@ -204,6 +228,7 @@ struct PolySHASRWidget : VenomWidget {
         module->saveHolds = val;
       }
     ));
+    VenomWidget::appendContextMenu(menu);
   }
 
 };

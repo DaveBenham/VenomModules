@@ -779,6 +779,21 @@ struct VCVLightButtonLatchLockable : VCVLightLatch<TLight> {
   }
 };
 
+struct GlowingTinyButtonLockable : GlowingSvgSwitchLockable {
+  GlowingTinyButtonLockable() {
+    momentary = true;
+    addFrame(Svg::load(asset::plugin( pluginInstance, "res/smallOffButtonSwitch.svg")));
+    addFrame(Svg::load(asset::plugin( pluginInstance, "res/smallWhiteButtonSwitch.svg")));
+  }
+};
+ 
+struct GlowingTinyButtonLatchLockable : GlowingTinyButtonLockable {
+  GlowingTinyButtonLatchLockable() {
+    momentary = false;
+    latch = true;
+  }
+};
+ 
 struct ShapeQuantity : ParamQuantity {
   std::string getUnit() override {
     float val = this->getValue();
