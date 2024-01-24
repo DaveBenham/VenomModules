@@ -15,7 +15,7 @@ Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 |----|----|----|----|
 |![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
 
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample-&-hold-analog-shift-register)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|
+|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|
 |----|----|----|----|----|----|
 |![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|
 
@@ -1020,7 +1020,29 @@ If Clone Merge is bypassed then the input is passed unchanged to the output.
 
 ## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
 ![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
-Ten channel sample and hold combined with a shift register
+Ten row polyphonic sample and hold combined with a shift register.
+
+Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Sample & Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
+
+If no input is provided, then random values are sampled.
+
+### OVER (Oversample) button
+This color coded button controls how much oversampling is applied to minimize aliasing when triggering the sample & hold at audio rates. Oversampling is CPU expensive, so should only be applied when needed.
+- **Off (gray - default)**
+- **2x (yellow)**
+- **4x (green)**
+- **8x (light blue)**
+- **16x (dark blue)**
+- **32x (purple)**
+
+### RND (Random Range) button
+This color coded button controls the output range of the internal random number generator
+- **0-1 V (yellow)**
+- **0-5 V (green)**
+- **0-10 V (dark blue - default)**
+- **+/- 1 V (pink)**
+- **+/- 5 V (orange)**
+- **+/- 10 V (purple)**
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
