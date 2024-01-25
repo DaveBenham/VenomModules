@@ -1022,9 +1022,12 @@ If Clone Merge is bypassed then the input is passed unchanged to the output.
 ![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
 Ten row polyphonic sample and hold combined with a shift register.
 
-Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Sample & Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
+Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
 
-If no input is provided, then random values are sampled.
+If no input is provided, then random values are sampled from an internal random number generator.
+
+### TRIG (Trigger) button
+Manually triggers the first row only
 
 ### OVER (Oversample) button
 This color coded button controls how much oversampling is applied to minimize aliasing when triggering the sample & hold at audio rates. Oversampling is CPU expensive, so should only be applied when needed.
@@ -1043,6 +1046,48 @@ This color coded button controls the output range of the internal random number 
 - **+/- 1 V (pink)**
 - **+/- 5 V (orange)**
 - **+/- 10 V (purple)**
+
+### CLR (Clear) button
+Resets all all polyphonic channels of all 10 Hold outputs to 0 V.
+
+### Sample & Hold row
+
+Each row functions as an independent sample and hold circuit.
+
+#### TRIG (Trigger) input
+The rising edge of a trigger input causes the row to sample and hold the current value at the Data input. The trigger is a Schmitt trigger that goes high above 2V and goes low below 0.1 V.
+
+The Trig input is polyphonic - each polyphonic channel can be triggered independently.
+
+For the first row only the sample can be triggered by the Trig input or the Trig button.
+
+All TRIG inputs from the 2nd row onward are normaled to the TRIG input from the row above. So a trigger at row one can trigger all rows if none of the other rows are patched.
+
+#### DATA input
+This is the source that is sampled.
+
+If the Trig input for the row is patched, then the Data input is normaled to the internal random number generator. Every row gets its own random value. Also each polyphonic channel gets its own random value.
+
+If the Trig input is not patched, then the Data input is normaled to the Hold output from the row above. This is what enables the module to function as a shift register.
+
+#### HOLD output
+This output holds the last value that was sampled. Normally the value remains constant until the next trigger. However, when oversampling is enabled the value will wobble a bit for a few samples before stabilizing.
+
+The number of polyphonic channels that are sampled and held at the output depends on the number of polyphonic channels found at the row inputs. The output polyphony count is the maximum count found between the Trig and Data inputs.
+
+#### Polyphony behavior
+If the Trig input is monophonic, and the Data input is polyphonic, then all Data channels will be sampled simultaneously upon receipt of a trigger.
+
+If the Trig input is polyphonic, and the Data input is monophonic, then each channel will sample the input when the channel receives a trigger. If normaled to the random number generator, then each channel will receive its own random value.
+
+If both Trig and Input are polyphonic with the same number of channels, then each channel trigger will sample the appropriate data channel.
+
+If both are polyphonic but the Data has fewer channels, then the missing data channels will be treated as constant 0 V.
+
+If both are polyphonic but the Trig input has fewer channels, then the extra channels at the Data will never be sampled.
+
+### Save Held Values context menu option
+By default all held values are stored with the patch and restored upon patch load. This feature can be disabled via the "Save held values" module context menu option.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
