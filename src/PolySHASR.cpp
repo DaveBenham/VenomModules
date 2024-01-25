@@ -101,13 +101,10 @@ struct PolySHASR : VenomModule {
             }
           }
           trigBtnState = params[TRIG_PARAM].getValue();
-        } else if (c) {
+        } else {
           trigCnt[c] = trigCnt[c-1];
           for (int p=0, pi=0; p<trigCnt[c]; p+=4, pi++)
             trig[c][pi] = trig[c-1][pi];
-        } else {
-          trigCnt[c] = 1;
-          trig[c][0] = float_4::zero();
         }
       }
       for (int c=CHANNEL_COUNT-1; c>=0; c--){
@@ -120,7 +117,7 @@ struct PolySHASR : VenomModule {
             if (oversample>1)
               data = inUpSample[c][pi].process(o ? float_4::zero() : data * oversample);
           } else if (inputs[TRIG_INPUT+c].isConnected()){
-            float_4 rnd{random::uniform(),random::uniform(),random::uniform(),random::uniform()};
+            float_4 rnd{tempTrig[0]?random::uniform():0.f, tempTrig[1]?random::uniform():0.f, tempTrig[2]?random::uniform():0.f, tempTrig[3]?random::uniform():0.f,};
             data = rnd * scale + offset;
           } else {
             data = c==0 ? float_4::zero() : out[c-1][pi];
@@ -131,7 +128,7 @@ struct PolySHASR : VenomModule {
       }
     }
     for (int c=0; c<CHANNEL_COUNT; c++){
-      for (int p=0, pi=0; p<trigCnt[c]; p+=4, pi++){
+      for (int p=0, pi=0; p<outCnt[c]; p+=4, pi++){
         outputs[OUTPUT+c].setVoltageSimd(finalOut[c][pi], p);
       }
       outputs[OUTPUT+c].setChannels(outCnt[c]);
