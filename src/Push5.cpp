@@ -27,7 +27,7 @@ struct Push5 : VenomModule {
     int onVal;
     int offVal;
     int poly;
-    bool lightOn;
+    float lightOn;
     bool buttonOn;
     dsp::PulseGenerator trigGenerator;
     ButtonExtension(){
@@ -37,7 +37,7 @@ struct Push5 : VenomModule {
       onVal=0;
       offVal=3;
       poly=1;
-      lightOn=false;
+      lightOn=0.f;
       buttonOn=false;
     }
   };
@@ -136,6 +136,9 @@ struct Push5 : VenomModule {
       std::string nm = "Button " + std::to_string(i+1);
       configParam(BUTTON_PARAM+i, 0.f, 1.f, 0.f, nm);
       configOutput(OUTPUT+i, nm);
+      paramExtensions[i].inputLink = false;
+      paramExtensions[i].nameLink = i;
+      outputExtensions[i].nameLink = i;
     }  
   }
 
@@ -147,11 +150,11 @@ struct Push5 : VenomModule {
       float out = 0.f;
       switch (e->mode){
         case 0: //trigger
-          if (val>0 && !e->lightOn && e->trigGenerator.remaining<=0.f){
+          if (val>0 && !e->buttonOn && !e->lightOn && e->trigGenerator.remaining<=0.f){
             e->trigGenerator.trigger();
           }
-          e->lightOn = val;
           out = e->trigGenerator.process(args.sampleTime) ? buttonVals[e->onVal] : buttonVals[e->offVal];
+          e->lightOn = math::clamp(out>0.f ? 1.f : e->lightOn - args.sampleTime/0.1f);
           break;
         case 1: //gate
           e->lightOn = val;
@@ -389,9 +392,9 @@ struct Push5Widget : VenomWidget {
     if(mod) {
       for (int i=0, l=0; i<5; i++, l+=3){
         Push5::ButtonExtension *e = mod->buttonExtension+i;
-        mod->lights[Push5::BUTTON_LIGHT+l+0].setBrightness(e->lightOn ? mod->buttonColors[e->onColor][0] : mod->buttonColors[e->offColor][0]);
-        mod->lights[Push5::BUTTON_LIGHT+l+1].setBrightness(e->lightOn ? mod->buttonColors[e->onColor][1] : mod->buttonColors[e->offColor][1]);
-        mod->lights[Push5::BUTTON_LIGHT+l+2].setBrightness(e->lightOn ? mod->buttonColors[e->onColor][2] : mod->buttonColors[e->offColor][2]);
+        mod->lights[Push5::BUTTON_LIGHT+l+0].setBrightness(e->lightOn*mod->buttonColors[e->onColor][0] + (1-e->lightOn)*mod->buttonColors[e->offColor][0]);
+        mod->lights[Push5::BUTTON_LIGHT+l+1].setBrightness(e->lightOn*mod->buttonColors[e->onColor][1] + (1-e->lightOn)*mod->buttonColors[e->offColor][1]);
+        mod->lights[Push5::BUTTON_LIGHT+l+2].setBrightness(e->lightOn*mod->buttonColors[e->onColor][2] + (1-e->lightOn)*mod->buttonColors[e->offColor][2]);
       }
     }
   }
