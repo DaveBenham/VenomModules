@@ -52,7 +52,7 @@ The factory default theme is ivory, and the factory default dark theme is coal.
 [Return to Table Of Contents](#venom)
 
 ## Custom Names
-Nearly every port (input or output), and every parameter (module knob, switch, or button etc.) within the Venom plugin has its own context menu option to set a custom name. Custom only appear in context menus and hover text - they do not change the faceplate graphics.
+Nearly every port (input or output), and every parameter (module knob, switch, or button etc.) within the Venom plugin has its own context menu option to set a custom name. Custom names only appear in context menus and hover text - they do not change the faceplate graphics.
 
 If a parameter or port is given a custom name, then an additional option is added to restore the factory default name.
 
