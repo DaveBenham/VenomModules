@@ -1020,7 +1020,7 @@ If Clone Merge is bypassed then the input is passed unchanged to the output.
 
 ## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
 ![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
-Ten row polyphonic sample and hold combined with a shift register.
+Ten row polyphonic sample and hold combined with a shift register, with oversampling options.
 
 Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
 
@@ -1074,6 +1074,9 @@ If the Trig input is not patched, then the Data input is normaled to the Hold ou
 This output holds the last value that was sampled. Normally the value remains constant until the next trigger. However, when oversampling is enabled the value will wobble a bit for a few samples before stabilizing.
 
 The number of polyphonic channels that are sampled and held at the output depends on the number of polyphonic channels found at the row inputs. The output polyphony count is the maximum count found between the Trig and Data inputs.
+
+#### Performance optimization
+To minimize CPU usage you should batch from the bottom and work your way up. For example, if you only need a 4 step shift register, then patch the trigger and data signals to the 7th row. If you patch the top row, then all 10 rows are triggered, and the module needs to do more work and consumes more CPU. The CPU usage can be dramatically different when polyphony and/or oversampling is involved.
 
 #### Polyphony behavior
 If the Trig input is monophonic, and the Data input is polyphonic, then all Data channels will be sampled simultaneously upon receipt of a trigger.
