@@ -6,6 +6,7 @@
 - Knob 5
 - Logic
 - NORSIQ Chord To Scale
+- Poly Sample & Hold Analog Shift Register
 - Push 5
 - Widget Menu Extender
 
