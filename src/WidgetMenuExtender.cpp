@@ -231,7 +231,7 @@ struct WidgetMenuExtender : VenomModule {
     }
   }
   
-  void initialPostDrawnProcess() override {
+  void initialPostDrawnProcess() override { // Called once from VenomModule process()
     for (uint64_t i=0; i<defaults.size(); i++){
       ParamDefault* d = &defaults[i];
       Module* mod = APP->engine->getModule(d->modId);
@@ -397,7 +397,7 @@ struct WidgetMenuExtenderWidget : VenomWidget {
   void step() override {
     VenomWidget::step();
     WidgetMenuExtender* mod = dynamic_cast<WidgetMenuExtender*>(this->module);
-    if (!mod) return;
+    if (!mod || mod->isBypassed()) return;
     bool enabled = mod->params[WidgetMenuExtender::ENABLE_PARAM].getValue();
     mod->lights[WidgetMenuExtender::ENABLE_RED_LIGHT].setBrightness(mod->disable ? LIGHT_ON : 0.f);
     mod->lights[WidgetMenuExtender::ENABLE_BLUE_LIGHT].setBrightness(enabled ? LIGHT_ON : mod->disable ? 0.f : LIGHT_OFF);
