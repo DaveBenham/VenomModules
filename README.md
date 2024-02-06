@@ -84,6 +84,8 @@ Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://g
 
 Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for advice on the NonOctave Repeating Scale Intervallic Quantizer, as well as help with compiling a representative set of scale presets.
 
+Super thanks to Benjamin Dill for his open source Stoermelder PackOne plugin. I could never have developed the Widget Menu Extender module without his tips and source code to study.
+
 Finally a thanks to Paul Dempsey for his MenuTextField struct from the pachde1 plugin that allows text entry in a menu. In turn that was developed using code/ideas from the SubmarineFree plugin by David O'Rourke.
 
 [Return to Table Of Contents](#venom)
