@@ -392,6 +392,15 @@
       ]
     },
     {
+      "slug": "WidgetMenuExtender",
+      "name": "Widget Menu Extender",
+      "description": "Extend context menus to support parameter/port renaming and parameter custom defaults",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-expander",
+      "tags": [
+        "Blank"
+      ]
+    },
+    {
       "slug": "WinComp",
       "name": "WinComp",
       "description": "Windowed comparator and rectifier",

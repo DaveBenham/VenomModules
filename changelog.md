@@ -7,6 +7,7 @@
 - Logic
 - NORSIQ Chord To Scale
 - Push 5
+- Widget Menu Extender
 
 ### Enhancements
 - Improved discrimination of DC offset removal by lowering cutoff frequency to 2 Hz

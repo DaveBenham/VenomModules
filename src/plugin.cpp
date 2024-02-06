@@ -106,6 +106,7 @@ void init(Plugin* p) {
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);
   p->addModel(modelVenomBlank);
+  p->addModel(modelWidgetMenuExtender);
   p->addModel(modelWinComp);
 
   // Any other plugin initialization may go here.

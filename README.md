@@ -23,9 +23,9 @@ Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 |----|----|----|----|
 |![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
-|[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM<br />BLANK](#venom-blank)|[WINCOMP](#wincomp)|
-|----|----|----|----|----|
-|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WINCOMP module image](doc/WinComp.PNG)|
+|[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM<br />BLANK](#venom-blank)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
+|----|----|----|----|----|----|
+|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -1828,6 +1828,12 @@ All other behaviors are the same as for Mix 4.
 ## VENOM BLANK
 ![VENOM BLANK module image](doc/VenomBlank.PNG)  
 A 3hp blank with standard Venom themes.
+
+[Return to Table Of Contents](#venom)
+
+## WIDGET MENU EXTENDER
+![WIDGET MENU EXTENDER module image](doc/WidgetMenuExtender.png)  
+Extend context menus to support parameter/port renaming and parameter custom defaults.
 
 [Return to Table Of Contents](#venom)
 

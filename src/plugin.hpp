@@ -42,6 +42,7 @@ extern Model* modelShapedVCA;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
 extern Model* modelVenomBlank;
+extern Model* modelWidgetMenuExtender;
 extern Model* modelWinComp;
 
 ////////////////////////////////
@@ -297,10 +298,13 @@ struct VenomModule : Module {
         }
         setLock(e->initLocked, i);
       }
+      initialPostDrawnProcess();
       paramsInitialized = true;
       extProcNeeded = false;
     }
   }
+  
+  virtual void initialPostDrawnProcess(){}
 
   json_t* dataToJson() override {
     json_t* rootJ = json_object();
