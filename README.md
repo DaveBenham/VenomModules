@@ -1857,6 +1857,8 @@ If a parameter or port has been given a custom name, then an additional menu opt
 
 If a module dynamically updates the parameter or port name, then that overrides any customm name from Widget Menu Extender.
 
+Do not include "input" or "output" in your custom port name - VCV will automatically append input or output to the name you provide.
+
 ### Custom Defaults
 When enabled, the context menu for every foreign parameter control is extended with an option to set the default value to the current value. The parameter is set to the default value whenever it is initialized, whether by double click, or menu option, etc.
 
