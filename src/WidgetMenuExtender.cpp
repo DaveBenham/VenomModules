@@ -282,7 +282,7 @@ struct WidgetMenuExtender : VenomModule {
       Module* mod = APP->engine->getModule(defaults[i].modId);
       if (!mod) continue;
       ParamQuantity* pq = mod->getParamQuantity(defaults[i].id);
-      if (!pq || pq->defaultValue != defaults[i].dflt) continue;
+      if (!pq || pq->defaultValue != defaults[i].dflt || pq->defaultValue == defaults[i].factoryDflt) continue;
       if (!array) array = json_array();
       json_t* obj = json_object();
       json_object_set_new(obj, "modId", json_integer(defaults[i].modId));
@@ -298,7 +298,7 @@ struct WidgetMenuExtender : VenomModule {
       Module* mod = APP->engine->getModule(wr->modId);
       if (!mod) continue;
       ParamQuantity* pq = mod->getParamQuantity(wr->id);
-      if (!pq || pq->name != wr->name) continue;
+      if (!pq || pq->name != wr->name || pq->name == wr->factoryName) continue;
       if (!array) array = json_array();
       json_array_append_new(array, json_rename(wr));
     }
@@ -309,7 +309,7 @@ struct WidgetMenuExtender : VenomModule {
       Module* mod = APP->engine->getModule(wr->modId);
       if (!mod) continue;
       PortInfo* pi = mod->getInputInfo(wr->id);
-      if (!pi || pi->name != wr->name) continue;
+      if (!pi || pi->name != wr->name || pi->name == wr->factoryName) continue;
       if (!array) array = json_array();
       json_array_append_new(array, json_rename(wr));
     }
@@ -320,7 +320,7 @@ struct WidgetMenuExtender : VenomModule {
       Module* mod = APP->engine->getModule(wr->modId);
       if (!mod) continue;
       PortInfo* pi = mod->getOutputInfo(wr->id);
-      if (!pi || pi->name != wr->name) continue;
+      if (!pi || pi->name != wr->name || pi->name == wr->factoryName) continue;
       if (!array) array = json_array();
       json_array_append_new(array, json_rename(wr));
     }
