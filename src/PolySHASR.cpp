@@ -126,7 +126,7 @@ struct PolySHASR : VenomModule {
             data = c==0 ? float_4::zero() : out[c-1][pi];
           }
           out[c][pi] = simd::ifelse(tempTrig>0.f, data, out[c][pi]);
-          finalOut[c][pi] = oversample>1 ? outDownSample[c][pi].process(out[c][pi]) : out[c][pi];
+          finalOut[c][pi] = oversample>1 && outputs[OUTPUT+c].isConnected() ? outDownSample[c][pi].process(out[c][pi]) : out[c][pi];
         }
       }
     }
