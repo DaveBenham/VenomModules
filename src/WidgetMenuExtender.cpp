@@ -349,6 +349,7 @@ struct WidgetMenuExtender : VenomModule {
 
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
+    if (paramsInitialized) return;
     if (!disable) {
       json_t* val = json_object_get(rootJ, "disable");
       if (val && json_boolean_value(val)) {
