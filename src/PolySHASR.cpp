@@ -142,34 +142,30 @@ struct PolySHASR : VenomModule {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "saveHolds", json_boolean(saveHolds));
     if (saveHolds){
-      for (int i=0; i<CHANNEL_COUNT; i++){
-        std::string nm = "outCnt"+std::to_string(i);
-        json_object_set_new(rootJ, nm.c_str(), json_integer(outCnt[i]));
-        std::string rootNm = "out"+std::to_string(i)+"-";
-        for (int p=0; p<outCnt[i]; p++){
-          nm = rootNm+std::to_string(p);
-          json_object_set_new(rootJ, nm.c_str(), json_real(out[i][p/4][p%4]));
+      json_t* cArray = json_array();
+      for (int c=0; c<CHANNEL_COUNT; c++){
+        json_t* pArray = json_array();
+        for (int p=0; p<outCnt[c]; p++){
+          json_array_append_new(pArray, json_real(out[c][p/4][p%4]));
         }
+        json_array_append_new(cArray, pArray);
       }
+      json_object_set_new(rootJ, "holds", cArray);
     }
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
-    json_t* val;
+    json_t *channels, *poly, *val;
+    size_t c, p;
     if ((val = json_object_get(rootJ, "saveHolds")))
       saveHolds = json_boolean_value(val);
-    if (saveHolds){
-      for (int i=0; i<CHANNEL_COUNT; i++){
-        std::string nm = "outCnt"+std::to_string(i);
-        if ((val = json_object_get(rootJ, nm.c_str())))
-          outCnt[i] = json_integer_value(val);
-        std::string rootNm = "out"+std::to_string(i)+"-";
-        for (int p=0; p<outCnt[i]; p++){
-          nm = rootNm+std::to_string(p);
-          if ((val = json_object_get(rootJ, nm.c_str())))
-            out[i][p/4][p%4] = json_real_value(val);
+    if (saveHolds && (channels = json_object_get(rootJ, "holds"))){
+      json_array_foreach(channels, c, poly) {
+        outCnt[c] = json_array_size(poly);
+        json_array_foreach(poly, p, val){
+          out[c][p/4][p%4] = json_real_value(val);
         }
       }
     }
