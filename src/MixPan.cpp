@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -38,10 +38,10 @@ struct MixPanWidget : MixExpanderWidget {
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(13.5f, 222.179f), module, MixModule::PAN_CV_PARAM+1));
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(13.5f, 271.081f), module, MixModule::PAN_CV_PARAM+2));
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(13.5f, 319.983f), module, MixModule::PAN_CV_PARAM+3));
-    addInput(createInputCentered<PJ301MPort>(Vec(28.5f, 195.82f), module, MixModule::PAN_INPUT+0));
-    addInput(createInputCentered<PJ301MPort>(Vec(28.5f, 244.721f), module, MixModule::PAN_INPUT+1));
-    addInput(createInputCentered<PJ301MPort>(Vec(28.5f, 293.623f), module, MixModule::PAN_INPUT+2));
-    addInput(createInputCentered<PJ301MPort>(Vec(28.5f, 342.525f), module, MixModule::PAN_INPUT+3));
+    addInput(createInputCentered<MonoPort>(Vec(28.5f, 195.82f), module, MixModule::PAN_INPUT+0));
+    addInput(createInputCentered<MonoPort>(Vec(28.5f, 244.721f), module, MixModule::PAN_INPUT+1));
+    addInput(createInputCentered<MonoPort>(Vec(28.5f, 293.623f), module, MixModule::PAN_INPUT+2));
+    addInput(createInputCentered<MonoPort>(Vec(28.5f, 342.525f), module, MixModule::PAN_INPUT+3));
   }
 };
 

@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -45,19 +45,19 @@ struct BernoulliSwitchExpanderWidget : VenomWidget {
     setVenomPanel("BernoulliSwitchExpander");
 
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(10.f, 30.f), module, BernoulliSwitchExpander::EXPAND_LIGHT));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.f, 97.f), module, BernoulliSwitchExpander::MODE_CV_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.f, 97.f), module, BernoulliSwitchExpander::MODE_CV_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.f, 97.f), module, BernoulliSwitchExpander::PROB_CV_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.f, 137.f), module, BernoulliSwitchExpander::RISE_CV_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.f, 137.f), module, BernoulliSwitchExpander::RISE_CV_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.f, 137.f), module, BernoulliSwitchExpander::RISE_CV_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.f, 177.f), module, BernoulliSwitchExpander::FALL_CV_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.f, 177.f), module, BernoulliSwitchExpander::FALL_CV_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.f, 177.f), module, BernoulliSwitchExpander::FALL_CV_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.f, 217.f), module, BernoulliSwitchExpander::OFFSET_CV_A_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.f, 217.f), module, BernoulliSwitchExpander::OFFSET_CV_A_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.f, 217.f), module, BernoulliSwitchExpander::OFFSET_CV_A_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.f, 257.f), module, BernoulliSwitchExpander::OFFSET_CV_B_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.f, 257.f), module, BernoulliSwitchExpander::OFFSET_CV_B_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.f, 257.f), module, BernoulliSwitchExpander::OFFSET_CV_B_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.f, 297.f), module, BernoulliSwitchExpander::SCALE_CV_A_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.f, 297.f), module, BernoulliSwitchExpander::SCALE_CV_A_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.f, 297.f), module, BernoulliSwitchExpander::SCALE_CV_A_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.f, 337.f), module, BernoulliSwitchExpander::SCALE_CV_B_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.f, 337.f), module, BernoulliSwitchExpander::SCALE_CV_B_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.f, 337.f), module, BernoulliSwitchExpander::SCALE_CV_B_PARAM));
   }
 };

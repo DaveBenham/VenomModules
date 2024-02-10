@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #pragma once
@@ -10,12 +10,15 @@ using namespace rack;
 extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
+extern Model* modelBenjolinOsc;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
 extern Model* modelCloneMerge;
 extern Model* modelHQ;
+extern Model* modelKnob5;
 extern Model* modelLinearBeats;
 extern Model* modelLinearBeatsExpander;
+extern Model* modelLogic;
 extern Model* modelMix4;
 extern Model* modelMix4Stereo;
 extern Model* modelMixFade;
@@ -26,8 +29,11 @@ extern Model* modelMixPan;
 extern Model* modelMixSend;
 extern Model* modelMixSolo;
 extern Model* modelNORS_IQ;
+extern Model* modelNORSIQChord2Scale;
 extern Model* modelPolyClone;
+extern Model* modelPolySHASR;
 extern Model* modelPolyUnison;
+extern Model* modelPush5;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
 extern Model* modelReformation;
@@ -36,6 +42,7 @@ extern Model* modelShapedVCA;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
 extern Model* modelVenomBlank;
+extern Model* modelWidgetMenuExtender;
 extern Model* modelWinComp;
 
 ////////////////////////////////
@@ -64,6 +71,42 @@ int getDefaultDarkTheme();
 void setDefaultTheme(int theme);
 void setDefaultDarkTheme(int theme);
 
+// MenuTextField extracted from pachde1 components.hpp
+// Textfield as menu item, originally adapted from SubmarineFree
+struct MenuTextField : ui::TextField {
+  std::function<void(std::string)> changeHandler;
+  std::function<void(std::string)> commitHandler;
+  void step() override {
+    // Keep selected
+    APP->event->setSelectedWidget(this);
+    TextField::step();
+  }
+  void setText(const std::string& text) {
+    this->text = text;
+    selectAll();
+  }
+
+  void onChange(const ChangeEvent& e) override {
+    ui::TextField::onChange(e);
+    if (changeHandler) { 
+      changeHandler(text);
+    }
+  }
+
+  void onSelectKey(const event::SelectKey &e) override {
+    if (e.action == GLFW_PRESS && (e.key == GLFW_KEY_ENTER || e.key == GLFW_KEY_KP_ENTER)) {
+      if (commitHandler) {
+        commitHandler(text);
+      }
+      ui::MenuOverlay *overlay = getAncestorOfType<ui::MenuOverlay>();
+      overlay->requestDelete();
+      e.consume(this);
+    }
+    if (!e.getTarget())
+      TextField::onSelectKey(e);
+  }
+};
+
 struct VenomModule : Module {
 
   int currentTheme = 0;
@@ -84,7 +127,37 @@ struct VenomModule : Module {
   void appendParamMenu(Menu* menu, int parmId) {
     ParamQuantity* q = paramQuantities[parmId];
     ParamExtension* e = &paramExtensions[parmId];
+    PortInfo* pi = NULL;
+    PortExtension* pe = NULL;
+    if (e->nameLink >= 0){
+      pi = e->inputLink ? inputInfos[e->nameLink] : outputInfos[e->nameLink];
+      pe = e->inputLink ? &inputExtensions[e->nameLink] : &outputExtensions[e->nameLink];
+    }
     menu->addChild(new MenuSeparator);
+    menu->addChild(createSubmenuItem("Parameter name", "",
+      [=](Menu *menu){
+        MenuTextField *editField = new MenuTextField();
+        editField->box.size.x = 250;
+        editField->setText(rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name);
+        editField->changeHandler = [=](std::string text) {
+          q->name = text + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+          if (pi) pi->name = text;
+        };
+        menu->addChild(editField);
+      }
+    ));
+    if (!e->factoryName.size())
+      e->factoryName = (rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name);
+    else if (e->factoryName != (rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name)) {
+      menu->addChild(createMenuItem("Restore factory name: "+e->factoryName, "",
+        [=]() {
+          q->name = e->factoryName + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+          if (pi) pi->name = e->factoryName;
+        }
+      ));
+    }  
+    if (pe && !pe->factoryName.size())
+      pe->factoryName = e->factoryName;
     menu->addChild(createBoolMenuItem("Lock parameter", "",
       [=]() {
         return e->locked;
@@ -99,13 +172,50 @@ struct VenomModule : Module {
         else q->defaultValue = q->getImmediateValue();
       }
     ));
-    if (e->factoryDflt != (e->locked ? e->dflt : q->defaultValue))
+    if (e->factoryDflt != (e->locked ? e->dflt : q->defaultValue)){
       menu->addChild(createMenuItem("Restore factory default", "",
         [=]() {
           if (e->locked) e->dflt = e->factoryDflt;
           else q->defaultValue = e->factoryDflt;
         }
       ));
+    }
+  }
+  
+  void appendPortMenu(Menu *menu, engine::Port::Type type, int portId){
+    PortInfo* pi = (type==engine::Port::INPUT ? inputInfos[portId] : outputInfos[portId]);
+    PortExtension* e = (type==engine::Port::INPUT ? &inputExtensions[portId] : &outputExtensions[portId]);
+    ParamQuantity* q = NULL;
+    ParamExtension* qe = NULL;
+    if (e->nameLink >= 0){
+      q = paramQuantities[e->nameLink];
+      qe = &paramExtensions[e->nameLink];
+    }
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createSubmenuItem("Port name", "",
+      [=](Menu *menu){
+        MenuTextField *editField = new MenuTextField();
+        editField->box.size.x = 250;
+        editField->setText(pi->name);
+        editField->changeHandler = [=](std::string text) {
+          pi->name = text;
+          if (q) q->name = text + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+        };
+        menu->addChild(editField);
+      }
+    ));
+    if (qe && !qe->factoryName.size())
+      qe->factoryName = pi->name;
+    if (!e->factoryName.size())
+      e->factoryName = pi->name;
+    else if (e->factoryName != pi->name) {
+      menu->addChild(createMenuItem("Restore factory name: "+e->factoryName, "",
+        [=]() {
+          pi->name = e->factoryName;
+          if (q) q->name = e->factoryName + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+        }
+      ));
+    }  
   }
 
   struct ParamExtension {
@@ -113,12 +223,27 @@ struct VenomModule : Module {
     bool initLocked;
     bool lockable;
     bool initDfltValid;
+    bool inputLink;
+    int  nameLink;
     float min, max, dflt, initDflt, factoryDflt;
+    std::string factoryName;
     ParamExtension(){
       locked = false;
       initLocked = false;
       lockable = false;
       initDfltValid = false;
+      factoryName = "";
+      inputLink = false;
+      nameLink = -1;
+    }
+  };
+  
+  struct PortExtension {
+    int nameLink;
+    std::string factoryName;
+    PortExtension(){
+      factoryName = "";
+      nameLink = -1;
     }
   };
 
@@ -149,11 +274,17 @@ struct VenomModule : Module {
   }
 
   std::vector<ParamExtension> paramExtensions;
+  std::vector<PortExtension> inputExtensions;
+  std::vector<PortExtension> outputExtensions;
 
   void venomConfig(int paramCnt, int inCnt, int outCnt, int lightCnt){
     config(paramCnt, inCnt, outCnt, lightCnt);
     for (int i=0; i<paramCnt; i++)
       paramExtensions.push_back(ParamExtension());
+    for (int i=0; i<inCnt; i++)
+      inputExtensions.push_back(PortExtension());
+    for (int i=0; i<outCnt; i++)
+      outputExtensions.push_back(PortExtension());
   }
 
   void process(const ProcessArgs& args) override {
@@ -167,21 +298,38 @@ struct VenomModule : Module {
         }
         setLock(e->initLocked, i);
       }
+      initialPostDrawnProcess();
       paramsInitialized = true;
       extProcNeeded = false;
     }
   }
+  
+  virtual void initialPostDrawnProcess(){}
 
   json_t* dataToJson() override {
     json_t* rootJ = json_object();
     for (int i=0; i<getNumParams(); i++){
       ParamExtension* e = &paramExtensions[i];
-      std::string nm = "paramLock"+std::to_string(i);
+      ParamQuantity* pq = paramQuantities[i];
+      std::string idStr = std::to_string(i);
+      std::string nm = "paramLock"+idStr;
       json_object_set_new(rootJ, nm.c_str(), json_boolean(e->locked));
-      nm = "paramDflt"+std::to_string(i);
-      json_object_set_new(rootJ, nm.c_str(), json_real(e->locked ? e->dflt : paramQuantities[i]->defaultValue));
-      nm = "paramVal"+std::to_string(i);
-      json_object_set_new(rootJ, nm.c_str(), json_real(paramQuantities[i]->getImmediateValue()));
+      nm = "paramDflt"+idStr;
+      json_object_set_new(rootJ, nm.c_str(), json_real(e->locked ? e->dflt : pq->defaultValue));
+      nm = "paramVal"+idStr;
+      json_object_set_new(rootJ, nm.c_str(), json_real(pq->getImmediateValue()));
+      nm = "paramName"+idStr;
+      json_object_set_new(rootJ, nm.c_str(), json_string(rack::string::endsWith(pq->name, " (locked)") ? pq->name.substr(0, pq->name.size()-9).c_str() : pq->name.c_str()));
+    }
+    for (int i=0; i<getNumInputs(); i++){
+      PortInfo* pi = inputInfos[i];
+      std::string nm = "inputName"+std::to_string(i);
+      json_object_set_new(rootJ, nm.c_str(), json_string(pi->name.c_str()));
+    }
+    for (int i=0; i<getNumOutputs(); i++){
+      PortInfo* pi = outputInfos[i];
+      std::string nm = "outputName"+std::to_string(i);
+      json_object_set_new(rootJ, nm.c_str(), json_string(pi->name.c_str()));
     }
     json_object_set_new(rootJ, "currentTheme", json_integer(currentTheme));
     return rootJ;
@@ -191,23 +339,48 @@ struct VenomModule : Module {
     json_t* val;
     for (int i=0; i<getNumParams(); i++){
       ParamExtension* e = &paramExtensions[i];
+      ParamQuantity* pq = paramQuantities[i];
       setLock(false, i);
-      std::string nm = "paramDflt"+std::to_string(i);
+      std::string idStr = std::to_string(i);
+      std::string nm = "paramDflt"+idStr;
       if ((val = json_object_get(rootJ, nm.c_str()))){
         if (paramsInitialized) {
-          paramQuantities[i]->defaultValue = json_real_value(val);
+          pq->defaultValue = json_real_value(val);
         }
         else {
           e->initDflt = json_real_value(val);
           e->initDfltValid = true;
         }
       }
-      nm = "paramVal"+std::to_string(i);
+      nm = "paramVal"+idStr;
       if ((val = json_object_get(rootJ, nm.c_str())))
-        paramQuantities[i]->setImmediateValue(json_real_value(val));
-      nm = "paramLock"+std::to_string(i);
+        pq->setImmediateValue(json_real_value(val));
+      nm = "paramLock"+idStr;
       if ((val = json_object_get(rootJ, nm.c_str())))
         e->initLocked = json_boolean_value(val);
+      if (!e->factoryName.size())
+        e->factoryName = pq->name;
+      nm = "paramName"+idStr;
+      if ((val = json_object_get(rootJ, nm.c_str())))
+        pq->name = json_string_value(val);
+    }
+    for (int i=0; i<getNumInputs(); i++){
+      PortExtension* e = &inputExtensions[i];
+      PortInfo* pi = inputInfos[i];
+      std::string nm = "inputName"+std::to_string(i);
+      if (!e->factoryName.size())
+        e->factoryName = pi->name;
+      if ((val = json_object_get(rootJ, nm.c_str())))
+        pi->name = json_string_value(val);
+    }
+    for (int i=0; i<getNumOutputs(); i++){
+      PortExtension* e = &outputExtensions[i];
+      PortInfo* pi = outputInfos[i];
+      std::string nm = "outputName"+std::to_string(i);
+      if (!e->factoryName.size())
+        e->factoryName = pi->name;
+      if ((val = json_object_get(rootJ, nm.c_str())))
+        pi->name = json_string_value(val);
     }
     val = json_object_get(rootJ, "currentTheme");
     if (val)
@@ -610,6 +783,21 @@ struct VCVLightButtonLatchLockable : VCVLightLatch<TLight> {
   }
 };
 
+struct GlowingTinyButtonLockable : GlowingSvgSwitchLockable {
+  GlowingTinyButtonLockable() {
+    momentary = true;
+    addFrame(Svg::load(asset::plugin( pluginInstance, "res/smallOffButtonSwitch.svg")));
+    addFrame(Svg::load(asset::plugin( pluginInstance, "res/smallWhiteButtonSwitch.svg")));
+  }
+};
+ 
+struct GlowingTinyButtonLatchLockable : GlowingTinyButtonLockable {
+  GlowingTinyButtonLatchLockable() {
+    momentary = false;
+    latch = true;
+  }
+};
+ 
 struct ShapeQuantity : ParamQuantity {
   std::string getUnit() override {
     float val = this->getValue();
@@ -619,6 +807,25 @@ struct ShapeQuantity : ParamQuantity {
 
 struct PolyPJ301MPort : app::SvgPort {
   PolyPJ301MPort() {
+    setSvg(Svg::load(asset::plugin( pluginInstance, "res/PJ301M-poly.svg")));
+  }
+};
+
+struct VenomPort : app::SvgPort {
+  void appendContextMenu(Menu* menu) override {
+    if (this->module)
+      dynamic_cast<VenomModule*>(this->module)->appendPortMenu(menu, this->type, this->portId);
+  }
+};
+
+struct MonoPort : VenomPort {
+  MonoPort() {
+    setSvg(Svg::load(asset::system("res/ComponentLibrary/PJ301M.svg")));
+  }
+};
+
+struct PolyPort : VenomPort {
+  PolyPort() {
     setSvg(Svg::load(asset::plugin( pluginInstance, "res/PJ301M-poly.svg")));
   }
 };

@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -51,10 +51,10 @@ struct ShapedVCA : VenomModule {
 
   ShapedVCA() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-    configSwitch(RANGE_PARAM, 0.f, 5.f, 0.f, "Level Range", {"0-1", "0-2", "0-10", "+/- 1", "+/- 2", "+/- 10"});
-    configSwitch(MODE_PARAM, 0.f, 1.f, 0.f, "VCA Mode", {"Unipolar clipped CV (2 quadrant)", "Bipolar unclipped CV (4 quadrant)"});
-    configSwitch(CLIP_PARAM, 0.f, 2.f, 0.f, "Output Clipping", {"Off", "Hard clip", "Soft clip"});
-    configSwitch(OVER_PARAM, 0.f, 4.f, 0.f, "Oversample", {"Off", "x4", "x8", "x16", "x32"});
+    configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 5.f, 0.f, "Level Range", {"0-1", "0-2", "0-10", "+/- 1", "+/- 2", "+/- 10"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 1.f, 0.f, "VCA Mode", {"Unipolar clipped CV (2 quadrant)", "Bipolar unclipped CV (4 quadrant)"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 2.f, 0.f, "Output Clipping", {"Off", "Hard clip", "Soft clip"});
+    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 4.f, 0.f, "Oversample", {"Off", "x4", "x8", "x16", "x32"});
     configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level", "x", 0.f, 1.f, 0.f);
     configInput(LEVEL_INPUT, "Level CV");
     configParam(BIAS_PARAM, 0.f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
@@ -64,7 +64,7 @@ struct ShapedVCA : VenomModule {
     configInput(RIGHT_INPUT, "Right");
     configOutput(LEFT_OUTPUT, "Left");
     configOutput(RIGHT_OUTPUT, "Right");
-    configSwitch(OFFSET_PARAM, 0.f, 2.f, 0.f, "Output offset", {"None", "-5 V", "+5 V"});
+    configSwitch<FixedSwitchQuantity>(OFFSET_PARAM, 0.f, 2.f, 0.f, "Output offset", {"None", "-5 V", "+5 V"});
     configBypass(LEFT_INPUT, LEFT_OUTPUT);
     configBypass(inputs[RIGHT_INPUT].isConnected() ? RIGHT_INPUT : LEFT_INPUT, RIGHT_OUTPUT);
   }
@@ -237,14 +237,14 @@ struct ShapedVCAWidget : VenomWidget {
     addParam(createLockableParamCentered<ModeSwitch>(Vec(17.243f,41.f), module, ShapedVCA::MODE_PARAM));
     addParam(createLockableParamCentered<ClipSwitch>(Vec(27.758f,41.f), module, ShapedVCA::CLIP_PARAM));
     addParam(createLockableParamCentered<OverSwitch>(Vec(38.274f,41.f), module, ShapedVCA::OVER_PARAM));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,106.5f), module, ShapedVCA::LEVEL_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f,106.5f), module, ShapedVCA::LEVEL_INPUT));
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(22.5f,138.5f), module, ShapedVCA::BIAS_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f,172.f), module, ShapedVCA::CURVE_PARAM));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,202.5f), module, ShapedVCA::CURVE_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,240.f), module, ShapedVCA::LEFT_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5f,270.f), module, ShapedVCA::RIGHT_INPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,309.f), module, ShapedVCA::LEFT_OUTPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5f,339.f), module, ShapedVCA::RIGHT_OUTPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f,202.5f), module, ShapedVCA::CURVE_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f,240.f), module, ShapedVCA::LEFT_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f,270.f), module, ShapedVCA::RIGHT_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.5f,309.f), module, ShapedVCA::LEFT_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.5f,339.f), module, ShapedVCA::RIGHT_OUTPUT));
     addParam(createLockableParamCentered<OffsetSwitch>(Vec(37.531f,326.013f), module, ShapedVCA::OFFSET_PARAM));
   }
 

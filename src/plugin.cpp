@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3 
 
 #include "plugin.hpp"
@@ -74,12 +74,15 @@ void init(Plugin* p) {
   pluginInstance = p;
 
   // Add modules here
+  p->addModel(modelBenjolinOsc);
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelBernoulliSwitchExpander);
   p->addModel(modelCloneMerge);
   p->addModel(modelHQ);
+  p->addModel(modelKnob5);
   p->addModel(modelLinearBeats);
   p->addModel(modelLinearBeatsExpander);
+  p->addModel(modelLogic);
   p->addModel(modelMix4);
   p->addModel(modelMix4Stereo);
   p->addModel(modelMixFade);
@@ -90,8 +93,11 @@ void init(Plugin* p) {
   p->addModel(modelMixSend);
   p->addModel(modelMixSolo);
   p->addModel(modelNORS_IQ);
+  p->addModel(modelNORSIQChord2Scale);
   p->addModel(modelPolyClone);
+  p->addModel(modelPolySHASR);
   p->addModel(modelPolyUnison);
+  p->addModel(modelPush5);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);
   p->addModel(modelReformation);
@@ -100,6 +106,7 @@ void init(Plugin* p) {
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);
   p->addModel(modelVenomBlank);
+  p->addModel(modelWidgetMenuExtender);
   p->addModel(modelWinComp);
 
   // Any other plugin initialization may go here.

@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -51,11 +51,11 @@ struct MixFade2Widget : MixExpanderWidget {
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(30.f,    99.025f), module, MixModule::FADE2_SHAPE_PARAM+2));
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(30.f,   129.764f), module, MixModule::FADE2_SHAPE_PARAM+3));
     addParam(createLockableParamCentered<TrimpotLockable>(Vec(30.f,   163.504f), module, MixModule::FADE2_MIX_SHAPE_PARAM));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(30.f, 209.778f), module, MixModule::FADE2_OUTPUT+0));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(30.f, 241.320f), module, MixModule::FADE2_OUTPUT+1));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(30.f, 273.239f), module, MixModule::FADE2_OUTPUT+2));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(30.f, 305.158f), module, MixModule::FADE2_OUTPUT+3));
-    addOutput(createOutputCentered<PJ301MPort>(Vec(30.f, 340.434f), module, MixModule::FADE2_MIX_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(30.f, 209.778f), module, MixModule::FADE2_OUTPUT+0));
+    addOutput(createOutputCentered<MonoPort>(Vec(30.f, 241.320f), module, MixModule::FADE2_OUTPUT+1));
+    addOutput(createOutputCentered<MonoPort>(Vec(30.f, 273.239f), module, MixModule::FADE2_OUTPUT+2));
+    addOutput(createOutputCentered<MonoPort>(Vec(30.f, 305.158f), module, MixModule::FADE2_OUTPUT+3));
+    addOutput(createOutputCentered<MonoPort>(Vec(30.f, 340.434f), module, MixModule::FADE2_MIX_OUTPUT));
   }
 
 };

@@ -1,37 +1,36 @@
 # Venom
-Venom modules version 2.5.0 for VCV Rack 2 are copyright 2023 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
+[Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Acknowledgments](#acknowledgments)  
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
+|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|
 |----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
+|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|
 
-|[MIX EXPANDERS](#mix-expanders)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[POLY<br />CLONE](#poly-clone)|[POLY<br />UNISON](#poly-unison)|
+|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
 |----|----|----|----|
-|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Unison module image](doc/PolyUnison.PNG)|
+|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
+
+|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|
+|----|----|----|----|----|----|
+|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|
 
 |[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
 |----|----|----|----|
 |![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
-|[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM<br />BLANK](#venom-blank)|[WINCOMP](#wincomp)|
-|----|----|----|----|----|
-|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WINCOMP module image](doc/WinComp.PNG)|
+|[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM<br />BLANK](#venom-blank)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
+|----|----|----|----|----|----|
+|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
 
-*EDIT - the following Rhythm Explorer polyphonic ports are missing brass cores:*
-  - *RAND*
-  - *OR*
-  - *XOR ODD*
-  - *XOR 1*
-
-Input ports are on the base faceplate color with base labels. Output ports are on a contrasting color with inverted labels.
+Input ports are on the base faceplate color, and output ports are on a contrasting background color.
 
 [Return to Table Of Contents](#venom)
 
@@ -51,6 +50,13 @@ If you want the default theme to disregard the VCV Rack dark panel setting, then
 The factory default theme is ivory, and the factory default dark theme is coal.
 
 [Return to Table Of Contents](#venom)
+
+## Custom Names
+Nearly every port (input or output), and every parameter (module knob, switch, or button etc.) within the Venom plugin has its own context menu option to set a custom name. Custom names only appear in context menus and hover text - they do not change the faceplate graphics.
+
+If a parameter or port is given a custom name, then an additional option is added to restore the factory default name.
+
+Custom names are saved with the patch and with presets, and restored upon patch or preset load. Custom names are also preserved when duplicating a module.
 
 ## Parameter Locks and Custom Defaults
 Nearly every parameter (module knob, switch, or button etc.) within the Venom plugin has its own parameter context menu options to lock the paramenter as well as set a custom default value. In addition, most modules have module context menu options to lock and unlock all parameters within that instance of the module.
@@ -77,6 +83,137 @@ Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com
 Also a hearty thanks to Squinky Labs for their [VCV Rack Demo project](https://github.com/squinkylabs/Demo), which showed me how to implement oversampling, and also got my foot in the door to understanding how to use SIMD with plugin development.
 
 Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for advice on the NonOctave Repeating Scale Intervallic Quantizer, as well as help with compiling a representative set of scale presets.
+
+Super thanks to Benjamin Dill for his open source Stoermelder PackOne plugin. I could never have developed the Widget Menu Extender module without his tips and source code to study.
+
+Finally a thanks to Paul Dempsey for his MenuTextField struct from the pachde1 plugin that allows text entry in a menu. In turn that was developed using code/ideas from the SubmarineFree plugin by David O'Rourke.
+
+[Return to Table Of Contents](#venom)
+
+## BENJOLIN OSCILLATOR
+![Benjolin Oscillator module image](doc/BenjolinOsc.png)  
+A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. It produces 7 outputs: two pairs of triangle and pulse waves with exponential FM, two varying width pulse outputs, and a stepped voltage output similar to a random sample & hold. Frequency range is very wide, from slow LFO rates to high audio rates. Connect a resonant filter with excellent ping characteristics, and you have a complete functional Benjolin.
+
+The Benjolin was invented by Rob Horkijk in 2009. It is a non-traditional / experimental electronic musical instrument that uses a small number of simple circuits and a minimal number of knobs to create an astonishing range of sounds and patterns. Extensive use of feedback and cross-modulation makes the Benjolin a chaotic sound source, with the ability to create stable patterns as well.
+
+There have been many variations of the Benjolin, but the basic functional architecture is always the same - two oscillators, a specialized shift register construct called the Rungler, and a resonant state variable filter. This module is based on the Eurorack version 2 of the Benjolin created by After Later Audio in collaboration with Rob Hordijk.
+
+Some day I would like to create a complete Benjolin module, but I do not yet have the kowledge to program a resonant filter worthy of the Benjolin. So this module only includes the two oscillators and the Rungler. A complete fully functioning Benjolin patch can be created by pairing the Benjolin Oscillator with a resonant filter module.
+
+The module is arranged in three vertical sections: OSC1, OSC2, and RUNGLER.
+
+The oscillators are digital with triangle and pulse outputs. They are intentionally not exactly 1V/Octave.
+
+### OSC1 (Oscillator 1)
+#### FREQ1 knob
+Sets the base frequency of oscillator one. Fully counterclockwise is roughly 0.03 Hz (30 seconds per cycle). The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory up through noon at about 15 Hz. A bit above that and it transitions to audio rates, with a maximum fully clockwise frequency of around 7.8 kHz. The oscillator can be modulated above the knob maximum.
+
+#### RUNG1 (Rungler 1) knob
+Controls how much the rungler signal modulates oscillator 1 frequency. The knob is a bipolar attenuverter ranging from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
+
+#### CV1 (Control Voltage 1) knob and input
+Bipolar input with a bipolar attenuverter to modulate oscillator 1 frequency. The attenuverter ranges from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
+
+The CV1 input is normalled to the Oscillator 2 triangle output.
+
+#### TRI1 (Triangle 1) output
+Triangle waveform bipolar output for oscillator one, ranging from -5 to 5 volts.
+
+#### PULSE1 output
+Pulse waveform bipolar output for oscillator one, ranging from -5 to 5 volts.
+
+### OSC2 (Oscillator 2)
+#### FREQ2 (Oscillator 2 Frequency) knob
+Sets the base frequency of oscillator two. Fully counterclockwise is roughly 0.03 Hz (around 30 seconds per cycle). The oscillator cannot be modulated below this minimum frequency. The oscillator remains in LFO territory up through noon at about 15 Hz. A bit above that and it transitions to audio rates, with a maximum fully clockwise frequency of around 7.8 kHz. The oscillator can be modulated above the knob maximum.
+
+#### RUNG2 (Rungler 2) knob
+Controls how much the rungler signal modulates oscillator 2 frequency. The knob is a bipolar attenuverter ranging from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
+
+#### CV2 (Control Voltage 2) knob and input
+Bipolar input with a bipolar attenuverter to modulate oscillator 2 frequency. The attenuverter ranges from -1 (100% inverted) to 1 (100%), with the default noon value of 0 (no modulation).
+
+The CV2 input is normalled to the Oscillator 1 triangle output.
+
+#### TRI2 (Triangle 2) output
+Triangle waveform bipolar output for oscillator two, ranging from -5 to 5 volts.
+
+#### PULSE2 output
+Pulse waveform bipolar output for oscillator two, ranging from -5 to 5 volts.
+
+### OVERSAMPLE switch
+This small color coded switch controls how much oversampling is applied to reduce aliasing artifacts in the outputs.
+- Off (gray)
+- x2 (yellow)
+- x4 (green)
+- x8 (light blue - default)
+- x16 (dark blue)
+- x32 (purple)
+
+Aliasing might not be noticeable with chaotic and/or low frequency outputs. But the aliasing can become painfully obvious when producing high frequency coherent output unless oversampling is used. But oversampling is rather CPU intensive, so you want to use the minimum amount that gives good results. An oversample value of x8 uses reasonable CPU with VCV running at 48 kHz, and provides clean output in all but the most extreme cases.
+
+Due to float arithmetic limitations, the oscillators would stall at the lowest frequency if the VCV sample rate is set above 48 kHz and high oversample rates are used. To compensate, the maximum allowed oversampling is reduced as the VCV sample rate increases. This enables the oscillators to cover their full range regardless what VCV sample rate is used.
+
+### RUNGLER
+The Rungler consists of an eight step shift register driven by a clock and a data input, along with comparators, logic gates, and a digital to analog converter. The rungler data input is always derived from the oscillator 1 triangle output. The clock input defaults to the oscillator 2 pulse output, but may be overridden at the clock input. When a bit shifts out of the shift register, it is XORed with the data input and fed back into the low bit of the ASR. The Rungler produces multiple output signals. Depending on configuration and the incoming data, the rungler output may be chaotic, or it may have a readily recognized pattern.
+
+#### PATTERN knob
+Controls whether the Rungler repeats a pattern or is chaotic. When fully anticlockwise, the Rungler produces an 8 step pattern. When fully clockwise it produces a 16 step pattern, with the first 8 steps being a mirror image of the second 8 steps. At noon the rungler output is chaotic.
+
+Below is a technical discussion of how it works.
+
+The Pattern knob range is from -1 to 1, with a default of 0 at noon. The raw internal triangle signal also ranges from -1 to 1. If the Pattern value is greater than the instantaneous incoming triangle value, then the rungler input is high (1), else the input is low (0). The input is XORed with the recycled shift register bit. So a high input inverts the recycled bit, and a low input preserves the recycled bit.
+
+When the Pattern knob is fully counterclockwise, the input is guaranteed to be zero, the recycled bit is preserved, and an 8 step pattern is established.
+
+When the Pattern knob is fully clockwise, the input is guaranteed to be 1, the recycled bit is inverted, and a 16 step pattern is established.
+
+At noon there is a roughly 50-50 chance of 0 or 1, so the rungler output is at its most chaotic, typically with no recognizeable pattern.
+
+#### CHAOS button and input
+If enabled, the Pattern knob is ignored, and the rungler output is always chaotic. Each press of the button toggles the state of the chaos button. The leading edge of a trigger at the input will also toggle the button state.
+
+The Chaos button works by converting the 8 step shift register into a 127 step linear feedback shift register, and by ignoring the Pattern knob and always comparing against 0, so there is always a 50% chance of inversion of the recycled bit.
+
+If Chaos is off, then the rungler may fall into a pattern over time, even if the Pattern knob is at noon. The Chaos button is useful for re-introducing chaos into the output.
+
+#### DOUBLE button and input
+If enabled, the Rungler is triggered at double the rate. Normally the Rungler is triggered by the leading edge of a clock gate. When in Double mode the Rungler is triggered by both the leading and trailing edges of a clock gate.
+
+Each press of the Double button toggles the state of the button. The leading edge of a trigger at the input will also toggle the button state.
+
+#### CLOCK input
+
+This is the input that triggers the Rungler. It expects a bipolar clock input, with a high state detected above +1V, and a low state below -1V.
+
+The Clock input is normaled to the Oscillator 2 pulse output.
+
+#### XOR output
+
+This is simply the first bit of the Rungler shift register, scaled and offset to be bipolar +/-5V.
+
+#### PWM output
+
+Although this is under the Rungler section, it actually has nothing to do with the Rungler. This bipolar +/-5V output is produced by a comparator that outputs 5V when the TRI2 signal is greater than TRI1, and -5V otherwise. This is the signal that traditionally gets sent to the Benjolin filter input. It was called PWM by Rob Hordijk because it produces a series of variable width pulses, reminiscent of a pulse wave with pulse width modulation.
+
+#### RUNG (Rungler) output
+
+This output is also bipolar varying between +/-5V. It is a stepped voltage signal with 8 possible values created by the digital to analog converter in the Rungler.
+
+### Patching a Complete Benjolin
+A minimal complete Benjolin can be patched simply by pairing the Benjolin Oscillator with a resonant filter with good ping characteristics. I find the Vult Unstabile filter works extremely well. Simply patch the PWM output to the filter input, and the Rungler output to the filter cuttoff input.
+
+A Benjolin should not self oscillate unless given feedback from the filter band pass output. So ideally the cutoff frequency and resonance amount should be constrained so as to prevent self oscillation. Other things to consider are a crossfade module to allow a mix of PWM and external CV (or self patched CV) as input to the filter. Also a mixer would be good to allow a mix of external (or self patched) CV and Rungler input to the Cutoff frequency.
+
+The patch below closely emulates the features of the Benjolin version 2 from After Later Audio, and is available at https://patchstorage.com/complete-benjolin-using-the-venom-benjolin-oscillator/
+
+![Complete Benjolin patch example image](doc/VenomBenjolin.PNG)
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are constant monophonic 0V when the Benjolin Oscillator is bypassed.
 
 [Return to Table Of Contents](#venom)
 
@@ -144,7 +281,7 @@ The following factory presets are available that emulate the four configurations
 - Toggled Bernoulli Gate - Toggles 10V Schmitt trigger gate between A and B
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass Behavior
 If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. The B input is still normalled to the A input while bypassed.
@@ -190,7 +327,7 @@ An LED glows yellow for each input that is successfully replicated. The LED glow
 All of the replicated inputs are merged into the single polyphonic output. The poly output starts with all clones from input 1, followed by clones from input 2, etc.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -250,11 +387,47 @@ If this port is patched, then the V/Oct input is quantized to the nearest harmon
 The final computed partial is converted into a delta V/Oct and added to the ROOT to establish the final output V/Oct value.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 The IN input is passed unchanged to the OUT output when the Harmonic Quantizer is bypassed.
+
+[Return to Table Of Contents](#venom)
+
+## KNOB 5
+![Knob 5 module image](doc/Knob5.png)  
+Five independently configurable constant voltage knobs.
+
+### Individual Button configuration
+Each knob has a custom menu option to tailor the knob to your needs.
+
+#### Knob Range
+Determines the minimum and maximum voltage of the knob.
+- **0-1 V**
+- **0-2 V**
+- **0-5 V**
+- **0-10 V**
+- **+/- 1 V**
+- **+/- 2 V**
+- **+/- 5 V**
+- **+/- 10 V (default)**
+
+#### Polyphony channels
+Determines the number of polyphonic channels to output. All channels will be identical. The default is 1 (mono).
+
+ 
+### Global Knob configuration
+The module context menu include an option to configure all buttons simultaneously. The option values are the same as for individual knobs.
+
+If all knobs currently share the same value, then the current value is displayed in the menu. If at least one button is different, then the current value is empty.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus. However, the rename function is modified slightly. Renameing a knob will automatically rename the corresponding output port, and vice versa.
+
+### Bypass
+
+All outputs are constant monophonic 0 V when KNOB 5 is bypassed.
 
 [Return to Table Of Contents](#venom)
 
@@ -312,6 +485,87 @@ An expander is ignored if it is bypassed.
 
 [Return to Table Of Contents](#venom)
 
+## LOGIC
+![Logic module image](doc/Logic.png)  
+
+The Logic module provides up to 9 independent polyphonic logic gates that can be configured for any of the standard logic operations. All logic gates support one, two, or more inputs. A merge option allows polyphonic input channels to be used as inputs for the same logic gate. Compound logic operations can be created by reusing earlier outputs as inputs, without introducing sample delays. Options for oversampling, output range, and DC offset removal make Logic ideal for audio applications, with undesired aliasing limited by the oversampling.
+
+### MERGE button
+Controls how polyphonic inputs are handled.
+- **Off (gray - default)**: Each polyphonic channel gets its own logic gate. The number of output channels is the maximum channel count found across all inputs for that gate. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels assign constant 0V to the missing channels.
+- **On (white)**: All logic gate outputs are monophonic. Polyphonic input channels are collected as separate inputs to a single monophonic gate.
+
+### OVER (oversampling) button
+Controls how much oversampling is applied to reduce aliasing when using the output as an audio signal. Oversampling can be CPU expensive, so should be off for normal CV usage. For audio applications, the least amount of oversampling should be used that gives satisfactory results.
+- **Off (gray - default)**
+- **2x (yellow)**
+- **4x (green)**
+- **8x (light blue)**
+- **16x (dark blue)**
+- **32x (purple)**
+
+### RANGE button
+Controls the output voltages used for high and low states. Unipolar outputs are typically used for CV, and bipolar for audio.
+- **0-1 (yellow)**: unipolar low = 0, high = 1
+- **0-5 (green)**: unipolar low = 0, high = 5
+- **0-10 (dark blue - default)**: unipolar low = 0, high = 10
+- **+/- 1 (pink)**: bipolar low = -1, high = 1
+- **+/- 5 (orange)**: bipolar low = -5, high = 5
+- **+/- 10 (purple)**: bipolar low = -10, high = 10
+
+### DC button
+Controls whether DC offsets are removed from the outputs
+- **Off (gray - default)**: Used for normal CV outputs
+- **On (white)**: Useful for audio outputs
+
+### HIGH THRESH and LOW THRESH knobs and inputs
+Set the low and high thresholds for the Schmitt triggers that determine the state of each input. The effective threshold is the sum of the knob value and the corresponding input. The same thresholds are used for all inputs. An input goes high whenever the voltage rises above the high threshold. The input goes low whenever the voltage is at or below the low threshold. The state remains unchanged if the voltage lies between the thresholds.
+
+The module automatically swaps the high and low thresholds if the high falls below the low, so the effective high threshold is always guaranteed to be greater than or equal to the low threshold.
+
+The Low Threshold knob factory default is 0.1V, and the High Threshold knob default is 2V.
+
+### Logic rows
+There are nine rows, each consisting of two inputs, a Reuse button to recycle a previous output as an additional input, an Operation button to set the output logic, and an output for the logic result. The operation may be set to "defer" so that the row inputs are included as inputs to the row below, and the deferred row output is effectively disabled.
+
+#### A and B inputs
+Provide up to two inputs for each row. An input is ignored if it is not patched.
+
+#### REUSE button
+This button allows any of the logic outputs from rows above to be used as an additional input for the row, without introducing a sample delay. If set to None (three dashes), then the button is ignored. The first row doesn't have any row above, so its value is fixed at None.
+
+If the output selected for reuse is deferred, then it is ignored as an input.
+
+An output can also be used as input by patching an output from one row to input A or B from another row, except the patch cable will introduce a one sample delay.
+
+#### OP (Operation) button
+All operations other than defer have non-standard definitions so that they work with one, two, three, or more inputs. Each logic operation will operate in the standard way if there are exactly two inputs.
+- **Defer (down arrow - default)**: All inputs from the row are included as inputs to the row below, and the output is unavailable for reuse. The output for the row will be constant 0V.
+- **AND**: The output is high only if all inputs are high.
+- **OR**: The output is high if at least one input is high.
+- **XOR 1**: The output is high only if exactly one input is high and all others are low.
+- **XOR ODD**: The output is high only if there are an odd number of high inputs.
+- **NAND**: The output is high if at least one input is low.
+- **NOR**: The output is high only if all inputs are low.
+- **XNOR 1**: The output is high unless exactly one input is high.
+- **XNOR ODD**: The output is high if an even number of outputs are high, or if all inputs are low
+
+Note that AND, OR, XOR 1, and XOR ODD will all give the same output if there is only one input. A high input will produce a high output, and low input a low output.
+
+The NAND, NOR, XNOR 1, and XNOR ODD will all function as a NOT operator if there is only one input. A high input will produce a low output, and a low input a high output.
+
+#### OUT output
+Produces the output for the selected logic operation. The output will be monophonic constant 0V if the operation is deferred, or if there are no inputs.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are monophonic 0V if LOGIC is bypassed.
+
+[Return to Table Of Contents](#venom)
+
 ## MIX 4
 ![Mix 4 module image](doc/Mix4.png)  
 A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
@@ -361,7 +615,7 @@ The color coded clip button determines how (or if) the final output is clipped. 
 - **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -682,7 +936,7 @@ This polyphonic output produces all the V/Oct values for the scale starting at t
 This output can also be used as an extended chord rooted at the Scale Root. Simply define the intervals between the notes in your chord, patch the root of the chord to the Scale Root input, and leave the IN input unpatched.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -690,6 +944,59 @@ If the module is bypassed then the Trig input is passed unchanged to the Trig ou
 
 [Return to Table Of Contents](#venom)
 
+
+## NORSIQ Chord To Scale
+![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)  
+Converts up to 14 channels of a polyphonic "chord" input into a set of CV outputs that define a scale for the Non-Octave-Repeating Scale Intervallic Quantizer (NORSIQ).
+
+### General Operation
+Polyphonic V/Oct channels at the CHORD input are sorted, and the lowest note defines the scale root, the number of channels determines the scale length, and the intervals between the sorted notes define the intervals for the NORSIQ. The computation of the defining scale CV may be continuous, or it may be held constant until a trigger is received.
+
+#### NORSIQ configuration
+The NORSIQ module must be configured properly for the CV from the NORSIQ Chord To Scale module to define the correct scale:
+- The EQUAL DIVS button must be off so that intervals can be defined directly.
+- All 14 Interval knobs must be fully counter-clockwise (0V, 0 cents, or 1:1 ratio)
+- The SCALE LENGTH knob must be fully counter-clockwise (1)
+- The SCALE ROOT should be at the default noon position (C4), unless you want to transpose the scale to a different key.
+  
+The PSEUD-OCT INTERVAL and EDPO knobs and inputs are ignored. The INTERVAL UNIT, ROOT UNIT, ROUND, and EQUI LIKELY contols may configured as you see fit.
+
+The NORSIQ has a "NORSIQ Chord To Scale configuration" factory preset that quickly sets the appropriate configuration with some parameters locked to make sure it works properly.
+
+### OCTAVE FOLD button
+Controls where the scale repeats
+- **Off (gray - default)**: The last (highest) note of the sorted chord input defines the last note of the scale, which becomes the root of the next scale.
+- **On (white)**: An extra note that is an octave multiple above the scale root is added to define the last note of the scale. The lowest root octave that is above the highest chord note is used. If the highest chord note is already an octave of the root, then it becomes the last note of the scale, and no note is added.
+
+### TRIG input
+If patched, then the outputs will not change until a monophonic trigger is received. The trigger is detected by a Schmitt trigger with a high threshold of 2V and low threshold of 0.1V.
+
+If left unpatched, then the outputs are continuosly updated according to the current inputs.
+
+### CHORD input
+The polyphonic V/Oct input used to define the scale. If the OCTAVE FOLD is off, then only the first 14 channels are used. If the OCTAVE FOLD is on, then only the first 13 channels are used.
+
+### TRIG output
+The result of the TRIG input Schmitt trigger is forwarded to the TRIG output so that the trigger remains in sync with any scale changes.
+
+### ROOT output
+This monophonic output is typically patched to the NORSIQ SCALE ROOT input to define the root of the scale according to the lowest sorted note from the CHORD input. The ROOT output can be ignored if you want to transpose the scale to a different key.
+
+### LENGTH output
+This monophonic output must be patched to the NORSIQ SCALE LENGTH input to define the length of the scale.
+
+### INTVLS output
+This polyphonic output must be patched to the NORSIQ POLY INTERVALS input to define the interval between each of the notes in the scale.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
+
+
+[Return to Table Of Contents](#venom)
 
 ## POLY CLONE
 ![Poly Clone module image](doc/PolyClone.png)  
@@ -709,11 +1016,94 @@ For each channel appearing at the input, the corresponding LED above glows yello
 All of the replicated channels are merged into the single polyphonic output. The poly output starts with all clones from input channel 1, followed by clones from input channel 2, etc.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 If Clone Merge is bypassed then the input is passed unchanged to the output.
+
+[Return to Table Of Contents](#venom)
+
+## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
+![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
+Ten row polyphonic sample and hold combined with a shift register, with oversampling options.
+
+Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
+
+If no input is provided, then random values are sampled from an internal random number generator.
+
+### TRIG (Trigger) button
+Manually triggers the first row only
+
+### OVER (Oversample) button
+This color coded button controls how much oversampling is applied to minimize aliasing when triggering the sample & hold at audio rates. Oversampling is CPU expensive, so should only be applied when needed.
+- **Off (gray - default)**
+- **2x (yellow)**
+- **4x (green)**
+- **8x (light blue)**
+- **16x (dark blue)**
+- **32x (purple)**
+
+### RND (Random Range) button
+This color coded button controls the output range of the internal random number generator
+- **0-1 V (yellow)**
+- **0-5 V (green)**
+- **0-10 V (dark blue - default)**
+- **+/- 1 V (pink)**
+- **+/- 5 V (orange)**
+- **+/- 10 V (purple)**
+
+### CLR (Clear) button
+Resets all all polyphonic channels of all 10 Hold outputs to 0 V.
+
+### Sample & Hold row
+
+Each row functions as an independent sample and hold circuit.
+
+#### TRIG (Trigger) input
+The rising edge of a trigger input causes the row to sample and hold the current value at the Data input. The trigger is a Schmitt trigger that goes high above 2V and goes low below 0.1 V.
+
+The Trig input is polyphonic - each polyphonic channel can be triggered independently.
+
+For the first row only the sample can be triggered by the Trig input or the Trig button.
+
+All TRIG inputs from the 2nd row onward are normaled to the TRIG input from the row above. So a trigger at row one can trigger all rows if none of the other rows are patched.
+
+#### DATA input
+This is the source that is sampled.
+
+If the Trig input for the row is patched, then the Data input is normaled to the internal random number generator. Every row gets its own random value. Also each polyphonic channel gets its own random value.
+
+If the Trig input is not patched, then the Data input is normaled to the Hold output from the row above. This is what enables the module to function as a shift register.
+
+#### HOLD output
+This output holds the last value that was sampled. Normally the value remains constant until the next trigger. However, when oversampling is enabled the value will wobble a bit for a few samples before stabilizing.
+
+The number of polyphonic channels that are sampled and held at the output depends on the number of polyphonic channels found at the row inputs. The output polyphony count is the maximum count found between the Trig and Data inputs.
+
+#### Performance optimization
+If you are using oversampling and you do not require the Trigger button, then consider patching from the bottom and work your way up. For example, if you only need a 4 step shift register, then patch the trigger and data signals to the 7th row. If you patch the top row, then all 10 rows are triggered, and the module needs to do more work and consumes more CPU. The CPU usage can be dramatically different when oversampling is involved.
+
+#### Polyphony behavior
+If the Trig input is monophonic, and the Data input is polyphonic, then all Data channels will be sampled simultaneously upon receipt of a trigger.
+
+If the Trig input is polyphonic, and the Data input is monophonic, then each channel will sample the input when the channel receives a trigger. If normaled to the random number generator, then each channel will receive its own random value.
+
+If both Trig and Input are polyphonic with the same number of channels, then each channel trigger will sample the appropriate data channel.
+
+If both are polyphonic but the Data has fewer channels, then the missing data channels will be treated as constant 0 V.
+
+If both are polyphonic but the Trig input has fewer channels, then the extra channels at the Data will never be sampled.
+
+### Save Held Values context menu option
+By default all held values are stored with the patch and restored upon patch load. This feature can be disabled via the "Save held values" module context menu option.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly S&H ASR is bypassed then all outputs are monophonic constant 0 V.
 
 [Return to Table Of Contents](#venom)
 
@@ -757,7 +1147,7 @@ For each channel appearing at the input, the corresponding LED above glows yello
 All of the replicated channels are merged into the single polyphonic output. The poly output starts with all replications from input channel 1, followed by replications from input channel 2, etc. Detune spread for each input channel goes from low to high (unless the detune CV creates a negative spread)
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -765,6 +1155,66 @@ If Poly Unison is bypassed then the input is passed unchanged to the output.
 
 [Return to Table Of Contents](#venom)
 
+## PUSH 5
+![Push 5 module image](doc/Push5.png)  
+Five independently configurable push buttons.
+
+### Individual Button configuration
+Each button has custom menu options that allow you to tailor the button to your needs
+
+#### Button Mode
+- **Trigger** - A 1 msec On value trigger is output each time the button is pressed.
+- **Gate (default)** - The On value is output while the button is pressed.
+- **Toggle** - The button changes state each time the button is pressed. Toggle button states are stored with patches, selection sets, and presets, and are restored when the patch, selection set, preset is loaded.
+
+#### On value
+- **10 V (default)**
+- **5 V**
+- **1 V**
+- **0 V**
+- **-1 V**
+- **-5 V**
+- **-10 V**
+
+#### Off value
+Same values as On except the default is 0 V.
+
+#### On Color
+- **Red**
+- **Yellow**
+- **Blue**
+- **Green**
+- **Purple**
+- **Orange**
+- **White (default)**
+- **Dim Red**
+- **Dim Yellow**
+- **Dim Blue**
+- **Dim Green**
+- **Dim Purple**
+- **Dim Orange**
+- **Dim Gray**
+- **Off**
+
+#### Off Color
+Same values as Off except the default is Dim Gray
+
+#### Polyphony channels
+Determines the number of channels to output. All channels will be identical. The default is 1 (mono).
+
+### Global Button configuration
+The module context menu includes options that configure all buttons simultaneously. The options and values are the same as for individual buttons.
+
+If all buttons currently share the same value, then the current value is displayed in the menu. If at least one button is different then the current value is empty.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus. However, the rename function is modified slightly. Renameing a button will automatically rename the corresponding output port, and vice versa.
+
+### Bypass
+
+All outputs are constant monophonic 0 V when PUSH 5 is bypassed.
+
+[Return to Table Of Contents](#venom)
 
 ## RECURSE
 ![RECURSE module image](doc/Recurse.PNG)  
@@ -809,7 +1259,7 @@ The unlabeled Modulation Mode knob determines when the SCALE and OFFSET operatio
 Since the Return is normalled to the Send, it is possible to generate a polyphonic series of constant voltages using only the RECURSE module. For example, leave all inputs and the Return unpatched, set the Recursion Count to 16, the Scale to 1, the Offset to 1V, and the Mode to nPre. The SEND output will have 16 channels of integral values from 1 to 16. Change the Mode to nPost and the values will range from 0 to 15.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -917,7 +1367,7 @@ Note that oversampling cannot remove aliasing that may be present in inputs driv
 The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -929,12 +1379,6 @@ The Input is passed unchanged to the Output when REFORMATION is bypassed.
 ## Rhythm Explorer
 ![Rhythm Explorer module image](doc/RhythmExplorer.PNG)  
 Rhythm Explorer is a trigger sequencer that randomly generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
-
-*NOTE - the following polyphonic ports are missing their brass core:*
-- *RAND*
-- *OR (potentially polyphonic)* 
-- *XOR ODD (potentially polyphonic)*
-- *XOR 1 (potentially polyphonic)*
 
 ### Basic Operation
 Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 ppqn clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
@@ -1273,7 +1717,7 @@ The output offset is particularly useful when using the Shaped VCA as a wave sha
 The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 The Left and Right inputs are passed unchanged to the Left and Right outputs when the module is bypassed. The Right input remains normaled to the Left input while bypassed. However, the left input is not normaled to 10V while bypassed.
@@ -1362,7 +1806,7 @@ The color coded exclude button determines if patched channel outputs are exclude
 - **On** (red): patched output channels are excluded from the final mix
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
@@ -1390,6 +1834,51 @@ All other behaviors are the same as for Mix 4.
 ## VENOM BLANK
 ![VENOM BLANK module image](doc/VenomBlank.PNG)  
 A 3hp blank with standard Venom themes.
+
+[Return to Table Of Contents](#venom)
+
+## WIDGET MENU EXTENDER
+![WIDGET MENU EXTENDER module image](doc/WidgetMenuExtender.png)  
+Extend context menus to support parameter/port renaming and parameter custom defaults.
+
+Custom names and defaults are stored with the patch and restored upon patch load as long as the Widget Menu Extender remains with the patch.
+
+Factory names and defaults are restored whenever the Widget Menu Extender is removed from the patch.
+
+Note that custom names and defaults are built into all of the Venom plugin modules (except for Rhythm Explorer). Widget Menu Extender brings that functionality to modules from foreign plugins (as well as Rhythm Explorer). The Venom module custom names and defaults are mainained independently from Widget Menu Extender.
+
+### ENABLE button
+Controls whether extended context menus are enabled or not. The button is bright blue when extended menus are On.
+
+Extended context menu options will only be available if the Enable button is On.
+
+Any existing custom names and defaults remain in effect when the extended menus are Off.
+
+### Custom Names
+When enabled, the context menu for every foreign input port, output port, and parameter control is extended with an option to rename the parameter or port with a custom name. Once set, the custom name only appears in hover text and context menus - it does not update the module faceplate.
+
+If a parameter or port has been given a custom name, then an additional menu option is added to restore the factory name.
+
+If a module dynamically updates the parameter or port name, then that overrides any customm name from Widget Menu Extender.
+
+Do not include "input" or "output" in your custom port name - VCV will automatically append input or output to the name you provide.
+
+### Custom Defaults
+When enabled, the context menu for every foreign parameter control is extended with an option to set the default value to the current value. The parameter is set to the default value whenever it is initialized, whether by double click, or menu option, etc.
+
+If a custom default value has been established, then an additional menu option is added to restore the factory default value.
+
+If a module dynamically updates the parameter default value, then that overrides any custom default value from Widget Menu Extender.
+
+### Multiple Instances
+Only one instance of Widget Menu Extender can be active per patch. If another instance is inserted, then it will be permanently disabled and the Enable button will be bright red. Since permanently disabled Widget Menu Extenders serve no purpose, they probably should be deleted from the patch.
+
+If using VCV Pro within a DAW, each instance of the VCV plugin is regarded as a separate patch, and can have its own active Widget Menu Extender.
+
+When importing a selection set containing Widget Menu Extender, custom names and defaults are preserved as long as the patch does not already have an active Widget Menu Extender. But if an active Widget Menu Extender already exists, then the selection set Widget Menu Extender will be permanently disabled, and selection set custom names and defaults will be lost.
+
+### Bypass
+When bypassed, Widget Menu Extender behaves the same as if the Enable button is off - the extended context menu options will not be available, but existing custom names and defaults are preserved.
 
 [Return to Table Of Contents](#venom)
 
@@ -1452,7 +1941,7 @@ Oversampling uses significant CPU, so there are multiple options to choose from:
 An LED glows blue above the output ports if oversampling is enabled. The LED is black when oversampling is off.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.

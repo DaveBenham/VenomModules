@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -340,11 +340,11 @@ struct VCAMix4Widget : MixBaseWidget {
     setModule(module);
     setVenomPanel("VCAMix4");
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329, 42.295), module, VCAMix4::CV_INPUTS+0));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329, 73.035), module, VCAMix4::CV_INPUTS+1));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329,103.775), module, VCAMix4::CV_INPUTS+2));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329,134.515), module, VCAMix4::CV_INPUTS+3));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329,168.254), module, VCAMix4::MIX_CV_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(21.329, 42.295), module, VCAMix4::CV_INPUTS+0));
+    addInput(createInputCentered<PolyPort>(Vec(21.329, 73.035), module, VCAMix4::CV_INPUTS+1));
+    addInput(createInputCentered<PolyPort>(Vec(21.329,103.775), module, VCAMix4::CV_INPUTS+2));
+    addInput(createInputCentered<PolyPort>(Vec(21.329,134.515), module, VCAMix4::CV_INPUTS+3));
+    addInput(createInputCentered<PolyPort>(Vec(21.329,168.254), module, VCAMix4::MIX_CV_INPUT));
 
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.671, 42.295), module, VCAMix4::LEVEL_PARAMS+0));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.671, 73.035), module, VCAMix4::LEVEL_PARAMS+1));
@@ -358,17 +358,17 @@ struct VCAMix4Widget : MixBaseWidget {
     addParam(createLockableParamCentered<ClipSwitch>(Vec(67.9055,151.8845), module, VCAMix4::CLIP_PARAM));
     addParam(createLockableParamCentered<ExcludeSwitch>(Vec(7.2725,151.8845), module, VCAMix4::EXCLUDE_PARAM));
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329,209.400), module, VCAMix4::INPUTS+0));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329,241.320), module, VCAMix4::INPUTS+1));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329,273.240), module, VCAMix4::INPUTS+2));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329,305.160), module, VCAMix4::INPUTS+3));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(21.329,340.434), module, VCAMix4::CHAIN_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(21.329,209.400), module, VCAMix4::INPUTS+0));
+    addInput(createInputCentered<PolyPort>(Vec(21.329,241.320), module, VCAMix4::INPUTS+1));
+    addInput(createInputCentered<PolyPort>(Vec(21.329,273.240), module, VCAMix4::INPUTS+2));
+    addInput(createInputCentered<PolyPort>(Vec(21.329,305.160), module, VCAMix4::INPUTS+3));
+    addInput(createInputCentered<PolyPort>(Vec(21.329,340.434), module, VCAMix4::CHAIN_INPUT));
 
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(53.671,209.400), module, VCAMix4::OUTPUTS+0));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(53.671,241.320), module, VCAMix4::OUTPUTS+1));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(53.671,273.240), module, VCAMix4::OUTPUTS+2));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(53.671,305.160), module, VCAMix4::OUTPUTS+3));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(53.671,340.434), module, VCAMix4::MIX_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(53.671,209.400), module, VCAMix4::OUTPUTS+0));
+    addOutput(createOutputCentered<PolyPort>(Vec(53.671,241.320), module, VCAMix4::OUTPUTS+1));
+    addOutput(createOutputCentered<PolyPort>(Vec(53.671,273.240), module, VCAMix4::OUTPUTS+2));
+    addOutput(createOutputCentered<PolyPort>(Vec(53.671,305.160), module, VCAMix4::OUTPUTS+3));
+    addOutput(createOutputCentered<PolyPort>(Vec(53.671,340.434), module, VCAMix4::MIX_OUTPUT));
   }
 
 };

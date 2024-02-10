@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -294,11 +294,11 @@ struct Mix4Widget : MixBaseWidget {
     addParam(createLockableParamCentered<DCBlockSwitch>(Vec(37.491,82.655), module, Mix4::DCBLOCK_PARAM));
     addParam(createLockableParamCentered<ClipSwitch>(Vec(37.491,114.895), module, Mix4::CLIP_PARAM));
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.337,201.993), module, Mix4::INPUTS+0));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.337,235.233), module, Mix4::INPUTS+1));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.337,268.473), module, Mix4::INPUTS+2));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.337,301.712), module, Mix4::INPUTS+3));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.337,340.434), module, Mix4::MIX_OUTPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.337,201.993), module, Mix4::INPUTS+0));
+    addInput(createInputCentered<PolyPort>(Vec(22.337,235.233), module, Mix4::INPUTS+1));
+    addInput(createInputCentered<PolyPort>(Vec(22.337,268.473), module, Mix4::INPUTS+2));
+    addInput(createInputCentered<PolyPort>(Vec(22.337,301.712), module, Mix4::INPUTS+3));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.337,340.434), module, Mix4::MIX_OUTPUT));
   }
 
 };

@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -37,10 +37,10 @@ struct MixSoloWidget : MixExpanderWidget {
     addParam(createLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<GreenLight>>>(Vec(22.5f,  73.035f), module, MixModule::SOLO_PARAM+1, MixModule::SOLO_LIGHT+1));
     addParam(createLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<GreenLight>>>(Vec(22.5f, 103.775f), module, MixModule::SOLO_PARAM+2, MixModule::SOLO_LIGHT+2));
     addParam(createLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<GreenLight>>>(Vec(22.5f, 134.514f), module, MixModule::SOLO_PARAM+3, MixModule::SOLO_LIGHT+3));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 209.778f), module, MixModule::SOLO_INPUT+0));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 241.320f), module, MixModule::SOLO_INPUT+1));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 273.239f), module, MixModule::SOLO_INPUT+2));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5f, 305.158f), module, MixModule::SOLO_INPUT+3));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 209.778f), module, MixModule::SOLO_INPUT+0));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 241.320f), module, MixModule::SOLO_INPUT+1));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 273.239f), module, MixModule::SOLO_INPUT+2));
+    addInput(createInputCentered<MonoPort>(Vec(22.5f, 305.158f), module, MixModule::SOLO_INPUT+3));
   }
 
   void step() override {

@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #pragma once
@@ -48,10 +48,10 @@ class OversampleFilter_4 {
 class DCBlockFilter_4 {
   public:
     void init(float sampleRate){
-      f[0].setCutoffFreq(10.f/sampleRate);
-      f[1].setCutoffFreq(10.f/sampleRate);
-      f[2].setCutoffFreq(10.f/sampleRate);
-      f[3].setCutoffFreq(10.f/sampleRate);
+      f[0].setCutoffFreq(2.f/sampleRate);
+      f[1].setCutoffFreq(2.f/sampleRate);
+      f[2].setCutoffFreq(2.f/sampleRate);
+      f[3].setCutoffFreq(2.f/sampleRate);
     }
     void reset(){
       f[0].reset();

@@ -1,5 +1,26 @@
 # Venom Modules Changelog
 
+## 2.6.0
+### New Modules
+- Benjolin Oscillator
+- Knob 5
+- Logic
+- NORSIQ Chord To Scale
+- Poly Sample & Hold Analog Shift Register
+- Push 5
+- Widget Menu Extender
+
+### Enhancements
+- Improved discrimination of DC offset removal by lowering cutoff frequency to 2 Hz
+- All Venom parameters and input/output ports have user configurable names (except Rhythm Explorer)
+
+### Bug Fixes
+- Fixed locked switch context menu
+  - Linear Beats Expander
+  - Reformation
+  - Shaped VCA
+- Rhythm Explorer - Fixed some polyphonic port displays
+
 ## 2.5.0 (2023-11-22)
 ### New Modules
 - Linear Beats

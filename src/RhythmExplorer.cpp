@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 // Thanks to Andrew Hanson for the initial prototype code
@@ -840,7 +840,7 @@ struct RhythmExplorerWidget : VenomWidget {
 
     addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::CLOCK_INPUT));
     x += dx;
-    addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::RNG_OVERRIDE_INPUT));
+    addInput(createInputCentered<PolyPJ301MPort>(Vec(x,y), module, RhythmExplorer::RNG_OVERRIDE_INPUT));
     x += dx;
     addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::SEED_INPUT));
     x += dx;
@@ -850,11 +850,11 @@ struct RhythmExplorerWidget : VenomWidget {
     x += dx;
     addInput(createInputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::RUN_GATE_INPUT));
     x += dx * 1.5f;
-    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_OR_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_OR_OUTPUT));
     x += dx;
-    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ODD_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ODD_OUTPUT));
     x += dx;
-    addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ONE_OUTPUT));
+    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(x,y), module, RhythmExplorer::GATE_XOR_ONE_OUTPUT));
     x += dx;
     addOutput(createOutputCentered<PJ301MPort>(Vec(x,y), module, RhythmExplorer::SEED_OUTPUT));
     x += dx;

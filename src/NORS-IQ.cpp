@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -464,24 +464,24 @@ struct NORS_IQWidget : VenomWidget {
     float x = 22.5f, y = 206.0f;
     for (int i=0; i<INTVL_CNT; i++) {
       addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(x, y), module, NORS_IQ::INTVL_PARAM+i));
-      addInput(createInputCentered<PJ301MPort>(Vec(x, y+32.5f), module, NORS_IQ::INTVL_INPUT+i));
+      addInput(createInputCentered<MonoPort>(Vec(x, y+32.5f), module, NORS_IQ::INTVL_INPUT+i));
       x+=30.f;
     }
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(35.603, 312.834), module, NORS_IQ::POLY_INTVL_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(35.603, 312.834), module, NORS_IQ::POLY_INTVL_INPUT));
 
-    addInput(createInputCentered<PJ301MPort>(Vec(125.0, 312.834), module, NORS_IQ::POI_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(164.1, 312.834), module, NORS_IQ::EDPO_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(201.2,312.834), module, NORS_IQ::LENGTH_INPUT));
-    addInput(createInputCentered<PJ301MPort>(Vec(239.3,312.834), module, NORS_IQ::ROOT_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(125.0, 312.834), module, NORS_IQ::POI_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(164.1, 312.834), module, NORS_IQ::EDPO_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(201.2,312.834), module, NORS_IQ::LENGTH_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(239.3,312.834), module, NORS_IQ::ROOT_INPUT));
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(299.279, 289.616), module, NORS_IQ::IN_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(333.867, 289.616), module, NORS_IQ::TRIG_INPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(368.455, 289.616), module, NORS_IQ::TRIG_OUTPUT));
+    addInput(createInputCentered<PolyPort>(Vec(299.279, 289.616), module, NORS_IQ::IN_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(333.867, 289.616), module, NORS_IQ::TRIG_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(368.455, 289.616), module, NORS_IQ::TRIG_OUTPUT));
 
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(299.279, 336.052), module, NORS_IQ::OUT_OUTPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(333.867, 336.052), module, NORS_IQ::POCT_OUTPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(368.455, 336.052), module, NORS_IQ::SCALE_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(299.279, 336.052), module, NORS_IQ::OUT_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(333.867, 336.052), module, NORS_IQ::POCT_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(368.455, 336.052), module, NORS_IQ::SCALE_OUTPUT));
     
     NORS_IQDisplay* display = createWidget<NORS_IQDisplay>(Vec(6.83,102.629));
     display->box.size = Vec(392.233, 84.847);

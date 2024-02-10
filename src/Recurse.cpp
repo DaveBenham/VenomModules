@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -162,15 +162,15 @@ struct RecurseWidget : VenomWidget {
     countDisplay->module = module;
     addChild(countDisplay);
     addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(18.134, 43.87)), module, Recurse::COUNT_PARAM));
-    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.299, 58.3)), module, Recurse::SCALE_INPUT));
+    addInput(createInputCentered<PolyPort>(mm2px(Vec(7.299, 58.3)), module, Recurse::SCALE_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 58.3)), module, Recurse::SCALE_PARAM));
-    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 72.75)), module, Recurse::OFFSET_INPUT));
+    addInput(createInputCentered<PolyPort>(mm2px(Vec(7.297, 72.75)), module, Recurse::OFFSET_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 72.75)), module, Recurse::OFFSET_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(12.7155, 84.50)), module, Recurse::TIMING_PARAM));
-    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 101.55)), module, Recurse::SEND_OUTPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 101.55)), module, Recurse::RETURN_INPUT));
-    addInput(createInputCentered<PolyPJ301MPort>(mm2px(Vec(7.297, 116.0)), module, Recurse::IN_INPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(mm2px(Vec(18.134, 116.0)), module, Recurse::OUT_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(mm2px(Vec(7.297, 101.55)), module, Recurse::SEND_OUTPUT));
+    addInput(createInputCentered<PolyPort>(mm2px(Vec(18.134, 101.55)), module, Recurse::RETURN_INPUT));
+    addInput(createInputCentered<PolyPort>(mm2px(Vec(7.297, 116.0)), module, Recurse::IN_INPUT));
+    addOutput(createOutputCentered<PolyPort>(mm2px(Vec(18.134, 116.0)), module, Recurse::OUT_OUTPUT));
 
     addChild(createLightCentered<TinyLight<YlwLight<>>>(mm2px(Vec(12.7115, 58.3)), module, Recurse::SCALE_LIGHT));
     addChild(createLightCentered<TinyLight<YlwLight<>>>(mm2px(Vec(12.7115, 72.75)), module, Recurse::OFFSET_LIGHT));

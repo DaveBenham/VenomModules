@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023 Dave Benham
+// Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
@@ -159,12 +159,12 @@ struct PolyUnisonWidget : VenomWidget {
     countDisplay->module = module;
     addChild(countDisplay);
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(22.5,91.941), module, PolyUnison::CLONE_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5,124.974), module, PolyUnison::CLONE_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.5,124.974), module, PolyUnison::CLONE_INPUT));
 
     addParam(createLockableParamCentered<DirectionSwitch>(Vec(13.012f,161.106f), module, PolyUnison::DIRECTION_PARAM));
     addParam(createLockableParamCentered<RangeSwitch>(Vec(31.989f,161.106), module, PolyUnison::RANGE_PARAM));
     addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(22.5,192.026), module, PolyUnison::DETUNE_PARAM));
-    addInput(createInputCentered<PJ301MPort>(Vec(22.5,225.079), module, PolyUnison::DETUNE_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(22.5,225.079), module, PolyUnison::DETUNE_INPUT));
 
     {
       int li, end;
@@ -176,8 +176,8 @@ struct PolyUnisonWidget : VenomWidget {
       }
     }
 
-    addInput(createInputCentered<PolyPJ301MPort>(Vec(22.5,301.712), module, PolyUnison::POLY_INPUT));
-    addOutput(createOutputCentered<PolyPJ301MPort>(Vec(22.5,340.434), module, PolyUnison::POLY_OUTPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5,301.712), module, PolyUnison::POLY_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.5,340.434), module, PolyUnison::POLY_OUTPUT));
   }
 
 };
