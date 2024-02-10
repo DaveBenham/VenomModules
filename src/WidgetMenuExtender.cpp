@@ -13,7 +13,6 @@ struct WidgetMenuExtender : VenomModule {
     PARAMS_LEN
   };
   enum InputId {
-//    TEST_INPUT,
     INPUTS_LEN
   };
   enum OutputId {
@@ -82,7 +81,6 @@ struct WidgetMenuExtender : VenomModule {
       configSwitch<FixedSwitchQuantity>(ENABLE_PARAM, 0.f, 0.f, 0.f, "Enable", {"Permanently disabled"});
     else
       configSwitch<FixedSwitchQuantity>(ENABLE_PARAM, 0.f, 1.f, 1.f, "Enable", {"Off", "On"});
-//    configInput(TEST_INPUT, "lint test");
   }
   
   ~WidgetMenuExtender() {
@@ -392,7 +390,6 @@ struct WidgetMenuExtenderWidget : VenomWidget {
     setModule(module);
     setVenomPanel("WidgetMenuExtender");
     addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<RedBlueLight<>>>>(Vec(22.5f, 100.f), module, WidgetMenuExtender::ENABLE_PARAM, WidgetMenuExtender::ENABLE_RED_LIGHT));
-//    addInput(createInputCentered<MonoPort>(Vec(22.5F, 140.f), module, WidgetMenuExtender::TEST_INPUT));
   }
 
   void step() override {
