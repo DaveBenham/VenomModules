@@ -34,16 +34,16 @@ struct MixFadeWidget : MixExpanderWidget {
     setVenomPanel("MixFade");
 
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(12.23f,  42.295f), module, MixModule::FADE_TIME_PARAM+0));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(12.23f,  73.035f), module, MixModule::FADE_TIME_PARAM+1));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(12.23f, 103.775f), module, MixModule::FADE_TIME_PARAM+2));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(12.23f, 134.514f), module, MixModule::FADE_TIME_PARAM+3));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(12.23f, 168.254f), module, MixModule::FADE_MIX_TIME_PARAM));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(32.77f,  42.295f), module, MixModule::FADE_SHAPE_PARAM+0));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(32.77f,  73.035f), module, MixModule::FADE_SHAPE_PARAM+1));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(32.77f, 103.775f), module, MixModule::FADE_SHAPE_PARAM+2));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(32.77f, 134.514f), module, MixModule::FADE_SHAPE_PARAM+3));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(32.77f, 168.254f), module, MixModule::FADE_MIX_SHAPE_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.23f,  42.295f), module, MixModule::FADE_TIME_PARAM+0));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.23f,  73.035f), module, MixModule::FADE_TIME_PARAM+1));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.23f, 103.775f), module, MixModule::FADE_TIME_PARAM+2));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.23f, 134.514f), module, MixModule::FADE_TIME_PARAM+3));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.23f, 168.254f), module, MixModule::FADE_MIX_TIME_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(32.77f,  42.295f), module, MixModule::FADE_SHAPE_PARAM+0));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(32.77f,  73.035f), module, MixModule::FADE_SHAPE_PARAM+1));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(32.77f, 103.775f), module, MixModule::FADE_SHAPE_PARAM+2));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(32.77f, 134.514f), module, MixModule::FADE_SHAPE_PARAM+3));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(32.77f, 168.254f), module, MixModule::FADE_MIX_SHAPE_PARAM));
     addOutput(createOutputCentered<MonoPort>(Vec(22.5f, 209.778f), module, MixModule::FADE_OUTPUT+0));
     addOutput(createOutputCentered<MonoPort>(Vec(22.5f, 241.320f), module, MixModule::FADE_OUTPUT+1));
     addOutput(createOutputCentered<MonoPort>(Vec(22.5f, 273.239f), module, MixModule::FADE_OUTPUT+2));

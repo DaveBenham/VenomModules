@@ -723,6 +723,17 @@ struct RoundSmallBlackKnobLockable : RoundSmallBlackKnob {
   }
 };
 
+struct RoundTinyBlackKnobLockable : RoundKnob {
+  RoundTinyBlackKnobLockable() {
+    setSvg(Svg::load(asset::plugin(pluginInstance, "res/RoundTinyBlackKnob.svg")));
+    bg->setSvg(Svg::load(asset::plugin(pluginInstance, "res/RoundTinyBlackKnob_bg.svg")));
+  }
+  void appendContextMenu(Menu* menu) override {
+    if (module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
 struct TrimpotLockable : Trimpot {
   void appendContextMenu(Menu* menu) override {
     if (module)

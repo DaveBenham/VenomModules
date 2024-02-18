@@ -1,5 +1,12 @@
 # Venom Modules Changelog
 
+## 2.6.1
+### Enhancements
+- Harmonic Quantizer: Add detune parameters
+
+### Bug Fixes
+- Benjolin Oscillator: Fix CV1, CV2, Clock normalled values (were 20% of intended value), with option to use old behavior
+
 ## 2.6.0 (2024-02-14)
 ### New Modules
 - Benjolin Oscillator

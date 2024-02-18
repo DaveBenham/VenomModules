@@ -56,9 +56,10 @@ struct BenjolinOsc : VenomModule {
         *tri1Out=&outA[0], *tri2Out=&outA[1], *pul1Out=&outA[2], *pul2Out=&outA[3], 
         *xorOut=&outB[0], *pwmOut=&outB[1], *rungOut=&outB[2],
         *cv1In=&in[0], *cv2In=&in[1], *clockIn=&in[2],
+        normScale=5.f,
         xorVal=0, rung=0;
   unsigned char asr = rack::random::uniform()*126+1;
-  bool chaosIn=false, dblIn=false;
+  bool origNormScale=false, chaosIn=false, dblIn=false;
  
   BenjolinOsc() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -154,8 +155,8 @@ struct BenjolinOsc : VenomModule {
         in = upSample.process(o ? simd::float_4::zero() : in * oversample);
       }
       simd::float_4 freq = {
-        params[FREQ1_PARAM].getValue() + (cv1Connected ? *cv1In : *tri2) * 0.9f * params[CV1_PARAM].getValue() + rung * 0.9f * params[RUNG1_PARAM].getValue(),
-        params[FREQ2_PARAM].getValue() + (cv2Connected ? *cv2In : *tri1) * 0.9f * params[CV2_PARAM].getValue() + rung * 0.9f * params[RUNG2_PARAM].getValue(),
+        params[FREQ1_PARAM].getValue() + (cv1Connected ? *cv1In : *tri2*normScale) * 0.9f * params[CV1_PARAM].getValue() + rung * 0.9f * params[RUNG1_PARAM].getValue(),
+        params[FREQ2_PARAM].getValue() + (cv2Connected ? *cv2In : *tri1*normScale) * 0.9f * params[CV2_PARAM].getValue() + rung * 0.9f * params[RUNG2_PARAM].getValue(),
         0.f,0.f
       };
       simd::ifelse(freq<-9.3f, -9.3f, freq);
@@ -171,7 +172,7 @@ struct BenjolinOsc : VenomModule {
       if (*pul1 != math::sgn(*tri1)) *pul1*=-1.f;
       if (*pul2 != math::sgn(*tri2)) *pul2*=-1.f;
       *pwmOut = *tri2>*tri1 ? 5.f : -5.f;
-      trig = clockTrig.processEvent( clockConnected ? *clockIn : *pul2, -1.f, 1.f);
+      trig = clockTrig.processEvent( clockConnected ? *clockIn : *pul2*normScale, -1.f, 1.f);
       if (trig>0 || (trig && dbl)){
         float ptrn = chaos ? 0.5f : params[PATTERN_PARAM].getValue();
         unsigned char data = (ptrn>=*tri1 || ptrn>=10.f) ^ (chaos ? ((asr&32)>>5)^((asr&64)>>6) : (asr&128)>>7);
@@ -196,6 +197,23 @@ struct BenjolinOsc : VenomModule {
     outputs[PWM_OUTPUT].setVoltage(*pwmOut);
     outputs[RUNG_OUTPUT].setVoltage(*rungOut);
   }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "origNormScale", json_boolean(origNormScale));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t *val;
+    if ((val = json_object_get(rootJ, "origNormScale")))
+      origNormScale = json_boolean_value(val);
+    else
+      origNormScale=true;
+    normScale = origNormScale ? 1.f : 5.f;
+  }
+
 };
 
 struct BenjolinOscWidget : VenomWidget {
@@ -236,6 +254,21 @@ struct BenjolinOscWidget : VenomWidget {
     addOutput(createOutputCentered<MonoPort>(Vec(63.288,330.368), module, BenjolinOsc::PULSE2_OUTPUT));
     addOutput(createOutputCentered<MonoPort>(Vec(101.712,330.368), module, BenjolinOsc::PWM_OUTPUT));
     addOutput(createOutputCentered<MonoPort>(Vec(140.135,330.368), module, BenjolinOsc::RUNG_OUTPUT));
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    BenjolinOsc* module = dynamic_cast<BenjolinOsc*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolMenuItem("Original release normalled values", "",
+      [=]() {
+        return module->origNormScale;
+      },
+      [=](bool val){
+        module->origNormScale = val;
+        module->normScale = module->origNormScale ? 1.f : 5.f;
+      }
+    ));
+    VenomWidget::appendContextMenu(menu);
   }
 
   void step() override {

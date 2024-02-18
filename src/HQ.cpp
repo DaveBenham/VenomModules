@@ -9,6 +9,8 @@ struct HQ : VenomModule {
     PARTIAL_PARAM,
     SERIES_PARAM,
     CV_PARAM,
+    DETUNE_AMT_PARAM,
+    DETUNE_COMP_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -118,6 +120,8 @@ struct HQ : VenomModule {
     configParam<PartialQuantity>(PARTIAL_PARAM, 0.f, 1.f, 0.f, "Partial", "");
     configParam(CV_PARAM, -1.f, 1.f, 0.f, "CV", "%", 0.f, 100.f, 0.f);
     configInput(CV_INPUT, "CV");
+    configParam(DETUNE_AMT_PARAM, -1.f, 1.f, 0.f, "Detune amount");
+    configParam(DETUNE_COMP_PARAM, 1.f, 2.f, 2.f, "Detune frequency compensation", "", 0.f, 1.f, -1.f);
     configInput(ROOT_INPUT, "Root");
     configInput(IN_INPUT, "V/Oct");
     configOutput(OUT_OUTPUT, "V/Oct");
@@ -205,6 +209,9 @@ struct HQ : VenomModule {
           monitorVal = pround;
         out = root + (pround>=0.f ? partials[static_cast<int>(pround)].voct : -partials[-static_cast<int>(pround)].voct);
       }
+      float detune = params[DETUNE_AMT_PARAM].getValue();
+      if (detune)
+        out += detune / pow(params[DETUNE_COMP_PARAM].getValue(), out < -4.f ? 0.f : out+4);
       outputs[OUT_OUTPUT].setVoltage(out, c);
     }
     if (monitor >= channels)
@@ -253,16 +260,18 @@ struct HQWidget : VenomWidget {
   HQWidget(HQ* module) {
     setModule(module);
     setVenomPanel("HQ");
-    PartialDisplay* partialDisplay = createWidget<PartialDisplay>(mm2px(Vec(1.75, 14.0)));
+    PartialDisplay* partialDisplay = createWidget<PartialDisplay>(Vec(4.976f, 43.217f));
     partialDisplay->module = module;
     addChild(partialDisplay);
-    addParam(createLockableParam<CKSSThreeHorizontalLockable>(mm2px(Vec(2.9, 25.5)), module, HQ::SERIES_PARAM));
-    addParam(createLockableParamCentered<RoundBlackKnobLockable>(mm2px(Vec(7.62, 42.9)), module, HQ::PARTIAL_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(7.62, 58)), module, HQ::CV_PARAM));
-    addInput(createInputCentered<PolyPort>(mm2px(Vec(7.62, 68)), module, HQ::CV_INPUT));
-    addInput(createInputCentered<PolyPort>(mm2px(Vec(7.62, 83)), module, HQ::ROOT_INPUT));
-    addInput(createInputCentered<PolyPort>(mm2px(Vec(7.62, 98)), module, HQ::IN_INPUT));
-    addOutput(createOutputCentered<PolyPort>(mm2px(Vec(7.62, 113)), module, HQ::OUT_OUTPUT));
+    addParam(createLockableParam<CKSSThreeHorizontalLockable>(Vec(8.812f, 74.f), module, HQ::SERIES_PARAM));
+    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(22.5f, 121.f), module, HQ::PARTIAL_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 159.f), module, HQ::CV_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f, 188.5f), module, HQ::CV_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.f, 229.f), module, HQ::DETUNE_AMT_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(33.f, 229.f), module, HQ::DETUNE_COMP_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f, 264.5f), module, HQ::ROOT_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f, 300.5f), module, HQ::IN_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.5f, 339.5f), module, HQ::OUT_OUTPUT));
   }
 
   void appendContextMenu(Menu* menu) override {

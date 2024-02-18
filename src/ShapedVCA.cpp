@@ -238,7 +238,7 @@ struct ShapedVCAWidget : VenomWidget {
     addParam(createLockableParamCentered<ClipSwitch>(Vec(27.758f,41.f), module, ShapedVCA::CLIP_PARAM));
     addParam(createLockableParamCentered<OverSwitch>(Vec(38.274f,41.f), module, ShapedVCA::OVER_PARAM));
     addInput(createInputCentered<PolyPort>(Vec(22.5f,106.5f), module, ShapedVCA::LEVEL_INPUT));
-    addParam(createLockableParamCentered<TrimpotLockable>(Vec(22.5f,138.5f), module, ShapedVCA::BIAS_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(22.5f,138.5f), module, ShapedVCA::BIAS_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f,172.f), module, ShapedVCA::CURVE_PARAM));
     addInput(createInputCentered<PolyPort>(Vec(22.5f,202.5f), module, ShapedVCA::CURVE_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(22.5f,240.f), module, ShapedVCA::LEFT_INPUT));
