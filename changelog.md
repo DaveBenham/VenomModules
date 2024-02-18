@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.6.0 (2023-02-14)
+## 2.6.0
 ### New Modules
 - Benjolin Oscillator
 - Knob 5
