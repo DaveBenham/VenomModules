@@ -56,12 +56,12 @@ struct ShapedVCA : VenomModule {
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 2.f, 0.f, "Output Clipping", {"Off", "Hard clip", "Soft clip"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 4.f, 0.f, "Oversample", {"Off", "x4", "x8", "x16", "x32"});
     configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level", "x", 0.f, 1.f, 0.f);
-    configInput(LEVEL_INPUT, "Level CV");
+    configInput(LEVEL_INPUT, "Level CV")->description = "Normalled to 10 volts";
     configParam(BIAS_PARAM, 0.f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
     configParam<ShapeQuantity>(CURVE_PARAM, -1.f, 1.f, 0.f, "Response curve", "%", 0.f, 100.f);
     configInput(CURVE_INPUT, "Response curve");
-    configInput(LEFT_INPUT, "Left");
-    configInput(RIGHT_INPUT, "Right");
+    configInput(LEFT_INPUT, "Left")->description = "Normalled to 10 volts";
+    configInput(RIGHT_INPUT, "Right")->description = "Normalled to left input";
     configOutput(LEFT_OUTPUT, "Left");
     configOutput(RIGHT_OUTPUT, "Right");
     configSwitch<FixedSwitchQuantity>(OFFSET_PARAM, 0.f, 2.f, 0.f, "Output offset", {"None", "-5 V", "+5 V"});

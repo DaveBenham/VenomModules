@@ -70,8 +70,8 @@ struct BenjolinOsc : VenomModule {
     configParam(RUNG2_PARAM, -1.f, 1.f, 0.f, "Oscillator 2 rungler modulation amount");
     configParam(CV1_PARAM, -1.f, 1.f, 0.f, "Oscillator 1 CV modulation amount");
     configParam(CV2_PARAM, -1.f, 1.f, 0.f, "Oscillator 2 CV modulation amount");
-    configInput(CV1_INPUT, "Oscillator 1 CV modulation");
-    configInput(CV2_INPUT, "Oscillator 2 CV modulation");
+    configInput(CV1_INPUT, "Oscillator 1 CV modulation")->description = "Normalled to oscillator 2 triangle output";
+    configInput(CV2_INPUT, "Oscillator 2 CV modulation")->description = "Normalled to oscillator 1 triangle output";
     configOutput(TRI1_OUTPUT, "Oscillator 1 triangle");
     configOutput(TRI2_OUTPUT, "Oscillator 2 triangle");
     configOutput(PULSE1_OUTPUT, "Oscillator 1 pulse");
@@ -81,7 +81,7 @@ struct BenjolinOsc : VenomModule {
     configSwitch<FixedSwitchQuantity>(DOUBLE_PARAM, 0.f, 1.f, 0.f, "Double clock", {"Off", "On"});
     configInput(CHAOS_INPUT,"Maximum chaos trigger");
     configInput(DOUBLE_INPUT,"Double clock trigger");
-    configInput(CLOCK_INPUT,"Clock");
+    configInput(CLOCK_INPUT,"Clock")->description = "Normalled to oscillator 2 pulse output";
     configOutput(XOR_OUTPUT,"XOR");
     configOutput(PWM_OUTPUT,"PWM");
     configOutput(RUNG_OUTPUT,"Rungler");

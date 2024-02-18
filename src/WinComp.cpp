@@ -131,12 +131,12 @@ struct WinComp : VenomModule {
     configLight(MAX_INV_LIGHT, "Maximum inverted indicator");
     configLight(CLAMP_INV_LIGHT, "A Clamped inverted indicator");
     configLight(OVER_INV_LIGHT, "A Overflow inverted indicator");
-    configLight(EQ_LIGHT, "A=B (yellow mono, blue poly)");
-    configLight(NEQ_LIGHT, "A<>B indicator (yellow mono, blue poly)");
-    configLight(LSEQ_LIGHT, "A<=B indicator (yellow mono, blue poly)");
-    configLight(GREQ_LIGHT, "A>=B indicator (yellow mono, blue poly)");
-    configLight(GR_LIGHT, "A>B indicator (yellow mono, blue poly)");
-    configLight(LS_LIGHT, "A<B indicator (yellow mono, blue poly)");
+    configLight(EQ_LIGHT, "A=B indicator")->description = "yellow = mono, blue = poly";
+    configLight(NEQ_LIGHT, "A<>B indicator")->description = "yellow = mono, blue = poly";
+    configLight(LSEQ_LIGHT, "A<=B indicator")->description = "yellow = mono, blue = poly";
+    configLight(GREQ_LIGHT, "A>=B indicator")->description = "yellow = mono, blue = poly";
+    configLight(GR_LIGHT, "A>B indicator")->description = "yellow = mono, blue = poly";
+    configLight(LS_LIGHT, "A<B indicator")->description = "yellow = mono, blue = poly";
 
     initializeOversample();
     lightDivider.setDivision(32);

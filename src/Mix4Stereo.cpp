@@ -46,7 +46,7 @@ struct Mix4Stereo : MixBaseModule {
     for (int i=0; i < 4; i++){
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);
       configInput(LEFT_INPUT+i, string::f("Left channel %d", i + 1));
-      configInput(RIGHT_INPUT+i, string::f("Right channel %d", i + 1));
+      configInput(RIGHT_INPUT+i, string::f("Right channel %d", i + 1))->description = string::f("Normalled to left channel %d input", i + 1);
     }
     configParam(MIX_LEVEL_PARAM, 0.f, 2.f, 1.f, "Mix level", " dB", -10.f, 20.f);
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 4.f, 0.f, "Level Mode", {

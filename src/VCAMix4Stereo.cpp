@@ -58,7 +58,7 @@ struct VCAMix4Stereo : MixBaseModule {
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);
       configInput(LEFT_INPUTS+i, string::f("Left channel %d", i + 1));
-      configInput(RIGHT_INPUTS+i, string::f("Right channel %d", i + 1));
+      configInput(RIGHT_INPUTS+i, string::f("Right channel %d", i + 1))->description = string::f("Normalled to left channel %d input", i+1);
       configOutput(LEFT_OUTPUTS+i, string::f("Left channel %d", i + 1));
       configOutput(RIGHT_OUTPUTS+i, string::f("Right channel %d", i + 1));
     }
@@ -77,7 +77,7 @@ struct VCAMix4Stereo : MixBaseModule {
                                                                                          "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level"});
     configSwitch<FixedSwitchQuantity>(EXCLUDE_PARAM, 0.f, 1.f, 0.f, "Exclude Patched Outs from Mix", {"Off", "On"});
     configInput(LEFT_CHAIN_INPUT, "Left chain");
-    configInput(RIGHT_CHAIN_INPUT, "Right chain");
+    configInput(RIGHT_CHAIN_INPUT, "Right chain")->description = "Normalled to left chain input";
     configOutput(LEFT_MIX_OUTPUT, "Left mix");
     configOutput(RIGHT_MIX_OUTPUT, "Right mix");
     for (int i=0; i<4; i++){
