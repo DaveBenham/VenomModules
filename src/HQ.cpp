@@ -147,6 +147,8 @@ struct HQ : VenomModule {
       scale = params[CV_PARAM].getValue() * 10.f;
       partial = partialParamGetValue();
     }
+    float detune = params[DETUNE_AMT_PARAM].getValue();
+    float comp = params[DETUNE_COMP_PARAM].getValue();
     for (int c=0; c<channels; c++){
       root = inputs[ROOT_INPUT].getPolyVoltage(c);
       if (inConnected) {
@@ -209,9 +211,10 @@ struct HQ : VenomModule {
           monitorVal = pround;
         out = root + (pround>=0.f ? partials[static_cast<int>(pround)].voct : -partials[-static_cast<int>(pround)].voct);
       }
-      float detune = params[DETUNE_AMT_PARAM].getValue();
-      if (detune)
-        out += detune / pow(params[DETUNE_COMP_PARAM].getValue(), out < -4.f ? 0.f : out+4);
+      if (detune) {
+        out += comp==2.f ? detune / rack::dsp::exp2_taylor5(out<-4.f ? 0.f : out+4) :
+               comp>1.f ? detune / pow(comp, out < -4.f ? 0.f : out+4) : detune;
+      }
       outputs[OUT_OUTPUT].setVoltage(out, c);
     }
     if (monitor >= channels)
