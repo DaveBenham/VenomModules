@@ -113,6 +113,8 @@ struct HQ : VenomModule {
       setValue(clamp(v,0.f,1.f));
     }
   };
+  
+  simd::float_4 out[4]{};
 
   HQ() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -141,7 +143,7 @@ struct HQ : VenomModule {
     });
     bool inConnected = inputs[IN_INPUT].isConnected();
     int series = static_cast<int>(params[SERIES_PARAM].getValue());
-    float scale=0.f, pfloat=0.f, out=0.f, root;
+    float scale=0.f, pfloat=0.f, root;
     int partial=0, pround=0;
     if (!inConnected) {
       scale = params[CV_PARAM].getValue() * 10.f;
@@ -150,6 +152,7 @@ struct HQ : VenomModule {
     float detune = params[DETUNE_AMT_PARAM].getValue();
     float comp = params[DETUNE_COMP_PARAM].getValue();
     for (int c=0; c<channels; c++){
+      int ci = c/4;
       root = inputs[ROOT_INPUT].getPolyVoltage(c);
       if (inConnected) {
         bool inv = false;
@@ -194,7 +197,7 @@ struct HQ : VenomModule {
         }
         if (c == monitor)
           monitorVal = inv ? -(rec->partial-1) : rec->partial-1;
-        out = root + (inv ? -rec->voct : rec->voct);
+        out[ci][c%4] = root + (inv ? -rec->voct : rec->voct);
       } else {
         int mn=ranges[range][0], mx=ranges[range][1];
         if (series==ODD) {
@@ -209,17 +212,23 @@ struct HQ : VenomModule {
           pround += pfloat > pround ? 1 : -1;
         if (c == monitor)
           monitorVal = pround;
-        out = root + (pround>=0.f ? partials[static_cast<int>(pround)].voct : -partials[-static_cast<int>(pround)].voct);
+        out[ci][c%4] = root + (pround>=0.f ? partials[static_cast<int>(pround)].voct : -partials[-static_cast<int>(pround)].voct);
       }
-      if (detune) {
-        out += comp==2.f ? detune / rack::dsp::exp2_taylor5(out<-4.f ? 0.f : out+4) :
-               comp>1.f ? detune / pow(comp, out < -4.f ? 0.f : out+4) : detune;
-      }
-      outputs[OUT_OUTPUT].setVoltage(out, c);
     }
+    for (int c=0, ci=0; c<channels; c+=4, ci++){
+      if (detune) {
+        if (comp==2.f)
+          out[ci] += detune / dsp::exp2_taylor5(simd::ifelse(out[ci]<-4.f, simd::float_4::zero(), out[ci]+4.f));
+        else if (comp>1.f)
+          out[ci] += detune / simd::pow(comp, simd::ifelse(out[ci]<-4.f, simd::float_4::zero(), out[ci]+4.f));
+        else
+          out[ci] += detune;
+      }
+      outputs[OUT_OUTPUT].setVoltageSimd(out[ci], c);
+    }
+    outputs[OUT_OUTPUT].setChannels(channels);
     if (monitor >= channels)
       monitorVal = MONITOR_OFF;
-    outputs[OUT_OUTPUT].setChannels(channels);
   }
 
   json_t* dataToJson() override {
