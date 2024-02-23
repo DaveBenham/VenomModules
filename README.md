@@ -64,7 +64,7 @@ Nearly every parameter (module knob, switch, or button etc.) within the Venom pl
 Parameter lock and custom default settings are saved with the patch and with presets, and restored upon patch or preset load. Parameter lock and custom default settings are also preserved when duplicating a module.
 
 ### Parameter Locks
-The parameter tooltip includes the word "locked" below the parameter name when hovering over a locked parameter.
+The display name includes "(locked)" when hovering over a locked parameter.
 
 The parameter value cannot be changed by any means while the parameter is locked. All of the normal means of changing a parameter value are blocked:
 - The parameter cannot be dragged or pushed
