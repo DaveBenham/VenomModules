@@ -62,10 +62,12 @@ struct Recurse : VenomModule {
     configParam<TimingQuantity>(TIMING_PARAM, 0.f, 3.f, 0.f, "Modulation Timing", "");
     configInput(SCALE_INPUT, "Scale");
     configInput(OFFSET_INPUT, "Offset");
-    configInput(RETURN_INPUT, "Return");
+    configInput(RETURN_INPUT, "Return")->description = "Normalled to send output";
     configInput(IN_INPUT, "Signal");
     configOutput(SEND_OUTPUT, "Send");
     configOutput(OUT_OUTPUT, "Signal");
+    configLight(SCALE_LIGHT, "Scale before offset indicator");
+    configLight(OFFSET_LIGHT, "Offset before scale indicator");
     configBypass(IN_INPUT, OUT_OUTPUT);
   }
 

@@ -66,14 +66,16 @@ struct RecurseStereo : VenomModule {
     configParam<TimingQuantity>(TIMING_PARAM, 0.f, 3.f, 0.f, "Modulation Timing", "");
     configInput(SCALE_INPUT, "Scale");
     configInput(OFFSET_INPUT, "Offset");
-    configInput(RETURN_L_INPUT, "Left Return");
-    configInput(RETURN_R_INPUT, "Right Return");
+    configInput(RETURN_L_INPUT, "Left Return")-> description = "Normalled to left send output";
+    configInput(RETURN_R_INPUT, "Right Return")->description = "Normalled to right send output";
     configInput(IN_L_INPUT, "Left Signal");
-    configInput(IN_R_INPUT, "Right Signal");
+    configInput(IN_R_INPUT, "Right Signal")->description = "Normalled to Left signal input";
     configOutput(SEND_L_OUTPUT, "Left Send");
     configOutput(SEND_R_OUTPUT, "Right Send");
     configOutput(OUT_L_OUTPUT, "Left Signal");
     configOutput(OUT_R_OUTPUT, "Right Signal");
+    configLight(SCALE_LIGHT, "Scale before offset indicator");
+    configLight(OFFSET_LIGHT, "Offset before scale indicator");
     configBypass(IN_L_INPUT, OUT_L_OUTPUT);
     configBypass(inputs[IN_R_INPUT].isConnected() ? IN_R_INPUT : IN_L_INPUT, OUT_R_OUTPUT);
   }

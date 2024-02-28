@@ -78,7 +78,7 @@ struct BernoulliSwitch : VenomModule {
     configParam(OFFSET_B_PARAM, -10.f, 10.f, 0.f, "B Offset", " V");
     configParam(SCALE_A_PARAM, -1.f, 1.f, 1.f, "A Scale", "");
     configParam(SCALE_B_PARAM, -1.f, 1.f, 1.f, "B Scale", "");
-    configInput(A_INPUT, "A");
+    configInput(A_INPUT, "A")->description = "Normalled to trigger input";
     configInput(B_INPUT, "B");
     configInput(TRIG_INPUT, "Trigger");
     configInput(PROB_INPUT, "Probability");
@@ -90,7 +90,7 @@ struct BernoulliSwitch : VenomModule {
     configLight(NO_SWAP_LIGHT, "No-swap indicator");
     configLight(SWAP_LIGHT, "Swap indicator");
     configLight(POLY_SENSE_ALL_LIGHT, "Polyphony sense all indicator");
-    configLight(AUDIO_LIGHT, "Audio processing (antipop red, oversample blue) indicator");
+    configLight(AUDIO_LIGHT, "Audio processing indicator")->description = "red = antipop, blue = oversample";
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
     lights[POLY_SENSE_ALL_LIGHT].setBrightness(false);

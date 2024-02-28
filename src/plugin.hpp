@@ -138,20 +138,20 @@ struct VenomModule : Module {
       [=](Menu *menu){
         MenuTextField *editField = new MenuTextField();
         editField->box.size.x = 250;
-        editField->setText(rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name);
+        editField->setText(q->name);
         editField->changeHandler = [=](std::string text) {
-          q->name = text + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+          q->name = text;
           if (pi) pi->name = text;
         };
         menu->addChild(editField);
       }
     ));
     if (!e->factoryName.size())
-      e->factoryName = (rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name);
-    else if (e->factoryName != (rack::string::endsWith(q->name, " (locked)") ? q->name.substr(0, q->name.size()-9) : q->name)) {
+      e->factoryName = q->name;
+    else if (e->factoryName != q->name) {
       menu->addChild(createMenuItem("Restore factory name: "+e->factoryName, "",
         [=]() {
-          q->name = e->factoryName + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+          q->name = e->factoryName;
           if (pi) pi->name = e->factoryName;
         }
       ));
@@ -199,7 +199,7 @@ struct VenomModule : Module {
         editField->setText(pi->name);
         editField->changeHandler = [=](std::string text) {
           pi->name = text;
-          if (q) q->name = text + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+          if (q) q->name = text;
         };
         menu->addChild(editField);
       }
@@ -212,7 +212,7 @@ struct VenomModule : Module {
       menu->addChild(createMenuItem("Restore factory name: "+e->factoryName, "",
         [=]() {
           pi->name = e->factoryName;
-          if (q) q->name = e->factoryName + (rack::string::endsWith(q->name, " (locked)") ? " (locked)" : "");
+          if (q) q->name = e->factoryName;
         }
       ));
     }  
@@ -256,11 +256,11 @@ struct VenomModule : Module {
         e->min = q->minValue;
         e->max = q->maxValue;
         e->dflt = q->defaultValue;
-        q->name += " (locked)";
+        q->description = "Locked";
         q->minValue = q->maxValue = q->defaultValue = q->getValue();
       }
       else {
-        q->name.erase(q->name.length()-9);
+        q->description = "";
         q->minValue = e->min;
         q->maxValue = e->max;
         q->defaultValue = e->dflt;
@@ -319,7 +319,7 @@ struct VenomModule : Module {
       nm = "paramVal"+idStr;
       json_object_set_new(rootJ, nm.c_str(), json_real(pq->getImmediateValue()));
       nm = "paramName"+idStr;
-      json_object_set_new(rootJ, nm.c_str(), json_string(rack::string::endsWith(pq->name, " (locked)") ? pq->name.substr(0, pq->name.size()-9).c_str() : pq->name.c_str()));
+      json_object_set_new(rootJ, nm.c_str(), json_string(pq->name.c_str()));
     }
     for (int i=0; i<getNumInputs(); i++){
       PortInfo* pi = inputInfos[i];
@@ -717,6 +717,17 @@ struct RoundBlackKnobLockable : RoundBlackKnob {
 };
 
 struct RoundSmallBlackKnobLockable : RoundSmallBlackKnob {
+  void appendContextMenu(Menu* menu) override {
+    if (module)
+      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+  }
+};
+
+struct RoundTinyBlackKnobLockable : RoundKnob {
+  RoundTinyBlackKnobLockable() {
+    setSvg(Svg::load(asset::plugin(pluginInstance, "res/RoundTinyBlackKnob.svg")));
+    bg->setSvg(Svg::load(asset::plugin(pluginInstance, "res/RoundTinyBlackKnob_bg.svg")));
+  }
   void appendContextMenu(Menu* menu) override {
     if (module)
       dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);

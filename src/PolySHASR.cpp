@@ -47,8 +47,9 @@ struct PolySHASR : VenomModule {
     configButton(CLEAR_PARAM, "Clear all");
     for (int i=0; i<CHANNEL_COUNT; i++){
       std::string iStr = std::to_string(i);
-      configInput(TRIG_INPUT+i, "Trigger "+iStr);
-      configInput(DATA_INPUT+i, "Data "+iStr);
+      configInput(TRIG_INPUT+i, "Trigger "+iStr)->description = i ? "Normalled to previous row trigger input" : "";
+      configInput(DATA_INPUT+i, "Data "+iStr)
+        ->description = i ? "Normalled to random value if trigger patched, else to previous row hold output" : "Normalled to random value";
       configOutput(OUTPUT+i, "Hold "+iStr);
     }
   }

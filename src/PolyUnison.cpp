@@ -63,7 +63,7 @@ struct PolyUnison : VenomModule {
     configOutput(POLY_OUTPUT, "Poly");
     configBypass(POLY_INPUT, POLY_OUTPUT);
     for (int i=0; i<16; i++){
-      configLight(CHANNEL_LIGHTS+i*2, string::f("Channel %d clone indicator (yellow OK, red Error)", i+1));
+      configLight(CHANNEL_LIGHTS+i*2, string::f("Channel %d clone indicator", i+1))->description = "yellow = OK, red = Error";
     }  
     lightDivider.setDivision(44);
     lights[CHANNEL_LIGHTS].setBrightness(1);

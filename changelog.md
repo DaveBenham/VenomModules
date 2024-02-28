@@ -1,5 +1,15 @@
 # Venom Modules Changelog
 
+## 2.6.1 (2024-02-28)
+### Enhancements
+- Harmonic Quantizer: Add detune parameters
+- Parameter tooltips: Moved "locked" indicator from name to description
+- Port tooltips: Added normalled values to description
+- Light tooltips: Moved color key from name to description
+
+### Bug Fixes
+- Benjolin Oscillator: Fix CV1, CV2, Clock normalled values (were 20% of intended value), with option to use old behavior
+
 ## 2.6.0 (2024-02-14)
 ### New Modules
 - Benjolin Oscillator

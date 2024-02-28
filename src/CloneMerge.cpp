@@ -28,7 +28,7 @@ struct CloneMerge : VenomModule {
     configParam(CLONE_PARAM, 1.f, 16.f, 1.f, "Clone count");
     for (int i=0; i < 8; i++) {
       configInput(MONO_INPUTS+i, string::f("Mono %d", i + 1));
-      configLight(MONO_LIGHTS+i*2, string::f("Input %d cloned indicator (yellow OK, red Error)", i + 1));
+      configLight(MONO_LIGHTS+i*2, string::f("Input %d cloned indicator", i + 1))->description = "yellow = OK, red = Error";
     }
     configOutput(POLY_OUTPUT, "Poly");
     lightDivider.setDivision(44);
