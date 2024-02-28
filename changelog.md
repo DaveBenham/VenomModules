@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.6.1
+## 2.6.1 (2024-02-28)
 ### Enhancements
 - Harmonic Quantizer: Add detune parameters
 - Parameter tooltips: Moved "locked" indicator from name to description
