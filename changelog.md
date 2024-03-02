@@ -1,5 +1,12 @@
 # Venom Modules Changelog
 
+## 2.7.0
+### New Modules
+- Auxilliary Clone Expander
+
+### Enhancements
+- Modified Clone Merge, Poly Clone, and Poly Unison to work with the Auxilliary Clone Expander
+
 ## 2.6.1 (2024-02-28)
 ### Enhancements
 - Harmonic Quantizer: Add detune parameters

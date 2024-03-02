@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.6.1",
+  "version": "2.7.dev",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -13,6 +13,17 @@
   "donateUrl": "",
   "changelogUrl": "https://github.com/DaveBenham/VenomModules/blob/main/changelog.md",
   "modules": [
+    {
+      "slug": "AuxClone",
+      "name": "Auxilliary Clone Expander",
+      "description": "Adds additional cloned poly input/output pairs to Clone Merge, Poly Merge, or Poly Unison",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#auxilliary-clone-expander",
+      "tags": [
+        "Expander",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
     {
       "slug": "BenjolinOsc",
       "name": "Benjolin Oscillator",

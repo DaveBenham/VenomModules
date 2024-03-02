@@ -10,6 +10,7 @@ using namespace rack;
 extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
+extern Model* modelAuxClone;
 extern Model* modelBenjolinOsc;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
@@ -187,9 +188,15 @@ struct VenomModule : Module {
     PortExtension* e = (type==engine::Port::INPUT ? &inputExtensions[portId] : &outputExtensions[portId]);
     ParamQuantity* q = NULL;
     ParamExtension* qe = NULL;
+    PortInfo* piLink = NULL;
+    PortExtension* eLink = NULL;
     if (e->nameLink >= 0){
       q = paramQuantities[e->nameLink];
       qe = &paramExtensions[e->nameLink];
+    }
+    if (e->portNameLink >= 0){
+      piLink = (type==engine::Port::INPUT ? outputInfos[e->portNameLink] : inputInfos[e->portNameLink]);
+      eLink = (type==engine::Port::INPUT ? &outputExtensions[e->portNameLink] : &inputExtensions[e->portNameLink]);
     }
     menu->addChild(new MenuSeparator);
     menu->addChild(createSubmenuItem("Port name", "",
@@ -200,6 +207,11 @@ struct VenomModule : Module {
         editField->changeHandler = [=](std::string text) {
           pi->name = text;
           if (q) q->name = text;
+          if (piLink) {
+            if (!eLink->factoryName.size())
+              eLink->factoryName = piLink->name;
+            piLink->name = text;
+          }
         };
         menu->addChild(editField);
       }
@@ -213,6 +225,7 @@ struct VenomModule : Module {
         [=]() {
           pi->name = e->factoryName;
           if (q) q->name = e->factoryName;
+          if (piLink) piLink->name = e->factoryName;
         }
       ));
     }  
@@ -240,10 +253,12 @@ struct VenomModule : Module {
   
   struct PortExtension {
     int nameLink;
+    int portNameLink;
     std::string factoryName;
     PortExtension(){
       factoryName = "";
       nameLink = -1;
+      portNameLink = -1;
     }
   };
 

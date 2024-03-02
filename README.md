@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.7.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
@@ -7,13 +7,13 @@ Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Acknowledgments](#acknowledgments)  
 
-|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|
+|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxialliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|
 |----|----|----|----|----|----|----|----|
-|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|
+|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|
 
-|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
-|----|----|----|----|
-|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
+|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
+|----|----|----|----|----|
+|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
 
 |[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|
 |----|----|----|----|----|----|
@@ -87,6 +87,33 @@ Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for 
 Super thanks to Benjamin Dill for his open source Stoermelder PackOne plugin. I could never have developed the Widget Menu Extender module without his tips and source code to study.
 
 Finally a thanks to Paul Dempsey for his MenuTextField struct from the pachde1 plugin that allows text entry in a menu. In turn that was developed using code/ideas from the SubmarineFree plugin by David O'Rourke.
+
+[Return to Table Of Contents](#venom)
+
+## AUXIALLIARY CLONE EXPANDER
+![Auxilliary Clone Expander module image](doc/AuxClone.png)  
+This expander module adds additional cloned poly input/output pairs to [Clone Merge](#clone-merge), [Poly Merge](#poly-merge), or [Poly Unison](#poly-unison).
+
+The expander must be placed immediately to the right of a Clone Merge, Poly Merge, or Poly Unison. The yellow LED in the upper left indicates whether the expander has successfully connected to a parent module.
+
+Each set of polyphonic input channels is cloned to match the clone count of the parent module, and sent to the output. The number of polyphonic channels at the input should either match the number of input channels at the parent, or else 1. If the input is unpatched it is treated as a mono input with a single chanel at constant 0 volts.
+
+The number of polyphonic channels at each output will always match the number of poly output channels at the parent. The LED to the right of each output indicates whether the output was able to properly clone all input channels.
+
+If the input poly count matches the parent, then each of the input channels is cloned as per the parent, and the LED is yellow.
+
+If the input poly count is 1, then the input is replicated to match the parent input channel count, and then each of those channels is cloned. The LED is yellow.
+
+If the input poly count is less than the parent, then the missing channels are treated as constant 0V, and the LED is orange.
+
+If the input poly count is greater than the parent, then excess channels are ignored, and the LED is red.
+
+All outputs will be constant 0V and all port LEDS will be black under any of the following conditions:
+- The expander is not connected to a parent.
+- The expander is bypassed.
+- The parent module is bypassed.
+
+The names of each input/output pair are linked. Changing the name of one will automatically change the name of the other.
 
 [Return to Table Of Contents](#venom)
 
@@ -317,6 +344,8 @@ All expander inputs as well as the probability CV attenuator are ignored when th
 ## CLONE MERGE
 ![Clone Merge module image](doc/CloneMerge.png)  
 Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursion count.
+
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander).
 
 ### CLONE knob
 Selects the number of times to clone or replicate each input. Possible values range from 1 to 16.
@@ -1014,6 +1043,8 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 ![Poly Clone module image](doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander).
+
 ### CLONE knob
 Selects the number of times to clone or replicate each input channel. Possible values range from 1 to 16.
 
@@ -1123,6 +1154,8 @@ If Poly S&H ASR is bypassed then all outputs are monophonic constant 0 V.
 ## POLY UNISON
 ![Poly Unison module image](doc/PolyUnison.PNG)  
 Replicate each channel of a polyphonic input with a variable detune spread, and merge the results into a single polyphonic output.
+
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander). Note that auxilliary outputs on the expander are not detuned.
 
 ### COUNT (Unison Count) knob
 Sets the number of unison channels for each input channel, from 1 to 16.

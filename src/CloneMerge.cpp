@@ -2,8 +2,10 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
+#include "CloneModule.hpp"
 
-struct CloneMerge : VenomModule {
+struct CloneMerge : CloneModuleBase {
+
   enum ParamId {
     CLONE_PARAM,
     PARAMS_LEN
@@ -57,12 +59,14 @@ struct CloneMerge : VenomModule {
         outputs[POLY_OUTPUT].setVoltage(val, channel++);
     }
     outputs[POLY_OUTPUT].setChannels(channel);
+    processExpander(clones, goodIns);
     
     if (lightDivider.process()) {
       for (int i=0; i<8; i++) {
         lights[MONO_LIGHTS+i*2].setBrightness(i<goodIns);
         lights[MONO_LIGHTS+i*2+1].setBrightness(i>=goodIns && i<ins);
       }
+      setExpanderLights(goodIns);
     }
   }
 
