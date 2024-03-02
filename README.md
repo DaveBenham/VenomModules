@@ -104,7 +104,7 @@ If the input poly count matches the parent, then each of the input channels is c
 
 If the input poly count is 1, then the input is replicated to match the parent input channel count, and then each of those channels is cloned. The LED is yellow.
 
-If the input poly count is less than the parent, then the missing channels are treated as constant 0V, and the LED is orange.
+If the input poly count is less than the parent and greater than 1, then the missing channels are treated as constant 0V, and the LED is orange.
 
 If the input poly count is greater than the parent, then excess channels are ignored, and the LED is red.
 
