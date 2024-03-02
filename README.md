@@ -92,7 +92,7 @@ Finally a thanks to Paul Dempsey for his MenuTextField struct from the pachde1 p
 
 ## AUXILLIARY CLONE EXPANDER
 ![Auxilliary Clone Expander module image](doc/AuxClone.png)  
-This expander module adds additional cloned poly input/output pairs to [Clone Merge](#clone-merge), [Poly Merge](#poly-merge), or [Poly Unison](#poly-unison).
+This expander module adds additional cloned poly input/output pairs to [Clone Merge](#clone-merge), [Poly Clone](#poly-clone), or [Poly Unison](#poly-unison).
 
 The expander must be placed immediately to the right of a Clone Merge, Poly Merge, or Poly Unison. The yellow LED in the upper left indicates whether the expander has successfully connected to a parent module.
 
