@@ -609,7 +609,7 @@ All outputs are monophonic 0V if LOGIC is bypassed.
 
 ## MIX 4
 ![Mix 4 module image](doc/Mix4.png)  
-A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
+A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
 ### General Operation
 There are four numbered inputs, each of which can be attenuated, inverted, and/or amplified by a level knob. The level knobs can be configured to different scales. The modulated inputs are then summed to create a mix that can also be attenuated, inverted, and/or amplified by a mix level knob. Finally there are options to hard or soft clip the mix and/or remove DC offset, before sending the final mix to the Mix output. Oversampling is available for soft clipping to control any aliasing that might otherwise be introduced.
@@ -667,9 +667,9 @@ The MIX output is monophonic 0V if MIX 4 is bypassed.
 
 ## MIX 4 STEREO
 ![Mix 4 Stereo module image](doc/Mix4Stereo.png)  
-A stereo compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
+A stereo compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
-Mix 4 Stereo is identical to Mix 4 except each of the inputs and outputs is doubled to support left and right channels so as to support stereo signals. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
+Mix 4 Stereo is identical to [Mix 4](#mix-4) except each of the inputs and outputs is doubled to support left and right channels so as to support stereo signals. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
 
 Each right input is normaled to the corresponding left input. When in CV mode, each input level knob produces constant CV only if both the left and right input are unpatched.
 
@@ -684,7 +684,7 @@ All other behaviors are the same as for Mix 4.
 
 ## MIX EXPANDERS
 ![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)  
-A collection of expander modules that extend the functionality of the four Mix modules: Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+A collection of expander modules that extend the functionality of the four Mix modules: [Mix 4](#mix-4), [Mix 4 Stereo](#mix-4-stereo), [VCA Mix 4](#vca-mix-4), and [VCA Mix 4 Stereo](#vca-mix-4-stereo).
 
 Mix expanders must be placed to the right of the main mix module. Multiple expanders can be used for one mix module as long as they form a contiguous chain to the right. Each expander has an LED in the upper left that glows yellow if successfully connected to a mix module.
 
@@ -1772,7 +1772,7 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 
 ## VCA MIX 4
 ![VCA Mix 4 module image](doc/VCAMix4.png)  
-A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
+A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
 ### General Operation
 There are four numbered inputs, each of which can be attenuated, inverted, and/or amplified by a level knob and CV input. Each modulated input can then be output to a dedicated numbered channel outupt and/or the modulated inputs can be summed to create a mix. There is also a 5th chain input, without modulation, that can be added to the mix. The mix can also be attenuated, inverted, and/or amplified by a mix level knob and CV input. Finally there are options to hard or soft clip the mix and/or remove DC offset, before sending the final mix to the Mix output. Oversampling is available for soft clipping to control any aliasing that might be introduced. The VCAs can be configured to have a linear or exponential response, and they can be unipolar or bipolar. Audio rate CV is supported so the VCA MIX 4 can do amplitude or ring modulation.
@@ -1862,9 +1862,9 @@ The numbered channel inputs are passed unchanged to their corresponding outputs 
 
 ## VCA MIX 4 STEREO
 ![VCA Mix 4 module image](doc/VCAMix4Stereo.png)  
-A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal.
+A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
-VCA Mix 4 Stereo is a stereo version of the VCA MIX 4, sharing the same features, but with the following differences:
+VCA Mix 4 Stereo is a stereo version of the [VCA MIX 4](#vca-mix-4), sharing the same features, but with the following differences:
 - Each of the channel inputs and outputs, as well as the Chain input and Mix output are doubled to support left and right channels. Each stereo pair is controlled by its own single Level knob and CV input.
 - Each right input is normaled to the corresponding left input. When using the bipolar Level mode, each input level knob produces constant CV only if both the left and right inputs are unpatched.
 - The output channel count for each numbered channel is the maximum polyphony found across the corresponding left, right, and CV inputs.
