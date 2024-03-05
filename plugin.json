@@ -240,6 +240,26 @@
       ]
     },
     {
+      "slug": "MultiMerge",
+      "name": "Multi Merge",
+      "description": "Merge one or more sets of mono and/or poly inputs into polyphonic outputs",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "MultiSplit",
+      "name": "Multi Split",
+      "description": "Split one or more poly inputs into multiple mono or poly outputs",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "NORS_IQ",
       "name": "Non-Octave-Repeating Scale Intervallic Quantizer",
       "description": "Quantizer for any scale defined by up to 13 intervals between notes",

@@ -3,6 +3,8 @@
 ## 2.7.0
 ### New Modules
 - Auxilliary Clone Expander
+- Multi Merge
+- Multi Split
 
 ### Enhancements
 - Modified Clone Merge, Poly Clone, and Poly Unison to work with the Auxilliary Clone Expander

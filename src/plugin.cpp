@@ -93,6 +93,8 @@ void init(Plugin* p) {
   p->addModel(modelMixPan);
   p->addModel(modelMixSend);
   p->addModel(modelMixSolo);
+  p->addModel(modelMultiMerge);
+  p->addModel(modelMultiSplit);
   p->addModel(modelNORS_IQ);
   p->addModel(modelNORSIQChord2Scale);
   p->addModel(modelPolyClone);
