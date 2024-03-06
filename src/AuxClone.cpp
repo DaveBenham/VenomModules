@@ -9,8 +9,6 @@
 
 struct AuxClone : CloneModule {
 
-  bool left = false;
-
   AuxClone() {
     venomConfig(EXP_PARAMS_LEN, EXP_INPUTS_LEN, EXP_OUTPUTS_LEN, EXP_LIGHTS_LEN);
     for (int i=0; i<EXPANDER_PORTS; i++) {
@@ -27,8 +25,8 @@ struct AuxClone : CloneModule {
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
   }
-  
-  void onExpanderChange(const ExpanderChangeEvent& e) override {
+
+  void setConnection(){
     Module* mod = getLeftExpander().module;
     bool connected = mod && (mod->model==modelCloneMerge || mod->model==modelPolyUnison || mod->model==modelPolyClone);
     lights[EXP_CONNECT_LIGHT].setBrightness( connected );
@@ -40,11 +38,16 @@ struct AuxClone : CloneModule {
         lights[EXP_POLY_LIGHT+i*2+1].setBrightness(0.f);
       }
     }
+  }
+  
+  void onExpanderChange(const ExpanderChangeEvent& e) override {
+    setConnection();
   }  
 
 };
 
 struct AuxCloneWidget : VenomWidget {
+  int venomDelCnt = 0;
 
   AuxCloneWidget(AuxClone* module) {
     setModule(module);
@@ -57,6 +60,14 @@ struct AuxCloneWidget : VenomWidget {
       delta+=35.f;
     }  
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(6.f, 10.f), module, AuxClone::EXP_CONNECT_LIGHT));
+  }
+  
+  void step() override {
+    if (this->module && venomDelCnt != getVenomDelCnt()) {
+      static_cast<AuxClone*>(this->module)->setConnection();
+      venomDelCnt = getVenomDelCnt();
+    }
+    VenomWidget::step();
   }
 
 };
