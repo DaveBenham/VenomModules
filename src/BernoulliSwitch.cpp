@@ -108,6 +108,13 @@ struct BernoulliSwitch : VenomModule {
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
   }
+  
+  // Bug fix for VCV bug in onExpanderChange (not triggered by module deletion)
+  void onRemove(const RemoveEvent& e) override {
+    Module* expander = getRightExpander().module;
+    if (expander && expander->model == modelBernoulliSwitchExpander)
+      expander->lights[EXPAND_LIGHT].setBrightness(0.f);
+  }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);

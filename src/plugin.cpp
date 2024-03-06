@@ -8,6 +8,15 @@ static std::string venomSettingsFileName = asset::user("Venom.json");
 int defaultTheme = 0;
 int defaultDarkTheme = 1;
 
+// Part of fix for VCV bug in onExpanderChange (not called after module deletion)
+int venomDelCnt = 0;
+int getVenomDelCnt(){
+  return venomDelCnt;
+}
+void incrVenomDelCnt(){
+  venomDelCnt++;
+}
+
 void setDefaultTheme(int theme){
   if (defaultTheme != theme){
     FILE *file = fopen(venomSettingsFileName.c_str(), "w");

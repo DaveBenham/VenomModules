@@ -74,6 +74,10 @@ int getDefaultDarkTheme();
 void setDefaultTheme(int theme);
 void setDefaultDarkTheme(int theme);
 
+// Part of fix for VCV bug in onExpanderChange (not triggered by module deletion)
+int getVenomDelCnt();
+void incrVenomDelCnt();
+
 // MenuTextField extracted from pachde1 components.hpp
 // Textfield as menu item, originally adapted from SubmarineFree
 struct MenuTextField : ui::TextField {
@@ -302,6 +306,11 @@ struct VenomModule : Module {
       inputExtensions.push_back(PortExtension());
     for (int i=0; i<outCnt; i++)
       outputExtensions.push_back(PortExtension());
+  }
+  
+  // Part of bug fix for VCV bug in onExpanderChange (not triggered by module deletion)
+  void onRemove(const RemoveEvent& e) override {
+    incrVenomDelCnt();
   }
 
   void process(const ProcessArgs& args) override {
