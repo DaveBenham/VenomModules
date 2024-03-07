@@ -290,6 +290,16 @@
       ]
     },
     {
+      "slug": "PolyOffset",
+      "name": "Poly Offset",
+      "description": "Provides an offset control for each channel of a polyphonic signal",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-offset",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "PolySHASR",
       "name": "Poly Sample & Hold Analog Shift Register",
       "description": "Ten channel polyphonic sample and hold combined with a shift register",
@@ -298,6 +308,17 @@
         "Polyphonic",
         "Random",
         "Sample and hold"
+      ]
+    },
+    {
+      "slug": "PolyScale",
+      "name": "Poly Scale",
+      "description": "Provides a level control for each channel of a polyphonic signal",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-offset",
+      "tags": [
+        "Attenuator",
+        "Polyphonic",
+        "Utility"
       ]
     },
     {
