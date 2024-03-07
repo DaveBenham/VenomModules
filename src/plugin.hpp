@@ -76,10 +76,6 @@ int getDefaultDarkTheme();
 void setDefaultTheme(int theme);
 void setDefaultDarkTheme(int theme);
 
-// Part of fix for VCV bug in onExpanderChange (not triggered by module deletion)
-int getVenomDelCnt();
-void incrVenomDelCnt();
-
 // MenuTextField extracted from pachde1 components.hpp
 // Textfield as menu item, originally adapted from SubmarineFree
 struct MenuTextField : ui::TextField {
@@ -310,9 +306,24 @@ struct VenomModule : Module {
       outputExtensions.push_back(PortExtension());
   }
   
-  // Part of bug fix for VCV bug in onExpanderChange (not triggered by module deletion)
+  // Hack workaround for VCV bug when deleting a module - failure to trigger onExpanderChange()
+  // Remove if/when VCV fixes the bug
   void onRemove(const RemoveEvent& e) override {
-    incrVenomDelCnt();
+    Module::ExpanderChangeEvent event;
+    Module::Expander expander = getRightExpander();
+    if (expander.module){
+      expander.module->getLeftExpander().module = NULL;
+      expander.module->getLeftExpander().moduleId = -1;
+      event.side = 0;
+      expander.module->onExpanderChange(event);
+    }
+    expander = getLeftExpander();
+    if (expander.module){
+      expander.module->getRightExpander().module = NULL;
+      expander.module->getRightExpander().moduleId = -1;
+      event.side = 1;
+      expander.module->onExpanderChange(event);
+    }
   }
 
   void process(const ProcessArgs& args) override {

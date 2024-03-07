@@ -5,7 +5,6 @@
 
 struct LinearBeats : VenomModule {
   #include "LinearBeatsExpander.hpp"
-  int venomDelCnt = 0;
 
   enum ParamId {
     ENUMS(MODE_PARAM,9),
@@ -64,16 +63,6 @@ struct LinearBeats : VenomModule {
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
 
-    // fix for VCV bug in onExpanderChange (not triggered by module deletion)
-    if (venomDelCnt != getVenomDelCnt()){
-      outMute = getRightExpander().module;
-      if (outMute && outMute->model != modelLinearBeatsExpander)
-        outMute = NULL;
-      inMute = getLeftExpander().module;
-      if ( inMute && inMute->model != modelLinearBeatsExpander)
-        inMute = NULL;
-      venomDelCnt = getVenomDelCnt();
-    }
     bool preState = false;
     bool trig = (!inputs[CLOCK_INPUT].isConnected()) || clockTrigger.process(inputs[CLOCK_INPUT].getVoltage(), 0.1f, 1.f);
     Module* finalInMute = inMute && !inMute->isBypassed() ? inMute : NULL;

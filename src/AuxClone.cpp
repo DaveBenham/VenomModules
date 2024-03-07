@@ -26,7 +26,7 @@ struct AuxClone : CloneModule {
     VenomModule::process(args);
   }
 
-  void setConnection(){
+  void onExpanderChange(const ExpanderChangeEvent& e) override {
     Module* mod = getLeftExpander().module;
     bool connected = mod && (mod->model==modelCloneMerge || mod->model==modelPolyUnison || mod->model==modelPolyClone);
     lights[EXP_CONNECT_LIGHT].setBrightness( connected );
@@ -38,10 +38,6 @@ struct AuxClone : CloneModule {
         lights[EXP_POLY_LIGHT+i*2+1].setBrightness(0.f);
       }
     }
-  }
-  
-  void onExpanderChange(const ExpanderChangeEvent& e) override {
-    setConnection();
   }  
 
 };
@@ -62,14 +58,6 @@ struct AuxCloneWidget : VenomWidget {
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(6.f, 10.f), module, AuxClone::EXP_CONNECT_LIGHT));
   }
   
-  void step() override {
-    if (this->module && venomDelCnt != getVenomDelCnt()) {
-      static_cast<AuxClone*>(this->module)->setConnection();
-      venomDelCnt = getVenomDelCnt();
-    }
-    VenomWidget::step();
-  }
-
 };
 
 Model* modelAuxClone = createModel<AuxClone, AuxCloneWidget>("AuxClone");

@@ -65,7 +65,6 @@ struct LinearBeatsExpander : VenomModule {
 };
 
 struct LinearBeatsExpanderWidget : VenomWidget {
-  int venomDelCnt = 0;
 
   LinearBeatsExpanderWidget(LinearBeatsExpander* module) {
     setModule(module);
@@ -89,11 +88,6 @@ struct LinearBeatsExpanderWidget : VenomWidget {
         this->module->lights[LinearBeatsExpander::MUTE_LIGHT+i].setBrightness(this->module->params[LinearBeatsExpander::MUTE_PARAM+i].getValue() ? LIGHT_ON : LIGHT_OFF);
       }
       this->module->lights[LinearBeatsExpander::BYPASS_LIGHT].setBrightness(this->module->params[LinearBeatsExpander::BYPASS_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
-      // fix for VCV bug in onExpanderChange (not triggered by module deletion)
-      if (venomDelCnt != getVenomDelCnt()){
-        static_cast<LinearBeatsExpander*>(this->module)->setConnectionLight();
-        venomDelCnt = getVenomDelCnt();
-      }
     }  
   }
 

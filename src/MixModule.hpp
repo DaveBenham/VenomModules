@@ -20,9 +20,6 @@ struct MixModule : VenomModule {
   int monoPanLaw=2;    // +3 dB side
   int stereoPanLaw=10; // Follow mono law
 
-  // Part of fix for VCV bug in onExpanderChange (not triggered by module deletion)
-  int venomDelCnt = 0;
-
   enum ExpLightId {
     EXP_LIGHT,
     EXP_LIGHTS_LEN
@@ -153,7 +150,6 @@ struct MixModule : VenomModule {
   dsp::SchmittTrigger muteCV[5], soloCV[4];
   dsp::SlewLimiter fade[5];
 
-  // Following is not reliable if expander was deleted due to VCV bug
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (e.side)
       rightExpander = dynamic_cast<MixModule*>(getRightExpander().module);
@@ -190,12 +186,6 @@ struct MixBaseModule : MixModule {
     soloPresent = false;
     fadePresent = false;
     
-    // fix for VCV onExpanderChange bug (not triggered by deleted module)
-    if (venomDelCnt != getVenomDelCnt()){
-      rightExpander = dynamic_cast<MixModule*>(getRightExpander().module);
-      leftExpander = dynamic_cast<MixModule*>(getLeftExpander().module);
-    }
-    
     // Clear expanders
     offsetExpander = NULL;
     muteSoloExpander = NULL;
@@ -203,12 +193,6 @@ struct MixBaseModule : MixModule {
     expanders.clear();
     // Load expanders
     for (MixModule* mod = rightExpander; mod; mod = mod->rightExpander) {
-      // fix for VCV onExpanderChange bug (not triggered by deleted module)
-      if (venomDelCnt != getVenomDelCnt()){
-        mod->rightExpander = dynamic_cast<MixModule*>(mod->getRightExpander().module);
-        mod->leftExpander = dynamic_cast<MixModule*>(mod->getLeftExpander().module);
-      }
-
       if (mod->mixType == MIXMUTE_TYPE && !mutePresent && (!soloPresent || mod->leftExpander->mixType == MIXSOLO_TYPE)) {
         mutePresent = true;
         if (soloPresent) {
@@ -244,8 +228,6 @@ struct MixBaseModule : MixModule {
       else
         break;
     }
-    // fix for VCV onExpanderChange bug (not triggered by deleted module)
-    venomDelCnt = getVenomDelCnt();
   }
 
   json_t* dataToJson() override {
@@ -385,12 +367,6 @@ struct MixExpanderWidget : VenomWidget {
     MixModule* pan = NULL;
     MixModule* solo = NULL;
     while (mixMod) {
-      //bug fix for VCV onExpanderChange bug (not triggered by module deletion)
-      if (mixMod->venomDelCnt != getVenomDelCnt()){
-        mixMod->rightExpander = dynamic_cast<MixModule*>(mixMod->getRightExpander().module);
-        mixMod->leftExpander = dynamic_cast<MixModule*>(mixMod->getLeftExpander().module);
-      }
-
       if ((base = dynamic_cast<MixBaseModule*>(mixMod))) {
         connected = (!pan || base->stereo);
         break;
@@ -423,8 +399,6 @@ struct MixExpanderWidget : VenomWidget {
           mixMod->outputs[i].setChannels(1);
         }
       }
-      //bug fix for VCV onExpanderChange bug (not triggered by module deletion)
-      mixMod->venomDelCnt = getVenomDelCnt();
     }
     
     VenomWidget::step();
