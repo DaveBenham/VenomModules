@@ -27,6 +27,11 @@ struct MultiSplit : VenomModule {
   };
   
   int outChannels[16]{}; // Assumes 1st DROP_LIGHT is 0
+  std::string outLabels[17]{"Auto","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+  
+  void setOutputDescription(int id){
+    outputInfos[id]->description = "Channels: "+outLabels[outChannels[id]];
+  }
   
   MultiSplit() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -35,6 +40,7 @@ struct MultiSplit : VenomModule {
       configInput(POLY_INPUT+i, name);
       configLight(DROP_LIGHT+i, name+" dropped channel(s) indicator");
       configOutput(POLY_OUTPUT+i, name);
+      setOutputDescription(i);
     }  
   }
 
@@ -104,10 +110,11 @@ struct MultiSplit : VenomModule {
       json_t* val;
       json_array_foreach(array, i, val) {
         outChannels[i] = json_integer_value(val);
+        setOutputDescription(i);
       }
     }
   }
-
+  
 };
 
 struct MultiSplitWidget : VenomWidget {
@@ -147,9 +154,16 @@ struct MultiSplitWidget : VenomWidget {
     void appendContextMenu(Menu* menu) override {
       MultiSplit* module = static_cast<MultiSplit*>(this->module);
       menu->addChild(new MenuSeparator);
-      menu->addChild(createIndexPtrSubmenuItem("Channels",
+      menu->addChild(createIndexSubmenuItem(
+        "Channels",
         {"Auto","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
-        &module->outChannels[portId]
+        [=]() {
+          return module->outChannels[portId];
+        },
+        [=](int cnt) {
+          module->outChannels[portId] = cnt;
+          module->setOutputDescription(portId);
+        }
       ));    
       PolyPort::appendContextMenu(menu);
     }
@@ -197,6 +211,7 @@ struct MultiSplitWidget : VenomWidget {
         if (cnt<16){
           for (int i=0; i<16; i++){
             module->outChannels[i] = cnt;
+            module->setOutputDescription(i);
           }
         }
       }
