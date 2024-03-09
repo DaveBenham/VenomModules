@@ -1109,13 +1109,43 @@ All of the replicated channels are merged into the single polyphonic output. The
 
 ### Bypass
 
-If Clone Merge is bypassed then the input is passed unchanged to the output.
+If Clone Merge is bypassed then the output is constant monophonic 0 volts.
 
 [Return to Table Of Contents](#venom)
 
 ## POLY OFFSET
 ![Poly Offset module image](doc/PolyOffset.png)  
-xxx
+Provides an offset control for each channel of a polyphonic signal. For each polyphonic output channel, the channel's knob voltage is added to the input voltage to get the final output voltage.
+
+### Offset knobs
+The default range for all offset knobs is bipolar +/- 10V.
+
+An "Offset range" option in the module context menu lets you specify a different range that is used for all the knobs
+- 0-1 V
+- 0-2 V
+- 0-5 V
+- 0-10 V
+- +/- 1 V
+- +/- 2 V
+- +/- 5 V
+- +/- 10 V (default)
+
+The default (initialize) value for all knobs always starts out at 0 volts, regardless of range. Of course the default can be overriden by the standard Venom parameter context menu option.
+
+### Output polyphonic channel count
+By default the number of output channels matches the number of input channels. Knobs for channels above the output count are ignored.
+
+There is a "Polyphony channels" option in the module context menu that lets you override the default and select a specific output channel count. Input channels and knobs above the specified channel count are ignored. If the selected count is greater than the input channel count, then missing channel inputs are assumed to be constant 0 volts, meaning the knob alone specifies the output voltage.
+
+### Channel count display
+The number of polyphonic channels at the output is displayed in the LED panel. The display will be yellow if the number of output channels is greater than or equal to the input channel count. The display will be red if the selected channel count is less than the input channel count.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly Offset is bypassed then the input is passed unchanged to the output.
 
 [Return to Table Of Contents](#venom)
 
@@ -1125,7 +1155,7 @@ Ten row polyphonic sample and hold combined with a shift register, with oversamp
 
 Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
 
-If no input is provided, then random values are sampled from an internal random number generator.
+If no input is provided, then values are sampled from an internal random number generator.
 
 ### TRIG (Trigger) button
 Manually triggers the first row only
@@ -1149,7 +1179,7 @@ This color coded button controls the output range of the internal random number 
 - **+/- 10 V (purple)**
 
 ### CLR (Clear) button
-Resets all all polyphonic channels of all 10 Hold outputs to 0 V.
+Resets all polyphonic channels of all 10 Hold outputs to 0 V.
 
 ### Sample & Hold row
 
@@ -1204,7 +1234,34 @@ If Poly S&H ASR is bypassed then all outputs are monophonic constant 0 V.
 
 ## POLY SCALE
 ![Poly Scale module image](doc/PolyScale.png)  
-xxx
+Provides a level control for each channel of a polyphonic signal. For each polyphonic output channel, the channel's input voltage is scaled (attenuated and/or iniverted and/or amplified) based on the Level knob for that channel, and then sent to the output.
+
+### Level knobs
+The Level knobs set the scale factor for each polyphonic input channel. The default range for all Level knobs is unipolar 0-1x.
+
+A "Level range" option in the module context menu lets you specify a different range that is used for all the knobs.
+- 0-1x (default)
+- 0-2x
+- 0-5x
+- 0-10x
+- +/- 1x
+- +/- 2x
+- +/- 5x
+- +/- 10x
+
+The default (initialize) level for each knob always starts out at 1x, regardless of the range. Of course the default can be overriden by the standard Venom parameter context menu option. 
+
+### Output polyphonic channel count
+The output channel count always matches the input channel count, and is displayed in the LED display panel.
+
+If there is no input, then the output is effectively constant monophonic 0 volts.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly Scale is bypassed then the input is passed unchanged to the output.
 
 [Return to Table Of Contents](#venom)
 
