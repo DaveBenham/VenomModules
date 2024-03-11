@@ -5,6 +5,7 @@ Venom modules version 2.7.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Themes](#themes)  
 [Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
+[Venom Expander Modules](#venom-expander-modules)  
 [Acknowledgments](#acknowledgments)  
 
 |[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|
@@ -80,6 +81,15 @@ The parameter value cannot be changed by any means while the parameter is locked
 A custom default value overrides the factory default whenever a parameter is initialized. An additional parameter menu option is added to restore the factory default whenever a custom default is in effect.
 
 [Return to Table Of Contents](#venom)
+
+## Venom Expander Modules
+A number of Venom modules do not do anything on their own, but rather augment the functionality of another module when placed beside it.
+
+VCV Rack supports two different mechanisms for implementinig expander modules:
+- Both the parent (base) module and the expander perform work, and they communicate with each other via messages that introduce sample delays, much as cables do in VCV Rack.
+- The base module does all the work, accessing the expander inputs, outputs, and controls directly. This does not introduce any sample delays.
+
+All Venom expanders are implemented using the second method where the base module directly accesses the expander, so Venom expanders do not introduce sample delays.
 
 ## Acknowledgments
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
@@ -731,7 +741,7 @@ Controls how left and right channels are attenuated/amplified as a mono input is
  * **-4.5 dB center (compromise: side overpowered)**  
    Same as +4.5 dB side except the center is attenuated rather than amplify the side.
  * **-6 dB center (linear: side overpowered)**  
-   Same as +6 dB side except the center is attenuated rather than ammplify the side.
+   Same as +6 dB side except the center is attenuated rather than amplify the side.
 
 #### Stereo input pan law &nbsp;(Pan expander)
 Controls how left and right channels are attenuated/amplified as a stereo input is panned. All of the mono options are available, plus the following
@@ -2018,7 +2028,7 @@ When enabled, the context menu for every foreign input port, output port, and pa
 
 If a parameter or port has been given a custom name, then an additional menu option is added to restore the factory name.
 
-If a module dynamically updates the parameter or port name, then that overrides any customm name from Widget Menu Extender.
+If a module dynamically updates the parameter or port name, then that overrides any custom name from Widget Menu Extender.
 
 Do not include "input" or "output" in your custom port name - VCV will automatically append input or output to the name you provide.
 
