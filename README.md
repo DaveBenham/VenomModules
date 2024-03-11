@@ -1,31 +1,36 @@
 # Venom
-Venom modules version 2.6.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.7.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
 [Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
+[Venom Expander Modules](#venom-expander-modules)  
 [Acknowledgments](#acknowledgments)  
 
-|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|
+|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|
 |----|----|----|----|----|----|----|----|
-|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|
+|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|
 
-|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
+|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
+|----|----|----|----|----|
+|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
+
+|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|
+|----|----|----|----|----|
+|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|
+
+|[POLY<br />OFFSET](#poly-offset)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|
+|----|----|----|----|----|----|----|----|
+|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|
+
+|[RHYTHM EXPLORER](#rhythm-explorer)|[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|
 |----|----|----|----|
-|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
+|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|
 
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|
-|----|----|----|----|----|----|
-|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|
-
-|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
-|----|----|----|----|
-|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
-
-|[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VENOM<br />BLANK](#venom-blank)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
-|----|----|----|----|----|----|
-|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|
+|[VENOM<br />BLANK](#venom-blank)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
+|----|----|----|
+|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -77,6 +82,15 @@ A custom default value overrides the factory default whenever a parameter is ini
 
 [Return to Table Of Contents](#venom)
 
+## Venom Expander Modules
+A number of Venom modules do not do anything on their own, but rather augment the functionality of another module when placed beside it.
+
+VCV Rack supports two different mechanisms for implementinig expander modules:
+- Both the parent (base) module and the expander perform work, and they communicate with each other via messages that introduce sample delays, much as cables do in VCV Rack.
+- The base module does all the work, accessing the expander inputs, outputs, and controls directly. This does not introduce any sample delays.
+
+All Venom expanders are implemented using the second method where the base module directly accesses the expander, so Venom expanders do not introduce sample delays.
+
 ## Acknowledgments
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
 
@@ -87,6 +101,33 @@ Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for 
 Super thanks to Benjamin Dill for his open source Stoermelder PackOne plugin. I could never have developed the Widget Menu Extender module without his tips and source code to study.
 
 Finally a thanks to Paul Dempsey for his MenuTextField struct from the pachde1 plugin that allows text entry in a menu. In turn that was developed using code/ideas from the SubmarineFree plugin by David O'Rourke.
+
+[Return to Table Of Contents](#venom)
+
+## AUXILLIARY CLONE EXPANDER
+![Auxilliary Clone Expander module image](doc/AuxClone.png)  
+This expander module adds additional cloned poly input/output pairs to [Clone Merge](#clone-merge), [Poly Clone](#poly-clone), or [Poly Unison](#poly-unison).
+
+The expander must be placed immediately to the right of a Clone Merge, Poly Merge, or Poly Unison. The yellow LED in the upper left indicates whether the expander has successfully connected to a parent module.
+
+Each set of polyphonic input channels is cloned to match the clone count of the parent module, and sent to the output. The number of polyphonic channels at the input should either match the number of input channels at the parent, or else 1. If the input is unpatched it is treated as a mono input with a single chanel at constant 0 volts.
+
+The number of polyphonic channels at each output will always match the number of poly output channels at the parent. The LED to the right of each output indicates whether the output was able to properly clone all input channels.
+
+If the input poly count matches the parent, then each of the input channels is cloned as per the parent, and the LED is yellow.
+
+If the input poly count is 1, then the input is replicated to match the parent input channel count, and then each of those channels is cloned. The LED is yellow.
+
+If the input poly count is less than the parent and greater than 1, then the missing channels are treated as constant 0V, and the LED is orange.
+
+If the input poly count is greater than the parent, then excess channels are ignored, and the LED is red.
+
+All outputs will be constant 0V and all port LEDS will be black under any of the following conditions:
+- The expander is not connected to a parent.
+- The expander is bypassed.
+- The parent module is bypassed.
+
+The names of each input/output pair are linked. Changing the name of one will automatically change the name of the other.
 
 [Return to Table Of Contents](#venom)
 
@@ -317,6 +358,8 @@ All expander inputs as well as the probability CV attenuator are ignored when th
 ## CLONE MERGE
 ![Clone Merge module image](doc/CloneMerge.png)  
 Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursion count.
+
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander).
 
 ### CLONE knob
 Selects the number of times to clone or replicate each input. Possible values range from 1 to 16.
@@ -580,7 +623,7 @@ All outputs are monophonic 0V if LOGIC is bypassed.
 
 ## MIX 4
 ![Mix 4 module image](doc/Mix4.png)  
-A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
+A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
 ### General Operation
 There are four numbered inputs, each of which can be attenuated, inverted, and/or amplified by a level knob. The level knobs can be configured to different scales. The modulated inputs are then summed to create a mix that can also be attenuated, inverted, and/or amplified by a mix level knob. Finally there are options to hard or soft clip the mix and/or remove DC offset, before sending the final mix to the Mix output. Oversampling is available for soft clipping to control any aliasing that might otherwise be introduced.
@@ -638,9 +681,9 @@ The MIX output is monophonic 0V if MIX 4 is bypassed.
 
 ## MIX 4 STEREO
 ![Mix 4 Stereo module image](doc/Mix4Stereo.png)  
-A stereo compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
+A stereo compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
-Mix 4 Stereo is identical to Mix 4 except each of the inputs and outputs is doubled to support left and right channels so as to support stereo signals. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
+Mix 4 Stereo is identical to [Mix 4](#mix-4) except each of the inputs and outputs is doubled to support left and right channels so as to support stereo signals. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
 
 Each right input is normaled to the corresponding left input. When in CV mode, each input level knob produces constant CV only if both the left and right input are unpatched.
 
@@ -655,7 +698,7 @@ All other behaviors are the same as for Mix 4.
 
 ## MIX EXPANDERS
 ![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)  
-A collection of expander modules that extend the functionality of the four Mix modules: Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+A collection of expander modules that extend the functionality of the four Mix modules: [Mix 4](#mix-4), [Mix 4 Stereo](#mix-4-stereo), [VCA Mix 4](#vca-mix-4), and [VCA Mix 4 Stereo](#vca-mix-4-stereo).
 
 Mix expanders must be placed to the right of the main mix module. Multiple expanders can be used for one mix module as long as they form a contiguous chain to the right. Each expander has an LED in the upper left that glows yellow if successfully connected to a mix module.
 
@@ -698,7 +741,7 @@ Controls how left and right channels are attenuated/amplified as a mono input is
  * **-4.5 dB center (compromise: side overpowered)**  
    Same as +4.5 dB side except the center is attenuated rather than amplify the side.
  * **-6 dB center (linear: side overpowered)**  
-   Same as +6 dB side except the center is attenuated rather than ammplify the side.
+   Same as +6 dB side except the center is attenuated rather than amplify the side.
 
 #### Stereo input pan law &nbsp;(Pan expander)
 Controls how left and right channels are attenuated/amplified as a stereo input is panned. All of the mono options are available, plus the following
@@ -803,6 +846,48 @@ If the main Mix module is not stereo (Mix 4, or VCA Mix 4), then the Right Send 
 The position of the Send module in a chain of Mix expanders is important. Expanders to the left of the Send expander affect the Send output. Expanders to the right of the Send expander do not affect the Send output.
 
 Any number of Send modules can be used with a single mix module.
+
+[Return to Table Of Contents](#venom)
+
+## MULTI MERGE
+![Multi Merge module image](doc/MultiMerge.png)  
+Merge one or more sets of mono and/or poly inputs into polyphonic outputs.
+
+This merge utility is extremely flexible, with many configurations possible. It can merge a set of monophonic inputs into one polyphonic output. It can also merge a set of polyphonic inputs into one polyphonic ouput. Or it can merge a mixture of mono and poly inputs into one polyphonic output. Finally, there can be multiple sets of merges, each with its own poly output.
+
+The thick red lines indicate which input ports are merged and sent to which output port. The groupings are defined by which output ports are patched. Unpatched output ports are ignored. The module is automatically reconfigured each time you patch or unpatch an output port. Each patched output merges the inputs from that row and above until it reaches another row with a patched output. If there are no output ports, then the module assumes the last output port will be patched.
+
+The number of polyphonic output channels cannot exceed 16. If the sum of polyphony counts across the inputs exceeds 16, then excess channels are dropped, and the LEDs next to input ports with dropped channels glow red.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are monophonic 0V if Multi Merge is bypassed.
+
+[Return to Table Of Contents](#venom)
+
+## MULTI SPLIT
+![Multi Split module image](doc/MultiSplit.png)  
+Split one or more poly inputs into multiple mono or poly outputs.
+
+This split utility is extremely flexible, with many configurations possible. Each polyphonic input can be split into any combination of monophonic and polyphonic outputs. The module has default Automatic behavior for distributing the input channels to the outputs. But the default behavior can be overridden by defining a specific channel count for one or more output ports via output port context menus. The hover tooltip for each output port includes information on the current channel configuration.
+
+The thick red lines indicate which input port is split to which set of output ports. The groupings are defined by which input ports are patched. Unpatched input ports are ignored. The module is automatically reconfigured each time you patch or unpatch an input port. Each patched input distributes its channels to the same output row downward until it reaches another row with a patched input. If no input is patched, then the module treats it as if a monophonic 0V input is patched to the top input.
+
+Multi Split attempts to distribute the input channels evenly to the output ports. When the input channels cannot be divided evenly, higher (lower numbered) output ports take precedence over lower (higher numbered) ports. However, any output channel that is configured for a specific channel count will always output that number of channels. So if you subtract the sum of the fixed output counts from the input count, then the remainder are divided amongst the output ports that are configured for Auto assignment. If the distributor runs out of input channels, then constant 0V is used for the remainder of the output channels.
+
+If the input channels cannot fit within the output channels, then the LED next to the input port glows red. This can only happen if all output ports in the group are configured for a specific channel count, and the sum of the channel counts is less than the input channel count.
+
+This all probably sounds confusing. But once you start patching, it will probably start making sense quickly. Even if you cannot figure out the automatic distrubution algorithm, you can always take control by assigning a specific channel count to each output port.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are monophonic 0V if Multi Split is bypassed.
 
 [Return to Table Of Contents](#venom)
 
@@ -1014,6 +1099,8 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 ![Poly Clone module image](doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander).
+
 ### CLONE knob
 Selects the number of times to clone or replicate each input channel. Possible values range from 1 to 16.
 
@@ -1032,7 +1119,43 @@ All of the replicated channels are merged into the single polyphonic output. The
 
 ### Bypass
 
-If Clone Merge is bypassed then the input is passed unchanged to the output.
+If Clone Merge is bypassed then the output is constant monophonic 0 volts.
+
+[Return to Table Of Contents](#venom)
+
+## POLY OFFSET
+![Poly Offset module image](doc/PolyOffset.png)  
+Provides an offset control for each channel of a polyphonic signal. For each polyphonic output channel, the channel's knob voltage is added to the input voltage to get the final output voltage.
+
+### Offset knobs
+The default range for all offset knobs is bipolar +/- 10V.
+
+An "Offset range" option in the module context menu lets you specify a different range that is used for all the knobs
+- 0-1 V
+- 0-2 V
+- 0-5 V
+- 0-10 V
+- +/- 1 V
+- +/- 2 V
+- +/- 5 V
+- +/- 10 V (default)
+
+The default (initialize) value for all knobs always starts out at 0 volts, regardless of range. Of course the default can be overriden by the standard Venom parameter context menu option.
+
+### Output polyphonic channel count
+By default the number of output channels matches the number of input channels. Knobs for channels above the output count are ignored.
+
+There is a "Polyphony channels" option in the module context menu that lets you override the default and select a specific output channel count. Input channels and knobs above the specified channel count are ignored. If the selected count is greater than the input channel count, then missing channel inputs are assumed to be constant 0 volts, meaning the knob alone specifies the output voltage.
+
+### Channel count display
+The number of polyphonic channels at the output is displayed in the LED panel. The display will be yellow if the number of output channels is greater than or equal to the input channel count. The display will be red if the selected channel count is less than the input channel count.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly Offset is bypassed then the input is passed unchanged to the output.
 
 [Return to Table Of Contents](#venom)
 
@@ -1042,7 +1165,7 @@ Ten row polyphonic sample and hold combined with a shift register, with oversamp
 
 Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
 
-If no input is provided, then random values are sampled from an internal random number generator.
+If no input is provided, then values are sampled from an internal random number generator.
 
 ### TRIG (Trigger) button
 Manually triggers the first row only
@@ -1066,7 +1189,7 @@ This color coded button controls the output range of the internal random number 
 - **+/- 10 V (purple)**
 
 ### CLR (Clear) button
-Resets all all polyphonic channels of all 10 Hold outputs to 0 V.
+Resets all polyphonic channels of all 10 Hold outputs to 0 V.
 
 ### Sample & Hold row
 
@@ -1119,10 +1242,44 @@ If Poly S&H ASR is bypassed then all outputs are monophonic constant 0 V.
 
 [Return to Table Of Contents](#venom)
 
+## POLY SCALE
+![Poly Scale module image](doc/PolyScale.png)  
+Provides a level control for each channel of a polyphonic signal. For each polyphonic output channel, the channel's input voltage is scaled (attenuated and/or iniverted and/or amplified) based on the Level knob for that channel, and then sent to the output.
+
+### Level knobs
+The Level knobs set the scale factor for each polyphonic input channel. The default range for all Level knobs is unipolar 0-1x.
+
+A "Level range" option in the module context menu lets you specify a different range that is used for all the knobs.
+- 0-1x (default)
+- 0-2x
+- 0-5x
+- 0-10x
+- +/- 1x
+- +/- 2x
+- +/- 5x
+- +/- 10x
+
+The default (initialize) level for each knob always starts out at 1x, regardless of the range. Of course the default can be overriden by the standard Venom parameter context menu option. 
+
+### Output polyphonic channel count
+The output channel count always matches the input channel count, and is displayed in the LED display panel.
+
+If there is no input, then the output is effectively constant monophonic 0 volts.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly Scale is bypassed then the input is passed unchanged to the output.
+
+[Return to Table Of Contents](#venom)
 
 ## POLY UNISON
 ![Poly Unison module image](doc/PolyUnison.PNG)  
 Replicate each channel of a polyphonic input with a variable detune spread, and merge the results into a single polyphonic output.
+
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander). Note that auxilliary outputs on the expander are not detuned.
 
 ### COUNT (Unison Count) knob
 Sets the number of unison channels for each input channel, from 1 to 16.
@@ -1739,7 +1896,7 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 
 ## VCA MIX 4
 ![VCA Mix 4 module image](doc/VCAMix4.png)  
-A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV.
+A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
 ### General Operation
 There are four numbered inputs, each of which can be attenuated, inverted, and/or amplified by a level knob and CV input. Each modulated input can then be output to a dedicated numbered channel outupt and/or the modulated inputs can be summed to create a mix. There is also a 5th chain input, without modulation, that can be added to the mix. The mix can also be attenuated, inverted, and/or amplified by a mix level knob and CV input. Finally there are options to hard or soft clip the mix and/or remove DC offset, before sending the final mix to the Mix output. Oversampling is available for soft clipping to control any aliasing that might be introduced. The VCAs can be configured to have a linear or exponential response, and they can be unipolar or bipolar. Audio rate CV is supported so the VCA MIX 4 can do amplitude or ring modulation.
@@ -1829,9 +1986,9 @@ The numbered channel inputs are passed unchanged to their corresponding outputs 
 
 ## VCA MIX 4 STEREO
 ![VCA Mix 4 module image](doc/VCAMix4Stereo.png)  
-A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal.
+A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
-VCA Mix 4 Stereo is a stereo version of the VCA MIX 4, sharing the same features, but with the following differences:
+VCA Mix 4 Stereo is a stereo version of the [VCA MIX 4](#vca-mix-4), sharing the same features, but with the following differences:
 - Each of the channel inputs and outputs, as well as the Chain input and Mix output are doubled to support left and right channels. Each stereo pair is controlled by its own single Level knob and CV input.
 - Each right input is normaled to the corresponding left input. When using the bipolar Level mode, each input level knob produces constant CV only if both the left and right inputs are unpatched.
 - The output channel count for each numbered channel is the maximum polyphony found across the corresponding left, right, and CV inputs.
@@ -1871,7 +2028,7 @@ When enabled, the context menu for every foreign input port, output port, and pa
 
 If a parameter or port has been given a custom name, then an additional menu option is added to restore the factory name.
 
-If a module dynamically updates the parameter or port name, then that overrides any customm name from Widget Menu Extender.
+If a module dynamically updates the parameter or port name, then that overrides any custom name from Widget Menu Extender.
 
 Do not include "input" or "output" in your custom port name - VCV will automatically append input or output to the name you provide.
 

@@ -10,6 +10,7 @@ using namespace rack;
 extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
+extern Model* modelAuxClone;
 extern Model* modelBenjolinOsc;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
@@ -28,10 +29,14 @@ extern Model* modelMixOffset;
 extern Model* modelMixPan;
 extern Model* modelMixSend;
 extern Model* modelMixSolo;
+extern Model* modelMultiMerge;
+extern Model* modelMultiSplit;
 extern Model* modelNORS_IQ;
 extern Model* modelNORSIQChord2Scale;
 extern Model* modelPolyClone;
+extern Model* modelPolyOffset;
 extern Model* modelPolySHASR;
+extern Model* modelPolyScale;
 extern Model* modelPolyUnison;
 extern Model* modelPush5;
 extern Model* modelRecurse;
@@ -187,9 +192,15 @@ struct VenomModule : Module {
     PortExtension* e = (type==engine::Port::INPUT ? &inputExtensions[portId] : &outputExtensions[portId]);
     ParamQuantity* q = NULL;
     ParamExtension* qe = NULL;
+    PortInfo* piLink = NULL;
+    PortExtension* eLink = NULL;
     if (e->nameLink >= 0){
       q = paramQuantities[e->nameLink];
       qe = &paramExtensions[e->nameLink];
+    }
+    if (e->portNameLink >= 0){
+      piLink = (type==engine::Port::INPUT ? outputInfos[e->portNameLink] : inputInfos[e->portNameLink]);
+      eLink = (type==engine::Port::INPUT ? &outputExtensions[e->portNameLink] : &inputExtensions[e->portNameLink]);
     }
     menu->addChild(new MenuSeparator);
     menu->addChild(createSubmenuItem("Port name", "",
@@ -200,6 +211,11 @@ struct VenomModule : Module {
         editField->changeHandler = [=](std::string text) {
           pi->name = text;
           if (q) q->name = text;
+          if (piLink) {
+            if (!eLink->factoryName.size())
+              eLink->factoryName = piLink->name;
+            piLink->name = text;
+          }
         };
         menu->addChild(editField);
       }
@@ -213,6 +229,7 @@ struct VenomModule : Module {
         [=]() {
           pi->name = e->factoryName;
           if (q) q->name = e->factoryName;
+          if (piLink) piLink->name = e->factoryName;
         }
       ));
     }  
@@ -240,10 +257,12 @@ struct VenomModule : Module {
   
   struct PortExtension {
     int nameLink;
+    int portNameLink;
     std::string factoryName;
     PortExtension(){
       factoryName = "";
       nameLink = -1;
+      portNameLink = -1;
     }
   };
 
@@ -285,6 +304,26 @@ struct VenomModule : Module {
       inputExtensions.push_back(PortExtension());
     for (int i=0; i<outCnt; i++)
       outputExtensions.push_back(PortExtension());
+  }
+  
+  // Hack workaround for VCV bug when deleting a module - failure to trigger onExpanderChange()
+  // Remove if/when VCV fixes the bug
+  void onRemove(const RemoveEvent& e) override {
+    Module::ExpanderChangeEvent event;
+    Module::Expander expander = getRightExpander();
+    if (expander.module){
+      expander.module->getLeftExpander().module = NULL;
+      expander.module->getLeftExpander().moduleId = -1;
+      event.side = 0;
+      expander.module->onExpanderChange(event);
+    }
+    expander = getLeftExpander();
+    if (expander.module){
+      expander.module->getRightExpander().module = NULL;
+      expander.module->getRightExpander().moduleId = -1;
+      event.side = 1;
+      expander.module->onExpanderChange(event);
+    }
   }
 
   void process(const ProcessArgs& args) override {

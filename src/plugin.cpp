@@ -74,6 +74,7 @@ void init(Plugin* p) {
   pluginInstance = p;
 
   // Add modules here
+  p->addModel(modelAuxClone);
   p->addModel(modelBenjolinOsc);
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelBernoulliSwitchExpander);
@@ -92,10 +93,14 @@ void init(Plugin* p) {
   p->addModel(modelMixPan);
   p->addModel(modelMixSend);
   p->addModel(modelMixSolo);
+  p->addModel(modelMultiMerge);
+  p->addModel(modelMultiSplit);
   p->addModel(modelNORS_IQ);
   p->addModel(modelNORSIQChord2Scale);
   p->addModel(modelPolyClone);
+  p->addModel(modelPolyOffset);
   p->addModel(modelPolySHASR);
+  p->addModel(modelPolyScale);
   p->addModel(modelPolyUnison);
   p->addModel(modelPush5);
   p->addModel(modelRecurse);

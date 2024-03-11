@@ -62,7 +62,7 @@ struct LinearBeats : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    
+
     bool preState = false;
     bool trig = (!inputs[CLOCK_INPUT].isConnected()) || clockTrigger.process(inputs[CLOCK_INPUT].getVoltage(), 0.1f, 1.f);
     Module* finalInMute = inMute && !inMute->isBypassed() ? inMute : NULL;

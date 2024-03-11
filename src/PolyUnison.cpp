@@ -2,8 +2,10 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
+#include "CloneModule.hpp"
 
-struct PolyUnison : VenomModule {
+struct PolyUnison : CloneModuleBase {
+
   enum ParamId {
     CLONE_PARAM,
     DETUNE_PARAM,
@@ -108,12 +110,14 @@ struct PolyUnison : VenomModule {
         outputs[POLY_OUTPUT].setVoltage(val, c++);
     }
     outputs[POLY_OUTPUT].setChannels(goodCh * clones);
+    processExpander(clones, goodCh);
 
     if (lightDivider.process()) {
       for (int i=1; i<16; i++) {
         lights[CHANNEL_LIGHTS+i*2].setBrightness(i<goodCh);
         lights[CHANNEL_LIGHTS+i*2+1].setBrightness(i>=goodCh && i<ch);
       }
+      setExpanderLights(goodCh);
     }
   }
 

@@ -393,11 +393,12 @@ struct MixExpanderWidget : VenomWidget {
     if(this->module) {
       mixMod = dynamic_cast<MixModule*>(this->module);
       mixMod->lights[MixModule::EXP_LIGHT].setBrightness(connected);
-      if (!connected)
+      if (!connected){
         for (int i=0; i<mixMod->getNumOutputs(); i++) {
           mixMod->outputs[i].setVoltage(0.f);
           mixMod->outputs[i].setChannels(1);
         }
+      }
     }
     
     VenomWidget::step();

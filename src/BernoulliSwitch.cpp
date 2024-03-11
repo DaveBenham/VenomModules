@@ -108,7 +108,7 @@ struct BernoulliSwitch : VenomModule {
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
   }
-
+  
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     using float_4 = simd::float_4;

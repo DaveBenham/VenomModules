@@ -1,5 +1,19 @@
 # Venom Modules Changelog
 
+## 2.7.0 (2024-03-11)
+### New Modules
+- Auxilliary Clone Expander
+- Multi Merge
+- Multi Split
+- Poly Offset
+- Poly Scale
+
+### Enhancements
+- Modified Clone Merge, Poly Clone, and Poly Unison to work with the Auxilliary Clone Expander
+
+### Bug Fixes
+- Fixed a bug with Venom expander modules. Prior to version 2.7, Venom expander modules could misbehave and possibly crash VCV Rack if an expander or base module was deleted.
+
 ## 2.6.1 (2024-02-28)
 ### Enhancements
 - Harmonic Quantizer: Add detune parameters

@@ -32,9 +32,9 @@ struct LinearBeatsExpander : VenomModule {
       paramQuantities[MUTE_PARAM+i]->name = label[i]+str;
       inputInfos[MUTE_INPUT+i]->name = label[i]+str+" CV";
     }
-  }  
+  }
   
-  void onExpanderChange(const ExpanderChangeEvent& e) override {
+  void setConnectionLight(){
     Module* mod = getRightExpander().module;
     if (mod && mod->model == modelLinearBeats) {
       lights[RIGHT_LIGHT].setBrightness(1.f);
@@ -56,6 +56,10 @@ struct LinearBeatsExpander : VenomModule {
         left = false;
       }  
     }  
+  }
+  
+  void onExpanderChange(const ExpanderChangeEvent& e) override {
+    setConnectionLight();
   }  
 
 };
