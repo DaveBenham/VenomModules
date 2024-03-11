@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.7.0
+## 2.7.0 (2024-03-11)
 ### New Modules
 - Auxilliary Clone Expander
 - Multi Merge
