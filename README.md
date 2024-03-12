@@ -8,9 +8,9 @@ Venom modules version 2.7.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Venom Expander Modules](#venom-expander-modules)  
 [Acknowledgments](#acknowledgments)  
 
-|[AUXILIARY<br />CLONE<br />EXPANDER](#auxiliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|
+|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|
 |----|----|----|----|----|----|----|----|
-|![Auxiliary Clone Expander module image](doc/AuxClone.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|
+|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|
 
 |[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
 |----|----|----|----|----|
@@ -104,8 +104,8 @@ Finally a thanks to Paul Dempsey for his MenuTextField struct from the pachde1 p
 
 [Return to Table Of Contents](#venom)
 
-## AUXILIARY CLONE EXPANDER
-![Auxiliary Clone Expander module image](doc/AuxClone.png)  
+## AUXILLIARY CLONE EXPANDER
+![Auxilliary Clone Expander module image](doc/AuxClone.png)  
 This expander module adds additional cloned poly input/output pairs to [Clone Merge](#clone-merge), [Poly Clone](#poly-clone), or [Poly Unison](#poly-unison).
 
 The expander must be placed immediately to the right of a Clone Merge, Poly Merge, or Poly Unison. The yellow LED in the upper left indicates whether the expander has successfully connected to a parent module.
@@ -359,7 +359,7 @@ All expander inputs as well as the probability CV attenuator are ignored when th
 ![Clone Merge module image](doc/CloneMerge.png)  
 Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursion count.
 
-Up to four auxiliary poly inputs may also be cloned via the [Auxiliary Clone Expander](#auxiliary-clone-expander).
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander).
 
 ### CLONE knob
 Selects the number of times to clone or replicate each input. Possible values range from 1 to 16.
@@ -829,7 +829,7 @@ Pan is only available to stereo mix modules Mix 4 Stereo and VCA Mix 4 Stereo. O
 
 ### MIX AUX SEND EXPANDER
 
-Provides an auxiliary mix of the four mix inputs that can be sent to the Send output(s), and optionally returned to the Return input(s)
+Provides an auxilliary mix of the four mix inputs that can be sent to the Send output(s), and optionally returned to the Return input(s)
 
 Each numbered knob can attenuate the channel to between 0% and 100%, before the channels are mixed and send to the Send output(s).
 
@@ -1099,7 +1099,7 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 ![Poly Clone module image](doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
-Up to four auxiliary poly inputs may also be cloned via the [Auxiliary Clone Expander](#auxiliary-clone-expander).
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander).
 
 ### CLONE knob
 Selects the number of times to clone or replicate each input channel. Possible values range from 1 to 16.
@@ -1279,7 +1279,7 @@ If Poly Scale is bypassed then the input is passed unchanged to the output.
 ![Poly Unison module image](doc/PolyUnison.PNG)  
 Replicate each channel of a polyphonic input with a variable detune spread, and merge the results into a single polyphonic output.
 
-Up to four auxiliary poly inputs may also be cloned via the [Auxiliary Clone Expander](#auxiliary-clone-expander). Note that auxiliary outputs on the expander are not detuned.
+Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](#auxilliary-clone-expander). Note that auxilliary outputs on the expander are not detuned.
 
 ### COUNT (Unison Count) knob
 Sets the number of unison channels for each input channel, from 1 to 16.
