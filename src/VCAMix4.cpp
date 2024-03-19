@@ -46,6 +46,7 @@ struct VCAMix4 : MixBaseModule {
   VCAMix4() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     mixType = VCAMIX4_TYPE;
+    baseMod = true;
     for (int i=0; i < 4; i++){
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);

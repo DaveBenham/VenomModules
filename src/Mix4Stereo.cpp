@@ -42,6 +42,7 @@ struct Mix4Stereo : MixBaseModule {
   Mix4Stereo() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     mixType=MIX4ST_TYPE;
+    baseMod = true;
     stereo = true;
     for (int i=0; i < 4; i++){
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);

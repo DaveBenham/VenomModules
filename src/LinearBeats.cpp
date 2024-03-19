@@ -165,7 +165,7 @@ struct LinearBeatsWidget : VenomWidget {
   }
 
   void appendContextMenu(Menu* menu) override {
-    LinearBeats* module = dynamic_cast<LinearBeats*>(this->module);
+    LinearBeats* module = static_cast<LinearBeats*>(this->module);
     if (module->inMute || module->outMute) {
       menu->addChild(new MenuSeparator);
       menu->addChild(createBoolMenuItem("Expander CV toggles button on/off", "",

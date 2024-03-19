@@ -53,6 +53,7 @@ struct VCAMix4Stereo : MixBaseModule {
   VCAMix4Stereo() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     mixType = VCAMIX4ST_TYPE;
+    baseMod = true;
     stereo = true;
     for (int i=0; i < 4; i++){
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));
