@@ -62,6 +62,16 @@
       ]
     },
     {
+      "slug": "Blocker",
+      "name": "Blocker",
+      "description": "Blocks expander chains",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#blocker",
+      "tags": [
+        "Blank",
+        "Utility"
+      ]
+    },
+    {
       "slug": "CloneMerge",
       "name": "Clone Merge",
       "description": "Clone up to 8 monophonic inputs and merge all channels into 1 polyphonic output",

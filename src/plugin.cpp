@@ -78,6 +78,7 @@ void init(Plugin* p) {
   p->addModel(modelBenjolinOsc);
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelBernoulliSwitchExpander);
+  p->addModel(modelBlocker);
   p->addModel(modelCloneMerge);
   p->addModel(modelHQ);
   p->addModel(modelKnob5);

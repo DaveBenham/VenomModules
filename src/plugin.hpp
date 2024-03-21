@@ -14,6 +14,7 @@ extern Model* modelAuxClone;
 extern Model* modelBenjolinOsc;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
+extern Model* modelBlocker;
 extern Model* modelCloneMerge;
 extern Model* modelHQ;
 extern Model* modelKnob5;
