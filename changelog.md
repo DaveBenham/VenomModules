@@ -2,7 +2,7 @@
 
 ## 2.8.0
 ### New Modules
-- Blocker
+- Blocker (interrupts extended expander chains)
 
 ### Enhancements
 - Shaped VCA
