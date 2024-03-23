@@ -63,7 +63,7 @@ struct ShapedVCA : VenomModule {
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 4.f, 0.f, "Oversample", {"Off", "x4", "x8", "x16", "x32"});
     configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level", "x", 0.f, 1.f, 0.f);
     configInput(LEVEL_INPUT, "Level CV")->description = "Normalled to 10 volts";
-    configParam(BIAS_PARAM, 0.f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
+    configParam(BIAS_PARAM, -0.5f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
     configParam<ShapeQuantity>(CURVE_PARAM, -1.f, 1.f, 0.f, "Response curve", "%", 0.f, 100.f);
     configInput(CURVE_INPUT, "Response curve");
     configInput(LEFT_INPUT, "Left")->description = "Normalled to 10 volts";
@@ -147,7 +147,7 @@ struct ShapedVCA : VenomModule {
         else if (algo == 1 && !half)
           gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*simd::abs(levelIn[s])+1.f), simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
         else {
-          if (half)
+          if (half && levelConnected)
             levelIn[s]*=2.f;
           gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*simd::abs(levelIn[s])+1.f), simd::sgn(levelIn[s])*simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
         }
