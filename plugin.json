@@ -72,6 +72,16 @@
       ]
     },
     {
+      "slug": "Bypass",
+      "name": "Bypass",
+      "description": "Bypass one or more modules at the end of patched cables",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bypass",
+      "tags": [
+        "Switch",
+        "Utility"
+      ]
+    },
+    {
       "slug": "CloneMerge",
       "name": "Clone Merge",
       "description": "Clone up to 8 monophonic inputs and merge all channels into 1 polyphonic output",
