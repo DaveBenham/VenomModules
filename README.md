@@ -8,13 +8,17 @@ Venom modules version 2.7.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Venom Expander Modules](#venom-expander-modules)  
 [Acknowledgments](#acknowledgments)  
 
-|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|
-|----|----|----|----|----|----|----|----|
-|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|
+|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS](#bypass)|
+|----|----|----|----|----|----|
+|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|
 
-|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
-|----|----|----|----|----|
-|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
+|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|
+|----|----|----|----|----|----|
+|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|
+
+|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
+|----|----|----|
+|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
 
 |[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|
 |----|----|----|----|----|
@@ -354,6 +358,22 @@ All expander inputs as well as the probability CV attenuator are ignored when th
 [Watch this video](https://www.youtube.com/watch?v=VRERXi6RuPE) to see how the Bernoulli Switch coupled with the Bernoulli Switch Expander can transform a simple sine wave into a dynamic complex stereo sound.
 
 [Return to Table Of Contents](#venom)
+
+## BLOCKER
+![Blocker module image](doc/Blocker.png)  
+Blocks expander chains for modules like Venom Bypass and Stoermelder Strip.
+
+[Return to Table Of Contents](#venom)
+
+## BYPASS
+![Bypass module image](doc/Bypass.png)|  
+Bypass (disable) one or more modules at the end of patched cables.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+[Return to Table Of Contents](#venom)
+
 
 ## CLONE MERGE
 ![Clone Merge module image](doc/CloneMerge.png)  
