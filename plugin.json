@@ -75,7 +75,7 @@
       "slug": "Bypass",
       "name": "Bypass",
       "description": "Bypass one or more modules at the end of patched cables",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bypass",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bypass-module",
       "tags": [
         "Switch",
         "Utility"
