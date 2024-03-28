@@ -363,11 +363,54 @@ All expander inputs as well as the probability CV attenuator are ignored when th
 ![Blocker module image](doc/Blocker.png)  
 Blocks expander chains for modules like Venom Bypass and Stoermelder Strip.
 
+Both Venom Bypass and Stoermelder Strip can operate on contiguous neighbor modules to the left and/or right, up until there is a gap. They locate neighbors via the VCV expander mechanism. Blocker works by hiding itself from the expander mechanism, so Bypass and Strip think there is a gap. Even when Blocker is bypassed, it still blocks expansion.
+
+Blocker uses virtually no CPU, so it also works well as a 1hp blank.
+
 [Return to Table Of Contents](#venom)
 
 ## BYPASS
 ![Bypass module image](doc/Bypass.png)|  
-Bypass (disable) one or more modules at the end of patched cables.
+Bypass (disable) one or more modules at the end of patched cables via CV control or a manual button press.
+
+The Bypass module has input/output pairs that simply pass through all channels appearing at the input. However, the Bypass module also has the ability of virtually transmitting a message through the cable to bypass the module (or group of modules) at the end of the cable.
+
+The Bypass module maintains its own state, indicating whether it thinks modules are bypassed or not. The actual bypass state of the target module may or may not match the Bypass state because users can directly change the module bypass state without using the Bypass module. The Bypass module only changes the target module bypass state when the Bypass module state changes.
+
+### G (Gate mode) button
+This controls whether trigger CV input acts as a gate or a toggle. By default the CV is a trigger, the Gate status is false, and the button is unlit. When activated, the CV acts as a gate, the Gate status is true, and the button is lit.
+
+### TRIG (Trigger) button and CV input
+
+Every time the Trig button is pressed, the bypass state is toggled on or off. The button glows red whenever the bypass state is active (meaning the modules are disabled)
+
+If the Gate mode is false, then the leading edge of a trigger at the CV input will also toggle the bypass state on or off.
+
+If the Gate mode is true, then a high gate at the input turns the bypass on, and a low gate turns the bypass off. The gate functions as a Schmitt trigger, going high at 2V, and low at 0.1V. Regardless whether the CV gate is high or low, the Trig button will always toggle the Bypass state.
+
+### Pass Thru input/output pairs, and Bypass mode buttons
+
+There are three input/output pairs that simply pass any input values through to the output, with full support for polyphonic cables. Each input port has a Bypass mode button above it, and each output port has a Bypass mode button below it. The Bypass mode dictates whether the Bypass module controls the bypass state of the module(s) at the end of patched cables at either port. The Bypass mode buttons are color coded. 
+
+Each input Bypass mode button has the following available options:
+- **Dark gray** (default) - Off  (no modules are bypassed)
+- **Purple** - Source (Only the input source module is bypassed)
+- **Blue** - Source and left neighbors (The input source module and all its contiguous neighbors to the left are bypassed)
+- **Yellow** - Source and right neighbors (The input source module and all its contiguous neighbors to the right are bypassed)
+- **Green** - Source and all neighbors (The input source module and all contiguous neighbors on both sides are bypassed)
+
+Each output Bypass mode button has the following options:
+- **Dark gray** - Off  (no modules are bypassed)
+- **Purple** (default) - Target (Only the output target module is bypassed)
+- **Blue** - Target and left neighbors (The output target module and all its contiguous neighbors to the left are bypassed)
+- **Yellow** - Target and right neighbors (The output target module and all its contiguous neighbors to the right are bypassed)
+- **Green** - Target and all neighbors (The output target module and all contiguous neighbors on both sides are bypassed)
+
+The Bypass module itself never counts as a neighbor module. The only way for one Bypass module to control whether another Bypass is disabled is to patch directly to the other Bypass module.
+
+Continuous neighbors can also be blocked by the Venom Blocker module.
+
+Each output port is a bit unusual in that any patched cable will have 0 channels if the corresponding Bypass input port is unpatched. This allows for Bypass to control the bypass state of other modules, without disturbing any normal value for the target module input port. The target module will act as though the cable is not there, yet Bypass will still be able to bypass the target module.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
