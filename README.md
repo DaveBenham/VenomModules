@@ -8,7 +8,7 @@ Venom modules version 2.7.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Venom Expander Modules](#venom-expander-modules)  
 [Acknowledgments](#acknowledgments)  
 
-|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS](#bypass)|
+|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|
 |----|----|----|----|----|----|
 |![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|
 
@@ -369,7 +369,7 @@ Blocker uses virtually no CPU, so it also works well as a 1hp blank.
 
 [Return to Table Of Contents](#venom)
 
-## BYPASS
+## BYPASS MODULE
 ![Bypass module image](doc/Bypass.png)|  
 Bypass (disable) one or more modules at the end of patched cables via CV control or a manual button press.
 
