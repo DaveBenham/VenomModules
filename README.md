@@ -524,7 +524,7 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 ![Knob 5 module image](doc/Knob5.png)  
 Five independently configurable constant voltage knobs.
 
-### Individual Button configuration
+### Individual Knob configuration
 Each knob has a custom menu option to tailor the knob to your needs.
 
 #### Knob Range
@@ -536,7 +536,18 @@ Determines the minimum and maximum voltage of the knob.
 - **+/- 1 V**
 - **+/- 2 V**
 - **+/- 5 V**
-- **+/- 10 V (default)**
+- **+/- 10 V** (default)
+
+#### Quantize
+Determines how output values are quantized.
+- **Off (continuous)** (default)
+- **Integers (octaves)**
+- **1/12 V (semitones)**
+
+#### Display unit
+Determines how knob values are displaed and entered in knob context menu and hover text. Output values are always in Volts.
+- **Volts (V)** (default)
+- **Cents (&cent;)**
 
 #### Polyphony channels
 Determines the number of polyphonic channels to output. All channels will be identical. The default is 1 (mono).
@@ -1198,24 +1209,36 @@ If Clone Merge is bypassed then the output is constant monophonic 0 volts.
 Provides an offset control for each channel of a polyphonic signal. For each polyphonic output channel, the channel's knob voltage is added to the input voltage to get the final output voltage.
 
 ### Offset knobs
-The default range for all offset knobs is bipolar +/- 10V.
+There is one offset knob for each of the possible polyphonic channels. The default (initialize) value for all knobs always starts out at 0 volts. Of course the default can be overriden by the standard Venom parameter context menu option.
 
-An "Offset range" option in the module context menu lets you specify a different range that is used for all the knobs
-- 0-1 V
-- 0-2 V
-- 0-5 V
-- 0-10 V
-- +/- 1 V
-- +/- 2 V
-- +/- 5 V
-- +/- 10 V (default)
+The module context menu has the following options to configure the behavior of the knobs:
 
-The default (initialize) value for all knobs always starts out at 0 volts, regardless of range. Of course the default can be overriden by the standard Venom parameter context menu option.
+#### Knob Range
+Determines the minimum and maximum voltage of the knobs.
+- **0-1 V**
+- **0-2 V**
+- **0-5 V**
+- **0-10 V**
+- **+/- 1 V**
+- **+/- 2 V**
+- **+/- 5 V**
+- **+/- 10 V** (default)
+
+#### Quantize
+Determines how output values are quantized.
+- **Off (continuous)** (default)
+- **Integers (octaves)**
+- **1/12 V (semitones)**
+
+#### Display unit
+Determines how knob values are displaed and entered in knob context menu and hover text. Output values are always in Volts.
+- **Volts (V)** (default)
+- **Cents (&cent;)**
 
 ### Output polyphonic channel count
 By default the number of output channels matches the number of input channels. Knobs for channels above the output count are ignored.
 
-There is a "Polyphony channels" option in the module context menu that lets you override the default and select a specific output channel count. Input channels and knobs above the specified channel count are ignored. If the selected count is greater than the input channel count, then missing channel inputs are assumed to be constant 0 volts, meaning the knob alone specifies the output voltage.
+There is a "Polyphony channels" option in the module context menu that lets you override the default and select a specific output channel count. Input channels and knobs above the specified channel count are ignored. Monophonic inputs are cloned to match the selected channel count. If the input channel count is poly but less than the selected channel count, then missing channel inputs are assumed to be constant 0 volts, meaning the knob alone specifies the output voltage.
 
 ### Channel count display
 The number of polyphonic channels at the output is displayed in the LED panel. The display will be yellow if the number of output channels is greater than or equal to the input channel count. The display will be red if the selected channel count is less than the input channel count.
@@ -1332,9 +1355,12 @@ A "Level range" option in the module context menu lets you specify a different r
 The default (initialize) level for each knob always starts out at 1x, regardless of the range. Of course the default can be overriden by the standard Venom parameter context menu option. 
 
 ### Output polyphonic channel count
-The output channel count always matches the input channel count, and is displayed in the LED display panel.
+By default the number of output channels matches the number of input channels. Knobs for channels above the output count are ignored.
 
-If there is no input, then the output is effectively constant monophonic 0 volts.
+There is a "Polyphony channels" option in the module context menu that lets you override the default and select a specific output channel count. Input channels and knobs above the specified channel count are ignored. Monophonic inputs are cloned to match the selected channel count. If the input channel count is poly but less than the selected channel count, then missing channel inputs are assumed to be constant 0 volts, meaning the output will also be 0 volts.
+
+### Channel count display
+The number of polyphonic channels at the output is displayed in the LED panel. The display will be yellow if the number of output channels is greater than or equal to the input channel count. The display will be red if the selected channel count is less than the input channel count.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
