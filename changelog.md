@@ -12,14 +12,15 @@
   - Changed Bias knob to bipolar +/- 5V instead of unipolar 0-5V
   - Modified context menu options for backward compatibility
 - Knob 5
-  - New quantze options: Off, Integers, Semitones
+  - New quantize options: Off, Integers, Semitones
   - New display unit options: Volts, Cents
 - PolyOffset
   - New quantize options: Off, Integers, Semitones
   - New display unit options: Volts, Cents
   - BREAKING CHANGE: mono input now cloned to match selected channel count
 - Poly Scale
-  - New polyphony channels option and mono input cloned to match selected channel count
+  - New output channel count option
+  - Mono input cloned to match selected channel count
 
 ## 2.7.0 (2024-03-11)
 ### New Modules
