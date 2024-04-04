@@ -7,7 +7,7 @@
 
 ### Enhancements
 - Shaped VCA
-  - Allow exponential to be bipolar in bipolar VCA mode
+  - Allow exponential shape output to be bipolar in bipolar VCA mode
   - Added additional VCA modes to better work with +/- 5V inputs with shaping
   - Changed Bias knob to bipolar +/- 5V instead of unipolar 0-5V
   - Modified context menu options for backward compatibility
