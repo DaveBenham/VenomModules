@@ -72,6 +72,7 @@ struct Knob5 : VenomModule {
   }
 
   void appendCustomParamMenu(Menu *menu, int paramId){
+    menu->addChild(new MenuSeparator);
     menu->addChild(createIndexSubmenuItem(
       "Knob range",
       {"0-1 V","0-2 V","0-5 V","0-10 V","+/- 1 V","+/- 2 V","+/- 5 V","+/- 10 V"},
@@ -215,8 +216,8 @@ struct Knob5Widget : VenomWidget {
   struct Knob : RoundSmallBlackKnobLockable {
     void appendContextMenu(Menu* menu) override {
       if (this->module) {
-        RoundSmallBlackKnobLockable::appendContextMenu(menu);
         static_cast<Knob5*>(this->module)->appendCustomParamMenu(menu, this->paramId);
+        RoundSmallBlackKnobLockable::appendContextMenu(menu);
       }
     }
   };
