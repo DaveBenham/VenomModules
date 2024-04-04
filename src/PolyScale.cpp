@@ -91,7 +91,19 @@ struct PolyScaleWidget : VenomWidget {
   
   struct PCCountDisplay : DigitalDisplay18 {
     void step() override {
-      text = module ? string::f("%d", module->inputs[PolyScale::POLY_INPUT].getChannels()) : "16";
+      if (module) {
+        PolyScale* mod = static_cast<PolyScale*>(module);
+        if (mod->channels){
+          text = string::f("%d", mod->channels);
+          fgColor = mod->inputs[PolyScale::POLY_INPUT].getChannels() > mod->channels ? SCHEME_RED : SCHEME_YELLOW;
+        } else {
+          text = string::f("%d", mod->inputs[PolyScale::POLY_INPUT].getChannels());
+          fgColor = SCHEME_YELLOW;
+        }
+      } else {
+        text = "16";
+        fgColor = SCHEME_YELLOW;
+      }
     }
   };
 
