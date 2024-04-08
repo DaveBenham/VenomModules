@@ -373,20 +373,25 @@ Blocker uses virtually no CPU, so it also works well as a 1hp blank.
 ![Bypass module image](doc/Bypass.png)  
 Bypass (disable) one or more modules at the end of patched cables via CV control or a manual button press.
 
-The Bypass module has input/output pairs that simply pass through all channels appearing at the input. However, the Bypass module also has the ability to virtually transmit a message through the cable to bypass the module (or group of modules) at the end of the cable.
+The Bypass module has input/output pairs that simply pass through all channels appearing at the input. However, the Bypass module also has the ability to virtually transmit a message through each cable to bypass the module (or group of modules) at the end of the cable.
 
 The Bypass module maintains its own state, indicating whether it thinks remote modules are bypassed or not. The actual bypass state of the remote module may or may not match the Bypass state because users can directly change the remote module bypass state without using the Bypass module. The Bypass module only changes the remote module bypass state when the Bypass module state changes.
 
 ### G (Gate mode) button
-This controls whether trigger CV input acts as a gate or a toggle trigger. By default the button is unlit, the Gate status is false, and CV is a toggle trigger. When activated, the button is lit, the Gate status is true, and the CV acts as a gate.
+This color coded button controls whether trigger CV input acts as a gate or a toggle trigger.
+- **Off (gray)** (default) - Input is a trigger
+- **On (green)** - Input is a gate
+- **Invert (red)** - Input is an inverted gate
 
 ### TRIG (Trigger) button and CV input
 
 Every time the Trig button is pressed, the bypass state is toggled on or off. The button glows red whenever the bypass state is active (meaning the modules are disabled)
 
-If the Gate mode is false, then the leading edge of a trigger at the CV input will also toggle the bypass state on or off.
+If the Gate mode is Off, then the leading edge of a trigger at the CV input will toggle the bypass state on or off.
 
-If the Gate mode is true, then a high gate at the input turns the bypass on, and a low gate turns the bypass off. The gate functions as a Schmitt trigger, going high at 2V, and low at 0.1V. Regardless whether the CV gate is high or low, the Trig button will always toggle the Bypass state.
+If the Gate mode is On, then a high gate at the input turns the bypass on, and a low gate turns the bypass off. The gate functions as a Schmitt trigger, going high at 2V, and low at 0.1V. Regardless whether the CV gate is high or low, the Trig button will always toggle the Bypass state.
+
+If the Gate mode is Invert, then a high gate at the input turns the bypass off, and a low gate turns the bypass on. The gate functions as a Schmitt trigger, going high at 2V, and low at 0.1V. Regardless whether the CV gate is high or low, the Trig button will always toggle the Bypass state.
 
 ### Pass Thru input/output pairs
 
@@ -399,17 +404,17 @@ Each input port has a Bypass mode button above it, and each output port has a By
 
 Each input Bypass mode button has the following available options:
 - **Dark gray** (default) - Off  (no modules are bypassed)
-- **Purple** - Source (Only the input source module is bypassed)
-- **Blue** - Source and left neighbors (The input source module and all its contiguous neighbors to the left are bypassed)
-- **Yellow** - Source and right neighbors (The input source module and all its contiguous neighbors to the right are bypassed)
-- **Green** - Source and all neighbors (The input source module and all contiguous neighbors on both sides are bypassed)
+- **Purple** - Source (Only the input source modules are bypassed)
+- **Blue** - Source and left neighbors (The input source modules and all contiguous neighbors to the left are bypassed)
+- **Yellow** - Source and right neighbors (The input source modules and all contiguous neighbors to the right are bypassed)
+- **Green** - Source and all neighbors (The input source modules and all contiguous neighbors on both sides are bypassed)
 
 Each output Bypass mode button has the following options:
 - **Dark gray** - Off  (no modules are bypassed)
-- **Purple** (default) - Target (Only the output target module is bypassed)
-- **Blue** - Target and left neighbors (The output target module and all its contiguous neighbors to the left are bypassed)
-- **Yellow** - Target and right neighbors (The output target module and all its contiguous neighbors to the right are bypassed)
-- **Green** - Target and all neighbors (The output target module and all contiguous neighbors on both sides are bypassed)
+- **Purple** (default) - Target (Only the output target modules are bypassed)
+- **Blue** - Target and left neighbors (The output target modules and all contiguous neighbors to the left are bypassed)
+- **Yellow** - Target and right neighbors (The output target modules and all contiguous neighbors to the right are bypassed)
+- **Green** - Target and all neighbors (The output target modules and all contiguous neighbors on both sides are bypassed)
 
 Every time the Bypass changes state, the relevant remote modules at the end of each cable are set appropriately.
 
