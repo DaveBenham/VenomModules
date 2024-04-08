@@ -28,13 +28,14 @@ struct Bypass : VenomModule {
 
   float buttonVal = 0.f;
   bool bypassed = false;
+  bool working = false;
   dsp::TSchmittTrigger<float> trig;
   TaskWorker taskWorker;
 
   Bypass() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(TRIG_PARAM, 0.f, 1.f, 0.f, "Trigger");
-    configSwitch<FixedSwitchQuantity>(GATE_PARAM, 0.f, 1.f, 0.f, "Gate Mode", {"False","True"});
+    configSwitch<FixedSwitchQuantity>(GATE_PARAM, 0.f, 2.f, 0.f, "Gate Mode", {"Off","On","Invert"});
     configInput(TRIG_INPUT, "Trigger");
     for (int i=0; i<3; i++){
       std::string id = std::to_string(i+1);
@@ -65,6 +66,7 @@ struct Bypass : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+    if (working) return;
     int event = 0;
     int buttonEvent = 0;
     BypassGroup bypassGroup[6]{};
@@ -76,12 +78,19 @@ struct Bypass : VenomModule {
         buttonEvent = 1;
       }
     }
-    if (params[GATE_PARAM].getValue()){ // Gate mode
-      if ((event = trig.processEvent(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f)))
-        bypassed = event > 0;
-    } else { // Trigger mode
-      if ((event = trig.process(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f)))
-        bypassed = !bypassed;
+    switch (static_cast<int>(params[GATE_PARAM].getValue())) {
+      case 0: // Trigger mode
+        if ((event = trig.process(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f)))
+          bypassed = !bypassed;
+        break;
+      case 1: // Gate mode
+        if ((event = trig.processEvent(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f)))
+          bypassed = event > 0;
+        break;
+      case 2: // Inverted gate mode
+        if ((event = trig.processEvent(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f)))
+          bypassed = event < 0;
+        break;
     }
     std::vector<Module*> inMods[INPUTS_LEN]{};
     std::vector<Module*> outMods[OUTPUTS_LEN]{};
@@ -97,15 +106,18 @@ struct Bypass : VenomModule {
       if (inputs[BYPASS_INPUT+i].isConnected()) outputs[BYPASS_OUTPUT+i].writeVoltages(inputs[BYPASS_INPUT+i].getVoltages());
       else outputs[BYPASS_OUTPUT+i].channels = 0;
       if (event || buttonEvent) {
-        if (inMods[BYPASS_INPUT+i].size() && (bypassGroup[groups].scope = params[INPUT_MODE_PARAM].getValue())){
+        if (inMods[BYPASS_INPUT+i].size() && (bypassGroup[groups].scope = params[INPUT_MODE_PARAM+i].getValue())){
           bypassGroup[groups++].mods = inMods[BYPASS_INPUT+i];
         }
-        if (outMods[BYPASS_OUTPUT+i].size() && (bypassGroup[groups].scope = params[OUTPUT_MODE_PARAM].getValue())){
+        if (outMods[BYPASS_OUTPUT+i].size() && (bypassGroup[groups].scope = params[OUTPUT_MODE_PARAM+i].getValue())){
           bypassGroup[groups++].mods = outMods[BYPASS_OUTPUT+i];
         }
       }
     }
-    if (groups) taskWorker.work([=](){ processBypassGroups(bypassed, bypassGroup, groups); });
+    if (groups) {
+      working = true;
+      taskWorker.work([=](){ processBypassGroups(bypassed, bypassGroup, groups); });
+    }
   }
   
   void processBypassGroups(bool bypassed, const BypassGroup* bypassGroup, int groups){
@@ -126,6 +138,7 @@ struct Bypass : VenomModule {
         APP->engine->bypassModule(mod, bypassed);
       }
     }
+    working = false;
   }  
   
   json_t* dataToJson() override {
@@ -159,7 +172,8 @@ struct BypassWidget : VenomWidget {
   struct GateSwitch : GlowingSvgSwitchLockable {
     GateSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
     }
   };
 
