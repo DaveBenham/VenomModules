@@ -22,6 +22,10 @@
   - New output channel count option
   - Mono input cloned to match selected channel count
 
+### Bug Fixes
+- Mix Fade and Mix Fade 2
+  - Fixed range of level output to 0-10 V. Was erroneously 0-1 V.
+
 ## 2.7.0 (2024-03-11)
 ### New Modules
 - Auxilliary Clone Expander

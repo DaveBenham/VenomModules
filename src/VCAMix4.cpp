@@ -241,7 +241,7 @@ struct VCAMix4 : MixBaseModule {
                 fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
                 shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
                 fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
-                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]*10.f); // fade & fade2 outputs match
               }  
               else if (softMute){
                 fade[i].rise = fade[i].fall = 40.f;
@@ -262,7 +262,7 @@ struct VCAMix4 : MixBaseModule {
                 fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
                 shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
                 fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
-                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]*10.f); // fade & fade2 outputs match
               }  
               else if (softMute) {
                 fade[i].rise = fade[i].fall = 40.f;
