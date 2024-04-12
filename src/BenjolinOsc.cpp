@@ -159,7 +159,7 @@ struct BenjolinOsc : VenomModule {
         params[FREQ2_PARAM].getValue() + (cv2Connected ? *cv2In : *tri1*normScale) * 0.9f * params[CV2_PARAM].getValue() + rung * 0.9f * params[RUNG2_PARAM].getValue(),
         0.f,0.f
       };
-      simd::ifelse(freq<-9.3f, -9.3f, freq);
+      freq = simd::clamp(freq, -9.3f, 9.7f);
       osc += simd::pow(2.f, freq) * k * dir;
       if (*tri1 > 1.f || *tri1 < -1.f) {
         *tri1 = *dir1 + *dir1 - *tri1;
