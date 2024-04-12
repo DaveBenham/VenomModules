@@ -68,6 +68,7 @@ struct Knob5 : VenomModule {
         q->displayOffset = -10.f;
         break;
     }
+    paramExtensions[paramId].factoryDflt = q->defaultValue;
     q->unit = unit[paramId] ? " \u00A2" : " V";
   }
 
@@ -141,7 +142,7 @@ struct Knob5 : VenomModule {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i<5; i++) {
       std::string nm = "Knob " + std::to_string(i+1);
-      configParam<Knob5Quantity>(KNOB_PARAM+i, 0.f, 1.f, 0.5f, nm, " V");
+      configParam<Knob5Quantity>(KNOB_PARAM+i, 0.f, 1.f, 0.5f, nm, " V", 0.f, 20.f, -10.f);
       configOutput(OUTPUT+i, nm);
       paramExtensions[i].inputLink = false;
       paramExtensions[i].nameLink = i;

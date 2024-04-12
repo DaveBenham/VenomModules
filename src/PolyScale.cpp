@@ -42,6 +42,7 @@ struct PolyScale : VenomModule {
       q->defaultValue = r->dflt;
       q->displayMultiplier = r->scale;
       q->displayOffset = r->offset;
+      paramExtensions[LEVEL_PARAM+i].factoryDflt = r->dflt;
     }
   }
   

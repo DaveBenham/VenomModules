@@ -44,6 +44,7 @@ struct PolyOffset : VenomModule {
       q->defaultValue = r->dflt;
       q->displayMultiplier = r->scale;
       q->displayOffset = r->offset;
+      paramExtensions[OFFSET_PARAM+i].factoryDflt = r->dflt;
     }
   }
   
