@@ -33,6 +33,7 @@ extern Model* modelMixSend;
 extern Model* modelMixSolo;
 extern Model* modelMultiMerge;
 extern Model* modelMultiSplit;
+extern Model* modelOscillator;
 extern Model* modelNORS_IQ;
 extern Model* modelNORSIQChord2Scale;
 extern Model* modelPolyClone;

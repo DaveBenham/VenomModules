@@ -280,6 +280,17 @@
       ]
     },
     {
+      "slug": "Oscillator",
+      "name": "Oscillator",
+      "description": "Audio or low frequency oscillator with 4 simultaneous waveforms, mixing, linear/exponential FM, phase modulation, sync, PWM, and more",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#oscillator",
+      "tags": [
+        "Low-frequency oscillator",
+        "Oscillator",
+        "Polyphonic"
+      ]
+    },
+    {
       "slug": "NORS_IQ",
       "name": "Non-Octave-Repeating Scale Intervallic Quantizer",
       "description": "Quantizer for any scale defined by up to 13 intervals between notes",

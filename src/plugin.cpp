@@ -97,6 +97,7 @@ void init(Plugin* p) {
   p->addModel(modelMixSolo);
   p->addModel(modelMultiMerge);
   p->addModel(modelMultiSplit);
+  p->addModel(modelOscillator);
   p->addModel(modelNORS_IQ);
   p->addModel(modelNORSIQChord2Scale);
   p->addModel(modelPolyClone);
