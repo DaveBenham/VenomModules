@@ -312,6 +312,7 @@ struct VenomModule : Module {
   // Hack workaround for VCV bug when deleting a module - failure to trigger onExpanderChange()
   // Remove if/when VCV fixes the bug
   void onRemove(const RemoveEvent& e) override {
+    if (rack::string::Version("2.5.0") < rack::string::Version(rack::APP_VERSION)) return;
     Module::ExpanderChangeEvent event;
     Module::Expander expander = getRightExpander();
     if (expander.module){
