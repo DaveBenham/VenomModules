@@ -4,6 +4,7 @@
 ### New Modules
 - Blocker (interrupts extended expander chains)
 - Bypass
+- Oscillator
 
 ### Enhancements
 - Shaped VCA
