@@ -59,18 +59,12 @@ struct Bypass : VenomModule {
     }
   }
   
-  struct BypassGroup {
-    std::vector<Module*> mods;
-    int scope = 0;
-  };
-
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     if (working) return;
     int event = 0;
     int buttonEvent = 0;
-    BypassGroup bypassGroup[6]{};
-    int groups = 0;
+
     if (params[TRIG_PARAM].getValue() != buttonVal){
       buttonVal = !buttonVal;
       if (buttonVal){
@@ -92,35 +86,39 @@ struct Bypass : VenomModule {
           bypassed = event < 0;
         break;
     }
-    std::vector<Module*> inMods[INPUTS_LEN]{};
-    std::vector<Module*> outMods[OUTPUTS_LEN]{};
-    if (event || buttonEvent){
-      for (int64_t cableId : APP->engine->getCableIds()){
-        Cable* cable = APP->engine->getCable(cableId);
-        if (cable->inputModule == this) inMods[cable->inputId].push_back(cable->outputModule);
-        if (cable->outputModule == this) outMods[cable->outputId].push_back(cable->inputModule);
-      }
-    }
     for (int i=0; i<3; i++){
       outputs[BYPASS_OUTPUT+i].setChannels(inputs[BYPASS_INPUT+i].getChannels());
       if (inputs[BYPASS_INPUT+i].isConnected()) outputs[BYPASS_OUTPUT+i].writeVoltages(inputs[BYPASS_INPUT+i].getVoltages());
       else outputs[BYPASS_OUTPUT+i].channels = 0;
-      if (event || buttonEvent) {
-        if (inMods[BYPASS_INPUT+i].size() && (bypassGroup[groups].scope = params[INPUT_MODE_PARAM+i].getValue())){
-          bypassGroup[groups++].mods = inMods[BYPASS_INPUT+i];
-        }
-        if (outMods[BYPASS_OUTPUT+i].size() && (bypassGroup[groups].scope = params[OUTPUT_MODE_PARAM+i].getValue())){
-          bypassGroup[groups++].mods = outMods[BYPASS_OUTPUT+i];
-        }
-      }
     }
-    if (groups) {
-      working = true;
-      taskWorker.work([=](){ processBypassGroups(bypassed, bypassGroup, groups); });
-    }
+    if (event || buttonEvent)
+      taskWorker.work([=](){ processBypass(); });
   }
   
-  void processBypassGroups(bool bypassed, const BypassGroup* bypassGroup, int groups){
+  struct BypassGroup {
+    std::vector<Module*> mods;
+    int scope = 0;
+  };
+
+  void processBypass(){
+    BypassGroup bypassGroup[6]{};
+    std::vector<Module*> inMods[INPUTS_LEN]{};
+    std::vector<Module*> outMods[OUTPUTS_LEN]{};
+    int groups = 0;
+
+    for (int64_t cableId : APP->engine->getCableIds()){
+      Cable* cable = APP->engine->getCable(cableId);
+      if (cable->inputModule == this) inMods[cable->inputId].push_back(cable->outputModule);
+      if (cable->outputModule == this) outMods[cable->outputId].push_back(cable->inputModule);
+    }
+    for (int i=0; i<3; i++){
+      if (inMods[BYPASS_INPUT+i].size() && (bypassGroup[groups].scope = params[INPUT_MODE_PARAM+i].getValue())){
+        bypassGroup[groups++].mods = inMods[BYPASS_INPUT+i];
+      }
+      if (outMods[BYPASS_OUTPUT+i].size() && (bypassGroup[groups].scope = params[OUTPUT_MODE_PARAM+i].getValue())){
+        bypassGroup[groups++].mods = outMods[BYPASS_OUTPUT+i];
+      }
+    }
     for (int i=0; i<groups; i++){
       bool bypassLeft = bypassGroup[i].scope == 2 || bypassGroup[i].scope == 4;
       bool bypassRight = bypassGroup[i].scope == 3 || bypassGroup[i].scope == 4;
