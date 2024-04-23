@@ -22,6 +22,8 @@
 - Poly Scale
   - New output channel count option
   - Mono input cloned to match selected channel count
+- Benjolin Oscillator
+  - Slightly detune oscillator 1 from 2 so PWM of newly inserted module is not constant
 
 ### Bug Fixes
 - Benjolin
