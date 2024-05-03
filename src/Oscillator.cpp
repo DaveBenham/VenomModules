@@ -55,17 +55,6 @@ struct Oscillator : VenomModule {
     SAW_PHASE_AMT_PARAM,
     MIX_PHASE_AMT_PARAM,
 
-    SIN_LEVEL_PARAM,
-    TRI_LEVEL_PARAM,
-    SQR_LEVEL_PARAM,
-    SAW_LEVEL_PARAM,
-    MIX_LEVEL_PARAM,
-    SIN_LEVEL_AMT_PARAM,
-    TRI_LEVEL_AMT_PARAM,
-    SQR_LEVEL_AMT_PARAM,
-    SAW_LEVEL_AMT_PARAM,
-    MIX_LEVEL_AMT_PARAM,
-
     SIN_OFFSET_PARAM,
     TRI_OFFSET_PARAM,
     SQR_OFFSET_PARAM,
@@ -76,6 +65,17 @@ struct Oscillator : VenomModule {
     SQR_OFFSET_AMT_PARAM,
     SAW_OFFSET_AMT_PARAM,
     MIX_OFFSET_AMT_PARAM,
+
+    SIN_LEVEL_PARAM,
+    TRI_LEVEL_PARAM,
+    SQR_LEVEL_PARAM,
+    SAW_LEVEL_PARAM,
+    MIX_LEVEL_PARAM,
+    SIN_LEVEL_AMT_PARAM,
+    TRI_LEVEL_AMT_PARAM,
+    SQR_LEVEL_AMT_PARAM,
+    SAW_LEVEL_AMT_PARAM,
+    MIX_LEVEL_AMT_PARAM,
 
     SIN_ASIGN_PARAM,
     TRI_ASIGN_PARAM,
@@ -254,6 +254,7 @@ struct Oscillator : VenomModule {
     // main loops
     for (int o=0; o<oversample; o++){
       for (int s=0, c=0; s<simdCnt; s++, c+=4){
+        // Main Phasor
         if (!o) {
           if (s==0 || inputs[EXP_DEPTH_INPUT].isPolyphonic()) {
             expDepthIn[s] = simd::clamp( inputs[EXP_DEPTH_INPUT].getNormalPolyVoltageSimd<float_4>(5.f,c)/5.f, -1.f, 1.f);
@@ -310,9 +311,11 @@ struct Oscillator : VenomModule {
         // Global (Mix) Phase
         globalPhasor = phasor[s] + (phaseIn[s][MIX]*params[MIX_PHASE_AMT_PARAM].getValue() + params[MIX_PHASE_PARAM].getValue()*2.f)*250.f;
 
+        mixOut[s] = float_4::zero();
+
         // Sine
         if (outputs[SIN_OUTPUT].isConnected() || 
-             (outputs[MIX_OUTPUT].isConnected() && params[SIN_ASIGN_PARAM].getValue()!=1 && (params[SIN_LEVEL_PARAM].getValue() || inputs[SIN_LEVEL_INPUT].isConnected()))
+             (outputs[MIX_OUTPUT].isConnected() && params[SIN_ASIGN_PARAM].getValue()!=1)
            )
         {
           if (s==0 || inputs[SIN_SHAPE_INPUT].isPolyphonic()) {
@@ -335,17 +338,34 @@ struct Oscillator : VenomModule {
           sinPhasor = simd::ifelse(sinPhasor<0.f, sinPhasor+1000.f, sinPhasor);
           sinPhasor = sinSimd_1000(sinPhasor);
           sinOut[s] = crossfade(sinPhasor, ifelse(shape>0.f, 11.f*sinPhasor/(10.f*simd::abs(sinPhasor)+1.f), simd::sgn(sinPhasor)*simd::pow(sinPhasor,4)), ifelse(shape>0.f, shape, -shape))*5.f;
-          if (oversample>1) {
-            sinOut[s] = outDownSample[s][SIN].process(sinOut[s]);
-          }
+          if (s==0 || inputs[SIN_OFFSET_INPUT].isPolyphonic()) {
+            offsetIn[s][SIN] = (o && !disableOver[SIN_OFFSET_INPUT]) ? float_4::zero() : inputs[SIN_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[SIN_OFFSET_INPUT].isConnected() && !disableOver[SIN_OFFSET_INPUT]){
+              if (o==0) offsetIn[s][SIN] *= oversample;
+              offsetIn[s][SIN] = offsetUpSample[s][SIN].process(offsetIn[s][SIN]);
+            }
+          } else offsetIn[s][SIN] = offsetIn[0][SIN];
+          sinOut[s] += clamp(offsetIn[s][SIN]*params[SIN_OFFSET_AMT_PARAM].getValue() + params[SIN_OFFSET_PARAM].getValue()*5.f, -5.f, 5.f);
+          if (s==0 || inputs[SIN_LEVEL_INPUT].isPolyphonic()) {
+            levelIn[s][SIN] = (o && !disableOver[SIN_LEVEL_INPUT]) ? float_4::zero() : inputs[SIN_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[SIN_LEVEL_INPUT].isConnected() && !disableOver[SIN_LEVEL_INPUT]){
+              if (o==0) levelIn[s][SIN] *= oversample;
+              levelIn[s][SIN] = levelUpSample[s][SIN].process(levelIn[s][SIN]);
+            }
+          } else levelIn[s][SIN] = levelIn[0][SIN];
+          float_4 sine = sinOut[s] * clamp(levelIn[s][SIN]*params[SIN_LEVEL_AMT_PARAM].getValue()*0.1f + params[SIN_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          if (params[SIN_ASIGN_PARAM].getValue() != 1)
+            mixOut[s] += sine;
+          if (params[SIN_ASIGN_PARAM].getValue() != 0)
+            sinOut[s] = sine;
         }
         
         // Triangle
         if (outputs[TRI_OUTPUT].isConnected() || 
-             (outputs[MIX_OUTPUT].isConnected() && params[TRI_ASIGN_PARAM].getValue()!=1 && (params[TRI_LEVEL_PARAM].getValue() || inputs[TRI_LEVEL_INPUT].isConnected()))
+             (outputs[MIX_OUTPUT].isConnected() && params[TRI_ASIGN_PARAM].getValue()!=1)
            )
         {
-          if (s==0 || inputs[SIN_SHAPE_INPUT].isPolyphonic()) {
+          if (s==0 || inputs[TRI_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[s][TRI] = (o && !disableOver[TRI_SHAPE_INPUT]) ? float_4::zero() : inputs[TRI_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
             if (oversample>1 && inputs[TRI_SHAPE_INPUT].isConnected() && !disableOver[TRI_SHAPE_INPUT]){
               if (o==0) shapeIn[s][TRI] *= oversample;
@@ -363,19 +383,34 @@ struct Oscillator : VenomModule {
           triPhasor = globalPhasor + (phaseIn[s][TRI]*params[TRI_PHASE_AMT_PARAM].getValue() + params[TRI_PHASE_PARAM].getValue()*2.f)*250.f - 250.f;
           triPhasor = simd::fmod(triPhasor, 1000.f);
           triPhasor = simd::ifelse(triPhasor<0.f, triPhasor+1000.f, triPhasor);
-
           shape = simd::ifelse(triPhasor<500.f, shape, -shape);
           triPhasor = simd::ifelse(triPhasor<500.f, triPhasor*.002f, (1000.f-triPhasor)*.002f);
           triOut[s] = crossfade(triPhasor, ifelse(shape>0.f, 11.f*triPhasor/(10.f*simd::abs(triPhasor)+1.f), simd::sgn(triPhasor)*simd::pow(triPhasor,4)), ifelse(shape>0.f, shape, -shape))*10.f-5.f;
-
-          if (oversample>1) {
-            triOut[s] = outDownSample[s][TRI].process(triOut[s]);
-          }
+          if (s==0 || inputs[TRI_OFFSET_INPUT].isPolyphonic()) {
+            offsetIn[s][TRI] = (o && !disableOver[TRI_OFFSET_INPUT]) ? float_4::zero() : inputs[TRI_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[TRI_OFFSET_INPUT].isConnected() && !disableOver[TRI_OFFSET_INPUT]){
+              if (o==0) offsetIn[s][TRI] *= oversample;
+              offsetIn[s][TRI] = offsetUpSample[s][TRI].process(offsetIn[s][TRI]);
+            }
+          } else offsetIn[s][TRI] = offsetIn[0][TRI];
+          triOut[s] += clamp(offsetIn[s][TRI]*params[TRI_OFFSET_AMT_PARAM].getValue() + params[TRI_OFFSET_PARAM].getValue()*5.f, -5.f, 5.f);
+          if (s==0 || inputs[TRI_LEVEL_INPUT].isPolyphonic()) {
+            levelIn[s][TRI] = (o && !disableOver[TRI_LEVEL_INPUT]) ? float_4::zero() : inputs[TRI_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[TRI_LEVEL_INPUT].isConnected() && !disableOver[TRI_LEVEL_INPUT]){
+              if (o==0) levelIn[s][TRI] *= oversample;
+              levelIn[s][TRI] = levelUpSample[s][TRI].process(levelIn[s][TRI]);
+            }
+          } else levelIn[s][TRI] = levelIn[0][TRI];
+          float_4 tri = triOut[s] * clamp(levelIn[s][TRI]*params[TRI_LEVEL_AMT_PARAM].getValue()*0.1f + params[TRI_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          if (params[TRI_ASIGN_PARAM].getValue() != 1)
+            mixOut[s] += tri;
+          if (params[TRI_ASIGN_PARAM].getValue() != 0)
+            triOut[s] = tri;
         }
         
         // Square
         if (outputs[SQR_OUTPUT].isConnected() || 
-             (outputs[MIX_OUTPUT].isConnected() && params[SQR_ASIGN_PARAM].getValue()!=1 && (params[SQR_LEVEL_PARAM].getValue() || inputs[SQR_LEVEL_INPUT].isConnected()))
+             (outputs[MIX_OUTPUT].isConnected() && params[SQR_ASIGN_PARAM].getValue()!=1)
            )
         {
           if (s==0 || inputs[SQR_SHAPE_INPUT].isPolyphonic()) {
@@ -398,14 +433,31 @@ struct Oscillator : VenomModule {
           sqrPhasor = simd::fmod(sqrPhasor, 1000.f);
           sqrPhasor = simd::ifelse(sqrPhasor<0.f, sqrPhasor+1000.f, sqrPhasor);
           sqrOut[s] = simd::ifelse(sqrPhasor<flip, 5.f, -5.f);
-          if (oversample>1) {
-            sqrOut[s] = outDownSample[s][SQR].process(sqrOut[s]);
-          }
+          if (s==0 || inputs[SQR_OFFSET_INPUT].isPolyphonic()) {
+            offsetIn[s][SQR] = (o && !disableOver[SQR_OFFSET_INPUT]) ? float_4::zero() : inputs[SQR_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[SQR_OFFSET_INPUT].isConnected() && !disableOver[SQR_OFFSET_INPUT]){
+              if (o==0) offsetIn[s][SQR] *= oversample;
+              offsetIn[s][SQR] = offsetUpSample[s][SQR].process(offsetIn[s][SQR]);
+            }
+          } else offsetIn[s][SQR] = offsetIn[0][SQR];
+          sqrOut[s] += clamp(offsetIn[s][SQR]*params[SQR_OFFSET_AMT_PARAM].getValue() + params[SQR_OFFSET_PARAM].getValue()*5.f, -5.f, 5.f);
+          if (s==0 || inputs[SQR_LEVEL_INPUT].isPolyphonic()) {
+            levelIn[s][SQR] = (o && !disableOver[SQR_LEVEL_INPUT]) ? float_4::zero() : inputs[SQR_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[SQR_LEVEL_INPUT].isConnected() && !disableOver[SQR_LEVEL_INPUT]){
+              if (o==0) levelIn[s][SQR] *= oversample;
+              levelIn[s][SQR] = levelUpSample[s][SQR].process(levelIn[s][SQR]);
+            }
+          } else levelIn[s][SQR] = levelIn[0][SQR];
+          float_4 sqr = sqrOut[s] * clamp(levelIn[s][SQR]*params[SQR_LEVEL_AMT_PARAM].getValue()*0.1f + params[SQR_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          if (params[SQR_ASIGN_PARAM].getValue() != 1)
+            mixOut[s] += sqr;
+          if (params[SQR_ASIGN_PARAM].getValue() != 0)
+            sqrOut[s] = sqr;
         }
         
         // Saw
         if (outputs[SAW_OUTPUT].isConnected() || 
-             (outputs[MIX_OUTPUT].isConnected() && params[SAW_ASIGN_PARAM].getValue()!=1 && (params[SAW_LEVEL_PARAM].getValue() || inputs[SAW_LEVEL_INPUT].isConnected()))
+             (outputs[MIX_OUTPUT].isConnected() && params[SAW_ASIGN_PARAM].getValue()!=1)
            )
         {
           if (s==0 || inputs[SAW_SHAPE_INPUT].isPolyphonic()) {
@@ -428,9 +480,61 @@ struct Oscillator : VenomModule {
           sawPhasor = simd::ifelse(sawPhasor<0.f, sawPhasor+1000.f, sawPhasor);
           sawPhasor *= 0.001f;
           sawOut[s] = crossfade(sawPhasor, ifelse(shape>0.f, 11.f*sawPhasor/(10.f*simd::abs(sawPhasor)+1.f), simd::sgn(sawPhasor)*simd::pow(sawPhasor,4)), ifelse(shape>0.f, shape, -shape))*10.f-5.f;
-          if (oversample>1) {
+          if (s==0 || inputs[SAW_OFFSET_INPUT].isPolyphonic()) {
+            offsetIn[s][SAW] = (o && !disableOver[SAW_OFFSET_INPUT]) ? float_4::zero() : inputs[SAW_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[SAW_OFFSET_INPUT].isConnected() && !disableOver[SAW_OFFSET_INPUT]){
+              if (o==0) offsetIn[s][SAW] *= oversample;
+              offsetIn[s][SAW] = offsetUpSample[s][SAW].process(offsetIn[s][SAW]);
+            }
+          } else offsetIn[s][SAW] = offsetIn[0][SAW];
+          sawOut[s] += clamp(levelIn[s][SAW]*params[SAW_OFFSET_AMT_PARAM].getValue() + params[SAW_OFFSET_PARAM].getValue()*5.f, -5.f, 5.f);
+          if (s==0 || inputs[SAW_LEVEL_INPUT].isPolyphonic()) {
+            levelIn[s][SAW] = (o && !disableOver[SAW_LEVEL_INPUT]) ? float_4::zero() : inputs[SAW_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[SAW_LEVEL_INPUT].isConnected() && !disableOver[SAW_LEVEL_INPUT]){
+              if (o==0) levelIn[s][SAW] *= oversample;
+              levelIn[s][SAW] = levelUpSample[s][SAW].process(levelIn[s][SAW]);
+            }
+          } else levelIn[s][SAW] = levelIn[0][SAW];
+          float_4 saw = sawOut[s] * clamp(levelIn[s][SAW]*params[SAW_LEVEL_AMT_PARAM].getValue()*0.1f + params[SAW_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          if (params[SAW_ASIGN_PARAM].getValue() != 1)
+            mixOut[s] += saw;
+          if (params[SAW_ASIGN_PARAM].getValue() != 0)
+            sawOut[s] = saw;
+        }
+        
+        // Mix
+        if (outputs[MIX_OUTPUT].isConnected()) {
+          if (s==0 || inputs[MIX_LEVEL_INPUT].isPolyphonic()) {
+            levelIn[s][MIX] = (o && !disableOver[MIX_LEVEL_INPUT]) ? float_4::zero() : inputs[MIX_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[MIX_LEVEL_INPUT].isConnected() && !disableOver[MIX_LEVEL_INPUT]){
+              if (o==0) levelIn[s][MIX] *= oversample;
+              levelIn[s][MIX] = levelUpSample[s][MIX].process(levelIn[s][MIX]);
+            }
+          } else levelIn[s][MIX] = levelIn[0][MIX];
+          mixOut[s] *= clamp(levelIn[s][MIX]*params[MIX_LEVEL_AMT_PARAM].getValue()*0.1f + params[MIX_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          if (s==0 || inputs[MIX_OFFSET_INPUT].isPolyphonic()) {
+            levelIn[s][MIX] = (o && !disableOver[MIX_OFFSET_INPUT]) ? float_4::zero() : inputs[MIX_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[MIX_OFFSET_INPUT].isConnected() && !disableOver[MIX_OFFSET_INPUT]){
+              if (o==0) levelIn[s][MIX] *= oversample;
+              levelIn[s][MIX] = levelUpSample[s][MIX].process(levelIn[s][MIX]);
+            }
+          } else levelIn[s][MIX] = levelIn[0][MIX];
+          mixOut[s] += clamp(levelIn[s][MIX]*params[MIX_OFFSET_AMT_PARAM].getValue() + params[MIX_OFFSET_PARAM].getValue()*5.f, -5.f, 5.f);
+        }
+
+
+        // Downsample outputs
+        if (oversample>1) {
+          if (outputs[SIN_OUTPUT].isConnected())
+            sinOut[s] = outDownSample[s][SIN].process(sinOut[s]);
+          if (outputs[TRI_OUTPUT].isConnected())
+            triOut[s] = outDownSample[s][TRI].process(triOut[s]);
+          if (outputs[SQR_OUTPUT].isConnected())
+            sqrOut[s] = outDownSample[s][SQR].process(sqrOut[s]);
+          if (outputs[SAW_OUTPUT].isConnected())
             sawOut[s] = outDownSample[s][SAW].process(sawOut[s]);
-          }
+          if (outputs[MIX_OUTPUT].isConnected())
+            mixOut[s] = outDownSample[s][MIX].process(mixOut[s]);
         }
       }
     }
@@ -441,11 +545,13 @@ struct Oscillator : VenomModule {
       outputs[TRI_OUTPUT].setVoltageSimd( triOut[s], c );
       outputs[SQR_OUTPUT].setVoltageSimd( sqrOut[s], c );
       outputs[SAW_OUTPUT].setVoltageSimd( sawOut[s], c );
+      outputs[MIX_OUTPUT].setVoltageSimd( mixOut[s], c );
     }
     outputs[SIN_OUTPUT].setChannels(channels);
     outputs[TRI_OUTPUT].setChannels(channels);
     outputs[SQR_OUTPUT].setChannels(channels);
     outputs[SAW_OUTPUT].setChannels(channels);
+    outputs[MIX_OUTPUT].setChannels(channels);
   }
   
   json_t* dataToJson() override {
