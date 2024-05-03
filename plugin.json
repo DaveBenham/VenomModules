@@ -273,7 +273,7 @@
       "slug": "MultiSplit",
       "name": "Multi Split",
       "description": "Split one or more poly inputs into multiple mono or poly outputs",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-split",
       "tags": [
         "Polyphonic",
         "Utility"
@@ -304,7 +304,7 @@
       "slug": "NORSIQChord2Scale",
       "name": "NORSIQ Chord To Scale",
       "description": "Convert a polyphonic chord into CV to generate a scale for the Non-Octave_Repeating Scale Intervallic Quantizer",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#nors_iq_interval_generator",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#norsiq_chord_to_scale",
       "tags": [
         "Quantizer",
         "Polyphonic"
@@ -334,7 +334,7 @@
       "slug": "PolySHASR",
       "name": "Poly Sample & Hold Analog Shift Register",
       "description": "Ten channel polyphonic sample and hold combined with a shift register",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-unison",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-sample--hold-analog-shift-register",
       "tags": [
         "Polyphonic",
         "Random",
@@ -345,7 +345,7 @@
       "slug": "PolyScale",
       "name": "Poly Scale",
       "description": "Provides a level control for each channel of a polyphonic signal",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-offset",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-scale",
       "tags": [
         "Attenuator",
         "Polyphonic",
@@ -478,7 +478,7 @@
       "slug": "WidgetMenuExtender",
       "name": "Widget Menu Extender",
       "description": "Extend context menus to support parameter/port renaming and parameter custom defaults",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-expander",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-extender",
       "tags": [
         "Blank"
       ]
