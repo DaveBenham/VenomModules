@@ -2235,8 +2235,13 @@ When bypassed, Widget Menu Extender behaves the same as if the Enable button is 
 
 ## WINCOMP
 ![WINCOMP module image](doc/WinComp.PNG)  
-A windowed comparator inspired by the VCV Fundamental COMPARE module, based on specs originally proposed at 
-https://community.vcvrack.com/t/vcv-compare-gates-logic-and-process/17828/17?u=davevenom.
+A windowed polyphonic comparator inspired by the VCV Free COMPARE module, including the following enhancements:
+- A tolerance factor to determine equivalency (the window)
+- Options to rectify and/or invert signal outputs
+- Gate output voltage options
+- Additional gate outputs for A>=B and A<=B
+- Oversampling options for audio applications
+
 
 ### Polyphony
 WINCOMP is fully polyphonic - the number of output channels is the maximum number of channels found across all three inputs.
@@ -2246,10 +2251,11 @@ Monophonic inputs are replicated to match the number of output channels. Polypho
 - **A** = A input, with OFFSET knob
 - **B** = B input, with OFFSET knob
 - **TOL** = Tolerance, with OFFSET knob. The tolerance specifies how close A must be to B in order to be considered equal.
-The absolute value of TOL is used in all computations.
-The tolerance affects all outputs except MIN and MAX.
 
 Each input is summed with the corresponding OFFSET value. The OFFSETS are bipolar +/-10V. The resultant values are unconstrained.
+
+The absolute value of TOL is used in all computations.
+The tolerance affects all outputs except MIN and MAX.
 
 ### Signal Outputs
 
