@@ -177,7 +177,7 @@ struct Oscillator : VenomModule {
 
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 2.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier bias"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 3.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
-    configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 3.f, "Pulse Width Range", {"Limited 3%-97%", "Full 0%-100%"});
+    configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Pulse Width Range", {"Limited 3%-97%", "Full 0%-100%"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
     configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "Mix DC Block", {"Off", "On"});
     
@@ -265,8 +265,13 @@ struct Oscillator : VenomModule {
             sinOut[4]{}, triOut[4]{}, sqrOut[4]{}, sawOut[4]{}, mixOut[4]{},
             sinPhasor{}, triPhasor{}, sqrPhasor{}, sawPhasor{}, globalPhasor{};
     float vOctParm = params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue(),
-          k =  1000.f * dsp::FREQ_C4 * args.sampleTime / oversample;
+          k =  1000.f * (params[MODE_PARAM].getValue()==0 ? dsp::FREQ_C4 : 2.f) * args.sampleTime / oversample;
+    
     bool soft = params[SOFT_PARAM].getValue();
+    if (!inputs[SYNC_INPUT].isConnected()){
+      for (int i=0; i<4; i++) phasorDir[i] = soft ? -1.f : 1.f;
+      soft = false;
+    }
     // main loops
     for (int o=0; o<oversample; o++){
       for (int s=0, c=0; s<simdCnt; s++, c+=4){
@@ -319,7 +324,9 @@ struct Oscillator : VenomModule {
         }
         freq[s] = vOctIn[s] + vOctParm + expIn[s]*expDepthIn[s]*params[EXP_PARAM].getValue();
         freq[s] = simd::pow(2.f, freq[s]) + linIn[s]*linDepthIn[s]*params[LIN_PARAM].getValue();
-        phasorDir[s] = simd::ifelse(sync>(soft ? 0.f : 10.f), phasorDir[s]*-1.f, phasorDir[s]);
+        if (soft) {
+          phasorDir[s] = simd::ifelse(sync>0.f, phasorDir[s]*-1.f, phasorDir[s]);
+        }
         phasor[s] += freq[s] * phasorDir[s] * k;
         phasor[s] = simd::fmod(phasor[s], 1000.f);
         phasor[s] = simd::ifelse(phasor[s]<0.f, phasor[s]+1000.f, phasor[s]);
@@ -529,8 +536,11 @@ struct Oscillator : VenomModule {
         
         // Mix
         if (outputs[MIX_OUTPUT].isConnected()) {
-          if (params[MIXSHP_PARAM].getValue() > 2.5)
+          int folds=10;
+          if (params[MIXSHP_PARAM].getValue() > 2.5) {
             mixOut[s] = simd::ifelse(mixDiv>0.f, mixOut[s]/mixDiv, mixOut[s]);
+            folds=3;
+          }
           int typ = static_cast<int>(params[MIXSHP_PARAM].getValue()) % 3;
           if (typ) {
             if (s==0 || inputs[MIX_SHAPE_INPUT].isPolyphonic()) {
@@ -547,7 +557,7 @@ struct Oscillator : VenomModule {
             if (typ==2){
               mixOut[s] *= drive;
               float_4 clmp;
-              for (int i=0; i<6; i++){
+              for (int i=0; i<folds; i++){
                 clmp = clamp(mixOut[s],-5,5);
                 mixOut[s] = clmp + clmp - mixOut[s];
               }
