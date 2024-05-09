@@ -30,7 +30,7 @@ struct Oscillator : VenomModule {
     DC_PARAM,
     FREQ_PARAM,
     OCTAVE_PARAM,
-    SOFT_PARAM,
+    UNUSED_PARAM,
     EXP_PARAM,
     LIN_PARAM,
     
@@ -118,6 +118,8 @@ struct Oscillator : VenomModule {
     SAW_LEVEL_INPUT,
     MIX_LEVEL_INPUT,
 
+    REV_INPUT,
+
     INPUTS_LEN
   };
   enum OutputId {
@@ -129,7 +131,7 @@ struct Oscillator : VenomModule {
     OUTPUTS_LEN
   };
   enum LightId {
-    SOFT_LIGHT,
+    ENUMS(REV_LIGHT,2),
     ENUMS(EXP_LIGHT,2),
     ENUMS(LIN_LIGHT,2),
     ENUMS(SYNC_LIGHT,2),
@@ -162,15 +164,16 @@ struct Oscillator : VenomModule {
   };
 
   bool disableOver[INPUTS_LEN]{};
+  bool softSync = false;
   using float_4 = simd::float_4;
   int oversample = -1;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
-  OversampleFilter_4 expUpSample[4], linUpSample[4], syncUpSample[4],
+  OversampleFilter_4 expUpSample[4], linUpSample[4], revUpSample[4], syncUpSample[4],
                      shapeUpSample[4][5], phaseUpSample[4][5], offsetUpSample[4][5], levelUpSample[4][5],
                      outDownSample[4][5];
   float_4 phasor[4]{}, phasorDir[4]{1.f, 1.f, 1.f, 1.f};
   DCBlockFilter_4 dcBlockFilter[4][5];
-  dsp::SchmittTrigger syncTrig[16];
+  dsp::SchmittTrigger syncTrig[16], revTrig[16];
   
   Oscillator() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -183,15 +186,16 @@ struct Oscillator : VenomModule {
     
     configParam(FREQ_PARAM, -4.f, 4.f, 0.f, "Frequency");
     configParam(OCTAVE_PARAM, -4.f, 4.f, 0.f, "Octave");
-    configSwitch<FixedSwitchQuantity>(SOFT_PARAM, 0.f, 1.f, 0.f, "Sync mode", {"Hard", "Soft"});
+    configLight(REV_LIGHT, "Reverse oversample indicator");
+    configInput(REV_INPUT, "Reverse");
     configParam(EXP_PARAM, -1.f, 1.f, 0.f, "Exponential FM");
     configParam(LIN_PARAM, -1.f, 1.f, 0.f, "Linear FM");
-    configInput(EXP_INPUT, "Exponential FM input");
+    configInput(EXP_INPUT, "Exponential FM");
     configLight(EXP_LIGHT, "Exponential FM oversample indicator");
-    configInput(LIN_INPUT, "Linear FM input");
+    configInput(LIN_INPUT, "Linear FM");
     configLight(LIN_LIGHT, "Linear FM oversample indicator");
-    configInput(EXP_DEPTH_INPUT, "Exponential FM depth input");
-    configInput(LIN_DEPTH_INPUT, "Linear FM depth input");
+    configInput(EXP_DEPTH_INPUT, "Exponential FM depth");
+    configInput(LIN_DEPTH_INPUT, "Linear FM depth");
     configInput(VOCT_INPUT, "V/Oct");
     configInput(SYNC_INPUT, "Sync");
     configLight(SYNC_LIGHT, "Sync oversample indicator");
@@ -241,6 +245,7 @@ struct Oscillator : VenomModule {
       for (int i=0; i<4; i++){
         expUpSample[i].setOversample(oversample);
         linUpSample[i].setOversample(oversample);
+        revUpSample[i].setOversample(oversample);
         syncUpSample[i].setOversample(oversample);
         for (int j=0; j<5; j++){
           shapeUpSample[i][j].setOversample(oversample);
@@ -260,17 +265,18 @@ struct Oscillator : VenomModule {
     }
     int simdCnt = (channels+3)/4;
     
-    float_4 expIn[4]{}, linIn[4]{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, syncIn[4]{}, freq[4]{},
+    float_4 expIn[4]{}, linIn[4]{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn[4]{}, syncIn[4]{}, freq[4]{},
             shapeIn[4][5]{}, phaseIn[4][5]{}, offsetIn[4][5]{}, levelIn[4][5]{},
             sinOut[4]{}, triOut[4]{}, sqrOut[4]{}, sawOut[4]{}, mixOut[4]{},
             sinPhasor{}, triPhasor{}, sqrPhasor{}, sawPhasor{}, globalPhasor{};
     float vOctParm = params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue(),
           k =  1000.f * (params[MODE_PARAM].getValue()==0 ? dsp::FREQ_C4 : 2.f) * args.sampleTime / oversample;
     
-    bool soft = params[SOFT_PARAM].getValue();
-    if (!inputs[SYNC_INPUT].isConnected()){
-      for (int i=0; i<4; i++) phasorDir[i] = soft ? -1.f : 1.f;
-      soft = false;
+    if (softSync != inputs[REV_INPUT].isConnected()) {
+      if (softSync) {
+        for (int i=0; i<4; i++) phasorDir[i] = 1.f;
+      }
+      softSync = !softSync;
     }
     // main loops
     for (int o=0; o<oversample; o++){
@@ -309,6 +315,19 @@ struct Oscillator : VenomModule {
             phaseIn[s][MIX] = phaseUpSample[s][MIX].process(phaseIn[s][MIX]);
           }
         } else phaseIn[s][MIX] = phaseIn[0][MIX];
+        float_4 rev{};
+        if (inputs[REV_INPUT].isConnected()) {
+          if (s==0 || inputs[REV_INPUT].isPolyphonic()) {
+            revIn[s] = (o && !disableOver[REV_INPUT]) ? float_4::zero() : inputs[REV_INPUT].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1 && inputs[REV_INPUT].isConnected() && !disableOver[REV_INPUT]){
+              if (o==0) revIn[s] *= oversample;
+              revIn[s] = revUpSample[s].process(revIn[s]);
+            }
+          } else revIn[s] = revIn[0];
+          for (int i=0; i<4; i++){
+            rev[i] = revTrig[c+i].process(revIn[s][i], 0.2f, 2.f);
+          }
+        }
         float_4 sync{};
         if (inputs[SYNC_INPUT].isConnected()) {
           if (s==0 || inputs[SYNC_INPUT].isPolyphonic()) {
@@ -324,13 +343,11 @@ struct Oscillator : VenomModule {
         }
         freq[s] = vOctIn[s] + vOctParm + expIn[s]*expDepthIn[s]*params[EXP_PARAM].getValue();
         freq[s] = simd::pow(2.f, freq[s]) + linIn[s]*linDepthIn[s]*params[LIN_PARAM].getValue();
-        if (soft) {
-          phasorDir[s] = simd::ifelse(sync>0.f, phasorDir[s]*-1.f, phasorDir[s]);
-        }
+        phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
         phasor[s] += freq[s] * phasorDir[s] * k;
         phasor[s] = simd::fmod(phasor[s], 1000.f);
         phasor[s] = simd::ifelse(phasor[s]<0.f, phasor[s]+1000.f, phasor[s]);
-        phasor[s] = simd::ifelse(sync>(soft ? 10.f : 0.f), float_4::zero(), phasor[s]);
+        phasor[s] = simd::ifelse(sync>0.f, float_4::zero(), phasor[s]);
 
         // Global (Mix) Phase
         globalPhasor = phasor[s] + (phaseIn[s][MIX]*params[MIX_PHASE_AMT_PARAM].getValue() + params[MIX_PHASE_PARAM].getValue()*2.f)*250.f;
@@ -732,7 +749,10 @@ struct OscillatorWidget : VenomWidget {
     
     addParam(createLockableParamCentered<RoundHugeBlackKnobLockable>(Vec(46.5f,93.5f), module, Oscillator::FREQ_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(29.f,157.f), module, Oscillator::OCTAVE_PARAM));
-    addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(64.f, 157.f), module, Oscillator::SOFT_PARAM, Oscillator::SOFT_LIGHT));
+
+    addInput(createInputCentered<OverPort>(Vec(64.f, 158.f), module, Oscillator::REV_INPUT));
+    addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(77.5f, 146.5f), module, Oscillator::REV_LIGHT));
+
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(29.f,206.f), module, Oscillator::EXP_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(64.f,206.f), module, Oscillator::LIN_PARAM));
     addInput(createOverInputCentered<OverPort>(Vec(29.f, 241.5f), module, Oscillator::EXP_INPUT));
@@ -767,8 +787,9 @@ struct OscillatorWidget : VenomWidget {
     VenomWidget::step();
     Oscillator* mod = dynamic_cast<Oscillator*>(this->module);
     if(mod) {
-      mod->lights[Oscillator::SOFT_LIGHT].setBrightness(mod->params[Oscillator::SOFT_PARAM].getValue() ? LIGHT_ON : LIGHT_OFF);
       bool over = mod->params[Oscillator::OVER_PARAM].getValue();
+      mod->lights[Oscillator::REV_LIGHT].setBrightness(over && !(mod->disableOver[Oscillator::REV_INPUT]) && mod->inputs[Oscillator::REV_INPUT].isConnected());
+      mod->lights[Oscillator::REV_LIGHT+1].setBrightness(over && mod->disableOver[Oscillator::REV_INPUT] && mod->inputs[Oscillator::REV_INPUT].isConnected());
       mod->lights[Oscillator::EXP_LIGHT].setBrightness(over && !(mod->disableOver[Oscillator::EXP_INPUT]) && mod->inputs[Oscillator::EXP_INPUT].isConnected());
       mod->lights[Oscillator::EXP_LIGHT+1].setBrightness(over && mod->disableOver[Oscillator::EXP_INPUT] && mod->inputs[Oscillator::EXP_INPUT].isConnected());
       mod->lights[Oscillator::LIN_LIGHT].setBrightness(over && !(mod->disableOver[Oscillator::LIN_INPUT]) && mod->inputs[Oscillator::LIN_INPUT].isConnected());
