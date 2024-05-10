@@ -87,9 +87,8 @@ struct Bypass : VenomModule {
         break;
     }
     for (int i=0; i<3; i++){
-      outputs[BYPASS_OUTPUT+i].setChannels(inputs[BYPASS_INPUT+i].getChannels());
-      if (inputs[BYPASS_INPUT+i].isConnected()) outputs[BYPASS_OUTPUT+i].writeVoltages(inputs[BYPASS_INPUT+i].getVoltages());
-      else outputs[BYPASS_OUTPUT+i].channels = 0;
+      outputs[BYPASS_OUTPUT+i].channels = inputs[BYPASS_INPUT+i].channels;
+      outputs[BYPASS_OUTPUT+i].writeVoltages(inputs[BYPASS_INPUT+i].getVoltages());
     }
     if (event || buttonEvent)
       taskWorker.work([=](){ processBypass(); });
