@@ -174,7 +174,31 @@ struct Oscillator : VenomModule {
   float_4 phasor[4]{}, phasorDir[4]{1.f, 1.f, 1.f, 1.f};
   DCBlockFilter_4 dcBlockFilter[4][5];
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
+  float currentOctave = -10.f;
+  float currentMode = -10.f;
   
+  struct PWQuantity : ParamQuantity {
+    float getDisplayValue() override {
+      //Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
+      float val = ParamQuantity::getDisplayValue();
+      if (!(module->params[PW_PARAM].getValue()))
+        val = clamp(val, 3.f, 97.f);
+      return val;
+    }
+  };
+
+  struct FreqQuantity : ParamQuantity {
+    float getDisplayValue() override {
+      Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
+      return pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * (mod->params[MODE_PARAM].getValue() ? 2.f : dsp::FREQ_C4);
+    }
+    void setDisplayValue(float v) override {
+      Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
+      setValue(clamp(std::log2f(v / (mod->params[MODE_PARAM].getValue() ? 2.f : dsp::FREQ_C4)) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
+    }
+  };
+
+
   Oscillator() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
@@ -184,30 +208,52 @@ struct Oscillator : VenomModule {
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
     configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "Mix DC Block", {"Off", "On"});
     
-    configParam(FREQ_PARAM, -4.f, 4.f, 0.f, "Frequency");
+    configParam<FreqQuantity>(FREQ_PARAM, -4.f, 4.f, 0.f, "Frequency", " Hz");
     configParam(OCTAVE_PARAM, -4.f, 4.f, 0.f, "Octave");
-    configLight(REV_LIGHT, "Reverse oversample indicator");
-    configInput(REV_INPUT, "Reverse");
-    configParam(EXP_PARAM, -1.f, 1.f, 0.f, "Exponential FM");
-    configParam(LIN_PARAM, -1.f, 1.f, 0.f, "Linear FM");
+    configLight(REV_LIGHT, "Soft sync oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
+    configInput(REV_INPUT, "Soft sync");
+    configParam(EXP_PARAM, -1.f, 1.f, 0.f, "Exponential FM", "%", 0.f, 100.f);
+    configParam(LIN_PARAM, -1.f, 1.f, 0.f, "Linear FM", "%", 0.f, 100.f);
     configInput(EXP_INPUT, "Exponential FM");
-    configLight(EXP_LIGHT, "Exponential FM oversample indicator");
+    configLight(EXP_LIGHT, "Exponential FM oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configInput(LIN_INPUT, "Linear FM");
-    configLight(LIN_LIGHT, "Linear FM oversample indicator");
+    configLight(LIN_LIGHT, "Linear FM oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configInput(EXP_DEPTH_INPUT, "Exponential FM depth");
     configInput(LIN_DEPTH_INPUT, "Linear FM depth");
     configInput(VOCT_INPUT, "V/Oct");
     configInput(SYNC_INPUT, "Sync");
-    configLight(SYNC_LIGHT, "Sync oversample indicator");
+    configLight(SYNC_LIGHT, "Sync oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
 
     std::string xStr[5]{"Sine","Triangle","Square","Saw","Mix"};
     std::string yStr[4]{" shape"," phase"," offset"," level"};
     for (int y=0; y<4; y++){
       for (int x=0; x<5; x++){
-        configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y]);
-        configParam(GRID_PARAM+y*10+x+5, -1.f, 1.f, 0.f, xStr[x]+yStr[y]+" CV amount");
+        switch (y) {
+          case 0: // shape
+            switch (x) {
+              case SQR:
+                configParam<PWQuantity>(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, "Square pulse width", "%", 0.f, 50.f, 50.f);
+                break;
+              case MIX:
+                configParam(GRID_PARAM+y*10+x, -1.f, 1.f, -1.f, xStr[x]+yStr[y], "%", 0.f, 50.f, 50.f);
+                break;
+              default:
+                configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], "%", 0.f, 100.f);
+            }
+            break;
+          case 1: // phase
+            configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], "\u00B0", 0.f, 180.f);
+            break;
+          case 2: // offset
+            configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], " V", 0.f, 5.f);
+            break;
+          case 3: // level
+            configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], "%", 0.f, 100.f);
+            break;
+        }
+        configParam(GRID_PARAM+y*10+x+5, -1.f, 1.f, 0.f, xStr[x]+yStr[y]+" CV amount", "%", 0.f, 100.f);
         configInput(GRID_INPUT+y*5+x, xStr[x]+yStr[y]+" CV");
-        configLight(GRID_LIGHT+y*10+x*2, xStr[x]+yStr[y]+" oversample indicator");
+        configLight(GRID_LIGHT+y*10+x*2, xStr[x]+yStr[y]+" oversample indicator")->description = "off = N/A, yellow = oversampled, red = disabled";
       }
     }
     for (int x=0; x<4; x++){
@@ -235,7 +281,7 @@ struct Oscillator : VenomModule {
   float_4 sinSimd_1000(float_4 t) {
     t = simd::ifelse(t > 500.f, 1000.f - t, t) * 0.002f - 0.5f;
     float_4 t2 = t * t;
-    return (((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
+    return -(((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
   }
 
   void process(const ProcessArgs& args) override {
@@ -344,6 +390,7 @@ struct Oscillator : VenomModule {
         freq[s] = vOctIn[s] + vOctParm + expIn[s]*expDepthIn[s]*params[EXP_PARAM].getValue();
         freq[s] = simd::pow(2.f, freq[s]) + linIn[s]*linDepthIn[s]*params[LIN_PARAM].getValue();
         phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
+        phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
         phasor[s] += freq[s] * phasorDir[s] * k;
         phasor[s] = simd::fmod(phasor[s], 1000.f);
         phasor[s] = simd::ifelse(phasor[s]<0.f, phasor[s]+1000.f, phasor[s]);
@@ -421,7 +468,7 @@ struct Oscillator : VenomModule {
               phaseIn[s][TRI] = phaseUpSample[s][TRI].process(phaseIn[s][TRI]);
             }
           } else phaseIn[s][TRI] = phaseIn[0][TRI];
-          triPhasor = globalPhasor + (phaseIn[s][TRI]*params[TRI_PHASE_AMT_PARAM].getValue() + params[TRI_PHASE_PARAM].getValue()*2.f)*250.f - 250.f;
+          triPhasor = globalPhasor + (phaseIn[s][TRI]*params[TRI_PHASE_AMT_PARAM].getValue() + params[TRI_PHASE_PARAM].getValue()*2.f)*250.f + 250.f;
           triPhasor = simd::fmod(triPhasor, 1000.f);
           triPhasor = simd::ifelse(triPhasor<0.f, triPhasor+1000.f, triPhasor);
           shape = simd::ifelse(triPhasor<500.f, shape, -shape);
