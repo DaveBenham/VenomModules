@@ -176,10 +176,10 @@ struct Oscillator : VenomModule {
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
   float currentOctave = -10.f;
   float currentMode = -10.f;
+  float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
   
   struct PWQuantity : ParamQuantity {
     float getDisplayValue() override {
-      //Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
       float val = ParamQuantity::getDisplayValue();
       if (!(module->params[PW_PARAM].getValue()))
         val = clamp(val, 3.f, 97.f);
@@ -190,11 +190,19 @@ struct Oscillator : VenomModule {
   struct FreqQuantity : ParamQuantity {
     float getDisplayValue() override {
       Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
-      return pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * (mod->params[MODE_PARAM].getValue() ? 2.f : dsp::FREQ_C4);
+      int mode = static_cast<int>(mod->params[MODE_PARAM].getValue());
+      if (mode < 2)
+        return pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mode];
+      else
+        return mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
     }
     void setDisplayValue(float v) override {
       Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
-      setValue(clamp(std::log2f(v / (mod->params[MODE_PARAM].getValue() ? 2.f : dsp::FREQ_C4)) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
+      int mode = static_cast<int>(mod->params[MODE_PARAM].getValue());
+      if (mode < 2)
+        setValue(clamp(std::log2f(v / mod->modeFreq[mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
+      else
+        setValue(clamp(v / mod->biasFreq, -4.f, 4.f));
     }
   };
 
@@ -311,12 +319,13 @@ struct Oscillator : VenomModule {
     }
     int simdCnt = (channels+3)/4;
     
+    int mode = static_cast<int>(params[MODE_PARAM].getValue());
     float_4 expIn[4]{}, linIn[4]{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn[4]{}, syncIn[4]{}, freq[4]{},
             shapeIn[4][5]{}, phaseIn[4][5]{}, offsetIn[4][5]{}, levelIn[4][5]{},
             sinOut[4]{}, triOut[4]{}, sqrOut[4]{}, sawOut[4]{}, mixOut[4]{},
             sinPhasor{}, triPhasor{}, sqrPhasor{}, sawPhasor{}, globalPhasor{};
-    float vOctParm = params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue(),
-          k =  1000.f * (params[MODE_PARAM].getValue()==0 ? dsp::FREQ_C4 : 2.f) * args.sampleTime / oversample;
+    float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
+    float k =  1000.f * modeFreq[mode] * args.sampleTime / oversample;
     
     if (softSync != inputs[REV_INPUT].isConnected()) {
       if (softSync) {
@@ -387,8 +396,12 @@ struct Oscillator : VenomModule {
             sync[i] = syncTrig[c+i].process(syncIn[s][i], 0.2f, 2.f);
           }
         }
-        freq[s] = vOctIn[s] + vOctParm + expIn[s]*expDepthIn[s]*params[EXP_PARAM].getValue();
-        freq[s] = simd::pow(2.f, freq[s]) + linIn[s]*linDepthIn[s]*params[LIN_PARAM].getValue();
+        if (mode<2) {
+          freq[s] = vOctIn[s] + vOctParm + expIn[s]*expDepthIn[s]*params[EXP_PARAM].getValue();
+          freq[s] = simd::pow(2.f, freq[s]) + linIn[s]*linDepthIn[s]*params[LIN_PARAM].getValue();
+        } else {
+          freq[s] = (vOctParm + vOctIn[s])*biasFreq + linIn[s]*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
+        }
         phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
         phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
         phasor[s] += freq[s] * phasorDir[s] * k;
