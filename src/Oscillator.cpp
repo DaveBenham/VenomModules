@@ -165,6 +165,7 @@ struct Oscillator : VenomModule {
 
   bool disableOver[INPUTS_LEN]{};
   bool softSync = false;
+  bool alternate = false;
   using float_4 = simd::float_4;
   int oversample = -1;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
@@ -326,6 +327,23 @@ struct Oscillator : VenomModule {
             sinPhasor{}, triPhasor{}, sqrPhasor{}, sawPhasor{}, globalPhasor{};
     float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
     float k =  1000.f * modeFreq[mode] * args.sampleTime / oversample;
+    
+    if (alternate != (mode==2)) {
+      alternate = !alternate;
+      paramQuantities[FREQ_PARAM]->name = alternate ? "Bias" : "Frequency";
+      paramQuantities[OCTAVE_PARAM]->name = alternate ? "Linear FM range" : "Octave";
+      inputInfos[VOCT_INPUT]->name = alternate ? "Bias" : "V/Oct";
+      paramQuantities[EXP_PARAM]->name = alternate ? "Unused" : "Exponential FM";
+      inputInfos[EXP_INPUT]->name = alternate ? "Unused" : "Exponential FM";
+      inputInfos[EXP_DEPTH_INPUT]->name = alternate ? "Unused" : "Exponential FM depth";
+
+      paramExtensions[FREQ_PARAM].factoryName = paramQuantities[FREQ_PARAM]->name;
+      paramExtensions[OCTAVE_PARAM].factoryName = paramQuantities[OCTAVE_PARAM]->name;
+      inputExtensions[VOCT_INPUT].factoryName = inputInfos[VOCT_INPUT]->name;
+      paramExtensions[EXP_PARAM].factoryName = paramQuantities[EXP_PARAM]->name;
+      inputExtensions[EXP_INPUT].factoryName = inputInfos[EXP_INPUT]->name;
+      inputExtensions[EXP_DEPTH_INPUT].factoryName = inputInfos[EXP_DEPTH_INPUT]->name;
+    }
     
     if (softSync != inputs[REV_INPUT].isConnected()) {
       if (softSync) {
@@ -801,11 +819,11 @@ struct OscillatorWidget : VenomWidget {
     setModule(module);
     setVenomPanel("Oscillator");
     
-    addParam(createLockableParamCentered<ModeSwitch>(Vec(14.5f,41.5f), module, Oscillator::MODE_PARAM));
-    addParam(createLockableParamCentered<OverSwitch>(Vec(32.5f,41.5f), module, Oscillator::OVER_PARAM));
-    addParam(createLockableParamCentered<PWSwitch>(Vec(50.5f,41.5f), module, Oscillator::PW_PARAM));
-    addParam(createLockableParamCentered<MixShpSwitch>(Vec(68.5f,41.5f), module, Oscillator::MIXSHP_PARAM));
-    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(86.5f,41.5f), module, Oscillator::DC_PARAM));
+    addParam(createLockableParamCentered<ModeSwitch>(Vec(14.5f,37.5f), module, Oscillator::MODE_PARAM));
+    addParam(createLockableParamCentered<OverSwitch>(Vec(32.5f,37.5f), module, Oscillator::OVER_PARAM));
+    addParam(createLockableParamCentered<PWSwitch>(Vec(50.5f,37.5f), module, Oscillator::PW_PARAM));
+    addParam(createLockableParamCentered<MixShpSwitch>(Vec(68.5f,37.5f), module, Oscillator::MIXSHP_PARAM));
+    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(86.5f,37.5f), module, Oscillator::DC_PARAM));
     
     addParam(createLockableParamCentered<RoundHugeBlackKnobLockable>(Vec(46.5f,93.5f), module, Oscillator::FREQ_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(29.f,157.f), module, Oscillator::OCTAVE_PARAM));
