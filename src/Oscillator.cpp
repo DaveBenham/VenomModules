@@ -166,6 +166,7 @@ struct Oscillator : VenomModule {
   bool disableOver[INPUTS_LEN]{};
   bool softSync = false;
   bool alternate = false;
+  bool lfo = false;
   using float_4 = simd::float_4;
   int oversample = -1;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
@@ -175,9 +176,9 @@ struct Oscillator : VenomModule {
   float_4 phasor[4]{}, phasorDir[4]{1.f, 1.f, 1.f, 1.f};
   DCBlockFilter_4 dcBlockFilter[4][5];
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
-  float currentOctave = -10.f;
-  float currentMode = -10.f;
   float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
+  int currentMode = 0;
+  int modeDefaultOver[3] = {2, 0, 2};
   
   struct PWQuantity : ParamQuantity {
     float getDisplayValue() override {
@@ -211,11 +212,11 @@ struct Oscillator : VenomModule {
   Oscillator() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 2.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier bias"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 2.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 3.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Pulse Width Range", {"Limited 3%-97%", "Full 0%-100%"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
-    configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "Mix DC Block", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "DC Block", {"Off", "On"});
     
     configParam<FreqQuantity>(FREQ_PARAM, -4.f, 4.f, 0.f, "Frequency", " Hz");
     configParam(OCTAVE_PARAM, -4.f, 4.f, 0.f, "Octave");
@@ -295,6 +296,15 @@ struct Oscillator : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+
+    int mode = static_cast<int>(params[MODE_PARAM].getValue());
+    if (mode != currentMode) {
+      currentMode = mode;
+      params[OVER_PARAM].setValue(modeDefaultOver[mode]);
+      paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
+      paramExtensions[OVER_PARAM].factoryDflt = modeDefaultOver[mode];
+    }
+
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
       for (int i=0; i<4; i++){
@@ -320,7 +330,6 @@ struct Oscillator : VenomModule {
     }
     int simdCnt = (channels+3)/4;
     
-    int mode = static_cast<int>(params[MODE_PARAM].getValue());
     float_4 expIn[4]{}, linIn[4]{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn[4]{}, syncIn[4]{}, freq[4]{},
             shapeIn[4][5]{}, phaseIn[4][5]{}, offsetIn[4][5]{}, levelIn[4][5]{},
             sinOut[4]{}, triOut[4]{}, sqrOut[4]{}, sawOut[4]{}, mixOut[4]{},
@@ -740,6 +749,7 @@ struct Oscillator : VenomModule {
         disableOver[index] = json_boolean_value(val);
       }
     }
+    currentMode = static_cast<int>(params[MODE_PARAM].getValue());
   }
   
 };
