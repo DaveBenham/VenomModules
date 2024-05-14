@@ -179,6 +179,7 @@ struct Oscillator : VenomModule {
   float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
   int currentMode = 0;
   int modeDefaultOver[3] = {2, 0, 2};
+  static constexpr float maxFreq = 12000.f;
   
   struct PWQuantity : ParamQuantity {
     float getDisplayValue() override {
@@ -193,14 +194,17 @@ struct Oscillator : VenomModule {
     float getDisplayValue() override {
       Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
       int mode = static_cast<int>(mod->params[MODE_PARAM].getValue());
+      float freq = 0.f;
       if (mode < 2)
-        return pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mode];
+        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mode];
       else
-        return mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
+        freq = mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
+      return freq < maxFreq ? freq : maxFreq;
     }
     void setDisplayValue(float v) override {
       Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
       int mode = static_cast<int>(mod->params[MODE_PARAM].getValue());
+      if (v > maxFreq) v = maxFreq;
       if (mode < 2)
         setValue(clamp(std::log2f(v / mod->modeFreq[mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
       else
@@ -335,7 +339,7 @@ struct Oscillator : VenomModule {
             sinOut[4]{}, triOut[4]{}, sqrOut[4]{}, sawOut[4]{}, mixOut[4]{},
             sinPhasor{}, triPhasor{}, sqrPhasor{}, sawPhasor{}, globalPhasor{};
     float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
-    float k =  1000.f * modeFreq[mode] * args.sampleTime / oversample;
+    float k =  1000.f * args.sampleTime / oversample;
     
     if (alternate != (mode==2)) {
       alternate = !alternate;
@@ -429,6 +433,8 @@ struct Oscillator : VenomModule {
         } else {
           freq[s] = (vOctParm + vOctIn[s])*biasFreq + linIn[s]*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
         }
+        freq[s] *= modeFreq[mode];
+        freq[s] = simd::ifelse(freq[s] > maxFreq, maxFreq, freq[s]);
         phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
         phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
         phasor[s] += freq[s] * phasorDir[s] * k;
