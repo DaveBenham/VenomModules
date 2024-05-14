@@ -1565,7 +1565,7 @@ Reformation transforms incoming CV or audio by remapping 5 voltage way points (m
 
 Reformation is fully polyphonic, and all modulation can be driven at audio rates.
 
-Reformation can be be used as a waveshaper and/or VCA and/or distortion effect (hard clipper or saturating limiter). CV control of each way point provides for amplitude modulation of specific regions of a wave form.
+Reformation can be be used as a waveshaper and/or VCA and/or distortion effect (hard clipper or saturating limiter). CV control of each way point provides for amplitude modulation of specific regions of a waveform.
 
 ### Way Point Sliders
 
@@ -2183,26 +2183,28 @@ All other behaviors are the same as for Mix 4.
 ## VCO LAB
 ![VCO Lab module image](doc/Oscillator.png)
 
-An oscillator with a dizzying array of features for the mad scientist, including available oversampling to give clean anti-aliased output regardless which options are combined.
+A polyphonic oscillator with a robust array of features for the mad scientist, including available oversampling to give clean anti-aliased output regardless which functions are combined.
 
 ### Summary of features
 
-- Simultaneous outputs for Sine, Triangle, Square, and Saw, plus a configurable Mix
-- Modes for audio, low frequency, and 0 Hz carrier linear FM
-- Independent controls/inputs for exponential FM and linear through 0 FM
-- Independent inputs for hard sync (reset phase to 0), and soft sync (reverse wavevorm)
-- Octave control
-- Each wave form has controls/inputs for shape, phase, offset, and level
-- The mix also has controls/inputs for shape (saturation or folding), global phase, offset, and level
 - Oversampling options to control aliasing
+- Simultaneous outputs for Sine, Triangle, Square, and Saw waveforms, plus a highly configurable Mix
+- Each waveform has controls/inputs for shape, phase, offset, and level
+- The mix also has controls/inputs for shape (saturation or folding), global phase, offset, and level
 - All inputs can be driven at audio rates, and nearly all can be oversampled
 - All inputs support polyphony
+- Bipolar level controls can be used as traditional VCAs, or for amplitude or ring modulation.
+- Modes for audio, low frequency, and 0 Hz carrier linear FM
+- Independent controls/inputs for exponential FM and true linear through 0 FM
+- Audio rate modulation of phase provides functionality often referred to as through 0 linear FM.
+- Independent inputs for hard sync (reset phase to 0), and soft sync (reverse waveform)
+- Octave control
 - Square pulse width range can be 0-100% or 3-97%
 - Optional DC offset removal
 
 Global controls and inputs are to the left.
 
-The grid of controls, inputs, and outputs to the right control each wave form as well as the overall mix
+The grid of controls, inputs, and outputs to the right control each waveform as well as the overall mix
 
 ### FRQ (Frequency Mode) button
 This color coded button controls the overall mode of the oscillator
@@ -2216,8 +2218,8 @@ In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input to 
 This color coded button controls how much oversampling is applied to control aliasing of audio output.
 - **Off** (dark gray - low frequency mode default)
 - **x2** (yellow)
-- **x4** (green)
-- **x8** (light blue - audio mode and 0 Hz carrier mode default)
+- **x4** (green - audio mode and 0 Hz carrier mode default)
+- **x8** (light blue)
 - **x16** (dark blue)
 - **x32** (purple)
 
