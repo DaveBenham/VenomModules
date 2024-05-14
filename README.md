@@ -1565,7 +1565,7 @@ Reformation transforms incoming CV or audio by remapping 5 voltage way points (m
 
 Reformation is fully polyphonic, and all modulation can be driven at audio rates.
 
-Reformation can be be used as a waveshaper and/or VCA and/or distortion effect (hard clipper or saturating limiter). CV control of each way point provides for amplitude modulation of specific regions of a wave form.
+Reformation can be be used as a waveshaper and/or VCA and/or distortion effect (hard clipper or saturating limiter). CV control of each way point provides for amplitude modulation of specific regions of a waveform.
 
 ### Way Point Sliders
 
@@ -2183,6 +2183,77 @@ All other behaviors are the same as for Mix 4.
 ## VCO LAB
 ![VCO Lab module image](doc/Oscillator.png)
 
+A polyphonic oscillator with a robust array of features for the mad scientist, including available oversampling to give clean anti-aliased output regardless which functions are combined.
+
+### Summary of features
+
+- Oversampling options to control aliasing
+- Simultaneous outputs for Sine, Triangle, Square, and Saw waveforms, plus a highly configurable Mix
+- Each waveform has controls/inputs for shape, phase, offset, and level
+- The mix also has controls/inputs for shape (saturation or folding), global phase, offset, and level
+- All inputs can be driven at audio rates, and nearly all can be oversampled
+- All inputs support polyphony
+- Bipolar level controls can be used as traditional VCAs, or for amplitude or ring modulation.
+- Modes for audio, low frequency, and 0 Hz carrier linear FM
+- Independent controls/inputs for exponential FM and true linear through 0 FM
+- Audio rate modulation of phase provides functionality often referred to as through 0 linear FM.
+- Independent inputs for hard sync (reset phase to 0), and soft sync (reverse waveform)
+- Octave control
+- Square pulse width range can be 0-100% or 3-97%
+- Optional DC offset removal
+
+Global controls and inputs are to the left.
+
+The grid of controls, inputs, and outputs to the right control each waveform as well as the overall mix
+
+### FRQ (Frequency Mode) button
+This color coded button controls the overall mode of the oscillator
+- **Audio frequency** (green - default)
+- **Low frequency** (dark blue)
+- **0 Hz carrier** (purple)
+
+In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
+
+### OVR (Oversample) button
+This color coded button controls how much oversampling is applied to control aliasing of audio output.
+- **Off** (dark gray - low frequency mode default)
+- **x2** (yellow)
+- **x4** (green - audio mode and 0 Hz carrier mode default)
+- **x8** (light blue)
+- **x16** (dark blue)
+- **x32** (purple)
+
+Note that oversampling is CPU intensive, so best to use the lowest amount of oversampling that gives satisfactory results.
+
+To further reduce CPU usage, oversampling may be disabled for individual inputs that are not being modulated at audio rates. Inputs that support oversampling have a context menu option to enable or disable oversampling, and an LED next to the port to indicate the current oversampling state:
+- dark gray indicates that oversampling is off, so the current port setting is not applicable
+- yellow indicates the input is being oversampled
+- red indicates the input is not being oversampled
+
+### PW (Pulse width range) button
+This color coded button controls the range of pulse width modulation for the square wave shape.
+- **Limited 3%-97%** (dark gray - default)
+- **Full 0%-100%** (yellow)
+
+Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
+
+### MIX (Mix shape mode) button
+This color coded button controls how the Shape Mix controls function
+- **Sum (No shaping)** (yellow)
+- **Saturate Sum** (orange - default)
+- **Fold Sum** (purple)
+- **Average (No shaping)** (light blue)
+- **Saturate Average** (green)
+- **Fold Average** (dark blue)
+
+Summed shaping is best for smooth bipolar shape modulation and maximum shaping effect
+
+Average shaping is best for maintaining 10V peak to peak output when no shaping is applied, as well as consistent unipolar output when applying Mix offset.
+
+### DC (DC block) button
+This color coded button controls whether a 2 Hz high pass filter is applied to remove DC offset from all outputs
+- **Off** (dark gray - default)
+- **On** (yellow)
 
 ## VENOM BLANK
 ![VENOM BLANK module image](doc/VenomBlank.PNG)  
