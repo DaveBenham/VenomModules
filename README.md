@@ -2206,6 +2206,13 @@ Global controls and inputs are to the left.
 
 The grid of controls, inputs, and outputs to the right control each waveform as well as the overall mix
 
+### Polyphony
+VCO LAB is fully polyphonic - All inputs can process polyphonic signals.
+
+The number of output channels is the maximum number of channels found across all inputs.
+
+Monophonic inputs are replicated to match the number of output channels. Polyphonic inputs that have fewer channels use 0V for missing channels.
+
 ### FRQ (Frequency Mode) button
 This color coded button controls the overall mode of the oscillator
 - **Audio frequency** (green - default)
@@ -2213,6 +2220,8 @@ This color coded button controls the overall mode of the oscillator
 - **0 Hz carrier** (purple)
 
 In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
+
+Regardless what mode is chosen, the full oscillator frequency range is accessible via CV modulation.
 
 ### OVR (Oversample) button
 This color coded button controls how much oversampling is applied to control aliasing of audio output.
@@ -2226,7 +2235,7 @@ This color coded button controls how much oversampling is applied to control ali
 Note that oversampling is CPU intensive, so best to use the lowest amount of oversampling that gives satisfactory results.
 
 To further reduce CPU usage, oversampling may be disabled for individual inputs that are not being modulated at audio rates. Inputs that support oversampling have a context menu option to enable or disable oversampling, and an LED next to the port to indicate the current oversampling state:
-- dark gray indicates that oversampling is off, so the current port setting is not applicable
+- dark gray indicates that oversampling is off, or there is no input, so the current port setting is not applicable
 - yellow indicates the input is being oversampled
 - red indicates the input is not being oversampled
 
@@ -2248,12 +2257,163 @@ This color coded button controls how the Shape Mix controls function
 
 Summed shaping is best for smooth bipolar shape modulation and maximum shaping effect
 
-Average shaping is best for maintaining 10V peak to peak output when no shaping is applied, as well as consistent unipolar output when applying Mix offset.
+Average shaping is best for maintaining 10V peak to peak output, as well as consistent unipolar output when applying Mix offset.
 
 ### DC (DC block) button
 This color coded button controls whether a 2 Hz high pass filter is applied to remove DC offset from all outputs
 - **Off** (dark gray - default)
 - **On** (yellow)
+
+### Frequency limits
+
+Regardless what mode, the VCO Lab has a hard upper frequency limit of 12 kHz. The frequency cannot be modulated above this limit.
+
+There is no fixed lower frequency limit. However, at very low frequencies the oscillator will stall due to the limits of single precision floating point numbers. The stall point varies depending on the VCV engine sample rate, and the amount of oversampling. The stall point rises as the engine sample rate rises and/or as the oversampling rises.
+
+### FREQ/BIAS (Frequency/Bias) knob
+Sets the base frequency of the oscillator. The knob range varies depending on the Frequency Mode and the current selected Octave. Normally the knob uses an exponential scale, but in 0 Hz carrier mode it is a linear Bias with a very small range. Below are the knob ranges by mode when the Octave is at 0. Note that the Octave does not modify the bias frequency when in 0 Hz carrier mode.
+
+|Mode|Minimum|Default|Maximum|
+|---|---|---|---|
+|Audio frequency|16.352 Hz (C0)|261.63 Hz (C4)|4186 Hz (C8)|
+|Low frequency|0.125 Hz|2 Hz|32 Hz|
+|0 Hz carrier bias|-0.08 Hz|0 Hz|0.08 Hz|
+
+When in 0 Hz carrier mode, a 0 Hz bias produces a static linear FM sound. A non 0 bias provides a rhythmic motion to the sound - the higher the bias magnitude, the faster the rhythm.
+
+### Octave/FM Range knob
+When in audio or low frequency mode, the Octave knob adds or subtracts octaves to the Frequency knob.
+
+When in 0 Hz carrier mode the knob sets the range for the linear FM depth. Low frequency modulation requires a smaller range, and higher frequency modulation a higher range to achieve the same degree of FM "folding"
+
+### Soft Sync input
+This port functions as a Schmitt trigger that goes high above 2V and goes low below 0.2V. The soft sync reverses the waveforms each time the signal transitions to a high state.
+
+The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be used.
+
+This port supports oversampling that can be disabled via the port context menu.
+
+### Exp FM (Exponential frequency modulation) knob
+This knob sets the depth of exponential frequency modulation.
+
+This knob is disabled when in 0 Hz Carrier mode.
+
+### Exp FM (Exponential frequency modulation) input
+This input is for exponential FM CV.
+
+This input is disabled when in 0 Hz Carrier mode.
+
+This port supports oversampling that can be disabled via the port context menu.
+
+### Exp FM (Exponential frequency modulationi) Depth input
+This bipolar input can attenuate the Exp FM depth. A value of 10V represents 100%, and -10V inverts the depth at 100%.
+
+This input is disabled when in 0 Hz Carrier mode.
+
+This port does not support oversampling.
+
+### Lin FM (Linear frequency modulation) knob
+This knob sets the depth of through 0 linear frequency modulation
+
+### Lin FM (Linear frequency modulation) input
+This input is for linear FM CV.
+
+This port supports oversampling that can be disabled via the port context menu.
+
+### Lin FM (Linear frequency modulation) Depth input
+This input can attenuate the Lin FM depth. A value of 10V represents 100%, and -10V inverts the depth at 100%
+
+This port does not support oversampling.
+
+### V/Oct / Bias input
+When in Audio or Low Frequency mode this input modulates the oscillator frequency at a scale of 1 volt per octave.
+
+When in 0 Hz Carrier mode the input modulates the linear Bias at 0.02 Hz per volt.
+
+This port does not support oversampling.
+
+### Sync (Hard Sync) input
+This port functions as a Schmitt trigger that goes high above 2V and goes low below 0.2V. The sync resets the master oscillator phase to 0 upon transition to high.
+
+The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be used.
+
+This port supports oversampling that can be disabled via the port context menu.
+
+### Waveform and Mix Grid
+
+The grid to the right contains columns of controls, inputs, and outputs for the four waveforms (sine, triangle, square, saw), and the mix.
+
+The grid rows consist of Shape modulation, Phase modulation, Offset modulation, Level modulation, and Output.
+
+For each modulation there is a base control knob plus a CV input and bipolar attenuator knob (attenuverter). The base modulation value is summed with the attenuated CV to get the final modulation amount.
+
+All grid inputs support oversampling that can be disabled via the port context menu.
+
+#### Waveform Shape Modulation
+All four waveforms get slightly different shape modulation.
+|Waveform|Negative modulation|No modulation|Positive modulation|
+|---|---|---|---|
+|**Sine**|exponential response|mathematical sine|logarithmic response|
+|**Triangle**|exponential rise, logarithmic fall|linear triangle|logarithmic rise, exponential fall|
+|**Square**|< 50% pulse width|50% pulse width|> 50% pulse width|
+|**Saw**|exponential ramp|linear saw|logarithmic ramp|
+
+#### Mix Shape Modulation
+The mix shaping is controled by the Mix button in the upper left.
+There are three possibilities:
+- Disabled
+- tanh saturation
+- folding
+
+In addition, the mix may be the sum of the waveform amounts, or the average
+
+#### Waveform Phase Modulation
+The phase of each waveform can be modulated relative to the other waveforms. This can have a dramatic impact on any resultant mix.
+
+Each waveform can also be independently modulated at audio rates to achieve what is commonly mislabeled as linear through 0 frequency modulation. The effect is similar to, but definitely not the same as true through 0 frequency modulation.
+
+#### Global (Mix) Phase Modulation
+The Mix phase modulation is actually a global modulation that is applied to all waveforms prior to mixing.
+
+Adjusting the global phase can have a profound impact on the sound of soft sync.
+
+Of course the global phase can be modulated at audio rates so that all waveforms get the same phase modulation.
+
+#### Waveform Offset Modulation
+Each waveform may be offset by as much as +5 or -5 volts, typically to achieve a unipolar output. Note that waveform offsets are only applied to the individual waveform outputs - they are not included in the mix output.
+
+Offsets are applied before any level adjustment.
+
+#### Mix Offset Modulation
+The mix also can be offset by as much as +5 or -5 volts, again typically to achieve a unipolar output. If trying to obtain a consistent unipolar output, it is often best to use one of the average options for the Mix Shape mode.
+
+The offset is applied before any level adjustment
+
+#### Waveform Level Modulation
+Each waveform has a color coded Lvl Asgn (Level Assign) button that controls how the waveform level attenuation is applied.
+- **Mix Output** (yellow - default) - The level determines how much of the waveform is added to the mix. The waveform output will be unattenuated.
+- **Waveform Output** (dark blue) - The level attenuates the waveform output, and the waveform is excluded from the mix.
+- **Both Waveform and Mix Output** (green) - The level determines how much of the waveform is added to the mix, and also attenuates the waveform output.
+
+The modulation is bipolar, so the level can invert the waveform.
+
+Besides controling the mix, the level modulation can be used for:
+- As a "traditional" VCA
+- At audio rates it can be used for amplitude modulation and ring modulation
+
+#### Mix Level Modulation
+The final mix also has bipolar level attenuation to control the final mix output. Again it can be used as a VCA, or for audio rate amplitude modulation or ring modulation.
+
+#### Outputs
+Each waveform has its own dedicated output, plus there is a Mix output.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+All outputs are monophonic 0V if the module is bypassed.
+
+[Return to Table Of Contents](#venom)
 
 ## VENOM BLANK
 ![VENOM BLANK module image](doc/VenomBlank.PNG)  
