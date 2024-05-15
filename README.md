@@ -2183,10 +2183,11 @@ All other behaviors are the same as for Mix 4.
 ## VCO LAB
 ![VCO Lab module image](doc/Oscillator.png)
 
-A polyphonic oscillator with a robust array of features for the mad scientist, including available oversampling to give clean anti-aliased output regardless which functions are combined.
+A polyphonic oscillator with a robust array of features for the mad scientist in all of us, including available oversampling to give clean anti-aliased output regardless which functions are combined.
 
 ### Summary of features
 
+- Modes for audio, low frequency, and 0 Hz carrier linear FM
 - Oversampling options to control aliasing
 - Simultaneous outputs for Sine, Triangle, Square, and Saw waveforms, plus a highly configurable Mix
 - Each waveform has controls/inputs for shape, phase, offset, and level
@@ -2194,9 +2195,8 @@ A polyphonic oscillator with a robust array of features for the mad scientist, i
 - All inputs can be driven at audio rates, and nearly all can be oversampled
 - All inputs support polyphony
 - Bipolar level controls can be used as traditional VCAs, or for amplitude or ring modulation.
-- Modes for audio, low frequency, and 0 Hz carrier linear FM
 - Independent controls/inputs for exponential FM and true linear through 0 FM
-- Audio rate modulation of phase provides functionality often referred to as through 0 linear FM.
+- Audio rate modulation of phase provides functionality often incorrectly referred to as through 0 linear FM.
 - Independent inputs for hard sync (reset phase to 0), and soft sync (reverse waveform)
 - Octave control
 - Square pulse width range can be 0-100% or 3-97%
@@ -2358,6 +2358,8 @@ All four waveforms get slightly different shape modulation.
 |**Square**|< 50% pulse width|50% pulse width|> 50% pulse width|
 |**Saw**|exponential ramp|linear saw|logarithmic ramp|
 
+![Waveform shape modulation image](doc/OscillatorShapeModulation.png)
+
 #### Mix Shape Modulation
 The mix shaping is controled by the Mix button in the upper left.
 There are three possibilities:
@@ -2365,9 +2367,12 @@ There are three possibilities:
 - tanh saturation
 - folding
 
-In addition, the mix may be the sum of the waveform amounts, or the average
+In addition, the mix may be the sum of the waveform amounts, or the average.
 
 #### Waveform Phase Modulation
+The image below shows the phase relationship between the four waveforms when no phase modulation is applied.  
+![Waveform phase relationships image](doc/OscillatorWaveformPhase.png)
+
 The phase of each waveform can be modulated relative to the other waveforms. This can have a dramatic impact on any resultant mix.
 
 Each waveform can also be independently modulated at audio rates to achieve what is commonly mislabeled as linear through 0 frequency modulation. The effect is similar to, but definitely not the same as true through 0 frequency modulation.
