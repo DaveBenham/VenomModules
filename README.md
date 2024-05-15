@@ -2339,7 +2339,73 @@ The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be
 
 This port supports oversampling that can be disabled via the port context menu.
 
-*To be continued...*
+### Waveform and Mix Grid
+
+The grid to the right contains columns of controls, inputs, and outputs for the four waveforms (sine, triangle, square, saw), and the mix.
+
+The grid rows consist of Shape modulation, Phase modulation, Offset modulation, Level modulation, and Output.
+
+For each modulation there is a base control knob plus a CV input and bipolar attenuator knob (attenuverter). The base modulation value is summed with the attenuated CV to get the final modulation amount.
+
+All grid inputs support oversampling that can be disabled via the port context menu.
+
+#### Waveform Shape Modulation
+All four waveforms get slightly different shape modulation.
+|Waveform|Negative modulation|No modulation|Positive modulation|
+|---|---|---|---|
+|**Sine**|exponential response|mathematical sine|logarithmic response|
+|**Triangle**|exponential rise, logarithmic fall|linear triangle|logarithmic rise, exponential fall|
+|**Square**|< 50% pulse width|50% pulse width|> 50% pulse width|
+|**Saw**|exponential ramp|linear saw|logarithmic ramp|
+
+#### Mix Shape Modulation
+The mix shaping is controled by the Mix button in the upper left.
+There are three possibilities:
+- Disabled
+- tanh saturation
+- folding
+
+In addition, the mix may be the sum of the waveform amounts, or the average
+
+#### Waveform Phase Modulation
+The phase of each waveform can be modulated relative to the other waveforms. This can have a dramatic impact on any resultant mix.
+
+Each waveform can also be independently modulated at audio rates to achieve what is commonly mislabeled as linear through 0 frequency modulation. The effect is similar to, but definitely not the same as true through 0 frequency modulation.
+
+#### Global (Mix) Phase Modulation
+The Mix phase modulation is actually a global modulation that is applied to all waveforms prior to mixing.
+
+Adjusting the global phase can have a profound impact on the sound of soft sync.
+
+Of course the global phase can be modulated at audio rates so that all waveforms get the same phase modulation.
+
+#### Waveform Offset Modulation
+Each waveform may be offset by as much as +5 or -5 volts, typically to achieve a unipolar output. Note that waveform offsets are only applied to the individual waveform outputs - they are not included in the mix output.
+
+Offsets are applied before any level adjustment.
+
+#### Mix Offset Modulation
+The mix also can be offset by as much as +5 or -5 volts, again typically to achieve a unipolar output. If trying to obtain a consistent unipolar output, it is often best to use one of the average options for the Mix Shape mode.
+
+The offset is applied before any level adjustment
+
+#### Waveform Level Modulation
+Each waveform has a color coded Lvl Asgn (Level Assign) button that controls how the waveform level attenuation is applied.
+- **Mix Output** (yellow - default) - The level determines how much of the waveform is added to the mix. The waveform output will be unattenuated.
+- **Waveform Output** (dark blue) - The level attenuates the waveform output, and the waveform is excluded from the mix.
+- **Both Waveform and Mix Output** (green) - The level determines how much of the waveform is added to the mix, and also attenuates the waveform output.
+
+The modulation is bipolar, so the level can invert the waveform.
+
+Besides controling the mix, the level modulation can be used for:
+- As a "traditional" VCA
+- At audio rates it can be used for amplitude modulation and ring modulation
+
+#### Mix Level Modulation
+The final mix also has bipolar level attenuation to control the final mix output. Again it can be used as a VCA, or for audio rate amplitude modulation or ring modulation.
+
+#### Outputs
+Each waveform has its own dedicated output, plus there is a Mix output.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
