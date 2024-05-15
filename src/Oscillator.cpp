@@ -364,6 +364,12 @@ struct Oscillator : VenomModule {
       }
       softSync = !softSync;
     }
+    
+    bool procSin = outputs[SIN_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SIN_ASIGN_PARAM].getValue() != 1.f);
+    bool procTri = outputs[TRI_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[TRI_ASIGN_PARAM].getValue() != 1.f);
+    bool procSqr = outputs[SQR_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SQR_ASIGN_PARAM].getValue() != 1.f);
+    bool procSaw = outputs[SAW_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SAW_ASIGN_PARAM].getValue() != 1.f);
+    bool procMix = outputs[MIX_OUTPUT].isConnected();
     // main loops
     for (int o=0; o<oversample; o++){
       for (int s=0, c=0; s<simdCnt; s++, c+=4){
@@ -448,7 +454,7 @@ struct Oscillator : VenomModule {
         mixOut[s] = float_4::zero();
 
         // Sine
-        if (outputs[SIN_OUTPUT].isConnected() || outputs[MIX_OUTPUT].isConnected())
+        if (procSin)
         {
           if (s==0 || inputs[SIN_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[s][SIN] = (o && !disableOver[SIN_SHAPE_INPUT]) ? float_4::zero() : inputs[SIN_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -497,7 +503,7 @@ struct Oscillator : VenomModule {
         }
         
         // Triangle
-        if (outputs[TRI_OUTPUT].isConnected() || outputs[MIX_OUTPUT].isConnected())
+        if (procTri)
         {
           if (s==0 || inputs[TRI_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[s][TRI] = (o && !disableOver[TRI_SHAPE_INPUT]) ? float_4::zero() : inputs[TRI_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -547,7 +553,7 @@ struct Oscillator : VenomModule {
         }
         
         // Square
-        if (outputs[SQR_OUTPUT].isConnected() || outputs[MIX_OUTPUT].isConnected())
+        if (procSqr)
         {
           if (s==0 || inputs[SQR_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[s][SQR] = (o && !disableOver[SQR_SHAPE_INPUT]) ? float_4::zero() : inputs[SQR_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -596,7 +602,7 @@ struct Oscillator : VenomModule {
         }
         
         // Saw
-        if (outputs[SAW_OUTPUT].isConnected() || outputs[MIX_OUTPUT].isConnected())
+        if (procSaw)
         {
           if (s==0 || inputs[SAW_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[s][SAW] = (o && !disableOver[SAW_SHAPE_INPUT]) ? float_4::zero() : inputs[SAW_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -645,7 +651,7 @@ struct Oscillator : VenomModule {
         }
         
         // Mix
-        if (outputs[MIX_OUTPUT].isConnected()) {
+        if (procMix) {
           int folds=10;
           if (params[MIXSHP_PARAM].getValue() > 2.5) {
             mixOut[s] = simd::ifelse(mixDiv>0.f, mixOut[s]/mixDiv, mixOut[s]);
