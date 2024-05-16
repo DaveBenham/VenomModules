@@ -2183,7 +2183,7 @@ All other behaviors are the same as for Mix 4.
 ## VCO LAB
 ![VCO Lab module image](doc/Oscillator.png)
 
-A polyphonic oscillator with a robust array of features for the mad scientist in all of us, including available oversampling to give clean anti-aliased output regardless which functions are combined.
+A polyphonic oscillator with a robust array of features for the mad scientist sound designers amongst us, including available oversampling to give clean anti-aliased output regardless which functions are combined.
 
 ### Summary of features
 
