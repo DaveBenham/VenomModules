@@ -15,6 +15,7 @@
 - Knob 5
   - New quantize options: Off, Integers, Semitones
   - New display unit options: Volts, Cents
+  - Reduced CPU usage
 - PolyOffset
   - New quantize options: Off, Integers, Semitones
   - New display unit options: Volts, Cents
