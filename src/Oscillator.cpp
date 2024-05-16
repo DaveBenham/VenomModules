@@ -370,30 +370,9 @@ struct Oscillator : VenomModule {
     bool procSqr = outputs[SQR_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SQR_ASIGN_PARAM].getValue() != 1.f);
     bool procSaw = outputs[SAW_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SAW_ASIGN_PARAM].getValue() != 1.f);
     bool procMix = outputs[MIX_OUTPUT].isConnected();
-    bool procOverExp = oversample>1 && inputs[EXP_INPUT].isConnected() && !disableOver[EXP_INPUT];
-    bool procOverLin = oversample>1 && inputs[LIN_INPUT].isConnected() && !disableOver[LIN_INPUT];
-    bool procOverRev = oversample>1 && inputs[REV_INPUT].isConnected() && !disableOver[REV_INPUT];
-    bool procOverSync = oversample>1 && inputs[SYNC_INPUT].isConnected() && !disableOver[SYNC_INPUT];
-    bool procOverSinShape = oversample>1 && inputs[SIN_SHAPE_INPUT].isConnected() && !disableOver[SIN_SHAPE_INPUT];
-    bool procOverTriShape = oversample>1 && inputs[TRI_SHAPE_INPUT].isConnected() && !disableOver[TRI_SHAPE_INPUT];
-    bool procOverSqrShape = oversample>1 && inputs[SQR_SHAPE_INPUT].isConnected() && !disableOver[SQR_SHAPE_INPUT];
-    bool procOverSawShape = oversample>1 && inputs[SAW_SHAPE_INPUT].isConnected() && !disableOver[SAW_SHAPE_INPUT];
-    bool procOverMixShape = oversample>1 && inputs[MIX_SHAPE_INPUT].isConnected() && !disableOver[MIX_SHAPE_INPUT];
-    bool procOverSinPhase = oversample>1 && inputs[SIN_PHASE_INPUT].isConnected() && !disableOver[SIN_PHASE_INPUT];
-    bool procOverTriPhase = oversample>1 && inputs[TRI_PHASE_INPUT].isConnected() && !disableOver[TRI_PHASE_INPUT];
-    bool procOverSqrPhase = oversample>1 && inputs[SQR_PHASE_INPUT].isConnected() && !disableOver[SQR_PHASE_INPUT];
-    bool procOverSawPhase = oversample>1 && inputs[SAW_PHASE_INPUT].isConnected() && !disableOver[SAW_PHASE_INPUT];
-    bool procOverMixPhase = oversample>1 && inputs[MIX_PHASE_INPUT].isConnected() && !disableOver[MIX_PHASE_INPUT];
-    bool procOverSinOffset = oversample>1 && inputs[SIN_OFFSET_INPUT].isConnected() && !disableOver[SIN_OFFSET_INPUT];
-    bool procOverTriOffset = oversample>1 && inputs[TRI_OFFSET_INPUT].isConnected() && !disableOver[TRI_OFFSET_INPUT];
-    bool procOverSqrOffset = oversample>1 && inputs[SQR_OFFSET_INPUT].isConnected() && !disableOver[SQR_OFFSET_INPUT];
-    bool procOverSawOffset = oversample>1 && inputs[SAW_OFFSET_INPUT].isConnected() && !disableOver[SAW_OFFSET_INPUT];
-    bool procOverMixOffset = oversample>1 && inputs[MIX_OFFSET_INPUT].isConnected() && !disableOver[MIX_OFFSET_INPUT];
-    bool procOverSinLevel = oversample>1 && inputs[SIN_LEVEL_INPUT].isConnected() && !disableOver[SIN_LEVEL_INPUT];
-    bool procOverTriLevel = oversample>1 && inputs[TRI_LEVEL_INPUT].isConnected() && !disableOver[TRI_LEVEL_INPUT];
-    bool procOverSqrLevel = oversample>1 && inputs[SQR_LEVEL_INPUT].isConnected() && !disableOver[SQR_LEVEL_INPUT];
-    bool procOverSawLevel = oversample>1 && inputs[SAW_LEVEL_INPUT].isConnected() && !disableOver[SAW_LEVEL_INPUT];
-    bool procOverMixLevel = oversample>1 && inputs[MIX_LEVEL_INPUT].isConnected() && !disableOver[MIX_LEVEL_INPUT];
+    bool procOver[INPUTS_LEN]{};
+    for (int i=0; i<INPUTS_LEN; i++)
+      procOver[i] = oversample>1 && inputs[i].isConnected() && !disableOver[i];
     // main loops
     for (int o=0; o<oversample; o++){
       for (int s=0, c=0; s<simdCnt; s++, c+=4){
@@ -415,7 +394,7 @@ struct Oscillator : VenomModule {
         if (!alternate) {
           if (s==0 || inputs[EXP_INPUT].isPolyphonic()) {
             expIn = (o && !disableOver[EXP_INPUT]) ? float_4::zero() : inputs[EXP_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverExp){
+            if (procOver[EXP_INPUT]){
               if (o==0) expIn *= oversample;
               expIn = expUpSample[s].process(expIn);
             }
@@ -423,14 +402,14 @@ struct Oscillator : VenomModule {
         }
         if (s==0 || inputs[LIN_INPUT].isPolyphonic()) {
           linIn = (o && !disableOver[LIN_INPUT]) ? float_4::zero() : inputs[LIN_INPUT].getPolyVoltageSimd<float_4>(c);
-          if (procOverLin){
+          if (procOver[LIN_INPUT]){
             if (o==0) linIn *= oversample;
             linIn = linUpSample[s].process(linIn);
           }
         } // else prserve prior linIn value
         if (s==0 || inputs[MIX_PHASE_INPUT].isPolyphonic()) {
           phaseIn[MIX] = (o && !disableOver[MIX_PHASE_INPUT]) ? float_4::zero() : inputs[MIX_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
-          if (procOverMixPhase){
+          if (procOver[MIX_PHASE_INPUT]){
             if (o==0) phaseIn[MIX] *= oversample;
             phaseIn[MIX] = phaseUpSample[s][MIX].process(phaseIn[MIX]);
           }
@@ -439,7 +418,7 @@ struct Oscillator : VenomModule {
         if (inputs[REV_INPUT].isConnected()) {
           if (s==0 || inputs[REV_INPUT].isPolyphonic()) {
             revIn = (o && !disableOver[REV_INPUT]) ? float_4::zero() : inputs[REV_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverRev){
+            if (procOver[REV_INPUT]){
               if (o==0) revIn *= oversample;
               revIn = revUpSample[s].process(revIn);
             }
@@ -452,7 +431,7 @@ struct Oscillator : VenomModule {
         if (inputs[SYNC_INPUT].isConnected()) {
           if (s==0 || inputs[SYNC_INPUT].isPolyphonic()) {
             syncIn = (o && !disableOver[SYNC_INPUT]) ? float_4::zero() : inputs[SYNC_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSync){
+            if (procOver[SYNC_INPUT]){
               if (o==0) syncIn *= oversample;
               syncIn = syncUpSample[s].process(syncIn);
             }
@@ -486,7 +465,7 @@ struct Oscillator : VenomModule {
         {
           if (s==0 || inputs[SIN_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[SIN] = (o && !disableOver[SIN_SHAPE_INPUT]) ? float_4::zero() : inputs[SIN_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSinShape){
+            if (procOver[SIN_SHAPE_INPUT]){
               if (o==0) shapeIn[SIN] *= oversample;
               shapeIn[SIN] = shapeUpSample[s][SIN].process(shapeIn[SIN]);
             }
@@ -494,7 +473,7 @@ struct Oscillator : VenomModule {
           float_4 shape = clamp(shapeIn[SIN]*params[SIN_SHAPE_AMT_PARAM].getValue()*0.1f + params[SIN_SHAPE_PARAM].getValue(), -1.f, 1.f);
           if (s==0 || inputs[SIN_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SIN] = (o && !disableOver[SIN_PHASE_INPUT]) ? float_4::zero() : inputs[SIN_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSinPhase){
+            if (procOver[SIN_PHASE_INPUT]){
               if (o==0) phaseIn[SIN] *= oversample;
               phaseIn[SIN] = phaseUpSample[s][SIN].process(phaseIn[SIN]);
             }
@@ -507,7 +486,7 @@ struct Oscillator : VenomModule {
 
           if (s==0 || inputs[SIN_LEVEL_INPUT].isPolyphonic()) {
             levelIn[SIN] = (o && !disableOver[SIN_LEVEL_INPUT]) ? float_4::zero() : inputs[SIN_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSinLevel){
+            if (procOver[SIN_LEVEL_INPUT]){
               if (o==0) levelIn[SIN] *= oversample;
               levelIn[SIN] = levelUpSample[s][SIN].process(levelIn[SIN]);
             }
@@ -520,7 +499,7 @@ struct Oscillator : VenomModule {
 
           if (s==0 || inputs[SIN_OFFSET_INPUT].isPolyphonic()) {
             offsetIn[SIN] = (o && !disableOver[SIN_OFFSET_INPUT]) ? float_4::zero() : inputs[SIN_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSinOffset){
+            if (procOver[SIN_OFFSET_INPUT]){
               if (o==0) offsetIn[SIN] *= oversample;
               offsetIn[SIN] = offsetUpSample[s][SIN].process(offsetIn[SIN]);
             }
@@ -535,7 +514,7 @@ struct Oscillator : VenomModule {
         {
           if (s==0 || inputs[TRI_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[TRI] = (o && !disableOver[TRI_SHAPE_INPUT]) ? float_4::zero() : inputs[TRI_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverTriShape){
+            if (procOver[TRI_SHAPE_INPUT]){
               if (o==0) shapeIn[TRI] *= oversample;
               shapeIn[TRI] = shapeUpSample[s][TRI].process(shapeIn[TRI]);
             }
@@ -543,7 +522,7 @@ struct Oscillator : VenomModule {
           float_4 shape = clamp(shapeIn[TRI]*params[TRI_SHAPE_AMT_PARAM].getValue()*0.1f + params[TRI_SHAPE_PARAM].getValue(), -1.f, 1.f);
           if (s==0 || inputs[TRI_PHASE_INPUT].isPolyphonic()) {
             phaseIn[TRI] = (o && !disableOver[TRI_PHASE_INPUT]) ? float_4::zero() : inputs[TRI_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverTriPhase){
+            if (procOver[TRI_PHASE_INPUT]){
               if (o==0) phaseIn[TRI] *= oversample;
               phaseIn[TRI] = phaseUpSample[s][TRI].process(phaseIn[TRI]);
             }
@@ -557,7 +536,7 @@ struct Oscillator : VenomModule {
 
           if (s==0 || inputs[TRI_LEVEL_INPUT].isPolyphonic()) {
             levelIn[TRI] = (o && !disableOver[TRI_LEVEL_INPUT]) ? float_4::zero() : inputs[TRI_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverTriLevel){
+            if (procOver[TRI_LEVEL_INPUT]){
               if (o==0) levelIn[TRI] *= oversample;
               levelIn[TRI] = levelUpSample[s][TRI].process(levelIn[TRI]);
             }
@@ -570,7 +549,7 @@ struct Oscillator : VenomModule {
 
           if (s==0 || inputs[TRI_OFFSET_INPUT].isPolyphonic()) {
             offsetIn[TRI] = (o && !disableOver[TRI_OFFSET_INPUT]) ? float_4::zero() : inputs[TRI_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverTriOffset){
+            if (procOver[TRI_OFFSET_INPUT]){
               if (o==0) offsetIn[TRI] *= oversample;
               offsetIn[TRI] = offsetUpSample[s][TRI].process(offsetIn[TRI]);
             }
@@ -585,7 +564,7 @@ struct Oscillator : VenomModule {
         {
           if (s==0 || inputs[SQR_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[SQR] = (o && !disableOver[SQR_SHAPE_INPUT]) ? float_4::zero() : inputs[SQR_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSqrShape){
+            if (procOver[SQR_SHAPE_INPUT]){
               if (o==0) shapeIn[SQR] *= oversample;
               shapeIn[SQR] = shapeUpSample[s][SQR].process(shapeIn[SQR]);
             }
@@ -594,7 +573,7 @@ struct Oscillator : VenomModule {
           if (!params[PW_PARAM].getValue()) flip = clamp( flip, 30.f, 970.f );
           if (s==0 || inputs[SQR_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SQR] = (o && !disableOver[SQR_PHASE_INPUT]) ? float_4::zero() : inputs[SQR_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSqrPhase){
+            if (procOver[SQR_PHASE_INPUT]){
               if (o==0) phaseIn[SQR] *= oversample;
               phaseIn[SQR] = phaseUpSample[s][SQR].process(phaseIn[SQR]);
             }
@@ -606,7 +585,7 @@ struct Oscillator : VenomModule {
 
           if (s==0 || inputs[SQR_LEVEL_INPUT].isPolyphonic()) {
             levelIn[SQR] = (o && !disableOver[SQR_LEVEL_INPUT]) ? float_4::zero() : inputs[SQR_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSqrLevel){
+            if (procOver[SQR_LEVEL_INPUT]){
               if (o==0) levelIn[SQR] *= oversample;
               levelIn[SQR] = levelUpSample[s][SQR].process(levelIn[SQR]);
             }
@@ -619,7 +598,7 @@ struct Oscillator : VenomModule {
 
           if (s==0 || inputs[SQR_OFFSET_INPUT].isPolyphonic()) {
             offsetIn[SQR] = (o && !disableOver[SQR_OFFSET_INPUT]) ? float_4::zero() : inputs[SQR_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSqrOffset){
+            if (procOver[SQR_OFFSET_INPUT]){
               if (o==0) offsetIn[SQR] *= oversample;
               offsetIn[SQR] = offsetUpSample[s][SQR].process(offsetIn[SQR]);
             }
@@ -634,7 +613,7 @@ struct Oscillator : VenomModule {
         {
           if (s==0 || inputs[SAW_SHAPE_INPUT].isPolyphonic()) {
             shapeIn[SAW] = (o && !disableOver[SAW_SHAPE_INPUT]) ? float_4::zero() : inputs[SAW_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSawShape){
+            if (procOver[SAW_SHAPE_INPUT]){
               if (o==0) shapeIn[SAW] *= oversample;
               shapeIn[SAW] = shapeUpSample[s][SAW].process(shapeIn[SAW]);
             }
@@ -642,7 +621,7 @@ struct Oscillator : VenomModule {
           float_4 shape = clamp(shapeIn[SAW]*params[SAW_SHAPE_AMT_PARAM].getValue()*0.1f + params[SAW_SHAPE_PARAM].getValue(), -1.f, 1.f);
           if (s==0 || inputs[SAW_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SAW] = (o && !disableOver[SAW_PHASE_INPUT]) ? float_4::zero() : inputs[SAW_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSawPhase){
+            if (procOver[SAW_PHASE_INPUT]){
               if (o==0) phaseIn[SAW] *= oversample;
               phaseIn[SAW] = phaseUpSample[s][SAW].process(phaseIn[SAW]);
             }
@@ -655,7 +634,7 @@ struct Oscillator : VenomModule {
 
           if (s==0 || inputs[SAW_LEVEL_INPUT].isPolyphonic()) {
             levelIn[SAW] = (o && !disableOver[SAW_LEVEL_INPUT]) ? float_4::zero() : inputs[SAW_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSawLevel){
+            if (procOver[SAW_LEVEL_INPUT]){
               if (o==0) levelIn[SAW] *= oversample;
               levelIn[SAW] = levelUpSample[s][SAW].process(levelIn[SAW]);
             }
@@ -668,7 +647,7 @@ struct Oscillator : VenomModule {
 
           if (s==0 || inputs[SAW_OFFSET_INPUT].isPolyphonic()) {
             offsetIn[SAW] = (o && !disableOver[SAW_OFFSET_INPUT]) ? float_4::zero() : inputs[SAW_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverSawOffset){
+            if (procOver[SAW_OFFSET_INPUT]){
               if (o==0) offsetIn[SAW] *= oversample;
               offsetIn[SAW] = offsetUpSample[s][SAW].process(offsetIn[SAW]);
             }
@@ -689,7 +668,7 @@ struct Oscillator : VenomModule {
           if (typ) {
             if (s==0 || inputs[MIX_SHAPE_INPUT].isPolyphonic()) {
               shapeIn[MIX] = (o && !disableOver[MIX_SHAPE_INPUT]) ? float_4::zero() : inputs[MIX_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
-              if (procOverMixShape){
+              if (procOver[MIX_SHAPE_INPUT]){
                 if (o==0) shapeIn[MIX] *= oversample;
                 shapeIn[MIX] = shapeUpSample[s][MIX].process(shapeIn[MIX]);
               }
@@ -709,7 +688,7 @@ struct Oscillator : VenomModule {
           }
           if (s==0 || inputs[MIX_OFFSET_INPUT].isPolyphonic()) {
             offsetIn[MIX] = (o && !disableOver[MIX_OFFSET_INPUT]) ? float_4::zero() : inputs[MIX_OFFSET_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverMixOffset){
+            if (procOver[MIX_OFFSET_INPUT]){
               if (o==0) offsetIn[MIX] *= oversample;
               offsetIn[MIX] = offsetUpSample[s][MIX].process(offsetIn[MIX]);
             }
@@ -717,7 +696,7 @@ struct Oscillator : VenomModule {
           mixOut[s] += clamp(offsetIn[MIX]*params[MIX_OFFSET_AMT_PARAM].getValue() + params[MIX_OFFSET_PARAM].getValue()*5.f, -5.f, 5.f);
           if (s==0 || inputs[MIX_LEVEL_INPUT].isPolyphonic()) {
             levelIn[MIX] = (o && !disableOver[MIX_LEVEL_INPUT]) ? float_4::zero() : inputs[MIX_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOverMixLevel){
+            if (procOver[MIX_LEVEL_INPUT]){
               if (o==0) levelIn[MIX] *= oversample;
               levelIn[MIX] = levelUpSample[s][MIX].process(levelIn[MIX]);
             }
