@@ -23,6 +23,7 @@ struct Knob5 : VenomModule {
   int quant[5]{0,0,0,0,0};
   int unit[5]{0,0,0,0,0};
   int poly[5]{1,1,1,1,1};
+  dsp::ClockDivider clockDivider;
   
   void configQuantity(int paramId){
     ParamQuantity *q = paramQuantities[paramId];
@@ -148,24 +149,27 @@ struct Knob5 : VenomModule {
       paramExtensions[i].nameLink = i;
       outputExtensions[i].nameLink = i;
     }  
+    clockDivider.setDivision(32);
   }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    for (int i=0; i<5; i++){
-      ParamQuantity *q = paramQuantities[i];
-      float out = q->getValue() * q->displayMultiplier + q->displayOffset;
-      switch (quant[i]){
-        case 1:  // integer
-          out = round(out);
-          break;
-        case 2:  // semitone
-          out = round(out*12.f)/12.f;
-          break;
-      }
-      for (int c=0; c<poly[i]; c++)
-        outputs[i].setVoltage(out,c);
-      outputs[i].setChannels(poly[i]);
+    if (clockDivider.process()) {
+      for (int i=0; i<5; i++){
+        ParamQuantity *q = paramQuantities[i];
+        float out = q->getValue() * q->displayMultiplier + q->displayOffset;
+        switch (quant[i]){
+          case 1:  // integer
+            out = round(out);
+            break;
+          case 2:  // semitone
+            out = round(out*12.f)/12.f;
+            break;
+        }
+        for (int c=0; c<poly[i]; c++)
+          outputs[i].setVoltage(out,c);
+        outputs[i].setChannels(poly[i]);
+      } 
     }
   }
   
