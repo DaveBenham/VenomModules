@@ -119,7 +119,8 @@ struct Mix4 : MixBaseModule {
     }
 
     int channels = mode == 1 ? 1 : std::max({1, inputs[INPUTS].getChannels(), inputs[INPUTS+1].getChannels(), inputs[INPUTS+2].getChannels(), inputs[INPUTS+3].getChannels()});
-    simd::float_4 out, channel[4];
+    simd::float_4 out, rtn, channel[4];
+    bool sendChain;
     float fadeLevel[5];
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
@@ -152,11 +153,14 @@ struct Mix4 : MixBaseModule {
               else
                 exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue();
             }
+            rtn = exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+            sendChain = exp->params[SEND_CHAIN_PARAM].getValue();
             exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
                  (  channel[0] * exp->params[SEND_PARAM+0].getValue()
                   + channel[1] * exp->params[SEND_PARAM+1].getValue()
                   + channel[2] * exp->params[SEND_PARAM+2].getValue()
                   + channel[3] * exp->params[SEND_PARAM+3].getValue()
+                  + (sendChain ? rtn : simd::float_4::zero())
                  ) * exp->fade[0].out
                  ,c
             );
@@ -164,8 +168,9 @@ struct Mix4 : MixBaseModule {
               exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
               exp->outputs[RIGHT_SEND_OUTPUT].setVoltage(0.f);
               exp->outputs[RIGHT_SEND_OUTPUT].setChannels(1);
-            }  
-            out += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            }
+            if (!sendChain)
+              out += rtn * exp->params[RETURN_PARAM].getValue();
             break;
         }
         if (!c && muteMod && !muteMod->isBypassed()) {

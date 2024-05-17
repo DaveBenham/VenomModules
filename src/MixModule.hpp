@@ -118,6 +118,7 @@ struct MixModule : VenomModule {
     ENUMS(SEND_PARAM,4),
     RETURN_PARAM,
     SEND_MUTE_PARAM,
+    SEND_CHAIN_PARAM,
     SEND_PARAMS_LEN
   };
   enum SendInputId {

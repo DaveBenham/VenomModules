@@ -16,7 +16,7 @@
   - New quantize options: Off, Integers, Semitones
   - New display unit options: Volts, Cents
   - Reduced CPU usage
-- PolyOffset
+- Poly Offset
   - New quantize options: Off, Integers, Semitones
   - New display unit options: Volts, Cents
   - BREAKING CHANGE: mono input now cloned to match selected channel count
@@ -25,6 +25,8 @@
   - Mono input cloned to match selected channel count
 - Benjolin Oscillator
   - Slightly detune oscillator 1 from 2 so PWM of newly inserted module is not flat
+- Mix Aux Send Expander
+  - Add a chain option for use when VCA mixers are chained
 
 ### Bug Fixes
 - Benjolin

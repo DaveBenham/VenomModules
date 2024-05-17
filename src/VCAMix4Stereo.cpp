@@ -180,7 +180,8 @@ struct VCAMix4Stereo : MixBaseModule {
       if (inChannels[i] > channels && (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected())))
         channels = inChannels[i];
     }
-    simd::float_4 leftOut, rightOut, cv, leftChannel[4], rightChannel[4];
+    simd::float_4 leftOut, rightOut, leftRtn, rightRtn, cv, leftChannel[4], rightChannel[4];
+    bool sendChain;
     float channelScale;
     float fadeLevel[5];
     fadeLevel[4] = 1.f; //initialize final mix fade factor
@@ -342,11 +343,15 @@ struct VCAMix4Stereo : MixBaseModule {
               else
                 exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue();
             }
+            leftRtn = exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+            rightRtn = exp->inputs[RIGHT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+            sendChain = exp->params[SEND_CHAIN_PARAM].getValue();
             exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
               (  leftChannel[0] * exp->params[SEND_PARAM+0].getValue()
                + leftChannel[1] * exp->params[SEND_PARAM+1].getValue()
                + leftChannel[2] * exp->params[SEND_PARAM+2].getValue()
                + leftChannel[3] * exp->params[SEND_PARAM+3].getValue()
+               + (sendChain ? leftRtn : simd::float_4::zero())
               ) * exp->fade[0].out
               ,c
             );
@@ -355,15 +360,18 @@ struct VCAMix4Stereo : MixBaseModule {
                + rightChannel[1] * exp->params[SEND_PARAM+1].getValue()
                + rightChannel[2] * exp->params[SEND_PARAM+2].getValue()
                + rightChannel[3] * exp->params[SEND_PARAM+3].getValue()
+               + (sendChain ? rightRtn : simd::float_4::zero())
               ) * exp->fade[0].out
               ,c
             );
             if (channels-c <= 4) {
               exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
               exp->outputs[RIGHT_SEND_OUTPUT].setChannels(channels);
-            }  
-            leftOut  += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
-            rightOut += exp->inputs[RIGHT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            }
+            if (!sendChain) {
+              leftOut  += leftRtn * exp->params[RETURN_PARAM].getValue();
+              rightOut += rightRtn * exp->params[RETURN_PARAM].getValue();
+            }
             break;
         }
         if (!c && muteMod && !muteMod->isBypassed()) {
