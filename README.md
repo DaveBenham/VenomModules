@@ -422,7 +422,7 @@ Every time the Bypass changes state, the relevant remote modules at the end of e
 A neighbor chain always terminates at any one of the following
 - A gap in the chain
 - A Bypass module. The Bypass is not part of the chain.
-- A Venom [Blocker module](#blocker-module). The Blocker is not part of the chain.
+- A Venom [Blocker](#blocker). The Blocker is not part of the chain.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
