@@ -160,7 +160,7 @@ struct BenjolinOsc : VenomModule {
         0.f,0.f
       };
       freq = simd::clamp(freq, -9.3f, 9.7f);
-      osc += simd::pow(2.f, freq) * k * dir;
+      osc += dsp::exp2_taylor5(freq) * k * dir;
       if (*tri1 > 1.f || *tri1 < -1.f) {
         *tri1 = *dir1 + *dir1 - *tri1;
         *dir1 *= -1.f;

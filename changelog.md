@@ -25,6 +25,7 @@
   - Mono input cloned to match selected channel count
 - Benjolin Oscillator
   - Slightly detune oscillator 1 from 2 so PWM of newly inserted module is not flat
+  - Minor reduction in CPU usage
 - Mix Aux Send Expander
   - Add a chain option for use when VCA mixers are chained
 
