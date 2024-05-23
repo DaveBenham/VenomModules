@@ -2189,7 +2189,7 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 
 ### Summary of features
 
-- Modes for audio, low frequency, and 0 Hz carrier linear FM
+- Modes for audio, low frequency, 0 Hz carrier linear FM, as well as various one shot audio and low frequency modes
 - Oversampling options to control aliasing
 - Simultaneous outputs for Sine, Triangle, Square, and Saw waveforms, plus a highly configurable Mix
 - Each waveform has controls/inputs for shape, phase, offset, and level
