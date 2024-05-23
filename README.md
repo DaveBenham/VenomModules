@@ -2218,12 +2218,20 @@ Monophonic inputs are replicated to match the number of output channels. Polypho
 ### FRQ (Frequency Mode) button
 This color coded button controls the overall mode of the oscillator
 - **Audio frequency** (green - default)
-- **Low frequency** (dark blue)
-- **0 Hz carrier** (purple)
+- **Low frequency** (orange)
+- **0 Hz carrier** (yellow)
+- **Triggered audio one shot** (light blue)
+- **Gated audio one shot** (dark blue)
+- **Triggered LFO one shot** (pink)
+- **Gated LFO one shot** (purple)
 
 In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
 
 Regardless what mode is chosen, the full oscillator frequency range is accessible via CV modulation.
+
+If using any of the one shot modes, then the oscillator will not produce any output until it receives a trigger or gate at the Sync input.
+ - Triggered one shots will output one complete cycle and then stop until the next trigger is received. If another trigger is received before the cycle completion, then the wave will be reset to phase 0 and retriggered.
+ - Gated one shots will output as much of a single wave cycle as fits within the high gate period. 
 
 ### OVR (Oversample) button
 This color coded button controls how much oversampling is applied to control aliasing of audio output.

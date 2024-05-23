@@ -178,6 +178,10 @@ struct Oscillator : VenomModule {
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
   float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
   int currentMode = 0;
+  int mode = 0;
+  bool once = false;
+  bool gated = false;
+  float_4 onceActive[4]{};
   int modeDefaultOver[3] = {2, 0, 2};
   static constexpr float maxFreq = 12000.f;
   
@@ -216,7 +220,7 @@ struct Oscillator : VenomModule {
   Oscillator() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 2.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 6.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier", "Triggered audio one shot", "Gated audio one shot", "Triggered LFO one shot", "Gated LFO one shot"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 3.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Pulse Width Range", {"Limited 3%-97%", "Full 0%-100%"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
@@ -297,16 +301,23 @@ struct Oscillator : VenomModule {
     float_4 t2 = t * t;
     return -(((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
   }
+  
+  void setMode() {
+    currentMode = static_cast<int>(params[MODE_PARAM].getValue());
+    mode = currentMode>4 ? 1 : currentMode>2 ? 0 : currentMode;
+    params[OVER_PARAM].setValue(modeDefaultOver[mode]);
+    paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
+    paramExtensions[OVER_PARAM].factoryDflt = modeDefaultOver[mode];
+    once = (currentMode>2);
+    gated = (currentMode==4) || (currentMode==6);
+    for (int i=0; i<4; i++) onceActive[i] = float_4::zero();
+  }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
 
-    int mode = static_cast<int>(params[MODE_PARAM].getValue());
-    if (mode != currentMode) {
-      currentMode = mode;
-      params[OVER_PARAM].setValue(modeDefaultOver[mode]);
-      paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
-      paramExtensions[OVER_PARAM].factoryDflt = modeDefaultOver[mode];
+    if (currentMode != static_cast<int>(params[MODE_PARAM].getValue())) {
+      setMode();
     }
 
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
@@ -406,7 +417,7 @@ struct Oscillator : VenomModule {
             if (o==0) linIn *= oversample;
             linIn = linUpSample[s].process(linIn);
           }
-        } // else prserve prior linIn value
+        } // else preserve prior linIn value
         if (s==0 || inputs[MIX_PHASE_INPUT].isPolyphonic()) {
           phaseIn[MIX] = (o && !disableOver[MIX_PHASE_INPUT]) ? float_4::zero() : inputs[MIX_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
           if (procOver[MIX_PHASE_INPUT]){
@@ -439,7 +450,7 @@ struct Oscillator : VenomModule {
           for (int i=0; i<4; i++){
             sync[i] = syncTrig[c+i].process(syncIn[i], 0.2f, 2.f);
           }
-        }
+        } else onceActive[s] = float_4::zero();
         if (!alternate) {
           freq[s] = vOctIn[s] + vOctParm + expIn*expDepthIn[s]*params[EXP_PARAM].getValue();
           freq[s] = dsp::exp2_taylor5(freq[s]) + linIn*linDepthIn[s]*params[LIN_PARAM].getValue();
@@ -451,9 +462,20 @@ struct Oscillator : VenomModule {
         phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
         phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
         phasor[s] += freq[s] * phasorDir[s] * k;
-        phasor[s] = simd::fmod(phasor[s], 1000.f);
-        phasor[s] = simd::ifelse(phasor[s]<0.f, phasor[s]+1000.f, phasor[s]);
+        float_4 tempPhasor = simd::fmod(phasor[s], 1000.f);
+        tempPhasor = simd::ifelse(tempPhasor<0.f, tempPhasor+1000.f, tempPhasor);
+        if (once)
+          onceActive[s] = simd::ifelse(tempPhasor != phasor[s], float_4::zero(), onceActive[s]);
+        phasor[s] = tempPhasor;
         phasor[s] = simd::ifelse(sync>0.f, float_4::zero(), phasor[s]);
+        if (once)
+          onceActive[s] = simd::ifelse(sync>float_4::zero(), 1.f, onceActive[s]);
+        if (gated){
+          for (int i=0; i<4; i++){
+            if (!syncTrig[c+i].isHigh())
+              onceActive[s][i] = 0.f;
+          }
+        }
 
         // Global (Mix) Phase
         globalPhasor = phasor[s] + (phaseIn[MIX]*params[MIX_PHASE_AMT_PARAM].getValue() + params[MIX_PHASE_PARAM].getValue()*2.f)*250.f;
@@ -705,6 +727,14 @@ struct Oscillator : VenomModule {
         }
 
         // FINAL PROCESSING
+        // Handle one shots
+        if (once){
+          sinOut[s] = simd::ifelse(onceActive[s]==float_4::zero(), float_4::zero(), sinOut[s]);
+          triOut[s] = simd::ifelse(onceActive[s]==float_4::zero(), float_4::zero(), triOut[s]);
+          sqrOut[s] = simd::ifelse(onceActive[s]==float_4::zero(), float_4::zero(), sqrOut[s]);
+          sawOut[s] = simd::ifelse(onceActive[s]==float_4::zero(), float_4::zero(), sawOut[s]);
+          mixOut[s] = simd::ifelse(onceActive[s]==float_4::zero(), float_4::zero(), mixOut[s]);
+        }
         // Remove DC offset
         if (params[DC_PARAM].getValue()) {
           if (outputs[SIN_OUTPUT].isConnected())
@@ -768,7 +798,7 @@ struct Oscillator : VenomModule {
         disableOver[index] = json_boolean_value(val);
       }
     }
-    currentMode = static_cast<int>(params[MODE_PARAM].getValue());
+    setMode();
   }
   
 };
@@ -778,7 +808,11 @@ struct OscillatorWidget : VenomWidget {
   struct ModeSwitch : GlowingSvgSwitchLockable {
     ModeSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
     }
   };
