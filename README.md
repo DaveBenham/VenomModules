@@ -2189,7 +2189,8 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 
 ### Summary of features
 
-- Modes for audio, low frequency, 0 Hz carrier linear FM, as well as various one shot audio and low frequency modes
+- Modes for audio, low frequency, and 0 Hz carrier linear FM
+- The audio and low frequency modes can also be setup for triggered or gated one shot mode
 - Oversampling options to control aliasing
 - Simultaneous outputs for Sine, Triangle, Square, and Saw waveforms, plus a highly configurable Mix
 - Each waveform has controls/inputs for shape, phase, offset, and level
@@ -2227,11 +2228,11 @@ This color coded button controls the overall mode of the oscillator
 
 In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
 
-Regardless what mode is chosen, the full oscillator frequency range is accessible via CV modulation.
-
 If using any of the one shot modes, then the oscillator will not produce any output until it receives a trigger or gate at the Sync input.
  - Triggered one shots will output one complete cycle and then stop until the next trigger is received. If another trigger is received before the cycle completion, then the wave will be reset to phase 0 and retriggered.
- - Gated one shots will output as much of a single wave cycle as fits within the high gate period. 
+ - Gated one shots work the same except they only output as much of a single wave cycle as fits within the high gate period.
+
+Regardless what mode is chosen, the full oscillator frequency range is accessible via CV modulation.
 
 ### OVR (Oversample) button
 This color coded button controls how much oversampling is applied to control aliasing of audio output.
@@ -2343,9 +2344,11 @@ When in 0 Hz Carrier mode the input modulates the linear Bias at 0.02 Hz per vol
 This port does not support oversampling.
 
 ### Sync (Hard Sync) input
-This port functions as a Schmitt trigger that goes high above 2V and goes low below 0.2V. The sync resets the master oscillator phase to 0 upon transition to high.
+This port functions as a Schmitt trigger that goes high above 2V and goes low below 0.2V. The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be used.
 
-The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be used.
+The sync resets the master oscillator phase to 0 upon transition to high.
+
+The Sync input also triggers the oscillator when using any of the four one shot modes.
 
 This port supports oversampling that can be disabled via the port context menu.
 
