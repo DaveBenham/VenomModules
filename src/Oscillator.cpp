@@ -159,11 +159,19 @@ struct Oscillator : VenomModule {
     ENUMS(SQR_LEVEL_LIGHT,2),
     ENUMS(SAW_LEVEL_LIGHT,2),
     ENUMS(MIX_LEVEL_LIGHT,2),
+    
+    SIN_RM_LIGHT,
+    TRI_RM_LIGHT,
+    SQR_RM_LIGHT,
+    SAW_RM_LIGHT,
+    MIX_RM_LIGHT,
 
     LIGHTS_LEN
   };
 
   bool disableOver[INPUTS_LEN]{};
+  bool ringMod[5]{};
+  float lvlScale[5]{0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
   bool softSync = false;
   bool alternate = false;
   bool lfo = false;
@@ -272,6 +280,9 @@ struct Oscillator : VenomModule {
         configParam(GRID_PARAM+y*10+x+5, -1.f, 1.f, 0.f, xStr[x]+yStr[y]+" CV amount", "%", 0.f, 100.f);
         configInput(GRID_INPUT+y*5+x, xStr[x]+yStr[y]+" CV");
         configLight(GRID_LIGHT+y*10+x*2, xStr[x]+yStr[y]+" oversample indicator")->description = "off = N/A, yellow = oversampled, red = disabled";
+        if (y==3) {
+          configLight(SIN_RM_LIGHT+x, xStr[x]+" Ring Mod (5V = unity) indicator");
+        }
       }
     }
     for (int x=0; x<4; x++){
@@ -313,6 +324,12 @@ struct Oscillator : VenomModule {
     for (int i=0; i<4; i++) onceActive[i] = float_4::zero();
   }
 
+  void setRingMod(int indx, bool rm) {
+    ringMod[indx] = rm;
+    lvlScale[indx] = rm ? 0.2f : 0.1f;
+    lights[Oscillator::SIN_RM_LIGHT+indx].setBrightness(rm);
+  }
+  
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
 
@@ -513,7 +530,7 @@ struct Oscillator : VenomModule {
               levelIn[SIN] = levelUpSample[s][SIN].process(levelIn[SIN]);
             }
           } else levelIn[SIN] = levelIn[0][SIN];
-          level = clamp(levelIn[SIN]*params[SIN_LEVEL_AMT_PARAM].getValue()*0.1f + params[SIN_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          level = levelIn[SIN]*params[SIN_LEVEL_AMT_PARAM].getValue()*lvlScale[SIN] + params[SIN_LEVEL_PARAM].getValue();
           if (params[SIN_ASIGN_PARAM].getValue()!=1) {
             mixOut[s] += sinOut[s] * level;
             mixDiv += simd::fabs(level);
@@ -563,7 +580,7 @@ struct Oscillator : VenomModule {
               levelIn[TRI] = levelUpSample[s][TRI].process(levelIn[TRI]);
             }
           } else levelIn[TRI] = levelIn[0][TRI];
-          level = clamp(levelIn[TRI]*params[TRI_LEVEL_AMT_PARAM].getValue()*0.1f + params[TRI_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          level = levelIn[TRI]*params[TRI_LEVEL_AMT_PARAM].getValue()*lvlScale[TRI] + params[TRI_LEVEL_PARAM].getValue();
           if (params[TRI_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += triOut[s] * level;
             mixDiv += simd::fabs(level);
@@ -612,7 +629,7 @@ struct Oscillator : VenomModule {
               levelIn[SQR] = levelUpSample[s][SQR].process(levelIn[SQR]);
             }
           } else levelIn[SQR] = levelIn[0][SQR];
-          level = clamp(levelIn[SQR]*params[SQR_LEVEL_AMT_PARAM].getValue()*0.1f + params[SQR_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          level = levelIn[SQR]*params[SQR_LEVEL_AMT_PARAM].getValue()*lvlScale[SQR] + params[SQR_LEVEL_PARAM].getValue();
           if (params[SQR_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += sqrOut[s] * level;
             mixDiv += simd::fabs(level);
@@ -661,7 +678,7 @@ struct Oscillator : VenomModule {
               levelIn[SAW] = levelUpSample[s][SAW].process(levelIn[SAW]);
             }
           } else levelIn[SAW] = levelIn[0][SAW];
-          level = clamp(levelIn[SAW]*params[SAW_LEVEL_AMT_PARAM].getValue()*0.1f + params[SAW_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          level = levelIn[SAW]*params[SAW_LEVEL_AMT_PARAM].getValue()*lvlScale[SAW] + params[SAW_LEVEL_PARAM].getValue();
           if (params[SAW_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += sawOut[s] * level;
             mixDiv += simd::fabs(level);
@@ -723,7 +740,7 @@ struct Oscillator : VenomModule {
               levelIn[MIX] = levelUpSample[s][MIX].process(levelIn[MIX]);
             }
           } // else preserve prior levelIn[MIX] value
-          mixOut[s] *= clamp(levelIn[MIX]*params[MIX_LEVEL_AMT_PARAM].getValue()*0.1f + params[MIX_LEVEL_PARAM].getValue(), -1.f, 1.f);
+          mixOut[s] *= levelIn[MIX]*params[MIX_LEVEL_AMT_PARAM].getValue()*lvlScale[MIX] + params[MIX_LEVEL_PARAM].getValue();
         }
 
         // FINAL PROCESSING
@@ -785,6 +802,10 @@ struct Oscillator : VenomModule {
     for (int i=0; i<INPUTS_LEN; i++)
       json_array_append_new(array, json_boolean(disableOver[i]));
     json_object_set_new(rootJ, "disableOver", array);
+    array = json_array();
+    for (int i=0; i<5; i++)
+      json_array_append_new(array, json_boolean(ringMod[i]));
+    json_object_set_new(rootJ, "ringMod", array);
     return rootJ;
   }
 
@@ -796,6 +817,11 @@ struct Oscillator : VenomModule {
     if ((array = json_object_get(rootJ, "disableOver"))) {
       json_array_foreach(array, index, val){
         disableOver[index] = json_boolean_value(val);
+      }
+    }
+    if ((array = json_object_get(rootJ, "ringMod"))) {
+      json_array_foreach(array, index, val){
+        setRingMod( index, json_boolean_value(val));
       }
     }
     setMode();
@@ -870,6 +896,23 @@ struct OscillatorWidget : VenomWidget {
       PolyPort::appendContextMenu(menu);
     }
   };
+
+  struct LevelPort : OverPort {
+    int portId;
+    void appendContextMenu(Menu* menu) override {
+      Oscillator* module = static_cast<Oscillator*>(this->module);
+      menu->addChild(new MenuSeparator);
+      menu->addChild(createBoolPtrMenuItem("Disable oversampling", "", &module->disableOver[portId]));
+      menu->addChild(createBoolMenuItem(
+        "Ring Mod (5V = unity)", "",
+        [=]() {return module->ringMod[portId-Oscillator::SIN_LEVEL_INPUT];},
+        [=](bool rm) {
+          module->setRingMod(portId-Oscillator::SIN_LEVEL_INPUT, rm);
+        }
+      ));
+      PolyPort::appendContextMenu(menu);
+    }
+  };
   
   template <class TOverPort>
   TOverPort* createOverInputCentered(math::Vec pos, engine::Module* module, int inputId) {
@@ -912,8 +955,13 @@ struct OscillatorWidget : VenomWidget {
       for (int x=0; x<5; x++) {
         addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(119.5f+dx*x,59.5f+dy*y), module, Oscillator::GRID_PARAM+y*10+x));
         addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(140.5f+dx*x,59.5f+dy*y), module, Oscillator::GRID_PARAM+y*10+x+5));
-        addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,85.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+        if (y<3)
+          addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,85.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+        else
+          addInput(createOverInputCentered<LevelPort>(Vec(130.f+dx*x,85.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
         addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(143.5f+dx*x, 74.f+dy*y), module, Oscillator::GRID_LIGHT+y*10+x*2));
+        if (y==3)
+          addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 74.f+dy*y), module, Oscillator::SIN_RM_LIGHT+x));
       }
     }
     for (int x=0; x<4; x++) {

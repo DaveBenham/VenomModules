@@ -2413,11 +2413,9 @@ Each waveform has a color coded Lvl Asgn (Level Assign) button that controls how
 - **Waveform Output** (dark blue) - The level attenuates the waveform output, and the waveform is excluded from the mix.
 - **Both Waveform and Mix Output** (green) - The level determines how much of the waveform is added to the mix, and also attenuates the waveform output.
 
-The modulation is bipolar, so the level can invert the waveform.
+The modulation supports bipolar CV so it can be used for ring modulation.
 
-Besides controling the mix, the level modulation can be used for:
-- As a "traditional" VCA
-- At audio rates it can be used for amplitude modulation and ring modulation
+By default the Level CV scales at 10V = unity. The Level CV port context menu has an option to scale at 5V = unity to better support ring modulation. The LED above and to the left of the port glows yellow when the "Ring Mod (5V = unity)" option is enabled.
 
 #### Mix Level Modulation
 The final mix also has bipolar level attenuation to control the final mix output. Again it can be used as a VCA, or for audio rate amplitude modulation or ring modulation.
