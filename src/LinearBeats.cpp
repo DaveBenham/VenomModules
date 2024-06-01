@@ -125,6 +125,19 @@ struct LinearBeats : VenomModule {
     }
   }
   
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "toggleCV", json_boolean(toggleCV));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "toggleCV")))
+      toggleCV = json_boolean_value(val);
+  }
+
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (e.side) { // right
       outMute = getRightExpander().module;
