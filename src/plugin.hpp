@@ -11,6 +11,9 @@ extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
 extern Model* modelAuxClone;
+extern Model* modelBayInput;
+extern Model* modelBayNorm;
+extern Model* modelBayOutput;
 extern Model* modelBenjolinOsc;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;

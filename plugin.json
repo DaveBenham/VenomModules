@@ -25,6 +25,36 @@
       ]
     },
     {
+      "slug": "BayInput",
+      "name": "Bay Input",
+      "description": "Teleporting input utility with custom labels for patch bays",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bay-input",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "BayNorm",
+      "name": "Bay Normal",
+      "description": "Teleporting output utility with normal inputs and custom labels for patch bays",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bay-normal",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "BayOutput",
+      "name": "Bay Output",
+      "description": "Teleporting output utility with custom labels for patch bays",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bay-output",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "BenjolinOsc",
       "name": "Benjolin Oscillator",
       "description": "Complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin",

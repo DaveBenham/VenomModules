@@ -2,20 +2,25 @@
 
 ## 2.8.0
 ### New Modules
+- Bay Input
+- Bay Normal
+- Bay Output
 - Blocker (interrupts extended expander chains)
 - Bypass
 - VCO Lab
 
 ### Enhancements
-- Shaped VCA
-  - Allow exponential shape output to be bipolar in bipolar VCA mode
-  - Added additional VCA modes to better work with +/- 5V inputs with shaping
-  - Changed Bias knob to bipolar +/- 5V instead of unipolar 0-5V
-  - Modified context menu options for backward compatibility
+- Benjolin Oscillator
+  - Slightly detune oscillator 1 from 2 so PWM of newly inserted module is not flat
+  - Minor reduction in CPU usage
 - Knob 5
   - New quantize options: Off, Integers, Semitones
   - New display unit options: Volts, Cents
   - Reduced CPU usage
+- Linear Beats
+  - Save toggle CV context menu option with patch
+- Mix Aux Send Expander
+  - Add a chain option for use when VCA mixers are chained
 - Poly Offset
   - New quantize options: Off, Integers, Semitones
   - New display unit options: Volts, Cents
@@ -23,11 +28,11 @@
 - Poly Scale
   - New output channel count option
   - Mono input cloned to match selected channel count
-- Benjolin Oscillator
-  - Slightly detune oscillator 1 from 2 so PWM of newly inserted module is not flat
-  - Minor reduction in CPU usage
-- Mix Aux Send Expander
-  - Add a chain option for use when VCA mixers are chained
+- Shaped VCA
+  - Allow exponential shape output to be bipolar in bipolar VCA mode
+  - Added additional VCA modes to better work with +/- 5V inputs with shaping
+  - Changed Bias knob to bipolar +/- 5V instead of unipolar 0-5V
+  - Modified context menu options for backward compatibility
 
 ### Bug Fixes
 - Benjolin

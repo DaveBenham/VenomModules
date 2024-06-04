@@ -75,6 +75,9 @@ void init(Plugin* p) {
 
   // Add modules here
   p->addModel(modelAuxClone);
+  p->addModel(modelBayInput);
+  p->addModel(modelBayNorm);
+  p->addModel(modelBayOutput);
   p->addModel(modelBenjolinOsc);
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelBernoulliSwitchExpander);
