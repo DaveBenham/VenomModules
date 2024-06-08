@@ -1,3 +1,7 @@
+#include "plugin.hpp"
+
+struct BayInput;
+
 struct BayModule : VenomModule {
 
   enum BayParamId {
@@ -18,39 +22,46 @@ struct BayModule : VenomModule {
     LIGHTS_LEN
   };
   
-  int64_t modId = -1;
+  static std::map<int64_t, BayInput*> sources;
 
-  struct BayLink {
-    int64_t id;
-    BayModule* mod;
-    BayLink( int64_t idParm = -1, BayModule* modParm = NULL ){
-      id = idParm;
-      mod = modParm;
-    }
-  };
+};
 
-  std::vector<BayLink> links{};
+struct BayInput : BayModule {
 
-  void process(const ProcessArgs& args) override {
-    VenomModule::process(args);
-    if (modId != id) { // first execution only - remove invalid links
-      for (int i=static_cast<int>(links.size())-1; i>=0; i--){
-        if (links[i].mod == NULL )
-          links.erase(links.begin()+i);
-      }
-      modId = id;
+  int64_t oldId = -1;
+  int64_t originalOldId = -1;
+  bool loadComplete = false;
+
+  BayInput() {
+    venomConfig(PARAMS_LEN, INPUTS_LEN, 0, LIGHTS_LEN);
+    for (int i=0; i < INPUTS_LEN; i++) {
+      configInput(POLY_INPUT+i, string::f("Port %d", i + 1));
     }
   }
 
+  void onAdd(const AddEvent& e) override {
+    sources[id] = this;
+  }
+
+  void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
+    if (oldId != -1){
+      if (loadComplete){
+        originalOldId = oldId;
+        oldId = -1;
+      }
+      else
+        loadComplete = true;
+    }
+  }
+
+  void onRemove(const RemoveEvent& e) override {
+    sources.erase(id);
+  }
+  
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
-    json_object_set_new(rootJ, "modId", json_integer(modId));
-    if (links.size()) {
-      json_t* array = json_array();
-      for (unsigned i=0; i<links.size(); i++)
-        json_array_append_new(array, json_integer(links[i].id));
-      json_object_set_new(rootJ, "links", array);
-    }
+    json_object_set_new(rootJ, "oldId", json_integer(id));
     return rootJ;
   
   }
@@ -58,84 +69,106 @@ struct BayModule : VenomModule {
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
     json_t* val;
-    json_t* array;
-    size_t index;
-    if ((val = json_object_get(rootJ, "modId")))
-      modId = json_integer_value(val);
-    if ((array = json_object_get(rootJ, "links"))) {
-      json_array_foreach(array, index, val)
-        links.push_back(BayLink(json_integer_value(val)));
-    }
-  }
-  
-};
-
-struct BayInputModule : BayModule {
-
-  void onAdd(const AddEvent& e) override {
-    unsigned todo = links.size();
-    if (modId != id && todo) { // remap links
-      for (int64_t modId : APP->engine->getModuleIds()){
-        BayModule* targetMod = dynamic_cast<BayModule*>(APP->engine->getModule(modId));
-        if (targetMod && targetMod->links.size()==1 && !(targetMod->links[0].mod) && targetMod->links[0].id == modId) {
-          for (BayLink& target : links) {
-            if (target.id == targetMod->modId) {
-              target.id = targetMod->id;
-              target.mod = targetMod;
-              targetMod->links[0].id = id;
-              targetMod->links[0].mod = this;
-              break;
-            }
-          }
-          if (!--todo)
-            break;
-        }
-      }
-    }
+    if ((val = json_object_get(rootJ, "oldId")))
+      oldId = json_integer_value(val);
   }
 
-  void onRemove(const RemoveEvent& e) override { // remove link to this module from all target's
-    for (BayLink& target : links) {
-      BayModule* targetMod = static_cast<BayModule*>(target.mod);
-      if (targetMod->links.size()==1)
-        targetMod->links.pop_back();
-    }
-  }
-  
 };
 
 struct BayOutputModule : BayModule {
+  
+  int64_t srcId = -1;
+  BayInput* srcMod = NULL;
+  
+  std::vector<BayInput*> bayInputs{};
+  std::vector<int64_t> bayInputIds{};
 
-  void onAdd(const AddEvent& e) override {
-    if (modId != id && links.size()==1 && links[0].id >= 0) { // remap link
-      for (int64_t modId : APP->engine->getModuleIds()){
-        BayModule* sourceMod = dynamic_cast<BayModule*>(APP->engine->getModule(modId));
-        if (sourceMod && sourceMod->modId == links[0].id) {
-          for (BayLink& target : sourceMod->links) {
-            if (target.id == modId) {
-              target.id = id;
-              target.mod = this;
-              links[0].id = sourceMod->id;
-              links[0].mod = sourceMod;
-              break;
-            }
-          }
-          break;
-        }
+  int bayOutputType = 0;
+  
+  void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
+    if (!srcMod && srcId >= 0) {
+      if (sources.count(srcId) && sources[srcId]->oldId==srcId) {
+        srcMod = sources[srcId];
       }
+      else {
+        for (auto const& it : sources) {
+          if (it.second->oldId == srcId) {
+            srcMod = it.second;
+            srcId = srcMod->id;
+            break;
+          }
+        }
+        if (!srcMod)
+          srcId = -1;
+      }  
     }
+    if (srcMod && !sources.count(srcId)) {
+      srcId = -1;
+      srcMod = NULL;
+    }
+  }  
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    if (sources.count(srcId))
+      json_object_set_new(rootJ, "srcId", json_integer(srcId));
+    return rootJ;
+  
   }
 
-  void onRemove(const RemoveEvent& e) override {  // remove this target link from the source
-    BayModule* sourceMod = links.size() ? static_cast<BayModule*>(links[0].mod) : NULL;
-    if (sourceMod) {
-      for (unsigned i=sourceMod->links.size(); i; i--) {
-        if (sourceMod->links[i].id == id) {
-          sourceMod->links.erase(sourceMod->links.begin()+i);
-          break;
-        }
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "srcId")))
+      srcId = json_integer_value(val);
+  }
+
+  void appendWidgetContextMenu(Menu* menu) {
+    std::vector<std::string> labels{"None"};
+    bayInputs.clear();
+    bayInputIds.clear();
+    for (auto const& it : sources){
+      if (APP->engine->getModule(it.first)) {
+        labels.push_back(std::to_string(it.first));
+        bayInputIds.push_back(it.first);
+        bayInputs.push_back(it.second);
       }
     }
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createIndexSubmenuItem(
+      bayOutputType ? "Bay Norm source" : "Bay Output source",
+      labels,
+      [=]() {
+        if (sources.count(srcId)) {
+          for (unsigned i=0; i<bayInputs.size(); i++) {
+            if (bayInputs[i] == srcMod)
+              return static_cast<int>(i+1);
+          }
+        }
+        return 0;
+      },
+      [=](int val) {
+        if (val) {
+          srcMod = bayInputs[val-1];
+          srcId = bayInputIds[val-1];
+        }
+        else {
+          srcId = -1;
+          srcMod = NULL;
+        }
+      }
+    ));
+  }
+
+};
+
+struct BayOutputModuleWidget : VenomWidget {
+
+  void appendContextMenu(Menu* menu) override {
+    BayOutputModule* thisMod = static_cast<BayOutputModule*>(this->module);
+    thisMod->appendWidgetContextMenu(menu);
+    VenomWidget::appendContextMenu(menu);
   }
 
 };

@@ -1,7 +1,6 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
 #include "BayModule.hpp"
 
 struct BayNorm : BayOutputModule {
@@ -15,13 +14,31 @@ struct BayNorm : BayOutputModule {
   }
 
   void process(const ProcessArgs& args) override {
-    BayModule::process(args);
+    BayOutputModule::process(args);
+    if (srcMod) {
+      for (int i=0; i<OUTPUTS_LEN; i++) {
+        int cnt = std::max(srcMod->inputs[i].getChannels(), inputs[i].getChannels());
+        for (int c=0; c<cnt; c++)
+          outputs[i].setVoltage(srcMod->inputs[i].getNormalVoltage(inputs[i].getVoltage(c), c), c);
+        outputs[i].setChannels(cnt);
+      }
+    }
+    else {
+      for (int i=0; i<OUTPUTS_LEN; i++) {
+        int cnt = inputs[i].getChannels();
+        for (int c=0; c<cnt; c++)
+          outputs[i].setVoltage(inputs[i].getVoltage(c), c);
+        outputs[i].setChannels(cnt);
+      }
+    }
   }
   
 };
 
-struct BayNormWidget : VenomWidget {
+struct BayNormWidget : BayOutputModuleWidget {
+
   BayNormWidget(BayNorm* module) {
+    module->bayOutputType = 1;
     setModule(module);
     setVenomPanel("BayNorm");
 

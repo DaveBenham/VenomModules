@@ -1,25 +1,12 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
 #include "BayModule.hpp"
 
-struct BayInput : BayInputModule {
-
-  BayInput() {
-    venomConfig(PARAMS_LEN, INPUTS_LEN, 0, LIGHTS_LEN);
-    for (int i=0; i < INPUTS_LEN; i++) {
-      configInput(POLY_INPUT+i, string::f("Port %d", i + 1));
-    }
-  }
-
-  void process(const ProcessArgs& args) override {
-    BayModule::process(args);
-  }
-  
-};
+// BayInput module defined in BayModule.hpp
 
 struct BayInputWidget : VenomWidget {
+
   BayInputWidget(BayInput* module) {
     setModule(module);
     setVenomPanel("BayInput");
@@ -30,5 +17,7 @@ struct BayInputWidget : VenomWidget {
   }
 
 };
+
+std::map<int64_t, BayInput*> BayModule::sources{};
 
 Model* modelBayInput = createModel<BayInput, BayInputWidget>("BayInput");
