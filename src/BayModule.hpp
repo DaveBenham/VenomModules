@@ -23,6 +23,7 @@ struct BayModule : VenomModule {
   };
   
   static std::map<int64_t, BayInput*> sources;
+  std::string modName;
 
 };
 
@@ -37,6 +38,7 @@ struct BayInput : BayModule {
     for (int i=0; i < INPUTS_LEN; i++) {
       configInput(POLY_INPUT+i, string::f("Port %d", i + 1));
     }
+    modName = "Bay Input";
   }
 
   void onAdd(const AddEvent& e) override {
@@ -62,6 +64,7 @@ struct BayInput : BayModule {
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "oldId", json_integer(id));
+    json_object_set_new(rootJ, "modName", json_string(modName.c_str()));
     return rootJ;
   
   }
@@ -71,6 +74,8 @@ struct BayInput : BayModule {
     json_t* val;
     if ((val = json_object_get(rootJ, "oldId")))
       oldId = json_integer_value(val);
+    if ((val = json_object_get(rootJ, "modName")))
+      modName = json_string_value(val);
   }
 
 };
@@ -111,6 +116,7 @@ struct BayOutputModule : BayModule {
 
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "modName", json_string(modName.c_str()));
     if (sources.count(srcId))
       json_object_set_new(rootJ, "srcId", json_integer(srcId));
     return rootJ;
@@ -120,6 +126,8 @@ struct BayOutputModule : BayModule {
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
     json_t* val;
+    if ((val = json_object_get(rootJ, "modName")))
+      modName = json_string_value(val);
     if ((val = json_object_get(rootJ, "srcId")))
       srcId = json_integer_value(val);
   }
@@ -130,12 +138,23 @@ struct BayOutputModule : BayModule {
     bayInputIds.clear();
     for (auto const& it : sources){
       if (APP->engine->getModule(it.first)) {
-        labels.push_back(std::to_string(it.first));
+        labels.push_back(it.second->modName + " (" + std::to_string(it.first) + ")");
         bayInputIds.push_back(it.first);
         bayInputs.push_back(it.second);
       }
     }
     menu->addChild(new MenuSeparator);
+    menu->addChild(createSubmenuItem(bayOutputType ? "Bay Norm name" : "Bay Output name", modName,
+      [=](Menu *menu){
+        MenuTextField *editField = new MenuTextField();
+        editField->box.size.x = 250;
+        editField->setText(modName);
+        editField->changeHandler = [=](std::string text) {
+          modName = text;
+        };
+        menu->addChild(editField);
+      }
+    ));
     menu->addChild(createIndexSubmenuItem(
       bayOutputType ? "Bay Norm source" : "Bay Output source",
       labels,
@@ -171,4 +190,61 @@ struct BayOutputModuleWidget : VenomWidget {
     VenomWidget::appendContextMenu(menu);
   }
 
+};
+
+struct BayOutputLabelsWidget : widget::Widget {
+  BayOutputModule* mod=NULL;
+  std::string modName;
+  std::string fontPath;
+
+  BayOutputLabelsWidget() {
+    fontPath = asset::system("res/fonts/DejaVuSans.ttf");
+  }
+
+  void draw(const DrawArgs& args) override {
+    if (mod) modName = mod->modName;
+    int theme = mod ? mod->currentTheme : 0;
+    if (!theme) theme = settings::preferDarkPanels ? getDefaultDarkTheme()+1 : getDefaultTheme()+1;
+    std::shared_ptr<Font> font = APP->window->loadFont(fontPath);
+    if (!font)
+      return;
+    nvgFontFaceId(args.vg, font->handle);
+    nvgTextAlign(args.vg, NVG_ALIGN_CENTER + NVG_ALIGN_MIDDLE);
+    nvgFontSize(args.vg, 11);
+    switch (theme) {
+      case 1: // ivory
+        nvgFillColor(args.vg, nvgRGB(0x25, 0x25, 0x25));
+        break;
+      case 2: // coal
+        nvgFillColor(args.vg, nvgRGB(0xed, 0xe7, 0xdc));
+        break;
+      case 3: // earth
+        nvgFillColor(args.vg, nvgRGB(0xd2, 0xac, 0x95));
+        break;
+      default: // danger
+        nvgFillColor(args.vg, nvgRGB(0x00, 0x00, 0x00));
+        break;
+    }
+    nvgText(args.vg, 37.5f, 13.f, modName.c_str(), NULL);
+    nvgFontSize(args.vg, 9.5);
+    switch (theme) {
+      case 1: // ivory
+        nvgFillColor(args.vg, nvgRGB(0xed, 0xe7, 0xdc));
+        break;
+      case 2: // coal
+        nvgFillColor(args.vg, nvgRGB(0x25, 0x25, 0x25));
+        break;
+      case 3: // earth
+        nvgFillColor(args.vg, nvgRGB(0x42, 0x39, 0x32));
+        break;
+      default: // danger
+        nvgFillColor(args.vg, nvgRGB(0xf2, 0xf2, 0xf2));
+        break;
+    }
+    std::string text;
+    for (int i=0; i<BayModule::OUTPUTS_LEN; i++) {
+      text = mod ? mod->outputInfos[i]->name : "Port "+std::to_string(i+1);
+      nvgText(args.vg, 37.5f, 31+i*42, text.c_str(), NULL);
+    }
+  }
 };

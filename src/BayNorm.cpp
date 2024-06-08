@@ -10,6 +10,7 @@ struct BayNorm : BayOutputModule {
     for (int i=0; i < OUTPUTS_LEN; i++) {
       configInput(POLY_INPUT+i, string::f("Port %d", i + 1));
       configOutput(POLY_OUTPUT+i, string::f("Port %d", i + 1));
+      modName = "Bay Norm";
     }
   }
 
@@ -38,13 +39,21 @@ struct BayNorm : BayOutputModule {
 struct BayNormWidget : BayOutputModuleWidget {
 
   BayNormWidget(BayNorm* module) {
-    module->bayOutputType = 1;
     setModule(module);
     setVenomPanel("BayNorm");
+    if (module) {
+      module->bayOutputType = 1;
+    }
+
+    BayOutputLabelsWidget* text = createWidget<BayOutputLabelsWidget>(Vec(0.f,0.f));
+    text->mod = module;
+    text->box.size = box.size;
+    text->modName = "BAY NORM";
+    addChild(text);
 
     for (int i=0; i<BayNorm::OUTPUTS_LEN; i++) {
-      addInput(createInputCentered<PolyPort>(Vec(21.5f,48.5f+i*42), module, BayNorm::POLY_INPUT + i));
-      addOutput(createOutputCentered<PolyPort>(Vec(53.5f,48.5f+i*42), module, BayNorm::POLY_OUTPUT + i));
+      addInput(createInputCentered<PolyPort>(Vec(20.5f,48.5f+i*42), module, BayNorm::POLY_INPUT + i));
+      addOutput(createOutputCentered<PolyPort>(Vec(54.5f,48.5f+i*42), module, BayNorm::POLY_OUTPUT + i));
     }
   }
 
