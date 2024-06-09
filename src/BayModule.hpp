@@ -138,7 +138,7 @@ struct BayOutputModule : BayModule {
     bayInputIds.clear();
     for (auto const& it : sources){
       if (APP->engine->getModule(it.first)) {
-        labels.push_back(it.second->modName + " (" + std::to_string(it.first) + ")");
+        labels.push_back(string::f("%s (%lld)", it.second->modName.c_str(), it.first));
         bayInputIds.push_back(it.first);
         bayInputs.push_back(it.second);
       }
@@ -179,6 +179,28 @@ struct BayOutputModule : BayModule {
       }
     ));
   }
+  
+  void widgetStep() { // propagate src labels to output
+    for (int i=0; i<OUTPUTS_LEN; i++) {
+      PortInfo* oi = outputInfos[i];
+      PortExtension* oe = &outputExtensions[i];
+      bool propagate = (oi->name == oe->factoryName);
+      if (srcMod)
+        oe->factoryName = srcMod->inputInfos[i]->name;
+      else
+        oe->factoryName = string::f("Port %d", i+1);
+      if (propagate)
+        oi->name = oe->factoryName;
+      if (bayOutputType) {
+        PortInfo* ii = inputInfos[i];
+        PortExtension* ie = &inputExtensions[i];
+        propagate = (ii->name == ie->factoryName);
+        ie->factoryName = oi->name + " normal";
+        if (propagate)
+          ii->name = ie->factoryName;
+      }  
+    }
+  }
 
 };
 
@@ -188,6 +210,13 @@ struct BayOutputModuleWidget : VenomWidget {
     BayOutputModule* thisMod = static_cast<BayOutputModule*>(this->module);
     thisMod->appendWidgetContextMenu(menu);
     VenomWidget::appendContextMenu(menu);
+  }
+
+  void step() override {
+    VenomWidget::step();
+    if(this->module) {
+      static_cast<BayOutputModule*>(this->module)->widgetStep();
+    }
   }
 
 };
@@ -243,7 +272,7 @@ struct BayOutputLabelsWidget : widget::Widget {
     }
     std::string text;
     for (int i=0; i<BayModule::OUTPUTS_LEN; i++) {
-      text = mod ? mod->outputInfos[i]->name : "Port "+std::to_string(i+1);
+      text = mod ? mod->outputInfos[i]->name : string::f("Port %d", i+1);
       nvgText(args.vg, 37.5f, 31+i*42, text.c_str(), NULL);
     }
   }
