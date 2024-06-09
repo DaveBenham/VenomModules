@@ -10,7 +10,7 @@ Venom modules version 2.8.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 
 |[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|
 |----|----|----|----|----|
-|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayNorm.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|
+|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|
 
 |[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|
 |----|----|----|----|----|----|----|----|
@@ -136,7 +136,7 @@ The names of each input/output pair are linked. Changing the name of one will au
 [Return to Table Of Contents](#venom)
 
 ## BAY MODULES
-![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayNorm.png)  
+![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)  
 Bay Input, Bay Norm, and Bay Output are teleporting polyphonic modules with custom labels for making clean, self documenting patch bays.
 
 [Return to Table Of Contents](#venom)
