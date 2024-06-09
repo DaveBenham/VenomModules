@@ -16,11 +16,19 @@ struct BayNorm : BayOutputModule {
 
   void process(const ProcessArgs& args) override {
     BayOutputModule::process(args);
-    if (srcMod) {
+    if (srcMod && !srcMod->isBypassed()) {
       for (int i=0; i<OUTPUTS_LEN; i++) {
-        int cnt = std::max(srcMod->inputs[i].getChannels(), inputs[i].getChannels());
-        for (int c=0; c<cnt; c++)
-          outputs[i].setVoltage(srcMod->inputs[i].getNormalVoltage(inputs[i].getVoltage(c), c), c);
+        int cnt = 0;
+        if (srcMod->inputs[i].isConnected()) {
+          cnt = srcMod->inputs[i].getChannels();
+          for (int c=0; c<cnt; c++)
+            outputs[i].setVoltage(srcMod->inputs[i].getVoltage(c), c);
+        }
+        else {
+          cnt = inputs[i].getChannels();
+          for (int c=0; c<cnt; c++)
+            outputs[i].setVoltage(inputs[i].getVoltage(c), c);
+        }
         outputs[i].setChannels(cnt);
       }
     }

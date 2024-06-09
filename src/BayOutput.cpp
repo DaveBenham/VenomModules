@@ -15,7 +15,7 @@ struct BayOutput : BayOutputModule {
 
   void process(const ProcessArgs& args) override {
     BayOutputModule::process(args);
-    if (srcMod) {
+    if (srcMod && !srcMod->isBypassed()) {
       for (int i=0; i<OUTPUTS_LEN; i++) {
         int cnt = srcMod->inputs[i].getChannels();
         for (int c=0; c<cnt; c++)
