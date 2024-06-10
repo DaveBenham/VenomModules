@@ -204,7 +204,7 @@ No values are teleported from a Bay Input to a Bay Output/Norm if either module 
 
 All Bay Output ports will be constant monnophonic 0 volts if the Bay Output is bypassed or the source Bay Input is bypassed.
 
-The Bay Norm output will be the normal input if the source Bay Input is bypassed. The Bay Norm output will be monophonic constant 0 volts if the Bay Normm is bypassed.
+The Bay Norm output will be the normal input if the source Bay Input is bypassed. The Bay Norm output will be monophonic constant 0 volts if the Bay Norm is bypassed.
 
 [Return to Table Of Contents](#venom)
 
