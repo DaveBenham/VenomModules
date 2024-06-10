@@ -152,18 +152,25 @@ Bay Output and Bay Norm each have a context menu option to specify the Bay Input
 The Bay Input source is identified by the numeric VCV module instance ID, shown within parentheses in the context menu. The user defined Bay Input name is displayed before the numeric ID, and makes it easier to keep track of which Input is linked to which Output/Norm. Changing the name of a Bay Input does not break the link.
 
 ### Port Names / Labels
-Each port on a Bay Input/Output/Norm can be given a user defined name via the standard Venom port context menu. The port name is displayed as a label above the port. The label for a Bay Norm output is taken from the output port. The normal input name only appears in the hover text - it does not appear as a label.
+Each port on a Bay Input/Output/Norm can be given a user defined name via the standard Venom port context menu. The port name is displayed as a label above the port. The label for a Bay Norm output is taken from the output port. The normal input port name only appears in the hover text - it does not appear as a label.
 
 #### Bay Input default port names
 The factory default input port name is always "Port " followed by the port number.
 
-#### Bay Output/Norm default output port names
+#### Bay Output, Bay Norm default output port names
 The factory default output port name depends on whether the module has been linked to a source:
 - Linked default: Inherits the current name from the source Bay Input port
 - Unlinked default: "Port " followed by the port number
 
 #### Bay Norm default normal input port names
 The factory default is always the current output port name with "normal" appended.
+
+### 0 Channel outputs
+Bay Output and Bay Norm have a "0 Channel output" context menu option. If this option is enabled, then a Bay Output output will have 0 channels if the source Bay Input is not patched or there is no link. A Bay Norm output will have 0 channels if both the source input and the normal input are not patched or if there is no link.
+
+If the option is not enabled then the output would be constant monophonic 0 volt instead.
+
+Cables with 0 channels act as though there is no patch cable at all, so normalled inputs at the destination input are preserved.
 
 ### Recommended configuration
 #### Patch Bay Input
@@ -194,15 +201,15 @@ Leave all patch bay output ports with their factory default names so they inheri
 
 ### Selection paste/import behavior
 
-Module and port names are always preserved when pasting or importing a selection set.
+Custom module and port names are always preserved when pasting or importing a selection set.
 
-Paired Bay Inputs and Bay Outputs/Norms within the selection set preserve their link when pasting or importing. If the source for a Bay Output or Bay Norm is not included in the selection set, then the Bay Output/Norm will be unlinked when pasted or imported.
+Paired Bay Inputs and Bay Outputs/Norms within the selection set preserve their link when pasting or importing. If a Bay Input, Bay Output, or Bay Norm is included within a selection set without the corresponding linked module, then the copied/imported module will not be linked.
 
 ### Bypass Behavior
 
 No values are teleported from a Bay Input to a Bay Output/Norm if either module is bypassed.
 
-All Bay Output ports will be constant monnophonic 0 volts if the Bay Output is bypassed or the source Bay Input is bypassed.
+All Bay Output ports will be constant monophonic 0 volts if the Bay Output is bypassed or the source Bay Input is bypassed.
 
 The Bay Norm output will be the normal input if the source Bay Input is bypassed. The Bay Norm output will be monophonic constant 0 volts if the Bay Norm is bypassed.
 
