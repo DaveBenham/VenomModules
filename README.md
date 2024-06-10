@@ -137,7 +137,74 @@ The names of each input/output pair are linked. Changing the name of one will au
 
 ## BAY MODULES
 ![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)  
-Bay Input, Bay Norm, and Bay Output are teleporting polyphonic modules with custom labels for making clean, self documenting patch bays.
+Bay Input, Bay Norm, and Bay Output are teleporting polyphonic modules with user defined labels for making clean, self documenting patch bays. They are a great companion for the MindMeld PatchMaster user interface modules.
+
+None of the Bay modules are particularly useful on their own - Each Bay Input should be paired with at least one Bay Output and/or Bay Norm. Each input on a Bay Input is teleported to the corresponding output on the Bay Output or Bay Norm. Each Bay Norm output has a corresponding Normal input that is used when the Bay Input is not patched.
+
+Signal teleporting is instantaneous - there is no sample delay introduced between a Bay Input and the linked Bay Output/Norm.
+
+### Module Name / Label
+Each Bay module has a context menu option to specify a unique name for the module instance that appears as a label at the top of the module.
+
+### Output Source
+Bay Output and Bay Norm each have a context menu option to specify the Bay Input source for that instance. A Bay Output or Bay Norm can only have a single source. But a Bay Input can be the source for multiple Bay Outputs/Norms
+
+The Bay Input source is identified by the numeric VCV module instance ID, shown within parentheses in the context menu. The user defined Bay Input name is displayed before the numeric ID, and makes it easier to keep track of which Input is linked to which Output/Norm. Changing the name of a Bay Input does not break the link.
+
+### Port Names / Labels
+Each port on a Bay Input/Output/Norm can be given a user defined name via the standard Venom port context menu. The port name is displayed as a label above the port. The label for a Bay Norm output is taken from the output port. The normal input name only appears in the hover text - it does not appear as a label.
+
+#### Bay Input default port names
+The factory default input port name is always "Port " followed by the port number.
+
+#### Bay Output/Norm default output port names
+The factory default output port name depends on whether the module has been linked to a source:
+- Linked default: Inherits the current name from the source Bay Input port
+- Unlinked default: "Port " followed by the port number
+
+#### Bay Norm default normal input port names
+The factory default is always the current output port name with "normal" appended.
+
+### Recommended configuration
+#### Patch Bay Input
+Place the Bay Input in your patch bay with a name of "Input n" where n is a sequential number.
+
+Give each of the Bay Input ports a descriptive name designating the use for the port.
+
+Place the destination Bay Norm in the "operational guts" of your patch, and give it a name of "Target n".
+
+Map the Target n source to the corresponding "Input n" in your patch bay.
+
+Leave all Bay Norm ports with factory default names so the labels are automatically inherited from the source.
+
+Patch the output ports to the correct inputs in your operational patch. Patch the default values to the normal inputs.
+
+#### Patch Bay Output
+Place a Bay Input near the operational guts of your patch and give it a name of "Source n", where n is a sequential number.
+
+Give each of the "Source n" ports a descriptive name designating the use of the patch bay output.
+
+Patch each signal source in your operational patch to the appropriate input port in your "Source n"
+
+Place a Bay Output in your patch bay and give it a name of "Output n" where n matches the number of the source.
+
+Map the output to the corresponding "Source n" in your operational patch.
+
+Leave all patch bay output ports with their factory default names so they inherit the name from the source.
+
+### Selection paste/import behavior
+
+Module and port names are always preserved when pasting or importing a selection set.
+
+Paired Bay Inputs and Bay Outputs/Norms within the selection set preserve their link when pasting or importing. If the source for a Bay Output or Bay Norm is not included in the selection set, then the Bay Output/Norm will be unlinked when pasted or imported.
+
+### Bypass Behavior
+
+No values are teleported from a Bay Input to a Bay Output/Norm if either module is bypassed.
+
+All Bay Output ports will be constant monnophonic 0 volts if the Bay Output is bypassed or the source Bay Input is bypassed.
+
+The Bay Norm output will be the normal input if the source Bay Input is bypassed. The Bay Norm output will be monophonic constant 0 volts if the Bay Normm is bypassed.
 
 [Return to Table Of Contents](#venom)
 
