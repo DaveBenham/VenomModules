@@ -139,7 +139,7 @@ The names of each input/output pair are linked. Changing the name of one will au
 ![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)  
 Bay Input, Bay Norm, and Bay Output are teleporting polyphonic modules with user defined labels for making clean, self documenting patch bays. They are a great companion for the MindMeld PatchMaster user interface modules.
 
-None of the Bay modules are particularly useful on their own - Each Bay Input should be paired with at least one Bay Output and/or Bay Norm. Each input on a Bay Input is teleported to the corresponding output on the Bay Output or Bay Norm. Each Bay Norm output has a corresponding Normal input that is used when the Bay Input is not patched.
+None of the Bay modules are particularly useful on their own - Each Bay Input should be paired with at least one Bay Output and/or Bay Norm. Each input on a Bay Input is teleported to the corresponding output on the Bay Output or Bay Norm. Each Bay Norm output has a corresponding Normal input that is used when the source Bay Input is not patched.
 
 Signal teleporting is instantaneous - there is no sample delay introduced between a Bay Input and the linked Bay Output/Norm.
 
