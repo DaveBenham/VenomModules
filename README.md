@@ -166,7 +166,7 @@ The factory default output port name depends on whether the module has been link
 The factory default is always the current output port name with "normal" appended.
 
 ### 0 Channel outputs
-Bay Output and Bay Norm have a "0 Channel output" context menu option. If this option is enabled, then a Bay Output output will have 0 channels if the source Bay Input is not patched or there is no link. A Bay Norm output will have 0 channels if both the source input and the normal input are not patched or if there is no link.
+Bay Output and Bay Norm have an "Enable 0 Channel output" context menu option. If this option is enabled, then a Bay Output output will have 0 channels if the source Bay Input is not patched or there is no link. A Bay Norm output will have 0 channels if both the source input and the normal input are not patched or if there is no link.
 
 If the option is not enabled then the output would be constant monophonic 0 volt instead.
 

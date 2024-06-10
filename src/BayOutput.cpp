@@ -18,15 +18,24 @@ struct BayOutput : BayOutputModule {
     if (srcMod && !srcMod->isBypassed()) {
       for (int i=0; i<OUTPUTS_LEN; i++) {
         int cnt = srcMod->inputs[i].getChannels();
+        outputs[i].channels = std::max(cnt,1);
         for (int c=0; c<cnt; c++)
           outputs[i].setVoltage(srcMod->inputs[i].getVoltage(c), c);
-        outputs[i].setChannels(cnt);
+        if (zeroChannel==true && cnt==0)
+          outputs[i].channels = 0;
+        else
+          outputs[i].setChannels(cnt);
       }
     }
     else {
       for (int i=0; i<OUTPUTS_LEN; i++) {
-        outputs[i].setVoltage(0.f);
-        outputs[i].setChannels(0);
+        if (zeroChannel==true)
+          outputs[i].channels = 0;
+        else {
+          outputs[i].channels = 1;
+          outputs[i].setVoltage(0.f);
+          outputs[i].setChannels(0);
+        }
       }
     }
   }

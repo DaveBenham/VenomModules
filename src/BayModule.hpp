@@ -89,6 +89,7 @@ struct BayOutputModule : BayModule {
   std::vector<int64_t> bayInputIds{};
 
   int bayOutputType = 0;
+  bool zeroChannel = false;
   
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
@@ -119,8 +120,8 @@ struct BayOutputModule : BayModule {
     json_object_set_new(rootJ, "modName", json_string(modName.c_str()));
     if (sources.count(srcId))
       json_object_set_new(rootJ, "srcId", json_integer(srcId));
+    json_object_set_new(rootJ, "zeroChannel", json_boolean(zeroChannel));
     return rootJ;
-  
   }
 
   void dataFromJson(json_t* rootJ) override {
@@ -130,6 +131,8 @@ struct BayOutputModule : BayModule {
       modName = json_string_value(val);
     if ((val = json_object_get(rootJ, "srcId")))
       srcId = json_integer_value(val);
+    if ((val = json_object_get(rootJ, "zeroChannel")))
+      zeroChannel = json_boolean_value(val);
   }
 
   void appendWidgetContextMenu(Menu* menu) {
@@ -176,6 +179,14 @@ struct BayOutputModule : BayModule {
           srcId = -1;
           srcMod = NULL;
         }
+      }
+    ));
+    menu->addChild(createBoolMenuItem("Enable 0 channel output", "",
+      [=]() {
+        return zeroChannel;
+      },
+      [=](bool val){
+        zeroChannel = val;
       }
     ));
   }

@@ -21,23 +21,32 @@ struct BayNorm : BayOutputModule {
         int cnt = 0;
         if (srcMod->inputs[i].isConnected()) {
           cnt = srcMod->inputs[i].getChannels();
+          outputs[i].channels = std::max(cnt,1);
           for (int c=0; c<cnt; c++)
             outputs[i].setVoltage(srcMod->inputs[i].getVoltage(c), c);
         }
         else {
           cnt = inputs[i].getChannels();
+          outputs[i].channels = std::max(cnt,1);
           for (int c=0; c<cnt; c++)
             outputs[i].setVoltage(inputs[i].getVoltage(c), c);
         }
-        outputs[i].setChannels(cnt);
+        if (zeroChannel==true && cnt==0)
+          outputs[i].channels = 0;
+        else
+          outputs[i].setChannels(cnt);
       }
     }
     else {
       for (int i=0; i<OUTPUTS_LEN; i++) {
         int cnt = inputs[i].getChannels();
+        outputs[i].channels = std::max(cnt,1);
         for (int c=0; c<cnt; c++)
           outputs[i].setVoltage(inputs[i].getVoltage(c), c);
-        outputs[i].setChannels(cnt);
+        if (zeroChannel==true && cnt==0)
+          outputs[i].channels = 0;
+        else
+          outputs[i].setChannels(cnt);
       }
     }
   }
