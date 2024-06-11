@@ -145,7 +145,7 @@ struct VenomModule : Module {
       pe = e->inputLink ? &inputExtensions[e->nameLink] : &outputExtensions[e->nameLink];
     }
     menu->addChild(new MenuSeparator);
-    menu->addChild(createSubmenuItem("Parameter name", "",
+    menu->addChild(createSubmenuItem("Parameter name", q->name,
       [=](Menu *menu){
         MenuTextField *editField = new MenuTextField();
         editField->box.size.x = 250;
@@ -209,7 +209,7 @@ struct VenomModule : Module {
       eLink = (type==engine::Port::INPUT ? &outputExtensions[e->portNameLink] : &inputExtensions[e->portNameLink]);
     }
     menu->addChild(new MenuSeparator);
-    menu->addChild(createSubmenuItem("Port name", "",
+    menu->addChild(createSubmenuItem("Port name", pi->name,
       [=](Menu *menu){
         MenuTextField *editField = new MenuTextField();
         editField->box.size.x = 250;
