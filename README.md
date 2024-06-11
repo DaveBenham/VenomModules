@@ -172,6 +172,9 @@ If the option is not enabled then the output would be constant monophonic 0 volt
 
 Cables with 0 channels act as though there is no patch cable at all, so normalled inputs at the destination input are preserved.
 
+### VCV Rack Pro within a DAW
+The Bay modules work fine when used with Rack Pro running as a plugin within a DAW. However, Bay Output and Bay Normal can only link to Bay Input sources within the same plugin instance. They cannot link across multiple plugin instances, whether they be in the same or different tracks.
+
 ### Recommended configuration
 #### Patch Bay Input
 Place the Bay Input in your patch bay with a name of "Input n" where n is a sequential number.
