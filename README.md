@@ -613,7 +613,7 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 Five independently configurable constant voltage knobs.
 
 ### Individual Knob configuration
-Each knob has a custom menu option to tailor the knob to your needs.
+Each knob has custom menu options to tailor the knob to your needs.
 
 #### Knob Range
 Determines the minimum and maximum voltage of the knob.
