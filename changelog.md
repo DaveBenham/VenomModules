@@ -39,6 +39,8 @@
   - Clamped the oscillator frequency to between ~0.03 Hz and ~12.5 kHz to prevent loss of output.
 - Mix Fade and Mix Fade 2
   - Fixed range of level output to 0-10 V. Was erroneously 0-1 V.
+- VCA Mix 4 and VCA Mix 4 Stereo
+  - Fixed output polyphony for excluded inputs
 
 ## 2.7.0 (2024-03-11)
 ### New Modules

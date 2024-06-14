@@ -2299,6 +2299,9 @@ The number of output channels is the maximum number of channels found across all
 
 Monophonic inputs are replicated to match the number of output channels. Polyphonic inputs that have fewer channels use 0V for missing channels.
 
+### Reset Poly (Reset Polyphony count) button
+Momentarily forces all outputs to be monophonic - useful when the input polyphony count is reduced when the VCO Lab has feedback. After release, the correct output poly count will be computed. Without the Reset Poly button it would require temporary removal of the feedback to restore the correct poly count.
+
 ### FRQ (Frequency Mode) button
 This color coded button controls the overall mode of the oscillator
 - **Audio frequency** (green - default)
