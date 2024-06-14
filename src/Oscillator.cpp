@@ -30,7 +30,7 @@ struct Oscillator : VenomModule {
     DC_PARAM,
     FREQ_PARAM,
     OCTAVE_PARAM,
-    UNUSED_PARAM,
+    RESET_POLY_PARAM,
     EXP_PARAM,
     LIN_PARAM,
     
@@ -233,6 +233,7 @@ struct Oscillator : VenomModule {
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Pulse Width Range", {"Limited 3%-97%", "Full 0%-100%"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
     configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "DC Block", {"Off", "On"});
+    configButton(RESET_POLY_PARAM, "Reset polyphony count");
     
     configParam<FreqQuantity>(FREQ_PARAM, -4.f, 4.f, 0.f, "Frequency", " Hz");
     configParam(OCTAVE_PARAM, -4.f, 4.f, 0.f, "Octave");
@@ -355,10 +356,12 @@ struct Oscillator : VenomModule {
     }
     // get channel count
     int channels = 1;
-    for (int i=0; i<INPUTS_LEN; i++) {
-      int c = inputs[i].getChannels();
-      if (c>channels)
-        channels = c;
+    if (!params[RESET_POLY_PARAM].getValue()){
+      for (int i=0; i<INPUTS_LEN; i++) {
+        int c = inputs[i].getChannels();
+        if (c>channels)
+          channels = c;
+      }
     }
     int simdCnt = (channels+3)/4;
     
@@ -930,6 +933,7 @@ struct OscillatorWidget : VenomWidget {
     addParam(createLockableParamCentered<PWSwitch>(Vec(50.5f,37.5f), module, Oscillator::PW_PARAM));
     addParam(createLockableParamCentered<MixShpSwitch>(Vec(68.5f,37.5f), module, Oscillator::MIXSHP_PARAM));
     addParam(createLockableParamCentered<DCBlockSwitch>(Vec(86.5f,37.5f), module, Oscillator::DC_PARAM));
+    addParam(createLockableParamCentered<GlowingTinyButtonLockable>(Vec(315.5f,16.5f), module, Oscillator::RESET_POLY_PARAM));
     
     addParam(createLockableParamCentered<RoundHugeBlackKnobLockable>(Vec(46.5f,93.5f), module, Oscillator::FREQ_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(29.f,157.f), module, Oscillator::OCTAVE_PARAM));
