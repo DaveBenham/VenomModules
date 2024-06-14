@@ -172,13 +172,17 @@ struct VCAMix4Stereo : MixBaseModule {
 
     int inChannels[4];
     int channels = std::max({1, inputs[LEFT_CHAIN_INPUT].getChannels(), inputs[RIGHT_CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    int loopChannels = channels;
     for (int i=0; i<4; i++){
       inChannels[i] = mode == 1 ? 1 : std::max({
         1, inputs[CV_INPUTS+i].getChannels(),
         inputs[LEFT_INPUTS+i].getChannels(), inputs[RIGHT_INPUTS+i].getChannels()
       });
-      if (inChannels[i] > channels && (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected())))
-        channels = inChannels[i];
+      if (inChannels[i] > channels) {
+        loopChannels = inChannels[i];
+        if (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected()))
+          channels = inChannels[i];
+      }
     }
     simd::float_4 leftOut, rightOut, leftRtn, rightRtn, cv, leftChannel[4], rightChannel[4];
     bool sendChain;
@@ -186,7 +190,7 @@ struct VCAMix4Stereo : MixBaseModule {
     float fadeLevel[5];
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
-    for (int c=0; c<channels; c+=4){
+    for (int c=0; c<loopChannels; c+=4){
       leftOut = inputs[LEFT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       rightOut = inputs[RIGHT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       if (mode == 1){

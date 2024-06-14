@@ -138,24 +138,28 @@ struct VCAMix4 : MixBaseModule {
     bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
     float preOff[4], postOff[4];
     for (int i=0; i<4; i++) {
-      int Cnt = mode == 1 ? inputs[INPUTS+i].getChannels() : 1;
-      preOff[i] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
-      postOff[i] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
+      int cnt = mode == 1 ? inputs[INPUTS+i].getChannels() : 1;
+      preOff[i] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+i].getValue() * cnt : 0.f;
+      postOff[i] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+i].getValue() * cnt : 0.f;
     }
 
     int inChannels[4];
     int channels = std::max({1, inputs[CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    int loopChannels = channels;
     for (int i=0; i<4; i++) {
       inChannels[i] = mode == 1 ? 1 : std::max({1, inputs[CV_INPUTS+i].getChannels(), inputs[INPUTS+i].getChannels()});
-      if (inChannels[i] > channels && (!exclude || !outputs[OUTPUTS+i].isConnected()))
-        channels = inChannels[i];
+      if (inChannels[i] > channels){
+        loopChannels = inChannels[i];
+        if (!exclude || !outputs[OUTPUTS+i].isConnected())
+          channels = inChannels[i];
+      }
     }
     simd::float_4 channel[4], out, rtn, cv;
     bool sendChain;
     float fadeLevel[5];
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
-    for (int c=0; c<channels; c+=4){
+    for (int c=0; c<loopChannels; c+=4){
       out = inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       for (int i=0; i<4; i++){
         cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
