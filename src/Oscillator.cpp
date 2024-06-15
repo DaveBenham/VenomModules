@@ -188,6 +188,7 @@ struct Oscillator : VenomModule {
   int currentMode = 0;
   int mode = 0;
   bool once = false;
+  bool noRetrigger = false;
   bool gated = false;
   float_4 onceActive[4]{};
   int modeDefaultOver[3] = {2, 0, 2};
@@ -228,7 +229,7 @@ struct Oscillator : VenomModule {
   Oscillator() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 6.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier", "Triggered audio one shot", "Gated audio one shot", "Triggered LFO one shot", "Gated LFO one shot"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 7.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier", "Triggered audio one shot", "Retriggered audio one shot", "Gated audio one shot", "Retriggered LFO one shot", "Gated LFO one shot"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 3.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Pulse Width Range", {"Limited 3%-97%", "Full 0%-100%"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
@@ -316,12 +317,13 @@ struct Oscillator : VenomModule {
   
   void setMode() {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
-    mode = currentMode>4 ? 1 : currentMode>2 ? 0 : currentMode;
+    mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
     params[OVER_PARAM].setValue(modeDefaultOver[mode]);
     paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
     paramExtensions[OVER_PARAM].factoryDflt = modeDefaultOver[mode];
     once = (currentMode>2);
-    gated = (currentMode==4) || (currentMode==6);
+    noRetrigger = (currentMode==3);
+    gated = (currentMode==5) || (currentMode==7);
     for (int i=0; i<4; i++) onceActive[i] = float_4::zero();
   }
 
@@ -468,7 +470,7 @@ struct Oscillator : VenomModule {
             }
           } // else preserve prior syncIn value
           for (int i=0; i<4; i++){
-            sync[i] = syncTrig[c+i].process(syncIn[i], 0.2f, 2.f);
+            sync[i] = syncTrig[c+i].process(syncIn[i], 0.2f, 2.f) && !(noRetrigger && onceActive[s][i]);
           }
         } else onceActive[s] = float_4::zero();
         if (!alternate) {
@@ -836,11 +838,12 @@ struct OscillatorWidget : VenomWidget {
   
   struct ModeSwitch : GlowingSvgSwitchLockable {
     ModeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
     }

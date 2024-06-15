@@ -2304,19 +2304,21 @@ Momentarily forces all outputs to be monophonic - useful when the input polyphon
 
 ### FRQ (Frequency Mode) button
 This color coded button controls the overall mode of the oscillator
-- **Audio frequency** (green - default)
+- **Audio frequency** (white - default)
 - **Low frequency** (orange)
 - **0 Hz carrier** (yellow)
 - **Triggered audio one shot** (light blue)
-- **Gated audio one shot** (dark blue)
-- **Triggered LFO one shot** (pink)
+- **Retriggered audio one shot** (dark blue)
+- **Gated audio one shot** (green)
+- **Retriggered LFO one shot** (pink)
 - **Gated LFO one shot** (purple)
 
 In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
 
 If using any of the one shot modes, then the oscillator will not produce any output until it receives a trigger or gate at the Sync input.
- - Triggered one shots will output one complete cycle and then stop until the next trigger is received. If another trigger is received before the cycle completion, then the wave will be reset to phase 0 and retriggered.
- - Gated one shots work the same except they only output as much of a single wave cycle as fits within the high gate period.
+ - Triggered one shots will output exactly one complete cycle and then stop until the next trigger is received. If the cycle has not yet completed when a sync trigger is received, then the trigger is ignored. This works well for creating undertone or subharmonic series!
+ - Retriggered one shots will output one complete cycle and then stop until the next trigger is received. If another trigger is received before the cycle completion, then the wave will be reset to phase 0 and retriggered.
+ - Gated one shots work the same as retriggered except they only output as much of a single wave cycle as fits within the high gate period.
 
 Regardless what mode is chosen, the full oscillator frequency range is accessible via CV modulation.
 
