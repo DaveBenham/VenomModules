@@ -903,7 +903,7 @@ struct OscillatorWidget : VenomWidget {
     }
   };
 
-  struct LevelPort : OverPort {
+  struct LevelPort : PolyPort {
     int portId;
     void appendContextMenu(Menu* menu) override {
       Oscillator* module = static_cast<Oscillator*>(this->module);
@@ -941,7 +941,7 @@ struct OscillatorWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundHugeBlackKnobLockable>(Vec(46.5f,93.5f), module, Oscillator::FREQ_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(29.f,157.f), module, Oscillator::OCTAVE_PARAM));
 
-    addInput(createInputCentered<OverPort>(Vec(64.f, 158.f), module, Oscillator::REV_INPUT));
+    addInput(createOverInputCentered<OverPort>(Vec(64.f, 158.f), module, Oscillator::REV_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(77.5f, 146.5f), module, Oscillator::REV_LIGHT));
 
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(29.f,206.f), module, Oscillator::EXP_PARAM));
