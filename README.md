@@ -152,7 +152,7 @@ Bay Output and Bay Norm each have a context menu option to specify the Bay Input
 The Bay Input source is identified by the numeric VCV module instance ID, shown within parentheses in the context menu. The user defined Bay Input name is displayed before the numeric ID, and makes it easier to keep track of which Input is linked to which Output/Norm. Changing the name of a Bay Input does not break the link.
 
 ### Port Names / Labels
-Each port on a Bay Input/Output/Norm can be given a user defined name via the standard Venom port context menu. The port name is displayed as a label above the port. The label for a Bay Norm output is taken from the output port. The normal input port name only appears in the hover text - it does not appear as a label.
+Each port on a Bay Input/Output/Norm can be given a user defined name via the [standard Venom port context menu](#custom-names). The port name is displayed as a label above the port. The label for a Bay Norm output is taken from the output port. The normal input port name only appears in the hover text - it does not appear as a label.
 
 #### Bay Input default port names
 The factory default input port name is always "Port " followed by the port number.
