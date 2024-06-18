@@ -165,6 +165,8 @@ struct Oscillator : VenomModule {
     SQR_RM_LIGHT,
     SAW_RM_LIGHT,
     MIX_RM_LIGHT,
+    
+    LIN_DC_LIGHT,
 
     LIGHTS_LEN
   };
@@ -182,7 +184,8 @@ struct Oscillator : VenomModule {
                      shapeUpSample[4][5], phaseUpSample[4][5], offsetUpSample[4][5], levelUpSample[4][5],
                      outDownSample[4][5];
   float_4 phasor[4]{}, phasorDir[4]{1.f, 1.f, 1.f, 1.f};
-  DCBlockFilter_4 dcBlockFilter[4][5];
+  DCBlockFilter_4 dcBlockFilter[4][6]; // Sin, Tri, Sqr, Saw, Mix, Lin FM Input
+  bool linDCCouple = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
   float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
   int currentMode = 0;
@@ -246,6 +249,7 @@ struct Oscillator : VenomModule {
     configLight(EXP_LIGHT, "Exponential FM oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configInput(LIN_INPUT, "Linear FM");
     configLight(LIN_LIGHT, "Linear FM oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
+    configLight(LIN_DC_LIGHT, "Linear FM DC coupled indicator");
     configInput(EXP_DEPTH_INPUT, "Exponential FM depth");
     configInput(LIN_DEPTH_INPUT, "Linear FM depth");
     configInput(VOCT_INPUT, "V/Oct");
@@ -303,7 +307,7 @@ struct Oscillator : VenomModule {
   void initDCBlock(){
     float sampleRate = settings::sampleRate;
     for (int i=0; i<4; i++){
-      for (int j=0; j<5; j++){
+      for (int j=0; j<6; j++){
         dcBlockFilter[i][j].init(sampleRate);
       }
     }
@@ -440,6 +444,8 @@ struct Oscillator : VenomModule {
             linIn = linUpSample[s].process(linIn);
           }
         } // else preserve prior linIn value
+        if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
+          linIn = dcBlockFilter[s][5].process(linIn);
         if (s==0 || inputs[MIX_PHASE_INPUT].isPolyphonic()) {
           phaseIn[MIX] = (o && !disableOver[MIX_PHASE_INPUT]) ? float_4::zero() : inputs[MIX_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
           if (procOver[MIX_PHASE_INPUT]){
@@ -811,6 +817,7 @@ struct Oscillator : VenomModule {
     for (int i=0; i<5; i++)
       json_array_append_new(array, json_boolean(ringMod[i]));
     json_object_set_new(rootJ, "ringMod", array);
+    json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
     return rootJ;
   }
 
@@ -828,6 +835,9 @@ struct Oscillator : VenomModule {
       json_array_foreach(array, index, val){
         setRingMod( index, json_boolean_value(val));
       }
+    }
+    if ((val = json_object_get(rootJ, "linDCCouple"))) {
+      linDCCouple = json_boolean_value(val);
     }
     setMode();
   }
@@ -902,6 +912,17 @@ struct OscillatorWidget : VenomWidget {
       PolyPort::appendContextMenu(menu);
     }
   };
+  
+  struct LinPort : PolyPort {
+    int portId;
+    void appendContextMenu(Menu* menu) override {
+      Oscillator* module = static_cast<Oscillator*>(this->module);
+      menu->addChild(new MenuSeparator);
+      menu->addChild(createBoolPtrMenuItem("Disable oversampling", "", &module->disableOver[portId]));
+      menu->addChild(createBoolPtrMenuItem("DC coupled", "", &module->linDCCouple));
+      PolyPort::appendContextMenu(menu);
+    }
+  };
 
   struct LevelPort : PolyPort {
     int portId;
@@ -948,8 +969,9 @@ struct OscillatorWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(64.f,206.f), module, Oscillator::LIN_PARAM));
     addInput(createOverInputCentered<OverPort>(Vec(29.f, 241.5f), module, Oscillator::EXP_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(42.5f, 230.f), module, Oscillator::EXP_LIGHT));
-    addInput(createOverInputCentered<OverPort>(Vec(64.f, 241.5f), module, Oscillator::LIN_INPUT));
+    addInput(createOverInputCentered<LinPort>(Vec(64.f, 241.5f), module, Oscillator::LIN_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(77.5f, 230.f), module, Oscillator::LIN_LIGHT));
+    addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(77.5f, 253.f), module, Oscillator::LIN_DC_LIGHT));
     addInput(createInputCentered<PolyPort>(Vec(29.f, 290.5f), module, Oscillator::EXP_DEPTH_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(64.f, 290.5f), module, Oscillator::LIN_DEPTH_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(29.f, 335.5f), module, Oscillator::VOCT_INPUT));
@@ -998,6 +1020,7 @@ struct OscillatorWidget : VenomWidget {
           mod->lights[Oscillator::GRID_LIGHT+y*10+x*2+1].setBrightness(over && mod->disableOver[Oscillator::GRID_INPUT+y*5+x] && mod->inputs[Oscillator::GRID_INPUT+y*5+x].isConnected());
         }
       }
+      mod->lights[Oscillator::LIN_DC_LIGHT].setBrightness(mod->linDCCouple);
     }
   }
 
