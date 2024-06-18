@@ -2288,7 +2288,7 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 - Independent inputs for hard sync (reset phase to 0), and soft sync (reverse waveform)
 - Octave control
 - Square pulse width range can be 0-100% or 3-97%
-- Optional DC offset removal
+- Optional DC offset removal for the outputs
 
 Global controls and inputs are generally to the left.
 
