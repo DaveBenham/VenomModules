@@ -2273,7 +2273,8 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 ### Summary of features
 
 - Modes for audio, low frequency, and 0 Hz carrier linear FM
-- The audio and low frequency modes can also be setup for triggered or gated one shot mode
+- The audio and low frequency modes can also be setup for triggered, retriggered, or gated one shot mode
+- The triggered one shot mode can generate the undertone/subharmonic series
 - Oversampling options to control aliasing
 - Simultaneous outputs for Sine, Triangle, Square, and Saw waveforms, plus a highly configurable Mix
 - Each waveform has controls/inputs for shape, phase, offset, and level
@@ -2282,13 +2283,14 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 - All inputs support polyphony
 - Bipolar level controls can be used as traditional VCAs, or for amplitude or ring modulation.
 - Independent controls/inputs for exponential FM and true linear through 0 FM
+- Linear FM input defaults to AC coupled, with an option for DC coupled
 - Audio rate modulation of phase provides functionality often incorrectly referred to as through 0 linear FM.
 - Independent inputs for hard sync (reset phase to 0), and soft sync (reverse waveform)
 - Octave control
 - Square pulse width range can be 0-100% or 3-97%
 - Optional DC offset removal
 
-Global controls and inputs are to the left.
+Global controls and inputs are generally to the left.
 
 The grid of controls, inputs, and outputs to the right control each waveform as well as the overall mix
 
