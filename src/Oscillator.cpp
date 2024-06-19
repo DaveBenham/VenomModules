@@ -233,7 +233,7 @@ struct Oscillator : VenomModule {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 7.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier", "Triggered audio one shot", "Retriggered audio one shot", "Gated audio one shot", "Retriggered LFO one shot", "Gated LFO one shot"});
-    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 3.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
+    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 2.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Pulse Width Range", {"Limited 3%-97%", "Full 0%-100%"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
     configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "DC Block", {"Off", "On"});
@@ -702,7 +702,7 @@ struct Oscillator : VenomModule {
               offsetIn[SAW] = offsetUpSample[s][SAW].process(offsetIn[SAW]);
             }
           } // else preserve prior offsetIn[SAW] value
-          sawOut[s] += clamp(levelIn[SAW]*params[SAW_OFFSET_AMT_PARAM].getValue() + params[SAW_OFFSET_PARAM].getValue()*5.f, -5.f, 5.f);
+          sawOut[s] += clamp(offsetIn[SAW]*params[SAW_OFFSET_AMT_PARAM].getValue() + params[SAW_OFFSET_PARAM].getValue()*5.f, -5.f, 5.f);
           if (params[SAW_ASIGN_PARAM].getValue()!=0)
             sawOut[s] *= level;  
         }
@@ -818,6 +818,7 @@ struct Oscillator : VenomModule {
       json_array_append_new(array, json_boolean(ringMod[i]));
     json_object_set_new(rootJ, "ringMod", array);
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
+    json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     return rootJ;
   }
 
@@ -840,6 +841,9 @@ struct Oscillator : VenomModule {
       linDCCouple = json_boolean_value(val);
     }
     setMode();
+    if ((val = json_object_get(rootJ, "overParam"))) {
+      params[OVER_PARAM].setValue(json_integer_value(val));
+    }
   }
   
 };
