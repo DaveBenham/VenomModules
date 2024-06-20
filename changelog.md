@@ -5,7 +5,7 @@
 - Bay Input
 - Bay Normal
 - Bay Output
-- Blocker (interrupts extended expander chains)
+- Blocker
 - Bypass
 - VCO Lab
 

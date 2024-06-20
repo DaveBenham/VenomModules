@@ -6,9 +6,6 @@
 #include "math.hpp"
 #include <float.h>
 
-#define LIGHT_ON 1.f
-#define LIGHT_OFF 0.02f
-
 #define GRID_PARAM  SIN_SHAPE_PARAM
 #define ASGN_PARAM  SIN_ASIGN_PARAM
 #define GRID_INPUT  SIN_SHAPE_INPUT
@@ -274,7 +271,7 @@ struct Oscillator : VenomModule {
             }
             break;
           case 1: // phase
-            configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], "\u00B0", 0.f, 180.f);
+            configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, ((x==4)?"Global":xStr[x])+yStr[y], "\u00B0", 0.f, 180.f);
             break;
           case 2: // offset
             configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], " V", 0.f, 5.f);
@@ -283,9 +280,9 @@ struct Oscillator : VenomModule {
             configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], "%", 0.f, 100.f);
             break;
         }
-        configParam(GRID_PARAM+y*10+x+5, -1.f, 1.f, 0.f, xStr[x]+yStr[y]+" CV amount", "%", 0.f, 100.f);
-        configInput(GRID_INPUT+y*5+x, xStr[x]+yStr[y]+" CV");
-        configLight(GRID_LIGHT+y*10+x*2, xStr[x]+yStr[y]+" oversample indicator")->description = "off = N/A, yellow = oversampled, red = disabled";
+        configParam(GRID_PARAM+y*10+x+5, -1.f, 1.f, 0.f, ((x==4&&y==1)?"Global":xStr[x])+yStr[y]+" CV amount", "%", 0.f, 100.f);
+        configInput(GRID_INPUT+y*5+x, ((x==4&&y==1)?"Global":xStr[x])+yStr[y]+" CV");
+        configLight(GRID_LIGHT+y*10+x*2, ((x==4&&y==1)?"Global":xStr[x])+yStr[y]+" oversample indicator")->description = "off = N/A, yellow = oversampled, red = disabled";
         if (y==3) {
           configLight(SIN_RM_LIGHT+x, xStr[x]+" Ring Mod (5V = unity) indicator");
         }
