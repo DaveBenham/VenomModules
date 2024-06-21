@@ -30,7 +30,6 @@ struct BayModule : VenomModule {
 struct BayInput : BayModule {
 
   int64_t oldId = -1;
-  int64_t originalOldId = -1;
   bool loadComplete = false;
 
   BayInput() {
@@ -48,10 +47,8 @@ struct BayInput : BayModule {
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     if (oldId != -1){
-      if (loadComplete){
-        originalOldId = oldId;
+      if (loadComplete)
         oldId = -1;
-      }
       else
         loadComplete = true;
     }
