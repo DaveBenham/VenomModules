@@ -39,12 +39,12 @@
      id="namedview102"
      showgrid="true"
      inkscape:zoom="2.2342105"
-     inkscape:cx="22.37927"
-     inkscape:cy="190"
+     inkscape:cx="12.084806"
+     inkscape:cy="189.55242"
      inkscape:window-x="1592"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer5"
+     inkscape:current-layer="layer6"
      inkscape:pagecheckerboard="0"
      units="px"
      inkscape:showpageshadow="false"
@@ -306,6 +306,15 @@
          id="path10734-8"
          style="fill:#ede7dc;fill-opacity:1" />
     </g>
+    <g
+       aria-label="M"
+       id="text2702"
+       style="font-weight:bold;font-size:6.66667px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#ede7dc;fill-opacity:1">
+      <path
+         d="m 5.1953114,46.548882 v -4.772138 h 1.442058 l 0.8658858,3.25521 0.8561202,-3.25521 h 1.4453132 v 4.772138 H 8.9095059 V 42.792369 L 7.9622398,46.548882 H 7.034505 L 6.0904941,42.792369 v 3.756513 z"
+         id="path1080"
+         style="fill:#ede7dc;fill-opacity:1" />
+    </g>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -478,6 +487,12 @@
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.77975;stroke-opacity:1"
        id="path1065-7-2-3-4-3-0"
        cx="37.5"
+       cy="53.5"
+       r="4.6101251" />
+    <circle
+       style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.77975;stroke-opacity:1"
+       id="path1065-7-2-3-4-3-0-1"
+       cx="7.5"
        cy="53.5"
        r="4.6101251" />
   </g>

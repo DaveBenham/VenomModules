@@ -460,15 +460,25 @@ The Bypass module has input/output pairs that simply pass through all channels a
 
 The Bypass module maintains its own state, indicating whether it thinks remote modules are bypassed or not. The actual bypass state of the remote module may or may not match the Bypass state because users can directly change the remote module bypass state without using the Bypass module. The Bypass module only changes the remote module bypass state when the Bypass module state changes.
 
-### G (Gate mode) button
+### TRIG (Trigger) button
+This button glows red when the Bypass state is active (meaning the controlled modules are disabled).
+
+By default, each time the button is pressed, it toggles the current Bypass state.
+
+If the Momentary button is active, then the button temporarily inverts the current Bypass state while it is held, and restores to the previous state when released.
+
+### M (Button Momentary mode) button
+This color coded button controls whether the trigger button acts as a toggle trigger, or a momentary inverting gate.
+- **Off (gray)** (default) - The button toggles the Bypass state each time it is pressed
+- **On (yellow)** - The button momentarily inverts the current Bypass state while it is pressed, and reverts to the prior state when released
+
+### G (CV Gate mode) button
 This color coded button controls whether trigger CV input acts as a gate or a toggle trigger.
 - **Off (gray)** (default) - Input is a trigger
 - **On (green)** - Input is a gate
 - **Invert (red)** - Input is an inverted gate
 
-### TRIG (Trigger) button and CV input
-
-Every time the Trig button is pressed, the bypass state is toggled on or off. The button glows red whenever the bypass state is active (meaning the modules are disabled)
+### TRIG (Trigger) CV input
 
 If the Gate mode is Off, then the leading edge of a trigger at the CV input will toggle the bypass state on or off.
 

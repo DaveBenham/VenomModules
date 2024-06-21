@@ -10,6 +10,7 @@ struct Bypass : VenomModule {
     GATE_PARAM,
     ENUMS(INPUT_MODE_PARAM,3),
     ENUMS(OUTPUT_MODE_PARAM,3),
+    MOMENT_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -28,6 +29,7 @@ struct Bypass : VenomModule {
 
   float buttonVal = 0.f;
   bool bypassed = false;
+  bool restore = false;
   bool working = false;
   dsp::TSchmittTrigger<float> trig;
   TaskWorker taskWorker;
@@ -35,7 +37,8 @@ struct Bypass : VenomModule {
   Bypass() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(TRIG_PARAM, 0.f, 1.f, 0.f, "Trigger");
-    configSwitch<FixedSwitchQuantity>(GATE_PARAM, 0.f, 2.f, 0.f, "Gate Mode", {"Off","On","Invert"});
+    configSwitch<FixedSwitchQuantity>(MOMENT_PARAM, 0.f, 1.f, 0.f, "Button Momentary Mode", {"Off","On"});
+    configSwitch<FixedSwitchQuantity>(GATE_PARAM, 0.f, 2.f, 0.f, "CV Gate Mode", {"Off","On","Invert"});
     configInput(TRIG_INPUT, "Trigger");
     for (int i=0; i<3; i++){
       std::string id = std::to_string(i+1);
@@ -67,8 +70,12 @@ struct Bypass : VenomModule {
 
     if (params[TRIG_PARAM].getValue() != buttonVal){
       buttonVal = !buttonVal;
-      if (buttonVal){
+      if (buttonVal || params[MOMENT_PARAM].getValue()){
+        restore = bypassed;
         bypassed = !bypassed;
+        buttonEvent = 1;
+      } else if (params[MOMENT_PARAM].getValue()) {
+        bypassed = restore;
         buttonEvent = 1;
       }
     }
@@ -174,10 +181,18 @@ struct BypassWidget : VenomWidget {
     }
   };
 
+  struct MomentSwitch : GlowingSvgSwitchLockable {
+    MomentSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+    }
+  };
+
   BypassWidget(Bypass* module) {
     setModule(module);
     setVenomPanel("Bypass");
     addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 39.5), module, Bypass::TRIG_PARAM, Bypass::TRIG_LIGHT));
+    addParam(createLockableParamCentered<MomentSwitch>(Vec(7.5f,53.5f), module, Bypass::MOMENT_PARAM));
     addParam(createLockableParamCentered<GateSwitch>(Vec(37.f,53.5f), module, Bypass::GATE_PARAM));
     addInput(createInputCentered<MonoPort>(Vec(22.5f,67.5f), module, Bypass::TRIG_INPUT));
     float delta=0.f;
