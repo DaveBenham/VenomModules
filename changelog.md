@@ -41,6 +41,8 @@
   - Fixed range of level output to 0-10 V. Was erroneously 0-1 V.
 - VCA Mix 4 and VCA Mix 4 Stereo
   - Fixed output polyphony for excluded inputs
+  - Fixed right chain input normalization to left chain input in the stereo version
+  - Fixed summing of polyphonic chain inputs to a single channel if in Unipolar Poly Sum mode
 
 ## 2.7.0 (2024-03-11)
 ### New Modules

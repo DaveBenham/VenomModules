@@ -16,6 +16,7 @@
 #define SQR 2
 #define SAW 3
 #define MIX 4
+#define LINFM 5
 
 struct Oscillator : VenomModule {
  
@@ -442,7 +443,7 @@ struct Oscillator : VenomModule {
           }
         } // else preserve prior linIn value
         if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
-          linIn = dcBlockFilter[s][5].process(linIn);
+          linIn = dcBlockFilter[s][LINFM].process(linIn);
         if (s==0 || inputs[MIX_PHASE_INPUT].isPolyphonic()) {
           phaseIn[MIX] = (o && !disableOver[MIX_PHASE_INPUT]) ? float_4::zero() : inputs[MIX_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
           if (procOver[MIX_PHASE_INPUT]){

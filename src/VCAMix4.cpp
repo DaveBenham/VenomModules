@@ -144,7 +144,7 @@ struct VCAMix4 : MixBaseModule {
     }
 
     int inChannels[4];
-    int channels = std::max({1, inputs[CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    int channels = mode==1 ? 1 : std::max({1, inputs[CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
     int loopChannels = channels;
     for (int i=0; i<4; i++) {
       inChannels[i] = mode == 1 ? 1 : std::max({1, inputs[CV_INPUTS+i].getChannels(), inputs[INPUTS+i].getChannels()});
@@ -160,7 +160,7 @@ struct VCAMix4 : MixBaseModule {
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
     for (int c=0; c<loopChannels; c+=4){
-      out = inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+      out = mode==1 ? inputs[CHAIN_INPUT].getVoltageSum() : inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       for (int i=0; i<4; i++){
         cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
         if (vcaMode <= 1)
@@ -302,7 +302,7 @@ struct VCAMix4 : MixBaseModule {
       }
       out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
 
-      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
+      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltage()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
       if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
       if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)

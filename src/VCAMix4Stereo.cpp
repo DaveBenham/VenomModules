@@ -171,7 +171,7 @@ struct VCAMix4Stereo : MixBaseModule {
     }
 
     int inChannels[4];
-    int channels = std::max({1, inputs[LEFT_CHAIN_INPUT].getChannels(), inputs[RIGHT_CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    int channels = mode == 1 ? 1 : std::max({1, inputs[LEFT_CHAIN_INPUT].getChannels(), inputs[RIGHT_CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
     int loopChannels = channels;
     for (int i=0; i<4; i++){
       inChannels[i] = mode == 1 ? 1 : std::max({
@@ -191,8 +191,11 @@ struct VCAMix4Stereo : MixBaseModule {
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
     for (int c=0; c<loopChannels; c+=4){
-      leftOut = inputs[LEFT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
-      rightOut = inputs[RIGHT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+      leftOut = mode==1 ? inputs[LEFT_CHAIN_INPUT].getVoltageSum() : inputs[LEFT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+      if (inputs[RIGHT_CHAIN_INPUT].isConnected())
+        rightOut = mode==1 ? inputs[RIGHT_CHAIN_INPUT].getVoltageSum() : inputs[RIGHT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+      else
+        rightOut = leftOut;
       if (mode == 1){
         for (int i=0; i<4; i++){
           cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
@@ -465,7 +468,7 @@ struct VCAMix4Stereo : MixBaseModule {
       leftOut += leftChannel[0] + leftChannel[1] + leftChannel[2] + leftChannel[3] + preMixOff;
       rightOut += rightChannel[0] + rightChannel[1] + rightChannel[2] + rightChannel[3] + preMixOff;
 
-      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
+      cv = inputs[MIX_CV_INPUT].isConnected() ? (mode == 1 ? inputs[MIX_CV_INPUT].getVoltage()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f) : 1.0f;
       if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
       if (vcaMode == 1 || vcaMode == 3)
