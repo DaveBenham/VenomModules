@@ -22,7 +22,7 @@ class OversampleFilter {
     }
 
   private:
-    rack::dsp::TBiquadFilter<float> f[3];
+    rack::dsp::TBiquadFilter<float> f[3]{};
 };
 
 class OversampleFilter_4 {
@@ -42,7 +42,7 @@ class OversampleFilter_4 {
     }
 
   private:
-    rack::dsp::TBiquadFilter<rack::simd::float_4> f[3];
+    rack::dsp::TBiquadFilter<rack::simd::float_4> f[3]{};
 };
 
 class DCBlockFilter_4 {
@@ -52,6 +52,7 @@ class DCBlockFilter_4 {
       f[1].setCutoffFreq(2.f/sampleRate);
       f[2].setCutoffFreq(2.f/sampleRate);
       f[3].setCutoffFreq(2.f/sampleRate);
+      reset();
     }
     void reset(){
       f[0].reset();
@@ -68,5 +69,5 @@ class DCBlockFilter_4 {
     }
 
   private:
-    rack::dsp::TRCFilter <rack::simd::float_4>f[4];
+    rack::dsp::TRCFilter <rack::simd::float_4>f[4]{};
 };

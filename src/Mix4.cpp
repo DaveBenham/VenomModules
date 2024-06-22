@@ -33,8 +33,8 @@ struct Mix4 : MixBaseModule {
   float scale = 1.f;
   float offset = 0.f;
   int oversample = 4;
-  OversampleFilter_4 outUpSample[4], outDownSample[4];
-  DCBlockFilter_4 dcBlockBeforeFilter[4], dcBlockAfterFilter[4];
+  OversampleFilter_4 outUpSample[4]{}, outDownSample[4]{};
+  DCBlockFilter_4 dcBlockBeforeFilter[4]{}, dcBlockAfterFilter[4]{};
 
   Mix4() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);

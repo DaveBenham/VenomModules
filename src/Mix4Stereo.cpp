@@ -35,9 +35,9 @@ struct Mix4Stereo : MixBaseModule {
   float scale = 1.f;
   float offset = 0.f;
   int oversample = 4;
-  OversampleFilter_4 leftUpSample[4], leftDownSample[4], rightUpSample[4], rightDownSample[4];
-  DCBlockFilter_4 leftDcBlockBeforeFilter[4], rightDcBlockBeforeFilter[4],
-                  leftDcBlockAfterFilter[4],  rightDcBlockAfterFilter[4];
+  OversampleFilter_4 leftUpSample[4]{}, leftDownSample[4]{}, rightUpSample[4]{}, rightDownSample[4]{};
+  DCBlockFilter_4 leftDcBlockBeforeFilter[4]{}, rightDcBlockBeforeFilter[4]{},
+                  leftDcBlockAfterFilter[4]{},  rightDcBlockAfterFilter[4]{};
 
   Mix4Stereo() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
