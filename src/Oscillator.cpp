@@ -177,11 +177,11 @@ struct Oscillator : VenomModule {
   using float_4 = simd::float_4;
   int oversample = -1;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
-  OversampleFilter_4 expUpSample[4], linUpSample[4], revUpSample[4], syncUpSample[4],
-                     shapeUpSample[4][5], phaseUpSample[4][5], offsetUpSample[4][5], levelUpSample[4][5],
-                     outDownSample[4][5];
+  OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
+                     shapeUpSample[4][5]{}, phaseUpSample[4][5]{}, offsetUpSample[4][5]{}, levelUpSample[4][5]{},
+                     outDownSample[4][5]{};
   float_4 phasor[4]{}, phasorDir[4]{1.f, 1.f, 1.f, 1.f};
-  DCBlockFilter_4 dcBlockFilter[4][6]; // Sin, Tri, Sqr, Saw, Mix, Lin FM Input
+  DCBlockFilter_4 dcBlockFilter[4][6]{}; // Sin, Tri, Sqr, Saw, Mix, Lin FM Input
   bool linDCCouple = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
   float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
