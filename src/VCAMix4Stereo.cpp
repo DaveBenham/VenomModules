@@ -88,7 +88,6 @@ struct VCAMix4Stereo : MixBaseModule {
       configBypass(inputs[RIGHT_INPUTS+i].isConnected() ? RIGHT_INPUTS+i : LEFT_INPUTS+i, RIGHT_OUTPUTS+i);
     }
     initOversample();
-//    initDCBlock();
   }
 
   void initOversample(){
@@ -106,30 +105,12 @@ struct VCAMix4Stereo : MixBaseModule {
     }
   }
 
-/*
-  void initDCBlock(){
-    float sampleTime = settings::sampleRate;
-    for (int i=0; i<4; i++){
-      leftDcBlockBeforeFilter[i].init(sampleTime);
-      rightDcBlockBeforeFilter[i].init(sampleTime);
-      leftDcBlockAfterFilter[i].init(sampleTime);
-      rightDcBlockAfterFilter[i].init(sampleTime);
-    }
-  }
-*/
-
   void onReset(const ResetEvent& e) override {
     mode = -1;
     initOversample();
     Module::onReset(e);
   }
 
-/*
-  void onSampleRateChange(const SampleRateChangeEvent& e) override {
-    initDCBlock();
-  }
-*/
-  
   void onPortChange(const PortChangeEvent& e) override {
     if (e.type == Port::INPUT && e.portId >= RIGHT_INPUTS && e.portId < RIGHT_INPUTS+4)
       bypassRoutes[e.portId].inputId = e.connecting ? e.portId : e.portId - 4;
@@ -484,7 +465,7 @@ struct VCAMix4Stereo : MixBaseModule {
         leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
         rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
       }
-      if (dcBlock && dcBlock <= 2){
+      if (dcBlock && dcBlock <= 2){ // no oversample applied during DC removal
         leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
         rightOut = rightDcBlockBeforeFilter[c/4].process(rightOut);
       }
@@ -506,7 +487,7 @@ struct VCAMix4Stereo : MixBaseModule {
           rightOut = rightDownSample[c/4].process(rightOut);
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip)){
+      if (dcBlock == 3 || (dcBlock == 2 && clip)){ // no oversample applied during DC removal
         leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }

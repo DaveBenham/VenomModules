@@ -72,7 +72,6 @@ struct VCAMix4 : MixBaseModule {
     for (int i=0; i<4; i++)
       configBypass(INPUTS+i, OUTPUTS+i);
     initOversample();
-//    initDCBlock();
   }
 
   void initOversample(){
@@ -86,27 +85,11 @@ struct VCAMix4 : MixBaseModule {
     }
   }
 
-/*
-  void initDCBlock(){
-    float sampleTime = settings::sampleRate;
-    for (int i=0; i<4; i++){
-      dcBlockBeforeFilter[i].init(sampleTime);
-      dcBlockAfterFilter[i].init(sampleTime);
-    }
-  }
-*/
-
   void onReset(const ResetEvent& e) override {
     mode = -1;
     initOversample();
     Module::onReset(e);
   }
-
-/*
-  void onSampleRateChange(const SampleRateChangeEvent& e) override {
-    initDCBlock();
-  }
-*/
 
   void process(const ProcessArgs& args) override {
     MixBaseModule::process(args);
@@ -319,7 +302,7 @@ struct VCAMix4 : MixBaseModule {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
         if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
       }
-      if (dcBlock && dcBlock <= 2)
+      if (dcBlock && dcBlock <= 2) // no oversample applied during DC removal
         out = dcBlockBeforeFilter[c/4].process(out);
       if (clip == 1 || clip == 4)
         out = clamp(out, -10.f, 10.f);
@@ -332,7 +315,7 @@ struct VCAMix4 : MixBaseModule {
           out = outDownSample[c/4].process(out);
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip))
+      if (dcBlock == 3 || (dcBlock == 2 && clip)) // no oversample applied during DC removal
         out = dcBlockAfterFilter[c/4].process(out);
       if (clip > 3) {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;

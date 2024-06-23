@@ -207,20 +207,18 @@ struct Oscillator : VenomModule {
   struct FreqQuantity : ParamQuantity {
     float getDisplayValue() override {
       Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
-      int mode = static_cast<int>(mod->params[MODE_PARAM].getValue());
       float freq = 0.f;
-      if (mode < 2)
-        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mode];
+      if (mod->mode < 2)
+        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mod->mode];
       else
         freq = mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
       return freq < maxFreq ? freq : maxFreq;
     }
     void setDisplayValue(float v) override {
       Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
-      int mode = static_cast<int>(mod->params[MODE_PARAM].getValue());
       if (v > maxFreq) v = maxFreq;
-      if (mode < 2)
-        setValue(clamp(std::log2f(v / mod->modeFreq[mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
+      if (mod->mode < 2)
+        setValue(clamp(std::log2f(v / mod->modeFreq[mod->mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
       else
         setValue(clamp(v / mod->biasFreq, -4.f, 4.f));
     }
@@ -295,23 +293,7 @@ struct Oscillator : VenomModule {
     for (int x=0; x<5; x++){
       configOutput(GRID_OUTPUT+x, xStr[x]);
     }
-//    initDCBlock();
   }
-
-/*
-  void onSampleRateChange(const SampleRateChangeEvent& e) override {
-    initDCBlock();
-  }
-  
-  void initDCBlock(){
-    float sampleRate = settings::sampleRate;
-    for (int i=0; i<4; i++){
-      for (int j=0; j<6; j++){
-        dcBlockFilter[i][j].init(sampleRate);
-      }
-    }
-  }
-*/
 
   float_4 sinSimd_1000(float_4 t) {
     t = simd::ifelse(t > 500.f, 1000.f - t, t) * 0.002f - 0.5f;
@@ -445,7 +427,7 @@ struct Oscillator : VenomModule {
           }
         } // else preserve prior linIn value
         if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
-          linIn = dcBlockFilter[s][LINFM].process(linIn);
+          linIn = dcBlockFilter[s][LINFM].process(linIn, procOver[MIX_PHASE_INPUT]?oversample:1);
         if (s==0 || inputs[MIX_PHASE_INPUT].isPolyphonic()) {
           phaseIn[MIX] = (o && !disableOver[MIX_PHASE_INPUT]) ? float_4::zero() : inputs[MIX_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
           if (procOver[MIX_PHASE_INPUT]){
@@ -766,15 +748,15 @@ struct Oscillator : VenomModule {
         // Remove DC offset
         if (params[DC_PARAM].getValue()) {
           if (outputs[SIN_OUTPUT].isConnected())
-            sinOut[s] = dcBlockFilter[s][SIN].process(sinOut[s]);
+            sinOut[s] = dcBlockFilter[s][SIN].process(sinOut[s], oversample);
           if (outputs[TRI_OUTPUT].isConnected())
-            triOut[s] = dcBlockFilter[s][TRI].process(triOut[s]);
+            triOut[s] = dcBlockFilter[s][TRI].process(triOut[s], oversample);
           if (outputs[SQR_OUTPUT].isConnected())
-            sqrOut[s] = dcBlockFilter[s][SQR].process(sqrOut[s]);
+            sqrOut[s] = dcBlockFilter[s][SQR].process(sqrOut[s], oversample);
           if (outputs[SAW_OUTPUT].isConnected())
-            sawOut[s] = dcBlockFilter[s][SAW].process(sawOut[s]);
+            sawOut[s] = dcBlockFilter[s][SAW].process(sawOut[s], oversample);
           if (outputs[MIX_OUTPUT].isConnected())
-            mixOut[s] = dcBlockFilter[s][MIX].process(mixOut[s]);
+            mixOut[s] = dcBlockFilter[s][MIX].process(mixOut[s], oversample);
         }
         // Downsample outputs
         if (oversample>1) {

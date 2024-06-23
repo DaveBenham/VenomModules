@@ -45,45 +45,17 @@ class OversampleFilter_4 {
     rack::dsp::TBiquadFilter<rack::simd::float_4> f[3]{};
 };
 
-/*
-class DCBlockFilter_4 {
-  public:
-    void init(float sampleRate){
-      f[0].setCutoffFreq(2.f/sampleRate);
-      f[1].setCutoffFreq(2.f/sampleRate);
-      f[2].setCutoffFreq(2.f/sampleRate);
-      f[3].setCutoffFreq(2.f/sampleRate);
-      reset();
-    }
-    void reset(){
-      f[0].reset();
-      f[1].reset();
-      f[2].reset();
-      f[3].reset();
-    }
-    rack::simd::float_4 process(rack::simd::float_4 val){
-      f[0].process(val);
-      f[1].process(f[0].highpass());
-      f[2].process(f[1].highpass());
-      f[3].process(f[2].highpass());
-      return f[3].highpass();
-    }
-
-  private:
-    rack::dsp::TRCFilter <rack::simd::float_4>f[4]{};
-};
-*/
-
 class DCBlockFilter_4 {
   public:
     rack::simd::float_4 val = rack::simd::float_4::zero();
     
-    rack::simd::float_4 process( rack::simd::float_4 x ) {
-      val = x - oldVal + static_cast<rack::simd::float_4>(0.999f) * val;
-      oldVal = x;
+    rack::simd::float_4 process( rack::simd::float_4 x, int over = 1 ) {
+      float r = 1.f - 250.f / rack::settings::sampleRate / static_cast<float>(over);
+      val = x - prevX + static_cast<rack::simd::float_4>(r) * val;
+      prevX = x;
       return val;
     }
   
   private:
-    rack::simd::float_4 oldVal = rack::simd::float_4::zero();
+    rack::simd::float_4 prevX = rack::simd::float_4::zero();
 };

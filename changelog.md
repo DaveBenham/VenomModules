@@ -43,6 +43,9 @@
   - Fixed output polyphony for excluded inputs
   - Fixed right chain input normalization to left chain input in the stereo version
   - Fixed summing of polyphonic chain inputs to a single channel if in Unipolar Poly Sum mode
+- All modules that have an option for DC offset removal
+  - The old DC removal algorithm was failing on some machines, so it has been replaced by an entirely new algorithm
+  - This has the potential to alter the sound of older patches, but hopefully not much
 
 ## 2.7.0 (2024-03-11)
 ### New Modules

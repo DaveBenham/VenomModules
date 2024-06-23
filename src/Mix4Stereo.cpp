@@ -59,7 +59,6 @@ struct Mix4Stereo : MixBaseModule {
     configOutput(LEFT_OUTPUT, "Left Mix");
     configOutput(RIGHT_OUTPUT, "Right Mix");
     initOversample();
-//    initDCBlock();
   }
 
   void initOversample(){
@@ -71,29 +70,11 @@ struct Mix4Stereo : MixBaseModule {
     }
   }
 
-/*
-  void initDCBlock(){
-    float sampleTime = settings::sampleRate;
-    for (int i=0; i<4; i++){
-      leftDcBlockBeforeFilter[i].init(sampleTime);
-      rightDcBlockBeforeFilter[i].init(sampleTime);
-      leftDcBlockAfterFilter[i].init(sampleTime);
-      rightDcBlockAfterFilter[i].init(sampleTime);
-    }
-  }
-*/
-
   void onReset(const ResetEvent& e) override {
     mode = -1;
     initOversample();
     Module::onReset(e);
   }
-
-/*
-  void onSampleRateChange(const SampleRateChangeEvent& e) override {
-    initDCBlock();
-  }
-*/
 
   void process(const ProcessArgs& args) override {
     MixBaseModule::process(args);
@@ -363,7 +344,7 @@ struct Mix4Stereo : MixBaseModule {
         leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale + postMixOff;
         rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale + postMixOff;
       }
-      if (dcBlock && dcBlock <= 2){
+      if (dcBlock && dcBlock <= 2){ // no oversample applied during DC removal
         leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
         rightOut = rightDcBlockBeforeFilter[c/4].process(rightOut);
       }
@@ -385,7 +366,7 @@ struct Mix4Stereo : MixBaseModule {
           rightOut = rightDownSample[c/4].process(rightOut);
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip)){
+      if (dcBlock == 3 || (dcBlock == 2 && clip)){ // no oversample applied during DC removal
         leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }

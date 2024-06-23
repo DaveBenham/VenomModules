@@ -833,7 +833,7 @@ The color coded mode button determines how the 4 channel and the mix knobs behav
 - **Bipolar x10 (CV)** (dark blue): Each input level knob ranges from -10x to 10x if the channel input is patched, or -10V to 10V constant CV when unpatched. Effectively this means unpateched channel inputs are normalled to 1V. Each input level knob defaults to 0% (or 0V) at noon. The Mix knob always ranges from -10x to 10x, with a default of 1x (unity).
 
 ### D (DC Block) button
-The color coded DC block button determines when (or if) a high pass filter with 2Hz cutoff is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
+The color coded DC block button determines when (or if) a high pass filter is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
 - **Off** (dark gray - default): DC offset is not removed.
 - **Before clipping** (yellow): DC offset is removed prior to any clipping. Note that subsequent clipping may re-introduce some DC offset.
 - **Before and after clipping** (green): DC offset is removed both before and after any clipping. Note that only one DC offset removal is performed if clipping is not applied.
@@ -2230,7 +2230,7 @@ The color coded VCA mode button determines how CV inputs are interpreted. The bu
 - **Bipolar exponential band limited - CV unclamped** (green): A VCA with exponential response that is capable of ring modulation. Negative CV values invert the base level, and the base level is amplified by CV with magnitude greater than 10V. The channel input and CV input are band limited by a low pass filter in an attempt to minimize audio aliasing when performing ring modulation or amplitude modulation. However, the exponential response introduces significantly more high frequency content, so the low pass filter does not help very much.
 
 ### D (DC Block) button
-The color coded DC block button determines when (or if) a high pass filter with 2Hz cutoff is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
+The color coded DC block button determines when (or if) a high pass filter is applied to the final mix to remove any DC offset. DC offset removal always occurs after the final mix is attenuated (or amplified) by the Mix level knob.
 - **Off** (dark gray - default): DC offset is not removed.
 - **Before clipping** (yellow): DC offset is removed prior to any clipping. Note that subsequent clipping may re-introduce some DC offset.
 - **Before and after clipping** (green): DC offset is removed both before and after any clipping. Note that only one DC offset removal is performed if clipping is not applied.
@@ -2371,7 +2371,7 @@ Summed shaping is best for smooth bipolar shape modulation and maximum shaping e
 Average shaping is best for maintaining 10V peak to peak output, as well as consistent unipolar output when applying Mix offset.
 
 ### DC (DC block) button
-This color coded button controls whether a 2 Hz high pass filter is applied to remove DC offset from all outputs
+This color coded button controls whether a high pass filter is applied to remove DC offset from all outputs
 - **Off** (dark gray - default)
 - **On** (yellow)
 
