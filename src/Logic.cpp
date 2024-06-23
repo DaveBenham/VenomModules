@@ -91,9 +91,10 @@ struct Logic : VenomModule {
       configOutput(GATE_OUTPUT + i, "Gate " + i_s);
       recycleLabels.push_back("Gate " + i_s + " output");
     }
-    initDCBlock();
+//    initDCBlock();
   }
 
+/*
   void initDCBlock(){
     float sampleTime = settings::sampleRate;
     for (int c=0; c<CHANNEL_COUNT; c++){
@@ -106,6 +107,7 @@ struct Logic : VenomModule {
   void onSampleRateChange(const SampleRateChangeEvent& e) override {
     initDCBlock();
   }
+*/
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);

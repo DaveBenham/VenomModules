@@ -88,7 +88,7 @@ struct VCAMix4Stereo : MixBaseModule {
       configBypass(inputs[RIGHT_INPUTS+i].isConnected() ? RIGHT_INPUTS+i : LEFT_INPUTS+i, RIGHT_OUTPUTS+i);
     }
     initOversample();
-    initDCBlock();
+//    initDCBlock();
   }
 
   void initOversample(){
@@ -106,6 +106,7 @@ struct VCAMix4Stereo : MixBaseModule {
     }
   }
 
+/*
   void initDCBlock(){
     float sampleTime = settings::sampleRate;
     for (int i=0; i<4; i++){
@@ -115,6 +116,7 @@ struct VCAMix4Stereo : MixBaseModule {
       rightDcBlockAfterFilter[i].init(sampleTime);
     }
   }
+*/
 
   void onReset(const ResetEvent& e) override {
     mode = -1;
@@ -122,9 +124,11 @@ struct VCAMix4Stereo : MixBaseModule {
     Module::onReset(e);
   }
 
+/*
   void onSampleRateChange(const SampleRateChangeEvent& e) override {
     initDCBlock();
   }
+*/
   
   void onPortChange(const PortChangeEvent& e) override {
     if (e.type == Port::INPUT && e.portId >= RIGHT_INPUTS && e.portId < RIGHT_INPUTS+4)

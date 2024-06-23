@@ -59,7 +59,7 @@ struct Mix4Stereo : MixBaseModule {
     configOutput(LEFT_OUTPUT, "Left Mix");
     configOutput(RIGHT_OUTPUT, "Right Mix");
     initOversample();
-    initDCBlock();
+//    initDCBlock();
   }
 
   void initOversample(){
@@ -71,7 +71,8 @@ struct Mix4Stereo : MixBaseModule {
     }
   }
 
-    void initDCBlock(){
+/*
+  void initDCBlock(){
     float sampleTime = settings::sampleRate;
     for (int i=0; i<4; i++){
       leftDcBlockBeforeFilter[i].init(sampleTime);
@@ -80,6 +81,7 @@ struct Mix4Stereo : MixBaseModule {
       rightDcBlockAfterFilter[i].init(sampleTime);
     }
   }
+*/
 
   void onReset(const ResetEvent& e) override {
     mode = -1;
@@ -87,9 +89,11 @@ struct Mix4Stereo : MixBaseModule {
     Module::onReset(e);
   }
 
+/*
   void onSampleRateChange(const SampleRateChangeEvent& e) override {
     initDCBlock();
   }
+*/
 
   void process(const ProcessArgs& args) override {
     MixBaseModule::process(args);

@@ -53,7 +53,7 @@ struct Mix4 : MixBaseModule {
                                                                                          "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level"});
     configOutput(MIX_OUTPUT, "Mix");
     initOversample();
-    initDCBlock();
+//    initDCBlock();
   }
 
   void initOversample(){
@@ -63,6 +63,7 @@ struct Mix4 : MixBaseModule {
     }
   }
 
+/*
   void initDCBlock(){
     float sampleTime = settings::sampleRate;
     for (int i=0; i<4; i++){
@@ -70,6 +71,7 @@ struct Mix4 : MixBaseModule {
       dcBlockAfterFilter[i].init(sampleTime);
     }
   }
+*/
 
   void onReset(const ResetEvent& e) override {
     mode = -1;
@@ -77,9 +79,11 @@ struct Mix4 : MixBaseModule {
     Module::onReset(e);
   }
   
+/*
   void onSampleRateChange(const SampleRateChangeEvent& e) override {
     initDCBlock();
   }
+*/
 
   void process(const ProcessArgs& args) override {
     MixBaseModule::process(args);

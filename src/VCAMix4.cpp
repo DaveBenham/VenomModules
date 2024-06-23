@@ -72,7 +72,7 @@ struct VCAMix4 : MixBaseModule {
     for (int i=0; i<4; i++)
       configBypass(INPUTS+i, OUTPUTS+i);
     initOversample();
-    initDCBlock();
+//    initDCBlock();
   }
 
   void initOversample(){
@@ -86,6 +86,7 @@ struct VCAMix4 : MixBaseModule {
     }
   }
 
+/*
   void initDCBlock(){
     float sampleTime = settings::sampleRate;
     for (int i=0; i<4; i++){
@@ -93,6 +94,7 @@ struct VCAMix4 : MixBaseModule {
       dcBlockAfterFilter[i].init(sampleTime);
     }
   }
+*/
 
   void onReset(const ResetEvent& e) override {
     mode = -1;
@@ -100,9 +102,11 @@ struct VCAMix4 : MixBaseModule {
     Module::onReset(e);
   }
 
+/*
   void onSampleRateChange(const SampleRateChangeEvent& e) override {
     initDCBlock();
   }
+*/
 
   void process(const ProcessArgs& args) override {
     MixBaseModule::process(args);

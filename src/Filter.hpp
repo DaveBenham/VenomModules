@@ -45,6 +45,7 @@ class OversampleFilter_4 {
     rack::dsp::TBiquadFilter<rack::simd::float_4> f[3]{};
 };
 
+/*
 class DCBlockFilter_4 {
   public:
     void init(float sampleRate){
@@ -70,4 +71,19 @@ class DCBlockFilter_4 {
 
   private:
     rack::dsp::TRCFilter <rack::simd::float_4>f[4]{};
+};
+*/
+
+class DCBlockFilter_4 {
+  public:
+    rack::simd::float_4 val = rack::simd::float_4::zero();
+    
+    rack::simd::float_4 process( rack::simd::float_4 x ) {
+      val = x - oldVal + static_cast<rack::simd::float_4>(0.999f) * val;
+      oldVal = x;
+      return val;
+    }
+  
+  private:
+    rack::simd::float_4 oldVal = rack::simd::float_4::zero();
 };

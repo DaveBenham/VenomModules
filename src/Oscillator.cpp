@@ -295,9 +295,10 @@ struct Oscillator : VenomModule {
     for (int x=0; x<5; x++){
       configOutput(GRID_OUTPUT+x, xStr[x]);
     }
-    initDCBlock();
+//    initDCBlock();
   }
 
+/*
   void onSampleRateChange(const SampleRateChangeEvent& e) override {
     initDCBlock();
   }
@@ -310,6 +311,7 @@ struct Oscillator : VenomModule {
       }
     }
   }
+*/
 
   float_4 sinSimd_1000(float_4 t) {
     t = simd::ifelse(t > 500.f, 1000.f - t, t) * 0.002f - 0.5f;
