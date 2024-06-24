@@ -47,15 +47,19 @@ class OversampleFilter_4 {
 
 class DCBlockFilter_4 {
   public:
-    rack::simd::float_4 val = rack::simd::float_4::zero();
+    rack::simd::float_4 val() {
+      return prevY;
+    }
     
     rack::simd::float_4 process( rack::simd::float_4 x, int over = 1 ) {
       float r = 1.f - 250.f / rack::settings::sampleRate / static_cast<float>(over);
-      val = x - prevX + static_cast<rack::simd::float_4>(r) * val;
+      rack::simd::float_4 y = x - prevX + static_cast<rack::simd::float_4>(r) * prevY;
       prevX = x;
-      return val;
+      prevY = y;
+      return y;
     }
   
   private:
     rack::simd::float_4 prevX = rack::simd::float_4::zero();
+    rack::simd::float_4 prevY = rack::simd::float_4::zero();
 };
