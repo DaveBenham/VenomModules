@@ -5,8 +5,8 @@ Venom modules version 2.8.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Themes](#themes)  
 [Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
-[Venom Expander Modules](#venom-expander-modules)
-[Limitations of DC offset removal](#limitations-of-dc-offset-removal)
+[Venom Expander Modules](#venom-expander-modules)  
+[Limitations of DC offset removal](#limitations-of-dc-offset-removal)  
 [Acknowledgments](#acknowledgments)  
 
 |[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|
