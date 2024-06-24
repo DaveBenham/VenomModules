@@ -427,7 +427,7 @@ struct Oscillator : VenomModule {
           }
         } // else preserve prior linIn value
         if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
-          linIn = dcBlockFilter[s][LINFM].process(linIn, oversample);
+          linIn = dcBlockFilter[s][LINFM].process(linIn/*, oversample*/);
         if (s==0 || inputs[MIX_PHASE_INPUT].isPolyphonic()) {
           phaseIn[MIX] = (o && !disableOver[MIX_PHASE_INPUT]) ? float_4::zero() : inputs[MIX_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
           if (procOver[MIX_PHASE_INPUT]){
@@ -748,15 +748,15 @@ struct Oscillator : VenomModule {
         // Remove DC offset
         if (params[DC_PARAM].getValue()) {
           if (outputs[SIN_OUTPUT].isConnected())
-            sinOut[s] = dcBlockFilter[s][SIN].process(sinOut[s], oversample);
+            sinOut[s] = dcBlockFilter[s][SIN].process(sinOut[s]/*, oversample*/);
           if (outputs[TRI_OUTPUT].isConnected())
-            triOut[s] = dcBlockFilter[s][TRI].process(triOut[s], oversample);
+            triOut[s] = dcBlockFilter[s][TRI].process(triOut[s]/*, oversample*/);
           if (outputs[SQR_OUTPUT].isConnected())
-            sqrOut[s] = dcBlockFilter[s][SQR].process(sqrOut[s], oversample);
+            sqrOut[s] = dcBlockFilter[s][SQR].process(sqrOut[s]/*, oversample*/);
           if (outputs[SAW_OUTPUT].isConnected())
-            sawOut[s] = dcBlockFilter[s][SAW].process(sawOut[s], oversample);
+            sawOut[s] = dcBlockFilter[s][SAW].process(sawOut[s]/*, oversample*/);
           if (outputs[MIX_OUTPUT].isConnected())
-            mixOut[s] = dcBlockFilter[s][MIX].process(mixOut[s], oversample);
+            mixOut[s] = dcBlockFilter[s][MIX].process(mixOut[s]/*, oversample*/);
         }
         // Downsample outputs
         if (oversample>1) {

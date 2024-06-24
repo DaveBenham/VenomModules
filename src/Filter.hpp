@@ -47,6 +47,8 @@ class OversampleFilter_4 {
 
 /*
 class DCBlockFilter_4 {
+// This version is mysteriously not working on some machines
+// Be sure to uncomment `, oversample` in process calls if reverting to this version
   public:
     rack::simd::float_4 val() {
       return prevY;
@@ -66,7 +68,14 @@ class DCBlockFilter_4 {
 };
 */
 
+/*
 class DCBlockFilter_4 {
+// This version is mysteriously not working on some machines
+// But I really like the behavior when it does.
+//  - Minimal bass attenuation
+//  - Consistent at all sample rates and oversampling rates
+//  - Excellent DC offset filtering
+// Be sure to uncomment `, oversample` in process calls if reverting to this version
   public:
     rack::simd::float_4 val() {
       return rtn;
@@ -87,4 +96,21 @@ class DCBlockFilter_4 {
     double prevX[4]{};
     double prevY[4]{};
     rack::simd::float_4 rtn = rack::simd::float_4::zero();
+};
+*/
+
+class DCBlockFilter_4 {
+// Naive version that doesn't adjust for sample rate or oversampling, so cutoff is not consistent
+// Also attenuates bass tones too much as sample rate and/or oversampling rate rises
+  public:
+    rack::simd::float_4 val = rack::simd::float_4::zero();
+    
+    rack::simd::float_4 process( rack::simd::float_4 x ) {
+      val = x - prevX + static_cast<rack::simd::float_4>(0.999f) * val;
+      prevX = x;
+      return val;
+    }
+  
+  private:
+    rack::simd::float_4 prevX = rack::simd::float_4::zero();
 };

@@ -5,7 +5,8 @@ Venom modules version 2.8.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Themes](#themes)  
 [Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
-[Venom Expander Modules](#venom-expander-modules)  
+[Venom Expander Modules](#venom-expander-modules)
+[Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 [Acknowledgments](#acknowledgments)  
 
 |[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|
@@ -94,6 +95,11 @@ VCV Rack supports two different mechanisms for implementinig expander modules:
 - The base module does all the work, accessing the expander inputs, outputs, and controls directly. This does not introduce any sample delays.
 
 All Venom expanders are implemented using the second method where the base module directly accesses the expander, so Venom expanders do not introduce sample delays.
+
+## Limitations of DC offset removal
+Currently Venom uses a naive implamentation of a highpass filter for DC offset removal - it does not compensate for sample rate or oversampling rate. So expect different results if you change the sample rate and/or the oversample rate. Additionally, the DC offset removal attenuates bass tones more and more as you increase sample rate or oversampling.
+
+I have a better version that gives much more consistent results for all sample rates and oversample rates, as well as minimal bass attenuation. But for some mysterious reason it works beatifully on some machines, yet not at all on others. So we are stuck with the inferior DC offset removal for now.
 
 ## Acknowledgments
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
@@ -752,6 +758,8 @@ Controls whether DC offsets are removed from the outputs
 - **Off (gray - default)**: Used for normal CV outputs
 - **On (white)**: Useful for audio outputs
 
+See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
+
 ### HIGH THRESH and LOW THRESH knobs and inputs
 Set the low and high thresholds for the Schmitt triggers that determine the state of each input. The effective threshold is the sum of the knob value and the corresponding input. The same thresholds are used for all inputs. An input goes high whenever the voltage rises above the high threshold. The input goes low whenever the voltage is at or below the low threshold. The state remains unchanged if the voltage lies between the thresholds.
 
@@ -840,6 +848,8 @@ The color coded DC block button determines when (or if) a high pass filter is ap
 - **After clipping** (light blue): DC offset is removed after any clipping.
 
 The last three DC offset options give identical results when no clipping is applied.
+
+See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled for CV or audio according to typical usage, but each option can be used for both audio and CV.
@@ -2238,6 +2248,8 @@ The color coded DC block button determines when (or if) a high pass filter is ap
 
 The last three DC offset options give identical results when no clipping is applied.
 
+See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
+
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled for CV or audio according to typical usage, but each option can be used for both audio and CV.
 - **Off** (dark gray - default): The final mix is left untouched, with no limit to the output voltage.
@@ -2375,6 +2387,8 @@ This color coded button controls whether a high pass filter is applied to remove
 - **Off** (dark gray - default)
 - **On** (yellow)
 
+See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
+
 ### Frequency limits
 
 Regardless what mode, the VCO Lab has a hard upper frequency limit of 12 kHz. The frequency cannot be modulated above this limit.
@@ -2428,6 +2442,8 @@ This knob sets the depth of through 0 linear frequency modulation
 
 ### Lin FM (Linear frequency modulation) input
 This input is for linear FM CV. By default this input is AC coupled. There is a port context menu to enable DC coupled mode, which can save a small amount of CPU if you know that your input does not have any DC offset. A small LED to the lower right glows red when the input is DC coupled.
+
+See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 This port supports oversampling that can be disabled via the port context menu.
 

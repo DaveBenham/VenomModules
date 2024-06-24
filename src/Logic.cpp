@@ -244,7 +244,7 @@ struct Logic : VenomModule {
       for (int c=0; c<endChannel; c++) {
         for (int p=0, pi=0; p<polyCount[c]; p+=4, pi++) {
           if (dc) {
-            outVal[c][pi] = dcBlock[c][pi].process(outVal[c][pi], oversample);
+            outVal[c][pi] = dcBlock[c][pi].process(outVal[c][pi]/*, oversample*/);
           }  
           outputs[GATE_OUTPUT+c].setVoltageSimd(outVal[c][pi], p);
         }
