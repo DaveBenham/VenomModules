@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.8.0
+## 2.8.0 (2024-06-26)
 ### New Modules
 - Bay Input
 - Bay Normal
@@ -45,7 +45,7 @@
   - Fixed summing of polyphonic chain inputs to a single channel if in Unipolar Poly Sum mode
 - All modules that have an option for DC offset removal
   - The old DC removal algorithm was failing on some machines, so it has been replaced by an entirely new algorithm
-  - This has the potential to alter the sound of older patches, but hopefully not much
+  - This has the potential to alter the sound of older patches that use Venom DC offset removal
 
 ## 2.7.0 (2024-03-11)
 ### New Modules
