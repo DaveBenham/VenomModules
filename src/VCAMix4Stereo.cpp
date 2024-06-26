@@ -44,15 +44,16 @@ struct VCAMix4Stereo : MixBaseModule {
   float scale = 1.f;
   float offset = 0.f;
   int oversample = 4;
-  OversampleFilter_4 leftUpSample[4], leftDownSample[4], 
-                     rightUpSample[4], rightDownSample[4],
-                     leftVcaBandlimit[2][5][4], rightVcaBandlimit[2][5][4];
-  DCBlockFilter_4 leftDcBlockBeforeFilter[4], leftDcBlockAfterFilter[4], 
-                  rightDcBlockBeforeFilter[4], rightDcBlockAfterFilter[4];
+  OversampleFilter_4 leftUpSample[4]{}, leftDownSample[4]{}, 
+                     rightUpSample[4]{}, rightDownSample[4]{},
+                     leftVcaBandlimit[2][5][4]{}, rightVcaBandlimit[2][5][4]{};
+  DCBlockFilter_4 leftDcBlockBeforeFilter[4]{}, leftDcBlockAfterFilter[4]{}, 
+                  rightDcBlockBeforeFilter[4]{}, rightDcBlockAfterFilter[4]{};
 
   VCAMix4Stereo() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     mixType = VCAMIX4ST_TYPE;
+    baseMod = true;
     stereo = true;
     for (int i=0; i < 4; i++){
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));
@@ -87,7 +88,6 @@ struct VCAMix4Stereo : MixBaseModule {
       configBypass(inputs[RIGHT_INPUTS+i].isConnected() ? RIGHT_INPUTS+i : LEFT_INPUTS+i, RIGHT_OUTPUTS+i);
     }
     initOversample();
-    initDCBlock();
   }
 
   void initOversample(){
@@ -105,26 +105,12 @@ struct VCAMix4Stereo : MixBaseModule {
     }
   }
 
-  void initDCBlock(){
-    float sampleTime = settings::sampleRate;
-    for (int i=0; i<4; i++){
-      leftDcBlockBeforeFilter[i].init(sampleTime);
-      rightDcBlockBeforeFilter[i].init(sampleTime);
-      leftDcBlockAfterFilter[i].init(sampleTime);
-      rightDcBlockAfterFilter[i].init(sampleTime);
-    }
-  }
-
   void onReset(const ResetEvent& e) override {
     mode = -1;
     initOversample();
     Module::onReset(e);
   }
 
-  void onSampleRateChange(const SampleRateChangeEvent& e) override {
-    initDCBlock();
-  }
-  
   void onPortChange(const PortChangeEvent& e) override {
     if (e.type == Port::INPUT && e.portId >= RIGHT_INPUTS && e.portId < RIGHT_INPUTS+4)
       bypassRoutes[e.portId].inputId = e.connecting ? e.portId : e.portId - 4;
@@ -170,23 +156,31 @@ struct VCAMix4Stereo : MixBaseModule {
     }
 
     int inChannels[4];
-    int channels = std::max({1, inputs[LEFT_CHAIN_INPUT].getChannels(), inputs[RIGHT_CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    int channels = mode == 1 ? 1 : std::max({1, inputs[LEFT_CHAIN_INPUT].getChannels(), inputs[RIGHT_CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    int loopChannels = channels;
     for (int i=0; i<4; i++){
       inChannels[i] = mode == 1 ? 1 : std::max({
         1, inputs[CV_INPUTS+i].getChannels(),
         inputs[LEFT_INPUTS+i].getChannels(), inputs[RIGHT_INPUTS+i].getChannels()
       });
-      if (inChannels[i] > channels && (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected())))
-        channels = inChannels[i];
+      if (inChannels[i] > channels) {
+        loopChannels = inChannels[i];
+        if (!exclude || (!outputs[LEFT_OUTPUTS+i].isConnected() && !outputs[RIGHT_OUTPUTS+i].isConnected()))
+          channels = inChannels[i];
+      }
     }
-    simd::float_4 leftOut, rightOut, cv, leftChannel[4], rightChannel[4];
+    simd::float_4 leftOut, rightOut, leftRtn, rightRtn, cv, leftChannel[4], rightChannel[4];
+    bool sendChain;
     float channelScale;
     float fadeLevel[5];
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
-    for (int c=0; c<channels; c+=4){
-      leftOut = inputs[LEFT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
-      rightOut = inputs[RIGHT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+    for (int c=0; c<loopChannels; c+=4){
+      leftOut = mode==1 ? inputs[LEFT_CHAIN_INPUT].getVoltageSum() : inputs[LEFT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+      if (inputs[RIGHT_CHAIN_INPUT].isConnected())
+        rightOut = mode==1 ? inputs[RIGHT_CHAIN_INPUT].getVoltageSum() : inputs[RIGHT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+      else
+        rightOut = leftOut;
       if (mode == 1){
         for (int i=0; i<4; i++){
           cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
@@ -341,11 +335,15 @@ struct VCAMix4Stereo : MixBaseModule {
               else
                 exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue();
             }
+            leftRtn = exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+            rightRtn = exp->inputs[RIGHT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+            sendChain = exp->params[SEND_CHAIN_PARAM].getValue();
             exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
               (  leftChannel[0] * exp->params[SEND_PARAM+0].getValue()
                + leftChannel[1] * exp->params[SEND_PARAM+1].getValue()
                + leftChannel[2] * exp->params[SEND_PARAM+2].getValue()
                + leftChannel[3] * exp->params[SEND_PARAM+3].getValue()
+               + (sendChain ? leftRtn : simd::float_4::zero())
               ) * exp->fade[0].out
               ,c
             );
@@ -354,15 +352,18 @@ struct VCAMix4Stereo : MixBaseModule {
                + rightChannel[1] * exp->params[SEND_PARAM+1].getValue()
                + rightChannel[2] * exp->params[SEND_PARAM+2].getValue()
                + rightChannel[3] * exp->params[SEND_PARAM+3].getValue()
+               + (sendChain ? rightRtn : simd::float_4::zero())
               ) * exp->fade[0].out
               ,c
             );
             if (channels-c <= 4) {
               exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
               exp->outputs[RIGHT_SEND_OUTPUT].setChannels(channels);
-            }  
-            leftOut  += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
-            rightOut += exp->inputs[RIGHT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            }
+            if (!sendChain) {
+              leftOut  += leftRtn * exp->params[RETURN_PARAM].getValue();
+              rightOut += rightRtn * exp->params[RETURN_PARAM].getValue();
+            }
             break;
         }
         if (!c && muteMod && !muteMod->isBypassed()) {
@@ -395,7 +396,7 @@ struct VCAMix4Stereo : MixBaseModule {
                 fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
                 shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
                 fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
-                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]*10.f); // fade & fade2 outputs match
               }  
               else if (softMute){
                 fade[i].rise = fade[i].fall = 40.f;
@@ -417,7 +418,7 @@ struct VCAMix4Stereo : MixBaseModule {
                 fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
                 shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
                 fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
-                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]*10.f); // fade & fade2 outputs match
               }  
               else if (softMute) {
                 fade[i].rise = fade[i].fall = 40.f;
@@ -452,7 +453,7 @@ struct VCAMix4Stereo : MixBaseModule {
       leftOut += leftChannel[0] + leftChannel[1] + leftChannel[2] + leftChannel[3] + preMixOff;
       rightOut += rightChannel[0] + rightChannel[1] + rightChannel[2] + rightChannel[3] + preMixOff;
 
-      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
+      cv = inputs[MIX_CV_INPUT].isConnected() ? (mode == 1 ? inputs[MIX_CV_INPUT].getVoltage()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f) : 1.0f;
       if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
       if (vcaMode == 1 || vcaMode == 3)
@@ -464,7 +465,7 @@ struct VCAMix4Stereo : MixBaseModule {
         leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
         rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
       }
-      if (dcBlock && dcBlock <= 2){
+      if (dcBlock && dcBlock <= 2){ // no oversample applied during DC removal
         leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
         rightOut = rightDcBlockBeforeFilter[c/4].process(rightOut);
       }
@@ -486,7 +487,7 @@ struct VCAMix4Stereo : MixBaseModule {
           rightOut = rightDownSample[c/4].process(rightOut);
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip)){
+      if (dcBlock == 3 || (dcBlock == 2 && clip)){ // no oversample applied during DC removal
         leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }

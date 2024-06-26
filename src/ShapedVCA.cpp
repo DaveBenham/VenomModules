@@ -37,7 +37,8 @@ struct ShapedVCA : VenomModule {
     LIGHTS_LEN
   };
 
-  bool oldLog = false;
+//  bool oldLog = false;
+  int algo = 0; // 0 = properly scaled with bipolar exp, 1 = unscaled, unipolar exp, 2 = unscaled, unipolar exp and funky log
   int range = -1; // force initialization
   float levelOffset, levelOffsetVals[6] = {0.f, 0.f, 0.f, -1.f, -2.f, -10.f};
   float levelScale, levelScaleVals[6] = {1.f, 2.f, 10.f, 2.f, 4.f, 20.f};
@@ -52,12 +53,17 @@ struct ShapedVCA : VenomModule {
   ShapedVCA() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 5.f, 0.f, "Level Range", {"0-1", "0-2", "0-10", "+/- 1", "+/- 2", "+/- 10"});
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 1.f, 0.f, "VCA Mode", {"Unipolar clipped CV (2 quadrant)", "Bipolar unclipped CV (4 quadrant)"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 3.f, 0.f, "VCA Mode", {
+      "Unipolar 0-10V clipped CV (2 quadrant)",
+      "Bipolar +/- 10V unclipped CV (4 quadrant)",
+      "Unipolar 0-5V clipped CV (2 quadrant)",
+      "Bipolar +/- 5V unclipped CV (4 quadrant)"
+    });
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 2.f, 0.f, "Output Clipping", {"Off", "Hard clip", "Soft clip"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 4.f, 0.f, "Oversample", {"Off", "x4", "x8", "x16", "x32"});
     configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level", "x", 0.f, 1.f, 0.f);
     configInput(LEVEL_INPUT, "Level CV")->description = "Normalled to 10 volts";
-    configParam(BIAS_PARAM, 0.f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
+    configParam(BIAS_PARAM, -0.5f, 0.5f, 0.f, "Level CV bias", " V", 0.f, 10.f, 0.f);
     configParam<ShapeQuantity>(CURVE_PARAM, -1.f, 1.f, 0.f, "Response curve", "%", 0.f, 100.f);
     configInput(CURVE_INPUT, "Response curve");
     configInput(LEFT_INPUT, "Left")->description = "Normalled to 10 volts";
@@ -117,7 +123,8 @@ struct ShapedVCA : VenomModule {
          curveConnected = inputs[CURVE_INPUT].isConnected(),
          leftOutConnected = outputs[LEFT_OUTPUT].isConnected(),
          rightOutConnected = outputs[RIGHT_OUTPUT].isConnected(),
-         ringMod = (params[MODE_PARAM].getValue()>0.f);
+         ringMod = (static_cast<int>(params[MODE_PARAM].getValue())%2),
+         half = params[MODE_PARAM].getValue()>1.5f;
 
     for( int o=0; o<oversample; o++){
       for( int s=0, c=0; s<simdCnt; s++, c+=4){
@@ -135,12 +142,14 @@ struct ShapedVCA : VenomModule {
         levelIn[s] += bias;
         if (!ringMod) levelIn[s] = clamp(levelIn[s]);
         shape = clamp(curveIn[s]/10.f + curve, -1.f, 1.f);
-        if (oldLog)
+        if (algo == 2 && !half) // oldlog and unscaled, unipolar exp
           gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*levelIn[s]+1.f), simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
+        else if (algo == 1 && !half)
+          gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*simd::abs(levelIn[s])+1.f), simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
         else {
-          float_4 absLevel = oldLog ? 1.f : simd::abs(levelIn[s]);
-          float_4 signLevel = oldLog ? 1.f : ifelse(levelIn[s]<0.f, -1.f, 1.f);
-          gain = crossfade(levelIn[s], ifelse(shape>0.f, signLevel*11.f*absLevel/(10.f*absLevel+1.f), simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
+          if (half && levelConnected)
+            levelIn[s]*=2.f;
+          gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*simd::abs(levelIn[s])+1.f), simd::sgn(levelIn[s])*simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
         }
         leftOut[s] = leftIn[s] * gain * level;
         rightOut[s] = rightIn[s] * gain * level;
@@ -168,17 +177,19 @@ struct ShapedVCA : VenomModule {
 
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
-    json_object_set_new(rootJ, "oldLog", json_boolean(oldLog));
+    json_object_set_new(rootJ, "algo", json_integer(algo));
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
     json_t* val;
-    if ((val = json_object_get(rootJ, "oldLog")))
-      oldLog = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "algo")))
+      algo = json_integer_value(val);
+    else if ((val = json_object_get(rootJ, "oldLog")))
+      algo = json_boolean_value(val) ? 2 : 1;
     else
-      oldLog = true;
+      algo = 2;
   }
 
 };
@@ -200,6 +211,8 @@ struct ShapedVCAWidget : VenomWidget {
     ModeSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
     }
   };
 
@@ -249,17 +262,19 @@ struct ShapedVCAWidget : VenomWidget {
   }
 
   void appendContextMenu(Menu* menu) override {
-    ShapedVCA* module = dynamic_cast<ShapedVCA*>(this->module);
+    ShapedVCA* module = static_cast<ShapedVCA*>(this->module);
 
     menu->addChild(new MenuSeparator);
-    menu->addChild(createBoolMenuItem("Old negative log behavior", "",
+    menu->addChild(createIndexSubmenuItem(
+      "Exp/Log algorithm",
+      {"corrected", "intermediate", "original"},
       [=]() {
-        return module->oldLog;
+        return module->algo;
       },
-      [=](bool val) {
-        module->oldLog = val;
+      [=](int val) {
+        module->algo = val;
       }
-    ));    
+    ));
 
     VenomWidget::appendContextMenu(menu);
   }

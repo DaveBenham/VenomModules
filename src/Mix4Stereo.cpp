@@ -35,13 +35,14 @@ struct Mix4Stereo : MixBaseModule {
   float scale = 1.f;
   float offset = 0.f;
   int oversample = 4;
-  OversampleFilter_4 leftUpSample[4], leftDownSample[4], rightUpSample[4], rightDownSample[4];
-  DCBlockFilter_4 leftDcBlockBeforeFilter[4], rightDcBlockBeforeFilter[4],
-                  leftDcBlockAfterFilter[4],  rightDcBlockAfterFilter[4];
+  OversampleFilter_4 leftUpSample[4]{}, leftDownSample[4]{}, rightUpSample[4]{}, rightDownSample[4]{};
+  DCBlockFilter_4 leftDcBlockBeforeFilter[4]{}, rightDcBlockBeforeFilter[4]{},
+                  leftDcBlockAfterFilter[4]{},  rightDcBlockAfterFilter[4]{};
 
   Mix4Stereo() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     mixType=MIX4ST_TYPE;
+    baseMod = true;
     stereo = true;
     for (int i=0; i < 4; i++){
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);
@@ -58,7 +59,6 @@ struct Mix4Stereo : MixBaseModule {
     configOutput(LEFT_OUTPUT, "Left Mix");
     configOutput(RIGHT_OUTPUT, "Right Mix");
     initOversample();
-    initDCBlock();
   }
 
   void initOversample(){
@@ -70,24 +70,10 @@ struct Mix4Stereo : MixBaseModule {
     }
   }
 
-    void initDCBlock(){
-    float sampleTime = settings::sampleRate;
-    for (int i=0; i<4; i++){
-      leftDcBlockBeforeFilter[i].init(sampleTime);
-      rightDcBlockBeforeFilter[i].init(sampleTime);
-      leftDcBlockAfterFilter[i].init(sampleTime);
-      rightDcBlockAfterFilter[i].init(sampleTime);
-    }
-  }
-
   void onReset(const ResetEvent& e) override {
     mode = -1;
     initOversample();
     Module::onReset(e);
-  }
-
-  void onSampleRateChange(const SampleRateChangeEvent& e) override {
-    initDCBlock();
   }
 
   void process(const ProcessArgs& args) override {
@@ -131,7 +117,8 @@ struct Mix4Stereo : MixBaseModule {
       inputs[LEFT_INPUT].getChannels(), inputs[LEFT_INPUT+1].getChannels(), inputs[LEFT_INPUT+2].getChannels(), inputs[LEFT_INPUT+3].getChannels(),
       inputs[RIGHT_INPUT].getChannels(), inputs[RIGHT_INPUT+1].getChannels(), inputs[RIGHT_INPUT+2].getChannels(), inputs[RIGHT_INPUT+3].getChannels()
     });
-    simd::float_4 leftOut, rightOut, leftChannel[4], rightChannel[4];
+    simd::float_4 leftOut, rightOut, leftRtn, rightRtn, leftChannel[4], rightChannel[4];
+    bool sendChain;
     float fadeLevel[5];
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
@@ -235,11 +222,15 @@ struct Mix4Stereo : MixBaseModule {
               else
                 exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue();
             }
+            leftRtn = exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+            rightRtn = exp->inputs[RIGHT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+            sendChain = exp->params[SEND_CHAIN_PARAM].getValue();
             exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
               (  leftChannel[0] * exp->params[SEND_PARAM+0].getValue()
                + leftChannel[1] * exp->params[SEND_PARAM+1].getValue()
                + leftChannel[2] * exp->params[SEND_PARAM+2].getValue()
                + leftChannel[3] * exp->params[SEND_PARAM+3].getValue()
+               + (sendChain ? leftRtn : simd::float_4::zero())
               ) * exp->fade[0].out
               ,c
             );
@@ -248,15 +239,18 @@ struct Mix4Stereo : MixBaseModule {
                + rightChannel[1] * exp->params[SEND_PARAM+1].getValue()
                + rightChannel[2] * exp->params[SEND_PARAM+2].getValue()
                + rightChannel[3] * exp->params[SEND_PARAM+3].getValue()
+               + (sendChain ? rightRtn : simd::float_4::zero())
               ) * exp->fade[0].out
               ,c
             );
             if (channels-c <= 4) {
               exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
               exp->outputs[RIGHT_SEND_OUTPUT].setChannels(channels);
-            }  
-            leftOut  += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
-            rightOut += exp->inputs[RIGHT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            }
+            if (!sendChain) {
+              leftOut  += leftRtn * exp->params[RETURN_PARAM].getValue();
+              rightOut += rightRtn * exp->params[RETURN_PARAM].getValue();
+            }
             break;
         }
         if (!c && muteMod && !muteMod->isBypassed()) {
@@ -289,7 +283,7 @@ struct Mix4Stereo : MixBaseModule {
                 fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
                 shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
                 fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
-                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]*10.f); // fade & fade2 outputs match
               }  
               else if (softMute){
                 fade[i].rise = fade[i].fall = 40.f;
@@ -311,7 +305,7 @@ struct Mix4Stereo : MixBaseModule {
                 fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
                 shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
                 fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
-                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]*10.f); // fade & fade2 outputs match
               }  
               else if (softMute) {
                 fade[i].rise = fade[i].fall = 40.f;
@@ -350,7 +344,7 @@ struct Mix4Stereo : MixBaseModule {
         leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale + postMixOff;
         rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale + postMixOff;
       }
-      if (dcBlock && dcBlock <= 2){
+      if (dcBlock && dcBlock <= 2){ // no oversample applied during DC removal
         leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
         rightOut = rightDcBlockBeforeFilter[c/4].process(rightOut);
       }
@@ -372,7 +366,7 @@ struct Mix4Stereo : MixBaseModule {
           rightOut = rightDownSample[c/4].process(rightOut);
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip)){
+      if (dcBlock == 3 || (dcBlock == 2 && clip)){ // no oversample applied during DC removal
         leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }

@@ -22,7 +22,7 @@ class OversampleFilter {
     }
 
   private:
-    rack::dsp::TBiquadFilter<float> f[3];
+    rack::dsp::TBiquadFilter<float> f[3]{};
 };
 
 class OversampleFilter_4 {
@@ -42,31 +42,75 @@ class OversampleFilter_4 {
     }
 
   private:
-    rack::dsp::TBiquadFilter<rack::simd::float_4> f[3];
+    rack::dsp::TBiquadFilter<rack::simd::float_4> f[3]{};
 };
 
+/*
 class DCBlockFilter_4 {
+// This version is mysteriously not working on some machines
+// Be sure to uncomment `, oversample` in process calls if reverting to this version
   public:
-    void init(float sampleRate){
-      f[0].setCutoffFreq(2.f/sampleRate);
-      f[1].setCutoffFreq(2.f/sampleRate);
-      f[2].setCutoffFreq(2.f/sampleRate);
-      f[3].setCutoffFreq(2.f/sampleRate);
+    rack::simd::float_4 val() {
+      return prevY;
     }
-    void reset(){
-      f[0].reset();
-      f[1].reset();
-      f[2].reset();
-      f[3].reset();
+    
+    rack::simd::float_4 process( rack::simd::float_4 x, int over = 1 ) {
+      float r = 1.f - 250.f / rack::settings::sampleRate / static_cast<float>(over);
+      rack::simd::float_4 y = x - prevX + static_cast<rack::simd::float_4>(r) * prevY;
+      prevX = x;
+      prevY = y;
+      return y;
     }
-    rack::simd::float_4 process(rack::simd::float_4 val){
-      f[0].process(val);
-      f[1].process(f[0].highpass());
-      f[2].process(f[1].highpass());
-      f[3].process(f[2].highpass());
-      return f[3].highpass();
-    }
-
+  
   private:
-    rack::dsp::TRCFilter <rack::simd::float_4>f[4];
+    rack::simd::float_4 prevX = rack::simd::float_4::zero();
+    rack::simd::float_4 prevY = rack::simd::float_4::zero();
+};
+*/
+
+/*
+class DCBlockFilter_4 {
+// This version is mysteriously not working on some machines
+// But I really like the behavior when it does.
+//  - Minimal bass attenuation
+//  - Consistent at all sample rates and oversampling rates
+//  - Excellent DC offset filtering
+// Be sure to uncomment `, oversample` in process calls if reverting to this version
+  public:
+    rack::simd::float_4 val() {
+      return rtn;
+    }
+    
+    rack::simd::float_4 process( rack::simd::float_4 x, int over = 1 ) {
+      double r = 1. - 100. / static_cast<double>(rack::settings::sampleRate) / static_cast<double>(over);
+      for (int i=0; i<4; i++){
+        double y = static_cast<double>(x[i]) - prevX[i] + r * prevY[i];
+        prevX[i] = static_cast<double>(x[i]);
+        prevY[i] = y;
+        rtn[i] = static_cast<float>(y);
+      }
+      return rtn;
+    }
+  
+  private:
+    double prevX[4]{};
+    double prevY[4]{};
+    rack::simd::float_4 rtn = rack::simd::float_4::zero();
+};
+*/
+
+class DCBlockFilter_4 {
+// Naive version that doesn't adjust for sample rate or oversampling, so cutoff is not consistent
+// Also attenuates bass tones too much as sample rate and/or oversampling rate rises
+  public:
+    rack::simd::float_4 val = rack::simd::float_4::zero();
+    
+    rack::simd::float_4 process( rack::simd::float_4 x ) {
+      val = x - prevX + static_cast<rack::simd::float_4>(0.999f) * val;
+      prevX = x;
+      return val;
+    }
+  
+  private:
+    rack::simd::float_4 prevX = rack::simd::float_4::zero();
 };

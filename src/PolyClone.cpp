@@ -78,7 +78,7 @@ struct PolyCloneWidget : VenomWidget {
   struct PCCountDisplay : DigitalDisplay18 {
     void step() override {
       if (module) {
-        PolyClone* mod = dynamic_cast<PolyClone*>(module);
+        PolyClone* mod = static_cast<PolyClone*>(module);
         text = string::f("%d", mod->clones);
         fgColor = SCHEME_YELLOW;
       } else {

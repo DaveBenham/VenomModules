@@ -14,11 +14,19 @@ struct MixModule : VenomModule {
     MIXSOLO_TYPE
   };
   
+  // all
   int mixType=-1;
+  bool baseMod = false;
+  bool stereo = false;
+
+  // base only
   bool softMute = true;
   bool toggleMute = false;
   int monoPanLaw=2;    // +3 dB side
   int stereoPanLaw=10; // Follow mono law
+
+  // expander only
+  bool connected = false;
 
   enum ExpLightId {
     EXP_LIGHT,
@@ -110,6 +118,7 @@ struct MixModule : VenomModule {
     ENUMS(SEND_PARAM,4),
     RETURN_PARAM,
     SEND_MUTE_PARAM,
+    SEND_CHAIN_PARAM,
     SEND_PARAMS_LEN
   };
   enum SendInputId {
@@ -163,8 +172,6 @@ struct MixExpanderModule : MixModule {
 };  
 
 struct MixBaseModule : MixModule {
-  bool stereo = false;
-
   bool mutePresent = false;
   bool offsetPresent = false;
   bool panPresent = false;
@@ -306,7 +313,7 @@ struct MixBaseWidget : VenomWidget {
   };
 
   void appendContextMenu(Menu* menu) override {
-    MixBaseModule* module = dynamic_cast<MixBaseModule*>(this->module);
+    MixBaseModule* module = static_cast<MixBaseModule*>(this->module);
 
     if (module->mutePresent || module->soloPresent || module->sendPresent || module->panPresent)
       menu->addChild(new MenuSeparator);
@@ -359,16 +366,16 @@ struct MixBaseWidget : VenomWidget {
 struct MixExpanderWidget : VenomWidget {
   void step() override {
     bool connected = false;
-    MixBaseModule* base;
-    MixModule* mixMod = dynamic_cast<MixModule*>(this->module);
+    MixModule* mixMod = static_cast<MixModule*>(this->module);
+    MixModule* thisMixMod = mixMod;
     MixModule* fade = NULL;
     MixModule* mute = NULL;
     MixModule* offset = NULL;
     MixModule* pan = NULL;
     MixModule* solo = NULL;
     while (mixMod) {
-      if ((base = dynamic_cast<MixBaseModule*>(mixMod))) {
-        connected = (!pan || base->stereo);
+      if (mixMod->baseMod) {
+        connected = (!pan || mixMod->stereo);
         break;
       } else if (mixMod->mixType == MixModule::MIXFADE_TYPE || mixMod->mixType == MixModule::MIXFADE2_TYPE) {
         if (fade || mute || solo || !mixMod->leftExpander || !(mixMod->leftExpander->mixType==MixModule::MIXSOLO_TYPE || mixMod->leftExpander->mixType==MixModule::MIXMUTE_TYPE)) break;
@@ -377,7 +384,7 @@ struct MixExpanderWidget : VenomWidget {
         if (mute || (solo && solo->leftExpander != mixMod)) break;
         mute = mixMod;
       } else if (mixMod->mixType == MixModule::MIXOFFSET_TYPE) {
-        if (offset || !dynamic_cast<MixBaseModule*>(mixMod->leftExpander)) break;
+        if (offset || !mixMod->leftExpander || !mixMod->leftExpander->baseMod) break;
         offset = mixMod;
       } else if (mixMod->mixType == MixModule::MIXPAN_TYPE) {
         if (pan) break;
@@ -390,13 +397,13 @@ struct MixExpanderWidget : VenomWidget {
       }
       mixMod = mixMod->leftExpander;
     }
-    if(this->module) {
-      mixMod = dynamic_cast<MixModule*>(this->module);
-      mixMod->lights[MixModule::EXP_LIGHT].setBrightness(connected);
+    if(thisMixMod && thisMixMod->connected != connected) {
+      thisMixMod->connected = connected;
+      thisMixMod->lights[MixModule::EXP_LIGHT].setBrightness(connected);
       if (!connected){
-        for (int i=0; i<mixMod->getNumOutputs(); i++) {
-          mixMod->outputs[i].setVoltage(0.f);
-          mixMod->outputs[i].setChannels(1);
+        for (int i=0; i<thisMixMod->getNumOutputs(); i++) {
+          thisMixMod->outputs[i].setVoltage(0.f);
+          thisMixMod->outputs[i].setChannels(1);
         }
       }
     }

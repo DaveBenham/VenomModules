@@ -335,7 +335,7 @@ struct BernoulliSwitchWidget : VenomWidget {
   }
 
   void appendContextMenu(Menu* menu) override {
-    BernoulliSwitch* module = dynamic_cast<BernoulliSwitch*>(this->module);
+    BernoulliSwitch* module = static_cast<BernoulliSwitch*>(this->module);
     assert(module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createIndexPtrSubmenuItem(

@@ -65,6 +65,7 @@ struct Push5 : VenomModule {
 
   void appendCustomParamMenu(Menu *menu, int paramId){
     ButtonExtension *e = buttonExtension + paramId;
+    menu->addChild(new MenuSeparator);
     menu->addChild(createIndexSubmenuItem(
       "Button mode",
       {"Trigger","Gate","Toggle"},
@@ -243,8 +244,8 @@ struct Push5Widget : VenomWidget {
   struct Button : VCVLightBezelLockable<TLightBase> {
     void appendContextMenu(Menu* menu) override {
       if (this->module) {
-        VCVLightBezelLockable<TLightBase>::appendContextMenu(menu);
         static_cast<Push5*>(this->module)->appendCustomParamMenu(menu, this->paramId);
+        VCVLightBezelLockable<TLightBase>::appendContextMenu(menu);
       }
     }
   };

@@ -23,6 +23,7 @@ struct MixSend : MixExpanderModule {
     configOutput(RIGHT_SEND_OUTPUT, "Right send");
     configInput(LEFT_RETURN_INPUT, "Left return");
     configInput(RIGHT_RETURN_INPUT, "Right return");
+    configSwitch<FixedSwitchQuantity>(SEND_CHAIN_PARAM, 0.f, 1.f, 0.f, "Chain mode", {"Off", "On"});
     fade[0].rise = fade[0].fall = 40.f;
 }
 
@@ -33,6 +34,13 @@ struct MixSend : MixExpanderModule {
 };
 
 struct MixSendWidget : MixExpanderWidget {
+
+  struct ChainSwitch : GlowingSvgSwitchLockable {
+    ChainSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+    }
+  };
 
   MixSendWidget(MixSend* module) {
     setModule(module);
@@ -45,10 +53,11 @@ struct MixSendWidget : MixExpanderWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 134.514f), module, MixModule::SEND_PARAM+3));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 169.926f), module, MixModule::RETURN_PARAM));
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 203.278f), module, MixModule::SEND_MUTE_PARAM, MixModule::RETURN_MUTE_LIGHT));
-    addOutput(createOutputCentered<PolyPort>(Vec(22.5f, 240.820f), module, MixModule::LEFT_SEND_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(22.5f, 272.820f), module, MixModule::RIGHT_SEND_OUTPUT));
-    addInput(createInputCentered<PolyPort>(Vec(22.5f, 310.795f), module, MixModule::LEFT_RETURN_INPUT));
-    addInput(createInputCentered<PolyPort>(Vec(22.5f, 343.925f), module, MixModule::RIGHT_RETURN_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.5f, 241.5f), module, MixModule::LEFT_SEND_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.5f, 269.5f), module, MixModule::RIGHT_SEND_OUTPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f, 315.5f), module, MixModule::LEFT_RETURN_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5f, 343.5f), module, MixModule::RIGHT_RETURN_INPUT));
+    addParam(createLockableParamCentered<ChainSwitch>(Vec(37.5,300.5), module, MixModule::SEND_CHAIN_PARAM));
   }
 
   void step() override {

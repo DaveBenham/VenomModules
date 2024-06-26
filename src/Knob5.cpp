@@ -20,12 +20,14 @@ struct Knob5 : VenomModule {
   };
   
   int knobRange[5]{7,7,7,7,7};
+  int quant[5]{0,0,0,0,0};
+  int unit[5]{0,0,0,0,0};
   int poly[5]{1,1,1,1,1};
+  dsp::ClockDivider clockDivider;
   
-  void setRange(int paramId, int range){
+  void configQuantity(int paramId){
     ParamQuantity *q = paramQuantities[paramId];
-    knobRange[paramId] = range;
-    switch (range){
+    switch (knobRange[paramId]){
       case 0:
         q->defaultValue = 0.f;
         q->displayMultiplier = 1.f;
@@ -67,9 +69,12 @@ struct Knob5 : VenomModule {
         q->displayOffset = -10.f;
         break;
     }
+    paramExtensions[paramId].factoryDflt = q->defaultValue;
+    q->unit = unit[paramId] ? " \u00A2" : " V";
   }
 
   void appendCustomParamMenu(Menu *menu, int paramId){
+    menu->addChild(new MenuSeparator);
     menu->addChild(createIndexSubmenuItem(
       "Knob range",
       {"0-1 V","0-2 V","0-5 V","0-10 V","+/- 1 V","+/- 2 V","+/- 5 V","+/- 10 V"},
@@ -77,7 +82,29 @@ struct Knob5 : VenomModule {
         return knobRange[paramId];
       },
       [=](int range) {
-        setRange(paramId, range);
+        knobRange[paramId] = range;
+        configQuantity(paramId);
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "Quantize",
+      {"Off (Continuous)","Integers (Octaves)","1/12V (Semitones)"},
+      [=]() {
+        return quant[paramId];
+      },
+      [=](int val) {
+        quant[paramId] = val;
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "Display unit", 
+      {"Volts (V)","Cents (\u00A2)"},
+      [=]() {
+        return unit[paramId];
+      },
+      [=](int val) {
+        unit[paramId] = val;
+        configQuantity(paramId);
       }
     ));
     menu->addChild(createIndexSubmenuItem(
@@ -92,26 +119,57 @@ struct Knob5 : VenomModule {
     ));
   }  
   
+  struct Knob5Quantity : ParamQuantity {
+    float getDisplayValue() override {
+      Knob5* mod = reinterpret_cast<Knob5*>(module);
+      float val = ParamQuantity::getDisplayValue(); // Continuous
+      switch (mod->quant[paramId]) {
+        case 1: // Integer
+          val = round(val);
+          break;
+        case 2: // Semitone
+          val = round(val*12.f)/12.f;
+      }
+      if (mod->unit[paramId]) val *= 1200.f;
+      return val;
+    }
+    void setDisplayValue(float val) override {
+      Knob5* mod = reinterpret_cast<Knob5*>(module);
+      ParamQuantity::setDisplayValue( mod->unit[paramId] ? val/1200.f : val);
+    }
+  };
+
   Knob5() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i<5; i++) {
       std::string nm = "Knob " + std::to_string(i+1);
-      configParam(KNOB_PARAM+i, 0.f, 1.f, 0.5f, nm, " V", 0.f, 20.f, -10.f);
+      configParam<Knob5Quantity>(KNOB_PARAM+i, 0.f, 1.f, 0.5f, nm, " V", 0.f, 20.f, -10.f);
       configOutput(OUTPUT+i, nm);
       paramExtensions[i].inputLink = false;
       paramExtensions[i].nameLink = i;
       outputExtensions[i].nameLink = i;
     }  
+    clockDivider.setDivision(32);
   }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    for (int i=0; i<5; i++){
-      ParamQuantity *q = paramQuantities[i];
-      float out = params[i].getValue() * q->displayMultiplier + q->displayOffset;
-      for (int c=0; c<poly[i]; c++)
-        outputs[i].setVoltage(out,c);
-      outputs[i].setChannels(poly[i]);
+    if (clockDivider.process()) {
+      for (int i=0; i<5; i++){
+        ParamQuantity *q = paramQuantities[i];
+        float out = q->getValue() * q->displayMultiplier + q->displayOffset;
+        switch (quant[i]){
+          case 1:  // integer
+            out = round(out);
+            break;
+          case 2:  // semitone
+            out = round(out*12.f)/12.f;
+            break;
+        }
+        for (int c=0; c<poly[i]; c++)
+          outputs[i].setVoltage(out,c);
+        outputs[i].setChannels(poly[i]);
+      } 
     }
   }
   
@@ -121,6 +179,10 @@ struct Knob5 : VenomModule {
       std::string iStr = std::to_string(i);
       std::string nm = "knobRange"+iStr;
       json_object_set_new(rootJ, nm.c_str(), json_integer(knobRange[i]));
+      nm = "quant"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(quant[i]));
+      nm = "unit"+iStr;
+      json_object_set_new(rootJ, nm.c_str(), json_integer(unit[i]));
       nm = "poly"+iStr;
       json_object_set_new(rootJ, nm.c_str(), json_integer(poly[i]));
     }
@@ -134,12 +196,21 @@ struct Knob5 : VenomModule {
       std::string iStr = std::to_string(i);
       std::string nm = "knobRange"+iStr;
       if ((val = json_object_get(rootJ, nm.c_str()))){
-        setRange(i, json_integer_value(val));
+        knobRange[i] = json_integer_value(val);
+      }
+      nm = "quant"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        quant[i] = json_integer_value(val);
+      }
+      nm = "unit"+iStr;
+      if ((val = json_object_get(rootJ, nm.c_str()))){
+        unit[i] = json_integer_value(val);
       }
       nm = "poly"+iStr;
       if ((val = json_object_get(rootJ, nm.c_str()))){
         poly[i] = json_integer_value(val);
       }
+      configQuantity(i);
     }
   }
 
@@ -150,8 +221,8 @@ struct Knob5Widget : VenomWidget {
   struct Knob : RoundSmallBlackKnobLockable {
     void appendContextMenu(Menu* menu) override {
       if (this->module) {
-        RoundSmallBlackKnobLockable::appendContextMenu(menu);
         static_cast<Knob5*>(this->module)->appendCustomParamMenu(menu, this->paramId);
+        RoundSmallBlackKnobLockable::appendContextMenu(menu);
       }
     }
   };
@@ -170,10 +241,11 @@ struct Knob5Widget : VenomWidget {
   }
 
   void appendContextMenu(Menu* menu) override {
-    Knob5* module = dynamic_cast<Knob5*>(this->module);
+    Knob5* module = reinterpret_cast<Knob5*>(this->module);
     menu->addChild(new MenuSeparator);
+    menu->addChild(createMenuLabel("Configure all knobs:"));
     menu->addChild(createIndexSubmenuItem(
-      "Configure all knob ranges",
+      "Knob range",
       {"0-1 V","0-2 V","0-5 V","0-10 V","+/- 1 V","+/- 2 V","+/- 5 V","+/- 10 V"},
       [=]() {
         int current = module->knobRange[0];
@@ -186,7 +258,47 @@ struct Knob5Widget : VenomWidget {
       [=](int range) {
         if (range<8) {
           for (int i=0; i<5; i++){
-            module->setRange(i, range);
+            module->knobRange[i] = range;
+            module->configQuantity(i);
+          }
+        }
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "Quantize",
+      {"Off (Continuous)","Integers (Octaves)","1/12V (Semitones)"},
+      [=]() {
+        int current = module->quant[0];
+        for (int i=1; i<5; i++){
+          if (current != module->quant[i])
+            current = 3;
+        }
+        return current;
+      },
+      [=](int val) {
+        if (val<3) {
+          for (int i=0; i<5; i++){
+            module->quant[i]=val;
+          }
+        }
+      }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "Display unit",
+      {"Volts (V)","Cents (\u00A2)"},
+      [=]() {
+        int current = module->unit[0];
+        for (int i=1; i<5; i++){
+          if (current != module->unit[i])
+            current = 2;
+        }
+        return current;
+      },
+      [=](int val) {
+        if (val<2) {
+          for (int i=0; i<5; i++){
+            module->unit[i]=val;
+            module->configQuantity(i);
           }
         }
       }

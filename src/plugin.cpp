@@ -75,9 +75,14 @@ void init(Plugin* p) {
 
   // Add modules here
   p->addModel(modelAuxClone);
+  p->addModel(modelBayInput);
+  p->addModel(modelBayNorm);
+  p->addModel(modelBayOutput);
   p->addModel(modelBenjolinOsc);
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelBernoulliSwitchExpander);
+  p->addModel(modelBlocker);
+  p->addModel(modelBypass);
   p->addModel(modelCloneMerge);
   p->addModel(modelHQ);
   p->addModel(modelKnob5);
@@ -95,6 +100,7 @@ void init(Plugin* p) {
   p->addModel(modelMixSolo);
   p->addModel(modelMultiMerge);
   p->addModel(modelMultiSplit);
+  p->addModel(modelOscillator);
   p->addModel(modelNORS_IQ);
   p->addModel(modelNORSIQChord2Scale);
   p->addModel(modelPolyClone);

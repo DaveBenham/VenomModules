@@ -155,12 +155,12 @@ struct BenjolinOsc : VenomModule {
         in = upSample.process(o ? simd::float_4::zero() : in * oversample);
       }
       simd::float_4 freq = {
-        params[FREQ1_PARAM].getValue() + (cv1Connected ? *cv1In : *tri2*normScale) * 0.9f * params[CV1_PARAM].getValue() + rung * 0.9f * params[RUNG1_PARAM].getValue(),
+        params[FREQ1_PARAM].getValue() + 0.000001f + (cv1Connected ? *cv1In : *tri2*normScale) * 0.9f * params[CV1_PARAM].getValue() + rung * 0.9f * params[RUNG1_PARAM].getValue(),
         params[FREQ2_PARAM].getValue() + (cv2Connected ? *cv2In : *tri1*normScale) * 0.9f * params[CV2_PARAM].getValue() + rung * 0.9f * params[RUNG2_PARAM].getValue(),
         0.f,0.f
       };
-      simd::ifelse(freq<-9.3f, -9.3f, freq);
-      osc += simd::pow(2.f, freq) * k * dir;
+      freq = simd::clamp(freq, -9.3f, 9.7f);
+      osc += dsp::exp2_taylor5(freq) * k * dir;
       if (*tri1 > 1.f || *tri1 < -1.f) {
         *tri1 = *dir1 + *dir1 - *tri1;
         *dir1 *= -1.f;

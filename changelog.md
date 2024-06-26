@@ -1,5 +1,52 @@
 # Venom Modules Changelog
 
+## 2.8.0 (2024-06-26)
+### New Modules
+- Bay Input
+- Bay Normal
+- Bay Output
+- Blocker
+- Bypass
+- VCO Lab
+
+### Enhancements
+- Benjolin Oscillator
+  - Slightly detune oscillator 1 from 2 so PWM of newly inserted module is not flat
+  - Minor reduction in CPU usage
+- Knob 5
+  - New quantize options: Off, Integers, Semitones
+  - New display unit options: Volts, Cents
+  - Reduced CPU usage
+- Linear Beats
+  - Save toggle CV context menu option with patch
+- Mix Aux Send Expander
+  - Add a chain option for use when VCA mixers are chained
+- Poly Offset
+  - New quantize options: Off, Integers, Semitones
+  - New display unit options: Volts, Cents
+  - BREAKING CHANGE: mono input now cloned to match selected channel count
+- Poly Scale
+  - New output channel count option
+  - Mono input cloned to match selected channel count
+- Shaped VCA
+  - Allow exponential shape output to be bipolar in bipolar VCA mode
+  - Added additional VCA modes to better work with +/- 5V inputs with shaping
+  - Changed Bias knob to bipolar +/- 5V instead of unipolar 0-5V
+  - Modified context menu options for backward compatibility
+
+### Bug Fixes
+- Benjolin
+  - Clamped the oscillator frequency to between ~0.03 Hz and ~12.5 kHz to prevent loss of output.
+- Mix Fade and Mix Fade 2
+  - Fixed range of level output to 0-10 V. Was erroneously 0-1 V.
+- VCA Mix 4 and VCA Mix 4 Stereo
+  - Fixed output polyphony for excluded inputs
+  - Fixed right chain input normalization to left chain input in the stereo version
+  - Fixed summing of polyphonic chain inputs to a single channel if in Unipolar Poly Sum mode
+- All modules that have an option for DC offset removal
+  - The old DC removal algorithm was failing on some machines, so it has been replaced by an entirely new algorithm
+  - This has the potential to alter the sound of older patches that use Venom DC offset removal
+
 ## 2.7.0 (2024-03-11)
 ### New Modules
 - Auxilliary Clone Expander

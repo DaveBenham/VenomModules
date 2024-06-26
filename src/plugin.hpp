@@ -11,9 +11,14 @@ extern Plugin* pluginInstance;
 
 // Declare each Model, defined in each module source file
 extern Model* modelAuxClone;
+extern Model* modelBayInput;
+extern Model* modelBayNorm;
+extern Model* modelBayOutput;
 extern Model* modelBenjolinOsc;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
+extern Model* modelBlocker;
+extern Model* modelBypass;
 extern Model* modelCloneMerge;
 extern Model* modelHQ;
 extern Model* modelKnob5;
@@ -31,6 +36,7 @@ extern Model* modelMixSend;
 extern Model* modelMixSolo;
 extern Model* modelMultiMerge;
 extern Model* modelMultiSplit;
+extern Model* modelOscillator;
 extern Model* modelNORS_IQ;
 extern Model* modelNORSIQChord2Scale;
 extern Model* modelPolyClone;
@@ -139,7 +145,7 @@ struct VenomModule : Module {
       pe = e->inputLink ? &inputExtensions[e->nameLink] : &outputExtensions[e->nameLink];
     }
     menu->addChild(new MenuSeparator);
-    menu->addChild(createSubmenuItem("Parameter name", "",
+    menu->addChild(createSubmenuItem("Parameter name", q->name,
       [=](Menu *menu){
         MenuTextField *editField = new MenuTextField();
         editField->box.size.x = 250;
@@ -203,7 +209,7 @@ struct VenomModule : Module {
       eLink = (type==engine::Port::INPUT ? &outputExtensions[e->portNameLink] : &inputExtensions[e->portNameLink]);
     }
     menu->addChild(new MenuSeparator);
-    menu->addChild(createSubmenuItem("Port name", "",
+    menu->addChild(createSubmenuItem("Port name", pi->name,
       [=](Menu *menu){
         MenuTextField *editField = new MenuTextField();
         editField->box.size.x = 250;
@@ -309,6 +315,7 @@ struct VenomModule : Module {
   // Hack workaround for VCV bug when deleting a module - failure to trigger onExpanderChange()
   // Remove if/when VCV fixes the bug
   void onRemove(const RemoveEvent& e) override {
+    if (rack::string::Version("2.5.0") < rack::string::Version(rack::APP_VERSION)) return;
     Module::ExpanderChangeEvent event;
     Module::Expander expander = getRightExpander();
     if (expander.module){

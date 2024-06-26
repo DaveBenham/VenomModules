@@ -91,20 +91,6 @@ struct Logic : VenomModule {
       configOutput(GATE_OUTPUT + i, "Gate " + i_s);
       recycleLabels.push_back("Gate " + i_s + " output");
     }
-    initDCBlock();
-  }
-
-  void initDCBlock(){
-    float sampleTime = settings::sampleRate;
-    for (int c=0; c<CHANNEL_COUNT; c++){
-      for (int i=0; i<4; i++){
-        dcBlock[c][i].init(sampleTime);
-      }
-    }
-  }
-
-  void onSampleRateChange(const SampleRateChangeEvent& e) override {
-    initDCBlock();
   }
 
   void process(const ProcessArgs& args) override {
@@ -258,7 +244,7 @@ struct Logic : VenomModule {
       for (int c=0; c<endChannel; c++) {
         for (int p=0, pi=0; p<polyCount[c]; p+=4, pi++) {
           if (dc) {
-            outVal[c][pi] = dcBlock[c][pi].process(outVal[c][pi]);
+            outVal[c][pi] = dcBlock[c][pi].process(outVal[c][pi]/*, oversample*/);
           }  
           outputs[GATE_OUTPUT+c].setVoltageSimd(outVal[c][pi], p);
         }

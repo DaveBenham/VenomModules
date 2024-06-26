@@ -40,12 +40,13 @@ struct VCAMix4 : MixBaseModule {
   float scale = 1.f;
   float offset = 0.f;
   int oversample = 4;
-  OversampleFilter_4 outUpSample[4], outDownSample[4], vcaBandlimit[2][5][4];
-  DCBlockFilter_4 dcBlockBeforeFilter[4], dcBlockAfterFilter[4];
+  OversampleFilter_4 outUpSample[4]{}, outDownSample[4]{}, vcaBandlimit[2][5][4]{};
+  DCBlockFilter_4 dcBlockBeforeFilter[4]{}, dcBlockAfterFilter[4]{};
 
   VCAMix4() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     mixType = VCAMIX4_TYPE;
+    baseMod = true;
     for (int i=0; i < 4; i++){
       configInput(CV_INPUTS+i, string::f("Channel %d CV", i + 1));
       configParam(LEVEL_PARAMS+i, 0.f, 2.f, 1.f, string::f("Channel %d level", i + 1), " dB", -10.f, 20.f);
@@ -71,7 +72,6 @@ struct VCAMix4 : MixBaseModule {
     for (int i=0; i<4; i++)
       configBypass(INPUTS+i, OUTPUTS+i);
     initOversample();
-    initDCBlock();
   }
 
   void initOversample(){
@@ -85,22 +85,10 @@ struct VCAMix4 : MixBaseModule {
     }
   }
 
-  void initDCBlock(){
-    float sampleTime = settings::sampleRate;
-    for (int i=0; i<4; i++){
-      dcBlockBeforeFilter[i].init(sampleTime);
-      dcBlockAfterFilter[i].init(sampleTime);
-    }
-  }
-
   void onReset(const ResetEvent& e) override {
     mode = -1;
     initOversample();
     Module::onReset(e);
-  }
-
-  void onSampleRateChange(const SampleRateChangeEvent& e) override {
-    initDCBlock();
   }
 
   void process(const ProcessArgs& args) override {
@@ -137,24 +125,29 @@ struct VCAMix4 : MixBaseModule {
     bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
     float preOff[4], postOff[4];
     for (int i=0; i<4; i++) {
-      int Cnt = mode == 1 ? inputs[INPUTS+i].getChannels() : 1;
-      preOff[i] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
-      postOff[i] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
+      int cnt = mode == 1 ? inputs[INPUTS+i].getChannels() : 1;
+      preOff[i] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+i].getValue() * cnt : 0.f;
+      postOff[i] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+i].getValue() * cnt : 0.f;
     }
 
     int inChannels[4];
-    int channels = std::max({1, inputs[CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    int channels = mode==1 ? 1 : std::max({1, inputs[CHAIN_INPUT].getChannels(), inputs[MIX_CV_INPUT].getChannels()});
+    int loopChannels = channels;
     for (int i=0; i<4; i++) {
       inChannels[i] = mode == 1 ? 1 : std::max({1, inputs[CV_INPUTS+i].getChannels(), inputs[INPUTS+i].getChannels()});
-      if (inChannels[i] > channels && (!exclude || !outputs[OUTPUTS+i].isConnected()))
-        channels = inChannels[i];
+      if (inChannels[i] > channels){
+        loopChannels = inChannels[i];
+        if (!exclude || !outputs[OUTPUTS+i].isConnected())
+          channels = inChannels[i];
+      }
     }
-    simd::float_4 channel[4], out, cv;
+    simd::float_4 channel[4], out, rtn, cv;
+    bool sendChain;
     float fadeLevel[5];
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
-    for (int c=0; c<channels; c+=4){
-      out = inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+    for (int c=0; c<loopChannels; c+=4){
+      out = mode==1 ? inputs[CHAIN_INPUT].getVoltageSum() : inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       for (int i=0; i<4; i++){
         cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
         if (vcaMode <= 1)
@@ -194,11 +187,14 @@ struct VCAMix4 : MixBaseModule {
               else
                 exp->fade[0].out = !exp->params[SEND_MUTE_PARAM].getValue();
             }
+            rtn = exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+            sendChain = exp->params[SEND_CHAIN_PARAM].getValue();
             exp->outputs[LEFT_SEND_OUTPUT].setVoltageSimd(
                  (  channel[0] * exp->params[SEND_PARAM+0].getValue()
                   + channel[1] * exp->params[SEND_PARAM+1].getValue()
                   + channel[2] * exp->params[SEND_PARAM+2].getValue()
                   + channel[3] * exp->params[SEND_PARAM+3].getValue()
+                  + (sendChain ? rtn : simd::float_4::zero())
                  ) * exp->fade[0].out
                  ,c
             );
@@ -206,8 +202,9 @@ struct VCAMix4 : MixBaseModule {
               exp->outputs[LEFT_SEND_OUTPUT].setChannels(channels);
               exp->outputs[RIGHT_SEND_OUTPUT].setVoltage(0.f);
               exp->outputs[RIGHT_SEND_OUTPUT].setChannels(1);
-            }  
-            out += exp->inputs[LEFT_RETURN_INPUT].getPolyVoltageSimd<simd::float_4>(c) * exp->params[RETURN_PARAM].getValue();
+            }
+            if (!sendChain)
+              out += rtn * exp->params[RETURN_PARAM].getValue();
             break;
         }
         if (!c && muteMod && !muteMod->isBypassed()) {
@@ -240,7 +237,7 @@ struct VCAMix4 : MixBaseModule {
                 fade[i].process(args.sampleTime, soloMod->params[SOLO_PARAM+i].getValue());
                 shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
                 fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
-                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]*10.f); // fade & fade2 outputs match
               }  
               else if (softMute){
                 fade[i].rise = fade[i].fall = 40.f;
@@ -261,7 +258,7 @@ struct VCAMix4 : MixBaseModule {
                 fade[i].process(args.sampleTime, !muteMod->params[MUTE_PARAM+i].getValue());
                 shape = fadeExpander->params[(isFadeType ? static_cast<int>(FADE_SHAPE_PARAM) : static_cast<int>(FADE2_SHAPE_PARAM))+i].getValue();
                 fadeLevel[i] = crossfade(fade[i].out, shape>0.f ? 11.f*fade[i].out/(10.f*fade[i].out+1.f) : pow(fade[i].out,4), shape>0.f ? shape : -shape);
-                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]); // fade & fade2 outputs match
+                fadeExpander->outputs[FADE_OUTPUT+i].setVoltage(fadeLevel[i]*10.f); // fade & fade2 outputs match
               }  
               else if (softMute) {
                 fade[i].rise = fade[i].fall = 40.f;
@@ -292,7 +289,7 @@ struct VCAMix4 : MixBaseModule {
       }
       out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
 
-      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
+      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltage()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
       if (vcaMode <= 1)
         cv = simd::clamp(cv, 0.f, 1.f);
       if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
@@ -305,7 +302,7 @@ struct VCAMix4 : MixBaseModule {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
         if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
       }
-      if (dcBlock && dcBlock <= 2)
+      if (dcBlock && dcBlock <= 2) // no oversample applied during DC removal
         out = dcBlockBeforeFilter[c/4].process(out);
       if (clip == 1 || clip == 4)
         out = clamp(out, -10.f, 10.f);
@@ -318,7 +315,7 @@ struct VCAMix4 : MixBaseModule {
           out = outDownSample[c/4].process(out);
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip))
+      if (dcBlock == 3 || (dcBlock == 2 && clip)) // no oversample applied during DC removal
         out = dcBlockAfterFilter[c/4].process(out);
       if (clip > 3) {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
