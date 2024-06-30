@@ -343,7 +343,7 @@ A Benjolin should not self oscillate unless given feedback from the filter band 
 
 The patch below closely emulates the features of the Benjolin version 2 from After Later Audio. A version of the patch wired up as a walking bass line is available at https://patchstorage.com/venom-2-8-benjolin-walking-bass/
 
-![Complete Benjolin patch example image](doc/Venom 2.8 Benjolin.PNG)
+![Complete Benjolin patch example image](doc/Venom2-8Benjolin.PNG)
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
