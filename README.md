@@ -341,9 +341,9 @@ A minimal complete Benjolin can be patched simply by pairing the Benjolin Oscill
 
 A Benjolin should not self oscillate unless given feedback from the filter band pass output. So ideally the cutoff frequency and resonance amount should be constrained so as to prevent self oscillation. Other things to consider are a crossfade module to allow a mix of PWM and external CV (or self patched CV) as input to the filter. Also a mixer would be good to allow a mix of external (or self patched) CV and Rungler input to the Cutoff frequency.
 
-The patch below closely emulates the features of the Benjolin version 2 from After Later Audio, and is available at https://patchstorage.com/complete-benjolin-using-the-venom-benjolin-oscillator/
+The patch below closely emulates the features of the Benjolin version 2 from After Later Audio. A version of the patch wired up as a walking bass line is available at https://patchstorage.com/venom-2-8-benjolin-walking-bass/
 
-![Complete Benjolin patch example image](doc/VenomBenjolin.PNG)
+![Complete Benjolin patch example image](doc/Venom 2.8 Benjolin.PNG)
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
