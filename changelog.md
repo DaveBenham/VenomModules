@@ -11,7 +11,6 @@
 
 ### Enhancements
 - Benjolin Oscillator
-  - Slightly detune oscillator 1 from 2 so PWM of newly inserted module is not flat
   - Minor reduction in CPU usage
 - Knob 5
   - New quantize options: Off, Integers, Semitones
