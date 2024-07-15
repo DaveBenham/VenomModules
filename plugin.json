@@ -488,7 +488,7 @@
       "slug": "Oscillator",
       "name": "VCO Lab",
       "description": "Audio or low frequency oscillator with 4 simultaneous waveforms, mixing, linear/exponential FM, phase modulation, hard/soft sync, PWM, and more",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#oscillator",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vco-lab",
       "tags": [
         "Function generator",
         "Low-frequency oscillator",
