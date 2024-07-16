@@ -2315,7 +2315,7 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 
 Global controls and inputs are generally to the left.
 
-The grid of controls, inputs, and outputs to the right control each waveform as well as the overall mix
+The grid of controls, inputs, and outputs to the right control each waveform as well as the overall mix. One major exception is the Mix Phase controls on the far right are actually global phase controls.
 
 ### Polyphony
 VCO LAB is fully polyphonic - All inputs can process polyphonic signals.
@@ -2338,7 +2338,7 @@ This color coded button controls the overall mode of the oscillator
 - **Retriggered LFO one shot** (pink)
 - **Gated LFO one shot** (purple)
 
-In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
+In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input or phase CV input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
 
 If using any of the one shot modes, then the oscillator will not produce any output until it receives a trigger or gate at the Sync input.
  - Triggered one shots will output exactly one complete cycle and then stop until the next trigger is received. If the cycle has not yet completed when a sync trigger is received, then the trigger is ignored. This works well for creating undertone or subharmonic series!
