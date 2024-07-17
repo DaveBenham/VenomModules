@@ -138,7 +138,7 @@ struct BayOutputModule : BayModule {
     bayInputIds.clear();
     for (auto const& it : sources){
       if (APP->engine->getModule(it.first)) {
-        labels.push_back(string::f("%s (%lld)", it.second->modName.c_str(), it.first));
+        labels.push_back(string::f("%s (%lld)", it.second->modName.c_str(), static_cast<long long int>(it.first)));
         bayInputIds.push_back(it.first);
         bayInputs.push_back(it.second);
       }
