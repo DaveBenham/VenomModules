@@ -54,8 +54,9 @@ struct Mix4Stereo : MixBaseModule {
       "Unipolar dB (audio x2)", "Unipolar poly sum dB (audio x2)", "Bipolar % (CV)", "Bipolar x2 (CV)", "Bipolar x10 (CV)"
     });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
-    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 6.f, 0.f, "Mix Clipping", {"Off", "Hard post-level", "Soft post-level", "Soft oversampled post-levl", 
-                                                                                         "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 7.f, 0.f, "Mix Clipping", {"Off", "Hard post-level", "Soft post-level", "Soft oversampled post-levl", 
+                                                                                         "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level",
+                                                                                         "Saturate (Soft oversampled post-level at 6V)"});
     configOutput(LEFT_OUTPUT, "Left Mix");
     configOutput(RIGHT_OUTPUT, "Right Mix");
     initOversample();
@@ -340,7 +341,7 @@ struct Mix4Stereo : MixBaseModule {
       leftOut += leftChannel[0] + leftChannel[1] + leftChannel[2] + leftChannel[3] + preMixOff;
       rightOut += rightChannel[0] + rightChannel[1] + rightChannel[2] + rightChannel[3] + preMixOff;
 
-      if (clip <= 3) {
+      if (clip <= 3 || clip == 7) {
         leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale + postMixOff;
         rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale + postMixOff;
       }
@@ -356,13 +357,13 @@ struct Mix4Stereo : MixBaseModule {
         leftOut = softClip(leftOut);
         rightOut = softClip(rightOut);
       }
-      if (clip == 3 || clip ==6){
+      if (clip == 3 || clip >= 6){
         for (int i=0; i<oversample; i++){
           leftOut = leftUpSample[c/4].process(i ? simd::float_4::zero() : leftOut*oversample);
-          leftOut = softClip(leftOut);
+          leftOut = (clip != 7) ? softClip(leftOut) : (softClip(leftOut*1.6667f) / 1.6667f);
           leftOut = leftDownSample[c/4].process(leftOut);
           rightOut = rightUpSample[c/4].process(i ? simd::float_4::zero() : rightOut*oversample);
-          rightOut = softClip(rightOut);
+          rightOut = (clip != 7) ? softClip(rightOut) : (softClip(rightOut*1.6667f) / 1.6667f);
           rightOut = rightDownSample[c/4].process(rightOut);
         }
       }
@@ -370,7 +371,7 @@ struct Mix4Stereo : MixBaseModule {
         leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }
-      if (clip > 3) {
+      if (clip > 3 && clip < 7) {
         leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale + postMixOff;
         rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale + postMixOff;
       }

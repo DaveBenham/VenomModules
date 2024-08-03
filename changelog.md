@@ -1,5 +1,12 @@
 # Venom Modules Changelog
 
+## 2.?.?
+### Enhancements
+- Mixers
+  - Added an extra clipping mode for saturation limiting at +/- 6V
+- Benjolin Oscillator
+  - Detune VCO 1 a tiny bit so PWM is not flat at initiation
+
 ## 2.8.0 (2024-06-26)
 ### New Modules
 - Bay Input
