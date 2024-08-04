@@ -6,6 +6,9 @@
   - Added an extra clipping mode for saturation limiting at +/- 6V
 - Benjolin Oscillator
   - Detune VCO 1 a tiny bit so PWM is not flat at initiation
+- VCO Lab
+  - Rearranged faceplate to be more logical
+  - Added shape mode options to Sin, Tri, and Saw waveforms
 
 ## 2.8.0 (2024-06-26)
 ### New Modules
