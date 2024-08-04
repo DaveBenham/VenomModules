@@ -852,24 +852,12 @@ The last three DC offset options give identical results when no clipping is appl
 See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 ### C (Clip) button
-The color coded clip button determines how (or if) the final output is clipped.
-- **Off** (dark gray - default)
-- **Hard post-level at 10V** (white)
-- **Soft post-level at 10V** (yellow)
-- **Soft oversampled post-level at 10V** (orange)
-- **Hard pre-level at 10V** (green)
-- **Soft pre-level at 10V** (light blue)
-- **Soft oversampled pre-level at 10V** (dark blue)
-- **Saturate (Soft oversampled post-level at 6V)** (purple)
+The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled for CV or audio according to typical usage, but each option can be used for both audio and CV.
+- **Off** (dark gray - default): The final mix is left untouched, with no limit to the output voltage.
+- **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
+- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V, with saturation, using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
+- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
 
-If clipping is off then there is no limit to the output voltage.
-
-Hard clipping can produce significant aliasing if applied to audio signals.
-
-Soft clipping provides tanh saturation. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to signfcant aliasing.
-
-Soft oversampled clipping also provides saturation, but aliasing is greatly reduced.
-   
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
@@ -2264,23 +2252,11 @@ The last three DC offset options give identical results when no clipping is appl
 See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 ### C (Clip) button
-The color coded clip button determines how (or if) the final output is clipped.
-- **Off** (dark gray - default)
-- **Hard post-level at 10V** (white)
-- **Soft post-level at 10V** (yellow)
-- **Soft oversampled post-level at 10V** (orange)
-- **Hard pre-level at 10V** (green)
-- **Soft pre-level at 10V** (light blue)
-- **Soft oversampled pre-level at 10V** (dark blue)
-- **Saturate (Soft oversampled post-level at 6V)** (purple)
-
-If clipping is off then there is no limit to the output voltage.
-
-Hard clipping can produce significant aliasing if applied to audio signals.
-
-Soft clipping provides tanh saturation. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to signfcant aliasing.
-
-Soft oversampled clipping also provides saturation, but aliasing is greatly reduced.
+The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled for CV or audio according to typical usage, but each option can be used for both audio and CV.
+- **Off** (dark gray - default): The final mix is left untouched, with no limit to the output voltage.
+- **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
+- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V, with saturation, using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
+- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
 
 ### X (eXclude) button
 The color coded exclude button determines if patched channel outputs are excluded or included in the final mix.
@@ -2387,6 +2363,26 @@ To further reduce CPU usage, oversampling may be disabled for individual inputs 
 - yellow indicates the input is being oversampled
 - red indicates the input is not being oversampled
 
+### PW (Pulse width range) button
+This color coded button controls the range of pulse width modulation for the square wave shape.
+- **Limited 3%-97%** (dark gray - default)
+- **Full 0%-100%** (yellow)
+
+Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
+
+### MIX (Mix shape mode) button
+This color coded button controls how the Shape Mix controls function
+- **Sum (No shaping)** (yellow)
+- **Saturate Sum** (orange - default)
+- **Fold Sum** (purple)
+- **Average (No shaping)** (light blue)
+- **Saturate Average** (green)
+- **Fold Average** (dark blue)
+
+Summed shaping is best for smooth bipolar shape modulation and maximum shaping effect
+
+Average shaping is best for maintaining 10V peak to peak output, as well as consistent unipolar output when applying Mix offset.
+
 ### DC (DC block) button
 This color coded button controls whether a high pass filter is applied to remove DC offset from all outputs
 - **Off** (dark gray - default)
@@ -2484,24 +2480,7 @@ For each modulation there is a base control knob plus a CV input and bipolar att
 All grid inputs support oversampling that can be disabled via the port context menu.
 
 #### Waveform Shape Modulation
-All four waveforms get different shape modulation. Each has a color coded Shape Mode button to determine the type of modulation used.
-
-##### Sin, Tri, Saw Shape Mode button
-Controls the type of sigmoidal shaping used. Each imparts its own timbre
-- **log/exp** (yellow - default)
-- **J-curve** (dark blue)
-- **S-curve** (purple)
-
-The J-curve uses only half (positive or negative portion) of the sigmoidal function.
-
-##### Sqr Shape Mode button
-Controls the range of pulse width modulation
-- **Limited PWM 3%-97%** (yellow - default)
-- **Full PWM 0%-100%** (dark blue)
-
-Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
-
-Below is a summary of the wave shaping when using the default (yellow) mode for all four waveforms.
+All four waveforms get slightly different shape modulation.
 |Waveform|Negative modulation|No modulation|Positive modulation|
 |---|---|---|---|
 |**Sine**|exponential response|mathematical sine|logarithmic response|
@@ -2511,18 +2490,14 @@ Below is a summary of the wave shaping when using the default (yellow) mode for 
 
 ![Waveform shape modulation image](doc/OscillatorShapeModulation.png)
 
-#### Mix Shape Modulation button
-The mix also has a color coded Shape Mode button
-- **Sum (No shaping)** (yellow)
-- **Saturate Sum** (orange - default)
-- **Fold Sum** (purple)
-- **Average (No shaping)** (light blue)
-- **Saturate Average** (green)
-- **Fold Average** (dark blue)
+#### Mix Shape Modulation
+The mix shaping is controled by the Mix button in the upper left.
+There are three possibilities:
+- Disabled
+- tanh saturation
+- folding
 
-Summed shaping is best for smooth bipolar shape modulation and maximum shaping effect
-
-Average shaping is best for maintaining 10V peak to peak output, as well as consistent unipolar output when applying Mix offset.
+In addition, the mix may be the sum of the waveform amounts, or the average.
 
 #### Waveform Phase Modulation
 The image below shows the phase relationship between the four waveforms when no phase modulation is applied.  
