@@ -80,6 +80,10 @@ struct Oscillator : VenomModule {
     TRI_ASIGN_PARAM,
     SQR_ASIGN_PARAM,
     SAW_ASIGN_PARAM,
+    
+    SINSHP_PARAM,
+    TRISHP_PARAM,
+    SAWSHP_PARAM,
 
     PARAMS_LEN
   };
@@ -230,10 +234,15 @@ struct Oscillator : VenomModule {
 
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 7.f, 0.f, "Frequency Mode", {"Audio frequency", "Low frequency", "0Hz carrier", "Triggered audio one shot", "Retriggered audio one shot", "Gated audio one shot", "Retriggered LFO one shot", "Gated LFO one shot"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 2.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
-    configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Pulse Width Range", {"Limited 3%-97%", "Full 0%-100%"});
-    configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
     configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "DC Block", {"Off", "On"});
     configButton(RESET_POLY_PARAM, "Reset polyphony count");
+
+    configSwitch<FixedSwitchQuantity>(SINSHP_PARAM, 0.f, 2.f, 0.f, "Sine Shape Mode", {"log/exp", "J-curve", "S-curve"});
+    configSwitch<FixedSwitchQuantity>(TRISHP_PARAM, 0.f, 2.f, 0.f, "Triangle Shape Mode", {"log/exp", "J-curve", "S-curve"});
+    configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Square Shape Mode", {"Limited PWM 3%-97%", "Full PWM 0%-100%"});
+    configSwitch<FixedSwitchQuantity>(SAWSHP_PARAM, 0.f, 2.f, 0.f, "Saw Shape Mode", {"log/exp", "J-curve", "S-curve"});
+    configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
+
     
     configParam<FreqQuantity>(FREQ_PARAM, -4.f, 4.f, 0.f, "Frequency", " Hz");
     configParam(OCTAVE_PARAM, -4.f, 4.f, 0.f, "Octave");
@@ -384,6 +393,13 @@ struct Oscillator : VenomModule {
       softSync = !softSync;
     }
     
+    int sinMode = static_cast<int>(params[SINSHP_PARAM].getValue());
+    int triMode = static_cast<int>(params[TRISHP_PARAM].getValue());
+    int sqrMode = static_cast<int>(params[PW_PARAM].getValue());
+    int sawMode = static_cast<int>(params[SAWSHP_PARAM].getValue());
+    int mixMode = static_cast<int>(params[MIXSHP_PARAM].getValue());
+    int mixType = mixMode % 3;
+    
     bool procSin = outputs[SIN_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SIN_ASIGN_PARAM].getValue() != 1.f);
     bool procTri = outputs[TRI_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[TRI_ASIGN_PARAM].getValue() != 1.f);
     bool procSqr = outputs[SQR_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SQR_ASIGN_PARAM].getValue() != 1.f);
@@ -514,7 +530,16 @@ struct Oscillator : VenomModule {
           sinPhasor = simd::fmod(sinPhasor, 1000.f);
           sinPhasor = simd::ifelse(sinPhasor<0.f, sinPhasor+1000.f, sinPhasor);
           sinPhasor = sinSimd_1000(sinPhasor);
-          sinOut[s] = crossfade(sinPhasor, ifelse(shape>0.f, 11.f*sinPhasor/(10.f*simd::abs(sinPhasor)+1.f), simd::sgn(sinPhasor)*simd::pow(sinPhasor,4)), ifelse(shape>0.f, shape, -shape))*5.f;
+          switch (sinMode) {
+            case 0:  // exp/log
+              sinOut[s] = crossfade(sinPhasor, ifelse(shape>0.f, 11.f*sinPhasor/(10.f*simd::abs(sinPhasor)+1.f), simd::sgn(sinPhasor)*simd::pow(sinPhasor,4)), ifelse(shape>0.f, shape, -shape))*5.f;
+              break;
+            case 1:  // J curve
+              sinOut[s] = (normSigmoid((sinPhasor+1.f)/2.f, -shape*0.9f)*2.f-1.f) * 5.f;
+              break;
+            default: // S curve
+              sinOut[s] = normSigmoid(sinPhasor, -shape*0.9f) * 5.f;
+          }
 
           if (s==0 || inputs[SIN_LEVEL_INPUT].isPolyphonic()) {
             levelIn[SIN] = (o && !disableOver[SIN_LEVEL_INPUT]) ? float_4::zero() : inputs[SIN_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -564,7 +589,16 @@ struct Oscillator : VenomModule {
           triPhasor = simd::ifelse(triPhasor<0.f, triPhasor+1000.f, triPhasor);
           shape = simd::ifelse(triPhasor<500.f, shape, -shape);
           triPhasor = simd::ifelse(triPhasor<500.f, triPhasor*.002f, (1000.f-triPhasor)*.002f);
-          triOut[s] = crossfade(triPhasor, ifelse(shape>0.f, 11.f*triPhasor/(10.f*simd::abs(triPhasor)+1.f), simd::sgn(triPhasor)*simd::pow(triPhasor,4)), ifelse(shape>0.f, shape, -shape))*10.f-5.f;
+          switch (triMode) {
+            case 0:  // exp/log
+              triOut[s] = crossfade(triPhasor, ifelse(shape>0.f, 11.f*triPhasor/(10.f*simd::abs(triPhasor)+1.f), simd::sgn(triPhasor)*simd::pow(triPhasor,4)), ifelse(shape>0.f, shape, -shape))*10.f-5.f;
+              break;
+            case 1:  // J curve
+              triOut[s] = normSigmoid(triPhasor, -shape*0.8) * 10.f - 5.f;
+              break;
+            default: // S curve
+              triOut[s] = normSigmoid(triPhasor*2.f-1.f, -shape*0.8) * 5.f;
+          }
 
           if (s==0 || inputs[TRI_LEVEL_INPUT].isPolyphonic()) {
             levelIn[TRI] = (o && !disableOver[TRI_LEVEL_INPUT]) ? float_4::zero() : inputs[TRI_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -602,7 +636,7 @@ struct Oscillator : VenomModule {
             }
           } // else preserve prior shapeIn[SQR] value
           float_4 flip = (shapeIn[SQR]*params[SQR_SHAPE_AMT_PARAM].getValue()*0.2f + params[SQR_SHAPE_PARAM].getValue() + 1.f) * 500.f;
-          if (!params[PW_PARAM].getValue()) flip = clamp( flip, 30.f, 970.f );
+          if (!sqrMode) flip = clamp( flip, 30.f, 970.f );
           if (s==0 || inputs[SQR_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SQR] = (o && !disableOver[SQR_PHASE_INPUT]) ? float_4::zero() : inputs[SQR_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[SQR_PHASE_INPUT]){
@@ -662,7 +696,16 @@ struct Oscillator : VenomModule {
           sawPhasor = simd::fmod(sawPhasor, 1000.f);
           sawPhasor = simd::ifelse(sawPhasor<0.f, sawPhasor+1000.f, sawPhasor);
           sawPhasor *= 0.001f;
-          sawOut[s] = crossfade(sawPhasor, ifelse(shape>0.f, 11.f*sawPhasor/(10.f*simd::abs(sawPhasor)+1.f), simd::sgn(sawPhasor)*simd::pow(sawPhasor,4)), ifelse(shape>0.f, shape, -shape))*10.f-5.f;
+          switch (sawMode) {
+            case 0:  // exp/log
+              sawOut[s] = crossfade(sawPhasor, ifelse(shape>0.f, 11.f*sawPhasor/(10.f*simd::abs(sawPhasor)+1.f), simd::sgn(sawPhasor)*simd::pow(sawPhasor,4)), ifelse(shape>0.f, shape, -shape))*10.f-5.f;
+              break;
+            case 1:  // J Curve
+              sawOut[s] = normSigmoid(sawPhasor, -shape*0.90) * 10.f - 5.f;
+              break;
+            default: // S Curve
+              sawOut[s] = normSigmoid(sawPhasor*2.f-1.f, -shape*0.85) * 5.f;
+          }
 
           if (s==0 || inputs[SAW_LEVEL_INPUT].isPolyphonic()) {
             levelIn[SAW] = (o && !disableOver[SAW_LEVEL_INPUT]) ? float_4::zero() : inputs[SAW_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -692,12 +735,11 @@ struct Oscillator : VenomModule {
         // Mix
         if (procMix) {
           int folds=10;
-          if (params[MIXSHP_PARAM].getValue() > 2.5) {
+          if (mixMode > 2) {
             mixOut[s] = simd::ifelse(mixDiv>0.f, mixOut[s]/mixDiv, mixOut[s]);
             folds=3;
           }
-          int typ = static_cast<int>(params[MIXSHP_PARAM].getValue()) % 3;
-          if (typ) {
+          if (mixType) {
             if (s==0 || inputs[MIX_SHAPE_INPUT].isPolyphonic()) {
               shapeIn[MIX] = (o && !disableOver[MIX_SHAPE_INPUT]) ? float_4::zero() : inputs[MIX_SHAPE_INPUT].getPolyVoltageSimd<float_4>(c);
               if (procOver[MIX_SHAPE_INPUT]){
@@ -706,10 +748,10 @@ struct Oscillator : VenomModule {
               }
             } // else preserve prior shapeIn[MIX] value
             float_4 drive = clamp(shapeIn[MIX]*params[MIX_SHAPE_AMT_PARAM].getValue() + params[MIX_SHAPE_PARAM].getValue()+1.f, 0.f, 3.f)*2.f + 1.f;
-            if (typ==1){
+            if (mixType==1){
               mixOut[s] = softClip<float_4>(mixOut[s]*2.f*drive)/2.f;
             }
-            if (typ==2){
+            if (mixType==2){
               mixOut[s] *= drive;
               float_4 clmp;
               for (int i=0; i<folds; i++){
@@ -858,8 +900,8 @@ struct OscillatorWidget : VenomWidget {
 
   struct PWSwitch : GlowingSvgSwitchLockable {
     PWSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
     }
   };
 
@@ -871,6 +913,14 @@ struct OscillatorWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+    }
+  };
+  
+  struct ShpSwitch : GlowingSvgSwitchLockable {
+    ShpSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
     }
   };
 
@@ -939,11 +989,15 @@ struct OscillatorWidget : VenomWidget {
     setVenomPanel("Oscillator");
     
     addParam(createLockableParamCentered<ModeSwitch>(Vec(14.5f,37.5f), module, Oscillator::MODE_PARAM));
-    addParam(createLockableParamCentered<OverSwitch>(Vec(32.5f,37.5f), module, Oscillator::OVER_PARAM));
-    addParam(createLockableParamCentered<PWSwitch>(Vec(50.5f,37.5f), module, Oscillator::PW_PARAM));
-    addParam(createLockableParamCentered<MixShpSwitch>(Vec(68.5f,37.5f), module, Oscillator::MIXSHP_PARAM));
-    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(86.5f,37.5f), module, Oscillator::DC_PARAM));
-    addParam(createLockableParamCentered<GlowingTinyButtonLockable>(Vec(315.5f,16.5f), module, Oscillator::RESET_POLY_PARAM));
+    addParam(createLockableParamCentered<OverSwitch>(Vec(35.5f,37.5f), module, Oscillator::OVER_PARAM));
+    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(56.5f,37.5f), module, Oscillator::DC_PARAM));
+    addParam(createLockableParamCentered<GlowingTinyButtonLockable>(Vec(77.5f,37.5f), module, Oscillator::RESET_POLY_PARAM));
+
+    addParam(createLockableParamCentered<ShpSwitch>(Vec(130.0f,49.0f), module, Oscillator::SINSHP_PARAM));
+    addParam(createLockableParamCentered<ShpSwitch>(Vec(175.0f,49.0f), module, Oscillator::TRISHP_PARAM));
+    addParam(createLockableParamCentered<PWSwitch>(Vec(220.0f,49.0f), module, Oscillator::PW_PARAM));
+    addParam(createLockableParamCentered<ShpSwitch>(Vec(265.0f,49.0f), module, Oscillator::SAWSHP_PARAM));
+    addParam(createLockableParamCentered<MixShpSwitch>(Vec(310.0f,49.0f), module, Oscillator::MIXSHP_PARAM));
     
     addParam(createLockableParamCentered<RoundHugeBlackKnobLockable>(Vec(46.5f,93.5f), module, Oscillator::FREQ_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(29.f,157.f), module, Oscillator::OCTAVE_PARAM));
@@ -965,18 +1019,18 @@ struct OscillatorWidget : VenomWidget {
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(77.5f, 324.f), module, Oscillator::SYNC_LIGHT));
     
     float dx = 45.f;
-    float dy = 61.f;
+    float dy = 59.f;
     for (int y=0; y<4; y++) {
       for (int x=0; x<5; x++) {
-        addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(119.5f+dx*x,59.5f+dy*y), module, Oscillator::GRID_PARAM+y*10+x));
-        addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(140.5f+dx*x,59.5f+dy*y), module, Oscillator::GRID_PARAM+y*10+x+5));
+        addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(119.5f+dx*x,68.5f+dy*y), module, Oscillator::GRID_PARAM+y*10+x));
+        addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(140.5f+dx*x,68.5f+dy*y), module, Oscillator::GRID_PARAM+y*10+x+5));
         if (y<3)
-          addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,85.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+          addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
         else
-          addInput(createOverInputCentered<LevelPort>(Vec(130.f+dx*x,85.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
-        addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(143.5f+dx*x, 74.f+dy*y), module, Oscillator::GRID_LIGHT+y*10+x*2));
+          addInput(createOverInputCentered<LevelPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+        addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(143.5f+dx*x, 83.f+dy*y), module, Oscillator::GRID_LIGHT+y*10+x*2));
         if (y==3)
-          addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 74.f+dy*y), module, Oscillator::SIN_RM_LIGHT+x));
+          addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 83.f+dy*y), module, Oscillator::SIN_RM_LIGHT+x));
       }
     }
     for (int x=0; x<4; x++) {
