@@ -169,13 +169,15 @@ struct Oscillator : VenomModule {
     MIX_RM_LIGHT,
     
     LIN_DC_LIGHT,
-
+    
     LIGHTS_LEN
   };
 
   bool disableOver[INPUTS_LEN]{};
   bool ringMod[5]{};
+  bool oldShpCV[4]{};
   float lvlScale[5]{0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
+  float shpScale[4]{0.2f, 0.2f, 0.2f, 0.2f};
   bool softSync = false;
   bool alternate = false;
   bool lfo = false;
@@ -326,6 +328,11 @@ struct Oscillator : VenomModule {
     ringMod[indx] = rm;
     lvlScale[indx] = rm ? 0.2f : 0.1f;
     lights[Oscillator::SIN_RM_LIGHT+indx].setBrightness(rm);
+  }
+  
+  void setOldShpCV(int indx, bool val) {
+    oldShpCV[indx] = val;
+    shpScale[indx] = val ? 0.1f : 0.2f;
   }
   
   void process(const ProcessArgs& args) override {
@@ -518,7 +525,7 @@ struct Oscillator : VenomModule {
               shapeIn[SIN] = shapeUpSample[s][SIN].process(shapeIn[SIN]);
             }
           } // preserve prior shapeIn[SIN] value
-          float_4 shape = clamp(shapeIn[SIN]*params[SIN_SHAPE_AMT_PARAM].getValue()*0.1f + params[SIN_SHAPE_PARAM].getValue(), -1.f, 1.f);
+          float_4 shape = clamp(shapeIn[SIN]*params[SIN_SHAPE_AMT_PARAM].getValue()*shpScale[SIN] + params[SIN_SHAPE_PARAM].getValue(), -1.f, 1.f);
           if (s==0 || inputs[SIN_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SIN] = (o && !disableOver[SIN_PHASE_INPUT]) ? float_4::zero() : inputs[SIN_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[SIN_PHASE_INPUT]){
@@ -576,7 +583,7 @@ struct Oscillator : VenomModule {
               shapeIn[TRI] = shapeUpSample[s][TRI].process(shapeIn[TRI]);
             }
           } // else preserve prior shapeIn[TRI] value
-          float_4 shape = clamp(shapeIn[TRI]*params[TRI_SHAPE_AMT_PARAM].getValue()*0.1f + params[TRI_SHAPE_PARAM].getValue(), -1.f, 1.f);
+          float_4 shape = clamp(shapeIn[TRI]*params[TRI_SHAPE_AMT_PARAM].getValue()*shpScale[TRI] + params[TRI_SHAPE_PARAM].getValue(), -1.f, 1.f);
           if (s==0 || inputs[TRI_PHASE_INPUT].isPolyphonic()) {
             phaseIn[TRI] = (o && !disableOver[TRI_PHASE_INPUT]) ? float_4::zero() : inputs[TRI_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[TRI_PHASE_INPUT]){
@@ -635,7 +642,7 @@ struct Oscillator : VenomModule {
               shapeIn[SQR] = shapeUpSample[s][SQR].process(shapeIn[SQR]);
             }
           } // else preserve prior shapeIn[SQR] value
-          float_4 flip = (shapeIn[SQR]*params[SQR_SHAPE_AMT_PARAM].getValue()*0.2f + params[SQR_SHAPE_PARAM].getValue() + 1.f) * 500.f;
+          float_4 flip = (shapeIn[SQR]*params[SQR_SHAPE_AMT_PARAM].getValue()*shpScale[SQR] + params[SQR_SHAPE_PARAM].getValue() + 1.f) * 500.f;
           if (!sqrMode) flip = clamp( flip, 30.f, 970.f );
           if (s==0 || inputs[SQR_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SQR] = (o && !disableOver[SQR_PHASE_INPUT]) ? float_4::zero() : inputs[SQR_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -684,7 +691,7 @@ struct Oscillator : VenomModule {
               shapeIn[SAW] = shapeUpSample[s][SAW].process(shapeIn[SAW]);
             }
           } // else preserve prior shapeIn[SAW] value
-          float_4 shape = clamp(shapeIn[SAW]*params[SAW_SHAPE_AMT_PARAM].getValue()*0.1f + params[SAW_SHAPE_PARAM].getValue(), -1.f, 1.f);
+          float_4 shape = clamp(shapeIn[SAW]*params[SAW_SHAPE_AMT_PARAM].getValue()*shpScale[SAW] + params[SAW_SHAPE_PARAM].getValue(), -1.f, 1.f);
           if (s==0 || inputs[SAW_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SAW] = (o && !disableOver[SAW_PHASE_INPUT]) ? float_4::zero() : inputs[SAW_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[SAW_PHASE_INPUT]){
@@ -838,9 +845,15 @@ struct Oscillator : VenomModule {
       json_array_append_new(array, json_boolean(disableOver[i]));
     json_object_set_new(rootJ, "disableOver", array);
     array = json_array();
-    for (int i=0; i<5; i++)
+    for (int i=0; i<5; i++){
       json_array_append_new(array, json_boolean(ringMod[i]));
+    }
     json_object_set_new(rootJ, "ringMod", array);
+    array = json_array();
+    for (int i=0; i<4; i++){
+      json_array_append_new(array, json_boolean(oldShpCV[i]));
+    }
+    json_object_set_new(rootJ, "oldShpCV", array);
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     return rootJ;
@@ -860,6 +873,16 @@ struct Oscillator : VenomModule {
       json_array_foreach(array, index, val){
         setRingMod( index, json_boolean_value(val));
       }
+    }
+    if ((array = json_object_get(rootJ, "oldShpCV"))) {
+      json_array_foreach(array, index, val){
+        setOldShpCV( index, json_boolean_value(val));
+      }
+    }
+    else {
+      setOldShpCV(SIN, true);
+      setOldShpCV(TRI, true);
+      setOldShpCV(SAW, true);
     }
     if ((val = json_object_get(rootJ, "linDCCouple"))) {
       linDCCouple = json_boolean_value(val);
@@ -977,6 +1000,23 @@ struct OscillatorWidget : VenomWidget {
     }
   };
   
+  struct ShapePort : PolyPort {
+    int portId;
+    void appendContextMenu(Menu* menu) override {
+      Oscillator* module = static_cast<Oscillator*>(this->module);
+      menu->addChild(new MenuSeparator);
+      menu->addChild(createBoolPtrMenuItem("Disable oversampling", "", &module->disableOver[portId]));
+      menu->addChild(createBoolMenuItem(
+        "20 VPP full range (original CV scale)", "",
+        [=]() {return module->oldShpCV[portId-Oscillator::SIN_SHAPE_INPUT];},
+        [=](bool val) {
+          module->setOldShpCV(portId-Oscillator::SIN_SHAPE_INPUT, val);
+        }
+      ));
+      PolyPort::appendContextMenu(menu);
+    }
+  };
+  
   template <class TOverPort>
   TOverPort* createOverInputCentered(math::Vec pos, engine::Module* module, int inputId) {
     TOverPort* o = createInputCentered<TOverPort>(pos, module, inputId);
@@ -1024,10 +1064,19 @@ struct OscillatorWidget : VenomWidget {
       for (int x=0; x<5; x++) {
         addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(119.5f+dx*x,68.5f+dy*y), module, Oscillator::GRID_PARAM+y*10+x));
         addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(140.5f+dx*x,68.5f+dy*y), module, Oscillator::GRID_PARAM+y*10+x+5));
-        if (y<3)
-          addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
-        else
-          addInput(createOverInputCentered<LevelPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+        switch (y) {
+          case 0:
+            if (x==2 || x==4)
+              addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+            else
+              addInput(createOverInputCentered<ShapePort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+            break;
+          case 3:
+            addInput(createOverInputCentered<LevelPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+            break;
+          default:
+            addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+        }
         addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(143.5f+dx*x, 83.f+dy*y), module, Oscillator::GRID_LIGHT+y*10+x*2));
         if (y==3)
           addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 83.f+dy*y), module, Oscillator::SIN_RM_LIGHT+x));

@@ -2494,6 +2494,9 @@ Controls the type of sigmoidal shaping used. Each imparts its own timbre
 
 The J-curve uses only half (positive or negative portion) of the sigmoidal function.
 
+##### Sin, Tri, Saw Shape CV inputs
+The initial release of VCO Lab required 20 volts peak to peak CV to cover the entire shape range for Sin, Tri, and Saw. Starting with V 2.9.0 these ports now default to 10 volts peak to peak covering the entire range. These ports have a context menu option to revert to old behavior.
+
 ##### Sqr Shape Mode button
 Controls the range of pulse width modulation
 - **Limited PWM 3%-97%** (yellow - default)

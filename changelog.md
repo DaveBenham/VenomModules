@@ -9,6 +9,7 @@
 - VCO Lab
   - Rearranged faceplate to be more logical
   - Added shape mode options to Sin, Tri, and Saw waveforms
+  - Changed Sin, Tri, and Saw shape CV so 10 VPP covers full range, with option for old behavior
 
 ## 2.8.0 (2024-06-26)
 ### New Modules
