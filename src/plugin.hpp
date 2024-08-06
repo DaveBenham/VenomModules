@@ -50,6 +50,7 @@ extern Model* modelRecurseStereo;
 extern Model* modelReformation;
 extern Model* modelRhythmExplorer;
 extern Model* modelShapedVCA;
+extern Model* modelThru;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
 extern Model* modelVenomBlank;

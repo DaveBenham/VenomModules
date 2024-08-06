@@ -114,6 +114,7 @@ void init(Plugin* p) {
   p->addModel(modelReformation);
   p->addModel(modelRhythmExplorer);
   p->addModel(modelShapedVCA);
+  p->addModel(modelThru);
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);
   p->addModel(modelVenomBlank);

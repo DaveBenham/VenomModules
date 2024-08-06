@@ -457,6 +457,18 @@
       ]
     },
     {
+      "slug": "Thru",
+      "name": "Thru",
+      "description": "5 polyphonic input/output pairs suitable for stacked input unity mixes and/or introduction of sample delays",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#thru",
+      "tags": [
+        "Delay",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "VCAMix4",
       "name": "VCA Mix 4",
       "description": "Compact audio or CV VCA, mixer, attenuator, inverter, amplifier, and/or offset",

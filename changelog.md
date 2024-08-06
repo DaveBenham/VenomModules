@@ -1,14 +1,17 @@
 # Venom Modules Changelog
 
 ## 2.?.?
+### New Module
+- Thru
+
 ### Enhancements
 - Mixers
   - Added an extra clipping mode for saturation limiting at +/- 6V
 - Benjolin Oscillator
   - Detune VCO 1 a tiny bit so PWM is not flat at initiation
 - VCO Lab
-  - Rearranged faceplate to be more logical
   - Added shape mode options to Sin, Tri, and Saw waveforms
+  - Rearranged faceplate to be more logical
   - Changed Sin, Tri, and Saw shape CV so 10 VPP covers full range, with option for old behavior
 
 ## 2.8.0 (2024-06-26)
