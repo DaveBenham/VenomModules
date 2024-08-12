@@ -529,6 +529,19 @@ struct VenomWidget : ModuleWidget {
     }
     Widget::step();
   }
+  
+  void addExpander( Model* model, ModuleWidget* parentModWidget, bool left = false ) {
+    Module* module = model->createModule();
+    APP->engine->addModule(module);
+    ModuleWidget* modWidget = model->createModuleWidget(module);
+    APP->scene->rack->setModulePosForce( modWidget, Vec( parentModWidget->box.pos.x + (left ? -modWidget->box.size.x : parentModWidget->box.size.x), parentModWidget->box.pos.y));
+    APP->scene->rack->addModule(modWidget);
+    history::ModuleAdd* h = new history::ModuleAdd;
+    h->name = "create "+model->name;
+    h->setModule(modWidget);
+    APP->history->push(h);
+  }  
+
 };
 
 struct FixedSwitchQuantity : SwitchQuantity {

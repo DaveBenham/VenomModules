@@ -1,10 +1,12 @@
 # Venom Modules Changelog
 
-## 2.?.?
+## 2.9.0
 ### New Module
 - Thru
 
 ### Enhancements
+- All Venom modules with expanders
+  - Added context menu options to add expanders
 - Mixers
   - Added an extra clipping mode for saturation limiting at +/- 6V
 - Benjolin Oscillator

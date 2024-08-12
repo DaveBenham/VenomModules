@@ -87,3 +87,15 @@ struct CloneModuleBase : CloneModule {
   }
   
 };
+
+struct CloneModuleWidget : VenomWidget {
+  void appendContextMenu(Menu* menu) override {
+    menu->addChild(new MenuSeparator());
+    Module* expander = module->rightExpander.module;
+    if (expander && expander->model == modelAuxClone)
+      menu->addChild(createMenuLabel("Auxilliary Clone expander connected"));
+    else
+      menu->addChild(createMenuItem("Add Auxilliary Clone expander", "", [this](){addExpander(modelAuxClone,this);}));
+    VenomWidget::appendContextMenu(menu);
+  }
+};
