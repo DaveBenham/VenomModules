@@ -2526,7 +2526,7 @@ Controls the type of sigmoidal shaping used. Each imparts its own timbre
 - **J-curve** (orange)
 - **S-curve** (purple)
 - **Rectify** (light blue)
-- **Normalized Rectify (dark blue)
+- **Normalized Rectify** (dark blue)
 
 The J-curve uses only half (positive or negative portion) of the sigmoidal function.
 
