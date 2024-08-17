@@ -79,6 +79,7 @@ void init(Plugin* p) {
   p->addModel(modelBayNorm);
   p->addModel(modelBayOutput);
   p->addModel(modelBenjolinOsc);
+  p->addModel(modelBenjolinGatesExpander);
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelBernoulliSwitchExpander);
   p->addModel(modelBlocker);

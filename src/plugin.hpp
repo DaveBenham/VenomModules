@@ -15,6 +15,7 @@ extern Model* modelBayInput;
 extern Model* modelBayNorm;
 extern Model* modelBayOutput;
 extern Model* modelBenjolinOsc;
+extern Model* modelBenjolinGatesExpander;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
 extern Model* modelBlocker;

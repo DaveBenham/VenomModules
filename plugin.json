@@ -67,6 +67,15 @@
       ]
     },
     {
+      "slug": "BenjolinGatesExpander",
+      "name": "Benjolin Gates Expander",
+      "description": "Adds additional Rungler gate outputs to the Benjolin Oscillator",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#benjolin-gates-expander",
+      "tags": [
+        "Expander"
+      ]
+    },
+    {
       "slug": "BernoulliSwitch",
       "name": "Bernoulli Switch",
       "description": "Randomly route two inputs to two outputs, with built in scaling and offset capabilities",

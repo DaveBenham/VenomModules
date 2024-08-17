@@ -1,0 +1,54 @@
+{
+  "plugin": "Venom",
+  "model": "BenjolinGatesExpander",
+  "version": "2.9.dev",
+  "params": [
+    {
+      "value": 0.0,
+      "id": 0
+    },
+    {
+      "value": 0.0,
+      "id": 1
+    }
+  ],
+  "data": {
+    "paramLock0": false,
+    "paramDflt0": 0.0,
+    "paramVal0": 0.0,
+    "paramName0": "Gate mode",
+    "paramLock1": false,
+    "paramDflt1": 0.0,
+    "paramVal1": 0.0,
+    "paramName1": "Polarity",
+    "outputName0": "1&2",
+    "outputName1": "2&4",
+    "outputName2": "4&7",
+    "outputName3": "1&2&4&7",
+    "outputName4": "2&3",
+    "outputName5": "3&5",
+    "outputName6": "5&8",
+    "outputName7": "2&3&5&8",
+    "currentTheme": 0,
+    "gateBits": [
+      3,
+      10,
+      72,
+      75,
+      6,
+      20,
+      144,
+      150
+    ],
+    "gateLogic": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

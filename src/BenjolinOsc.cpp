@@ -3,11 +3,12 @@
 
 #include "plugin.hpp"
 #include "Filter.hpp"
+#include "BenjolinModule.hpp"
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
 
-struct BenjolinOsc : VenomModule {
+struct BenjolinOsc : BenjolinModule {
   
   enum ParamId {
     OVER_PARAM,
@@ -132,7 +133,7 @@ struct BenjolinOsc : VenomModule {
          clockConnected = inputs[CLOCK_INPUT].isConnected(),
          chaos = params[CHAOS_PARAM].getValue(),
          dbl = params[DOUBLE_PARAM].getValue();
-    int trig;
+    int trig=0;
     *cv1In = inputs[CV1_INPUT].getVoltage();
     *cv2In = inputs[CV2_INPUT].getVoltage();
     *clockIn = inputs[CLOCK_INPUT].getVoltage();
@@ -188,6 +189,58 @@ struct BenjolinOsc : VenomModule {
       }
       else
         outA = osc*5.f;
+    }
+    for (BenjolinModule* expndr = rightExpander; expndr; expndr = expndr->rightExpander){
+      if (!expndr->isBypassed() && expndr->model == modelBenjolinGatesExpander){
+        BenjolinGatesExpander* gates = static_cast<BenjolinGatesExpander*>(expndr);
+        float hi = gates->params[GATES_POLARITY_PARAM].getValue() ? 5.f : 10.f;
+        float lo = gates->params[GATES_POLARITY_PARAM].getValue() ? -5.f : 0.f;
+        int mode = static_cast<int>(gates->params[GATES_MODE_PARAM].getValue());
+        unsigned char val;
+        for (int i=0; i<8; i++){
+          val = asr & gates->gateBits[i];
+          switch (gates->gateLogic[i]){
+            case BenjolinGatesExpander::AND:
+              if (val != gates->gateBits[i]) val = 0;
+              break;
+            case BenjolinGatesExpander::XOR:
+              val = gates->setCount(val) == 1;
+              break;
+          }
+          switch (mode){
+            // case 0: gate do nothing
+            case 1: // clock gate
+              val = (val && clockTrig.isHigh());
+              break;
+            case 2: // inverse clock gate
+              val = (val && !clockTrig.isHigh());
+              break;
+            case 3: // trigger
+              if (val != gates->oldVal[i]) {
+                if (val) gates->trigGenerator[i].trigger();
+                gates->oldVal[i] = val;
+              }
+              break;
+            case 4: // clock rise trigger
+              if (val && trig>0) gates->trigGenerator[i].trigger();
+              break;
+            case 5: // clock fall trigger
+              if (val && trig<0) gates->trigGenerator[i].trigger();
+              break;
+            case 6: // clock edge trigger
+              if (val && trig) gates->trigGenerator[i].trigger();
+              break;
+          }
+          if (mode >= 3 /*trigger*/) {
+            if (val)
+              val = gates->trigGenerator[i].process(args.sampleTime);
+            else
+              gates->trigGenerator[i].reset();
+          }
+          gates->outputs[i].setVoltage(val ? hi : lo);
+          gates->lights[GATE_LIGHT+i].setBrightnessSmooth(val!=0, args.sampleTime);
+        }
+      }
     }
     outputs[TRI1_OUTPUT].setVoltage(*tri1Out);
     outputs[TRI2_OUTPUT].setVoltage(*tri2Out);

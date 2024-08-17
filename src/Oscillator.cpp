@@ -554,7 +554,7 @@ struct Oscillator : VenomModule {
               if (o==0) levelIn[SIN] *= oversample;
               levelIn[SIN] = levelUpSample[s][SIN].process(levelIn[SIN]);
             }
-          } // else preserve prior levelIn[SIN] value else levelIn[SIN] = levelIn[0][SIN];
+          } // else preserve prior levelIn[SIN] value
           level = levelIn[SIN]*params[SIN_LEVEL_AMT_PARAM].getValue()*lvlScale[SIN] + params[SIN_LEVEL_PARAM].getValue();
           if (params[SIN_ASIGN_PARAM].getValue()!=1) {
             mixOut[s] += sinOut[s] * level;
@@ -613,7 +613,7 @@ struct Oscillator : VenomModule {
               if (o==0) levelIn[TRI] *= oversample;
               levelIn[TRI] = levelUpSample[s][TRI].process(levelIn[TRI]);
             }
-          } // else preserve prior levelIn[TRI] value else levelIn[TRI] = levelIn[0][TRI];
+          } // else preserve prior levelIn[TRI] value
           level = levelIn[TRI]*params[TRI_LEVEL_AMT_PARAM].getValue()*lvlScale[TRI] + params[TRI_LEVEL_PARAM].getValue();
           if (params[TRI_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += triOut[s] * level;
@@ -662,7 +662,7 @@ struct Oscillator : VenomModule {
               if (o==0) levelIn[SQR] *= oversample;
               levelIn[SQR] = levelUpSample[s][SQR].process(levelIn[SQR]);
             }
-          } // else preserve prior levelIn[TRI] value else levelIn[SQR] = levelIn[0][SQR];
+          } // else preserve prior levelIn[SQR] value
           level = levelIn[SQR]*params[SQR_LEVEL_AMT_PARAM].getValue()*lvlScale[SQR] + params[SQR_LEVEL_PARAM].getValue();
           if (params[SQR_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += sqrOut[s] * level;
@@ -720,7 +720,7 @@ struct Oscillator : VenomModule {
               if (o==0) levelIn[SAW] *= oversample;
               levelIn[SAW] = levelUpSample[s][SAW].process(levelIn[SAW]);
             }
-          } // else preserve prior levelIn[TRI] value else levelIn[SAW] = levelIn[0][SAW];
+          } // else preserve prior levelIn[SAW] value
           level = levelIn[SAW]*params[SAW_LEVEL_AMT_PARAM].getValue()*lvlScale[SAW] + params[SAW_LEVEL_PARAM].getValue();
           if (params[SAW_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += sawOut[s] * level;
@@ -944,6 +944,7 @@ struct OscillatorWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
     }
   };
 

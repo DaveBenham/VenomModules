@@ -2,6 +2,8 @@
 
 ## 2.9.0
 ### New Module
+- Benjolin Gates Expander
+- Benjolin Volts Expander
 - Thru
 
 ### Enhancements
@@ -15,6 +17,10 @@
   - Added shape mode options to Sin, Tri, and Saw waveforms
   - Rearranged faceplate to be more logical
   - Changed Sin, Tri, and Saw shape CV so 10 VPP covers full range, with option for old behavior
+  
+### Bug Fix
+- VCO Lab
+  - Polyphonic CV level when level input is monophonic
 
 ## 2.8.0 (2024-06-26)
 ### New Modules
