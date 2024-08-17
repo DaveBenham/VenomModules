@@ -239,10 +239,10 @@ struct Oscillator : VenomModule {
     configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "DC Block", {"Off", "On"});
     configButton(RESET_POLY_PARAM, "Reset polyphony count");
 
-    configSwitch<FixedSwitchQuantity>(SINSHP_PARAM, 0.f, 2.f, 0.f, "Sine Shape Mode", {"log/exp", "J-curve", "S-curve"});
-    configSwitch<FixedSwitchQuantity>(TRISHP_PARAM, 0.f, 2.f, 0.f, "Triangle Shape Mode", {"log/exp", "J-curve", "S-curve"});
+    configSwitch<FixedSwitchQuantity>(SINSHP_PARAM, 0.f, 4.f, 0.f, "Sine Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"});
+    configSwitch<FixedSwitchQuantity>(TRISHP_PARAM, 0.f, 4.f, 0.f, "Triangle Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"});
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Square Shape Mode", {"Limited PWM 3%-97%", "Full PWM 0%-100%"});
-    configSwitch<FixedSwitchQuantity>(SAWSHP_PARAM, 0.f, 2.f, 0.f, "Saw Shape Mode", {"log/exp", "J-curve", "S-curve"});
+    configSwitch<FixedSwitchQuantity>(SAWSHP_PARAM, 0.f, 4.f, 0.f, "Saw Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
 
     
@@ -526,6 +526,7 @@ struct Oscillator : VenomModule {
             }
           } // preserve prior shapeIn[SIN] value
           float_4 shape = clamp(shapeIn[SIN]*params[SIN_SHAPE_AMT_PARAM].getValue()*shpScale[SIN] + params[SIN_SHAPE_PARAM].getValue(), -1.f, 1.f);
+          float_4 shapeSign{};
           if (s==0 || inputs[SIN_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SIN] = (o && !disableOver[SIN_PHASE_INPUT]) ? float_4::zero() : inputs[SIN_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[SIN_PHASE_INPUT]){
@@ -544,8 +545,16 @@ struct Oscillator : VenomModule {
             case 1:  // J curve
               sinOut[s] = (normSigmoid((sinPhasor+1.f)/2.f, -shape*0.9f)*2.f-1.f) * 5.f;
               break;
-            default: // S curve
+            case 2: // S curve
               sinOut[s] = normSigmoid(sinPhasor, -shape*0.9f) * 5.f;
+              break;
+            default: // Rectify
+              shape = -shape;
+              float_4 shapeSign = simd::sgn(shape);
+              sinOut[s] = simd::ifelse(shapeSign==0, sinPhasor, -(shapeSign*simd::abs(-sinPhasor+shapeSign-shape)-shapeSign+shape));
+              if (sinMode==4 /*Normalized Rectify*/)
+                sinOut[s] = -((1+simd::abs(shape))*-sinOut[s]-shape);
+              sinOut[s] *= 5.f;
           }
 
           if (s==0 || inputs[SIN_LEVEL_INPUT].isPolyphonic()) {
@@ -594,7 +603,7 @@ struct Oscillator : VenomModule {
           triPhasor = globalPhasor + (phaseIn[TRI]*params[TRI_PHASE_AMT_PARAM].getValue() + params[TRI_PHASE_PARAM].getValue()*2.f)*250.f + 250.f;
           triPhasor = simd::fmod(triPhasor, 1000.f);
           triPhasor = simd::ifelse(triPhasor<0.f, triPhasor+1000.f, triPhasor);
-          shape = simd::ifelse(triPhasor<500.f, shape, -shape);
+          if (triMode<=2) shape = simd::ifelse(triPhasor<500.f, shape, -shape);
           triPhasor = simd::ifelse(triPhasor<500.f, triPhasor*.002f, (1000.f-triPhasor)*.002f);
           switch (triMode) {
             case 0:  // exp/log
@@ -603,8 +612,17 @@ struct Oscillator : VenomModule {
             case 1:  // J curve
               triOut[s] = normSigmoid(triPhasor, -shape*0.8) * 10.f - 5.f;
               break;
-            default: // S curve
+            case 2: // S curve
               triOut[s] = normSigmoid(triPhasor*2.f-1.f, -shape*0.8) * 5.f;
+              break;
+            default: // Rectify
+              shape = -shape;
+              float_4 shapeSign = simd::sgn(shape);
+              triOut[s] = triPhasor*2.f-1.f;
+              triOut[s] = simd::ifelse(shapeSign==0, triOut[s], -(shapeSign*simd::abs(-triOut[s]+shapeSign-shape)-shapeSign+shape));
+              if (triMode==4 /*Normalized Rectify*/)
+                triOut[s] = -((1+simd::abs(shape))*-triOut[s]-shape);
+              triOut[s] *= 5.f;
           }
 
           if (s==0 || inputs[TRI_LEVEL_INPUT].isPolyphonic()) {
@@ -710,8 +728,17 @@ struct Oscillator : VenomModule {
             case 1:  // J Curve
               sawOut[s] = normSigmoid(sawPhasor, -shape*0.90) * 10.f - 5.f;
               break;
-            default: // S Curve
+            case 2: // S Curve
               sawOut[s] = normSigmoid(sawPhasor*2.f-1.f, -shape*0.85) * 5.f;
+              break;
+            default: // Rectify
+              shape = -shape;
+              float_4 shapeSign = simd::sgn(shape);
+              sawOut[s] = sawPhasor*2.f-1.f;
+              sawOut[s] = simd::ifelse(shapeSign==0, sawOut[s], -(shapeSign*simd::abs(-sawOut[s]+shapeSign-shape)-shapeSign+shape));
+              if (sawMode==4 /*Normalized Rectify*/)
+                sawOut[s] = -((1+simd::abs(shape))*-sawOut[s]-shape);
+              sawOut[s] *= 5.f;
           }
 
           if (s==0 || inputs[SAW_LEVEL_INPUT].isPolyphonic()) {
@@ -942,9 +969,10 @@ struct OscillatorWidget : VenomWidget {
   struct ShpSwitch : GlowingSvgSwitchLockable {
     ShpSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
     }
   };
 
@@ -1008,7 +1036,7 @@ struct OscillatorWidget : VenomWidget {
       menu->addChild(new MenuSeparator);
       menu->addChild(createBoolPtrMenuItem("Disable oversampling", "", &module->disableOver[portId]));
       menu->addChild(createBoolMenuItem(
-        "20 VPP full range (original CV scale)", "",
+        "20 VPP full range (old behavior)", "",
         [=]() {return module->oldShpCV[portId-Oscillator::SIN_SHAPE_INPUT];},
         [=](bool val) {
           module->setOldShpCV(portId-Oscillator::SIN_SHAPE_INPUT, val);
