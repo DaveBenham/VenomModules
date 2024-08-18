@@ -241,6 +241,21 @@ struct BenjolinOsc : BenjolinModule {
           gates->lights[GATE_LIGHT+i].setBrightnessSmooth(val!=0, args.sampleTime);
         }
       }
+      if (!expndr->isBypassed() && expndr->model == modelBenjolinVoltsExpander){
+        BenjolinVoltsExpander* volts = static_cast<BenjolinVoltsExpander*>(expndr);
+        float val = 0.f;
+        float div = 0.f;
+        for (int i=0; i<8; i++){
+          float v = volts->getBitValue(VOLT_PARAM+i);
+          div += v;
+          if (asr & (1<<i)){
+            val += v;
+          }
+        }
+        if (div)
+          val = val/div * volts->params[VOLTS_RANGE_PARAM].getValue() - 5.f;
+        volts->outputs[VOLTS_OUTPUT].setVoltage(val + volts->params[VOLTS_OFFSET_PARAM].getValue());
+      }
     }
     outputs[TRI1_OUTPUT].setVoltage(*tri1Out);
     outputs[TRI2_OUTPUT].setVoltage(*tri2Out);
@@ -322,6 +337,7 @@ struct BenjolinOscWidget : VenomWidget {
       }
     ));
     menu->addChild(createMenuItem("Add Benjolin Gates Expander", "", [this](){addExpander(modelBenjolinGatesExpander,this);}));
+    menu->addChild(createMenuItem("Add Benjolin Volts Expander", "", [this](){addExpander(modelBenjolinVoltsExpander,this);}));
     VenomWidget::appendContextMenu(menu);
   }
 

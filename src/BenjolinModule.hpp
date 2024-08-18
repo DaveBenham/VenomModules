@@ -22,6 +22,25 @@ struct BenjolinModule : VenomModule {
     ENUMS(GATE_LIGHT,8),
     GATES_LIGHTS_LEN
   };
+  
+  enum VoltsParamId {
+    VOLTS_BINARY_PARAM,
+    ENUMS(VOLT_PARAM,8),
+    VOLTS_RANGE_PARAM,
+    VOLTS_OFFSET_PARAM,
+    VOLTS_PARAMS_LEN
+  };
+  enum VoltsInputId {
+    VOLTS_INPUTS_LEN
+  };
+  enum VoltsOutputId {
+    VOLTS_OUTPUT,
+    VOLTS_OUTPUTS_LEN
+  };
+  enum VoltsLightId {
+    VOLTS_EXP_LIGHT,
+    VOLTS_LIGHTS_LEN
+  };
  
   BenjolinModule* leftExpander = NULL;
   BenjolinModule* rightExpander = NULL;
@@ -159,6 +178,51 @@ struct BenjolinGatesExpander : BenjolinModule {
       }
     ));
   }  
+};
+
+
+struct BenjolinVoltsExpander : BenjolinModule {
+  
+  float mode = 1.f;
+  
+  float getBitValue(int i){
+    float val = params[i].getValue();
+    return val ? std::pow(2,val-1) : 0.f;
+  }
+
+  struct BitQuantity : ParamQuantity {
+
+    BitQuantity() {
+      snapEnabled = true;
+      smoothEnabled = false;
+    }
+
+    float getDisplayValue() override {
+      float val = getValue();
+      return val ? std::pow(2,val-1) : 0.f;
+    }
+
+    void setDisplayValue(float v) override {
+      setValue(v ? math::log2(v)+1 : 0.f);
+    }
+  };
+
+  BenjolinVoltsExpander() {
+    venomConfig(VOLTS_PARAMS_LEN, VOLTS_INPUTS_LEN, VOLTS_OUTPUTS_LEN, VOLTS_LIGHTS_LEN);
+    configLight(0, "Left connection indicator");
+    configSwitch<FixedSwitchQuantity>(VOLTS_BINARY_PARAM, 0.f, 1.f, 1.f, "Binary bit values", {"Off", "On"});
+    for (int i=0; i<8; i++) {
+      configParam<BitQuantity>(VOLT_PARAM+i, 0.f, 8.f, 0.f, string::f("Bit %d", i + 1), "");
+    }
+    configParam(VOLTS_RANGE_PARAM, 0.f, 10.f, 10.f, "Output level", " V");
+    configParam(VOLTS_OFFSET_PARAM, -10.f, 10.f, 0.f, "Output level", " V");
+    configOutput(VOLTS_OUTPUT,"");
+  }
+
+  void process(const ProcessArgs& args) override {
+    VenomModule::process(args);
+  }
+
 };
 
 

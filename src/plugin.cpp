@@ -80,6 +80,7 @@ void init(Plugin* p) {
   p->addModel(modelBayOutput);
   p->addModel(modelBenjolinOsc);
   p->addModel(modelBenjolinGatesExpander);
+  p->addModel(modelBenjolinVoltsExpander);
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelBernoulliSwitchExpander);
   p->addModel(modelBlocker);

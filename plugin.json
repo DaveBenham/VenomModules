@@ -76,6 +76,15 @@
       ]
     },
     {
+      "slug": "BenjolinVoltsExpander",
+      "name": "Benjolin Volts Expander",
+      "description": "Adds additional Rungler CV outputs to the Benjolin Oscillator",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#benjolin-volts-expander",
+      "tags": [
+        "Expander"
+      ]
+    },
+    {
       "slug": "BernoulliSwitch",
       "name": "Bernoulli Switch",
       "description": "Randomly route two inputs to two outputs, with built in scaling and offset capabilities",
