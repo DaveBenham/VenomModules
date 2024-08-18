@@ -9,25 +9,25 @@ Venom modules version 2.8.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Limitations of DC offset removal](#limitations-of-dc-offset-removal)  
 [Acknowledgments](#acknowledgments)  
 
-|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|
-|----|----|----|----|----|----|
-|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|
+|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
+|----|----|----|----|----|
+|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)|![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)|
 
-|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|
+|----|----|----|----|----|----|----|----|----|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|
+
+|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
+|----|----|----|----|
+|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
+
+|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|
+|----|----|----|----|----|
+|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|
+
+|[POLY<br />OFFSET](#poly-offset)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|
 |----|----|----|----|----|----|----|----|
-|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|
-
-|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|
-|----|----|----|----|----|
-|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|
-
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />OFFSET](#poly-offset)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|
-|----|----|----|----|----|
-|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|
-
-|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|
-|----|----|----|----|----|----|
-|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|
+|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|
 
 |[RHYTHM EXPLORER](#rhythm-explorer)|[SHAPED<br />VCA](#shaped-vca)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|
 |----|----|----|----|----|
@@ -357,7 +357,21 @@ All outputs are constant monophonic 0V when the Benjolin Oscillator is bypassed.
 
 ## BENJOLIN GATES EXPANDER
 ![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)  
-Adds additional Rungler gate outputs to the Benjolin Oscillator
+Adds additional Rungler gate outputs to the Benjolin Oscillator.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are constant monophonic 0V when the Benjolin Gates Expander is bypassed.
+
+[Return to Table Of Contents](#venom)
+
+
+## BENJOLIN VOLTS EXPANDER
+![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)  
+Adds additional Rungler CV outputs to the Benjolin Oscillator.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.

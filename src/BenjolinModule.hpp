@@ -210,7 +210,7 @@ struct BenjolinVoltsExpander : BenjolinModule {
   BenjolinVoltsExpander() {
     venomConfig(VOLTS_PARAMS_LEN, VOLTS_INPUTS_LEN, VOLTS_OUTPUTS_LEN, VOLTS_LIGHTS_LEN);
     configLight(0, "Left connection indicator");
-    configSwitch<FixedSwitchQuantity>(VOLTS_BINARY_PARAM, 0.f, 1.f, 1.f, "Binary bit values", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(VOLTS_BINARY_PARAM, 0.f, 1.f, 1.f, "Snap to powers of 2", {"Off", "On"});
     for (int i=0; i<8; i++) {
       configParam<BitQuantity>(VOLT_PARAM+i, 0.f, 8.f, 0.f, string::f("Bit %d", i + 1), "");
     }
