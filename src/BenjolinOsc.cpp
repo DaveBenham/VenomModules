@@ -321,6 +321,7 @@ struct BenjolinOscWidget : VenomWidget {
         module->normScale = module->origNormScale ? 1.f : 5.f;
       }
     ));
+    menu->addChild(createMenuItem("Add Benjolin Gates Expander", "", [this](){addExpander(modelBenjolinGatesExpander,this);}));
     VenomWidget::appendContextMenu(menu);
   }
 
