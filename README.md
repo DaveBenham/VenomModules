@@ -88,7 +88,7 @@ A custom default value overrides the factory default whenever a parameter is ini
 [Return to Table Of Contents](#venom)
 
 ## Venom Expander Modules
-A number of Venom modules do not do anything on their own, but rather augment the functionality of another module when placed beside it.
+A number of Venom modules do not do anything on their own, but rather augment the functionality of a compatible base module when placed beside it. Each Venom base module that supports expanders has module context menu options to add expanders without having to open the module browser.
 
 VCV Rack supports two different mechanisms for implementinig expander modules:
 - Both the parent (base) module and the expander perform work, and they communicate with each other via messages that introduce sample delays, much as cables do in VCV Rack.
@@ -359,6 +359,48 @@ All outputs are constant monophonic 0V when the Benjolin Oscillator is bypassed.
 ![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)  
 Adds additional Rungler gate outputs to the Benjolin Oscillator.
 
+Any number of Gates expanders may be used. All expanders must be placed to the right of the Benjolin Oscillator in a contiguous chain. The upper left LED glows yellow when the expander is successfully connected to a base module.
+
+Note the gate outputs do not participate in oversampling.
+
+### MODE (Gate Mode) button
+This color coded button controls the timing and length of the gate outputs:
+- **Gate** (white, default) - The gate is high as long as the gate logic is true
+- **Clock gate** (yellow) - The gate is high when the gate logic is true and the Rungler clock is high
+- **Inverse clock gate** (orange) - The gate is high when the gate logic is true and the Rungler clock is low
+- **Trigger** (green) - A trigger is sent when the gate logic transitions to true
+- **Clock rise trigger** (light blue) - A trigger is sent when the Rungler clock transitions to high while the gate logic is true
+- **Clock fall trigger** (dark blue) - A trigger is sent when the Rungler clock transitions to low while the gate logic is true
+- **Clock edge trigger** (purple) - A trigger is sent when the Rungler clock tranitions to high or low while the gate logic is true
+
+Triggers are high for 1 msec. But if using a clocked trigger and the clock goes low before the trigger has completed, then the trigger immediately goes low.
+
+### POLAR (Polarity) button
+This color coded button controls the polarity of the gates
+- **Unipolar** (green, default) - Low = 0V and high = 10V
+- **Bipolar** (purple) - Low = -5 V and high = 5 V
+
+### 8 Gate outputs
+Each output port has a context menu to specify which Rungler bits are used, and what logic operator to use. By default the gate logic is used for the port name, and displayed as a label above the port.
+
+#### Gate bits
+You may select up to 4 bits. Once 4 have been selected you cannot select another without first unselecting one.
+
+#### Gate logic
+You must select one of three options:
+- **AND** (&) - The gate logic is true if all selected bits are high
+- **OR** (|) - The gate logic is true if at least one selected bit is high
+- **XOR** (^) - The gate logic is true if exactly one selected bit is high
+
+If only one bit is selected, then all logic operations give the same result - the logic is true if the selected bit is high.
+
+### Factory Presets
+There are four factory presets that default to mode = Gate and polarity = Unipolar
+- All Bits - There is one gate for each Rungler bit
+- AND Gates - AND logic is used with bits 1&2, 2&4, 4&7, 1&2&4&7, 2&3, 3&5, 5&8, 2&3&5&8
+- OR Gates - OR logic is used with bits 1|2, 2|4, 4|7, 1|2|4|7, 2|3, 3|5, 5|8, 2|3|5|8
+- XOR Gates - XOR logic is used with bits 1^2, 2^4, 4^7, 1^2^4^7, 2^3, 3^5, 5^8, 2^3^5^8
+
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
@@ -371,14 +413,33 @@ All outputs are constant monophonic 0V when the Benjolin Gates Expander is bypas
 
 ## BENJOLIN VOLTS EXPANDER
 ![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)  
-Adds additional Rungler CV outputs to the Benjolin Oscillator.
+Adds an additional Rungler CV output to the Benjolin Oscillator. It works as a configurable digital to analog converter.
+
+Any number of Volts expanders may be used. All expanders must be placed to the right of the Benjolin Oscillator in a contiguous chain. The upper left LED glows yellow when the expander is successfully connected to a base module.
+
+Note the output does not participate in oversampling.
+
+### SNAP button
+If on (white), then the Bit knobs snap to powers of 2. If off (gray) then the knobs can be freely set to any decimal value betwen 0 and 128.
+
+### Bit knobs 1-8
+Each knob represents a Rungler bit. The knob assigns a value to the bit between 0 and 128. Knobs (bits) set to 0 do not participate in the digital to analog conversion. The assigned values for all high Rungler bits are summed, and then scaled and offset to a bipolar +/- 5V range (10 VPP).
+
+### RANGE knob
+Scales the peak to peak range of the output to any value between 0 and 10V.
+
+### OFFSET knob
+Offsets the output by any value between -10V and 10V. The Offset is applied after the Range.
+
+### OUT port
+The final computed voltage is ouput here.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
-All outputs are constant monophonic 0V when the Benjolin Gates Expander is bypassed.
+The output is constant monophonic 0V when the Benjolin Volts Expander is bypassed.
 
 [Return to Table Of Contents](#venom)
 
