@@ -381,6 +381,8 @@ This color coded button controls the polarity of the gates
 - **Bipolar** (purple) - Low = -5 V and high = 5 V
 
 ### 8 Gate outputs
+The LED in the upper right corner of each output port glows yellow whenever the output gate is high.
+
 Each output port has a context menu to specify which Rungler bits are used, and what logic operator to use. By default the gate logic is used for the port name, and displayed as a label above the port.
 
 #### Gate bits
