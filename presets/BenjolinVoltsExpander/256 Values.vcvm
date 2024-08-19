@@ -1,0 +1,99 @@
+{
+  "plugin": "Venom",
+  "model": "BenjolinVoltsExpander",
+  "version": "2.9.dev",
+  "params": [
+    {
+      "value": 1.0,
+      "id": 0
+    },
+    {
+      "value": 1.0,
+      "id": 1
+    },
+    {
+      "value": 2.0,
+      "id": 2
+    },
+    {
+      "value": 3.0,
+      "id": 3
+    },
+    {
+      "value": 4.0,
+      "id": 4
+    },
+    {
+      "value": 5.0,
+      "id": 5
+    },
+    {
+      "value": 6.0,
+      "id": 6
+    },
+    {
+      "value": 7.0,
+      "id": 7
+    },
+    {
+      "value": 8.0,
+      "id": 8
+    },
+    {
+      "value": 10.0,
+      "id": 9
+    },
+    {
+      "value": 0.0,
+      "id": 10
+    }
+  ],
+  "data": {
+    "paramLock0": false,
+    "paramDflt0": 1.0,
+    "paramVal0": 1.0,
+    "paramName0": "Snap to powers of 2",
+    "paramLock1": false,
+    "paramDflt1": 0.0,
+    "paramVal1": 1.0,
+    "paramName1": "Bit 1",
+    "paramLock2": false,
+    "paramDflt2": 0.0,
+    "paramVal2": 2.0,
+    "paramName2": "Bit 2",
+    "paramLock3": false,
+    "paramDflt3": 0.0,
+    "paramVal3": 3.0,
+    "paramName3": "Bit 3",
+    "paramLock4": false,
+    "paramDflt4": 0.0,
+    "paramVal4": 4.0,
+    "paramName4": "Bit 4",
+    "paramLock5": false,
+    "paramDflt5": 0.0,
+    "paramVal5": 5.0,
+    "paramName5": "Bit 5",
+    "paramLock6": false,
+    "paramDflt6": 0.0,
+    "paramVal6": 6.0,
+    "paramName6": "Bit 6",
+    "paramLock7": false,
+    "paramDflt7": 0.0,
+    "paramVal7": 7.0,
+    "paramName7": "Bit 7",
+    "paramLock8": false,
+    "paramDflt8": 0.0,
+    "paramVal8": 8.0,
+    "paramName8": "Bit 8",
+    "paramLock9": false,
+    "paramDflt9": 10.0,
+    "paramVal9": 10.0,
+    "paramName9": "Output level",
+    "paramLock10": false,
+    "paramDflt10": 0.0,
+    "paramVal10": 0.0,
+    "paramName10": "Output level",
+    "outputName0": "",
+    "currentTheme": 0
+  }
+}

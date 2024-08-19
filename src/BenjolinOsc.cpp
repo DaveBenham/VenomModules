@@ -253,7 +253,7 @@ struct BenjolinOsc : BenjolinModule {
           }
         }
         if (div)
-          val = val/div * volts->params[VOLTS_RANGE_PARAM].getValue() - 5.f;
+          val = (val/div - 0.5f) * volts->params[VOLTS_RANGE_PARAM].getValue();
         volts->outputs[VOLTS_OUTPUT].setVoltage(val + volts->params[VOLTS_OFFSET_PARAM].getValue());
       }
     }
