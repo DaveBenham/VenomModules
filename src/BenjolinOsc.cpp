@@ -60,7 +60,7 @@ struct BenjolinOsc : BenjolinModule {
         normScale=5.f,
         xorVal=0, rung=0;
   unsigned char asr = rack::random::uniform()*126+1;
-  bool origNormScale=false, chaosIn=false, dblIn=false;
+  bool origNormScale=false, chaosIn=false, dblIn=false, unipolarClock=false;
  
   BenjolinOsc() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -173,7 +173,7 @@ struct BenjolinOsc : BenjolinModule {
       if (*pul1 != math::sgn(*tri1)) *pul1*=-1.f;
       if (*pul2 != math::sgn(*tri2)) *pul2*=-1.f;
       *pwmOut = *tri2>*tri1 ? 5.f : -5.f;
-      trig = clockTrig.processEvent( clockConnected ? *clockIn : *pul2*normScale, -1.f, 1.f);
+      trig = clockTrig.processEvent( clockConnected ? *clockIn : *pul2*normScale, unipolarClock?0.1f:-1.f, 1.f);
       if (trig>0 || (trig && dbl)){
         float ptrn = chaos ? 0.5f : params[PATTERN_PARAM].getValue();
         unsigned char data = (ptrn>=*tri1 || ptrn>=10.f) ^ (chaos ? ((asr&32)>>5)^((asr&64)>>6) : (asr&128)>>7);
@@ -269,6 +269,7 @@ struct BenjolinOsc : BenjolinModule {
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "origNormScale", json_boolean(origNormScale));
+    json_object_set_new(rootJ, "unipolarClock", json_boolean(unipolarClock));
     return rootJ;
   }
 
@@ -280,6 +281,8 @@ struct BenjolinOsc : BenjolinModule {
     else
       origNormScale=true;
     normScale = origNormScale ? 1.f : 5.f;
+    if ((val = json_object_get(rootJ, "unipolarClock")))
+      unipolarClock = json_boolean_value(val);
   }
 
 };
@@ -336,6 +339,7 @@ struct BenjolinOscWidget : VenomWidget {
         module->normScale = module->origNormScale ? 1.f : 5.f;
       }
     ));
+    menu->addChild(createBoolPtrMenuItem("Unipolar clock input", "", &module->unipolarClock));
     menu->addChild(createMenuItem("Add Benjolin Gates Expander", "", [this](){addExpander(modelBenjolinGatesExpander,this);}));
     menu->addChild(createMenuItem("Add Benjolin Volts Expander", "", [this](){addExpander(modelBenjolinVoltsExpander,this);}));
     VenomWidget::appendContextMenu(menu);

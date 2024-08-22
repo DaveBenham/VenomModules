@@ -319,7 +319,10 @@ Each press of the Double button toggles the state of the button. The leading edg
 
 This is the input that triggers the Rungler. It expects a bipolar clock input, with a high state detected above +1V, and a low state below -1V.
 
+If oversampling is enabled, then interpolation of square unipolar clock input will have enough "bounce" to reset to a negative state. But square unipolar clocks will not work if oversampling is off. Nor will unipolar sine or triangle waves work regardless of oversampling status. There is a "Unipolar clock input" module context menu option available to work with any unipolar clock input.
+
 The Clock input is normaled to the Oscillator 2 pulse output.
+
 
 #### XOR output
 
