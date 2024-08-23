@@ -72,7 +72,7 @@ struct CloneMerge : CloneModuleBase {
 
 };
 
-struct CloneMergeWidget : VenomWidget {
+struct CloneMergeWidget : CloneModuleWidget {
   CloneMergeWidget(CloneMerge* module) {
     setModule(module);
     setVenomPanel("CloneMerge");

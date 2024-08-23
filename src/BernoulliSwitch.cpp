@@ -358,6 +358,11 @@ struct BernoulliSwitchWidget : VenomWidget {
         module->lights[BernoulliSwitch::SWAP_LIGHT].setBrightness(i > module->oldChannels ? false : module->swap[i]);
       }
     ));
+    Module* expander = module->rightExpander.module;
+    if (expander && expander->model == modelBernoulliSwitchExpander)
+      menu->addChild(createMenuLabel("Bernoulli Switch expander connected"));
+    else
+      menu->addChild(createMenuItem("Add Bernoulli Switch expander", "", [this](){addExpander(modelBernoulliSwitchExpander,this);}));
     VenomWidget::appendContextMenu(menu);
   }
 

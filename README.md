@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.8.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.9.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
@@ -9,29 +9,29 @@ Venom modules version 2.8.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 [Limitations of DC offset removal](#limitations-of-dc-offset-removal)  
 [Acknowledgments](#acknowledgments)  
 
-|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|
+|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
 |----|----|----|----|----|
-|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|
+|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)|![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)|
 
-|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|
-|----|----|----|----|----|----|----|----|
-|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|
+|----|----|----|----|----|----|----|----|----|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|
 
-|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|
-|----|----|----|----|----|
-|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|
-
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY<br />OFFSET](#poly-offset)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|
-|----|----|----|----|----|
-|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|
-
-|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|
-|----|----|----|----|----|----|
-|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|
-
-|[RHYTHM EXPLORER](#rhythm-explorer)|[SHAPED<br />VCA](#shaped-vca)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|
+|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
 |----|----|----|----|
-|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|
+|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
+
+|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|
+|----|----|----|----|----|
+|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|
+
+|[POLY<br />OFFSET](#poly-offset)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|
+|----|----|----|----|----|----|----|----|
+|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|
+
+|[RHYTHM EXPLORER](#rhythm-explorer)|[SHAPED<br />VCA](#shaped-vca)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|
+|----|----|----|----|----|
+|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|
 
 |[VCO LAB](#vco-lab)|[VENOM<br />BLANK](#venom-blank)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
 |----|----|----|----|
@@ -88,7 +88,7 @@ A custom default value overrides the factory default whenever a parameter is ini
 [Return to Table Of Contents](#venom)
 
 ## Venom Expander Modules
-A number of Venom modules do not do anything on their own, but rather augment the functionality of another module when placed beside it.
+A number of Venom modules do not do anything on their own, but rather augment the functionality of a compatible base module when placed beside it. Each Venom base module that supports expanders has module context menu options to add expanders without having to open the module browser.
 
 VCV Rack supports two different mechanisms for implementinig expander modules:
 - Both the parent (base) module and the expander perform work, and they communicate with each other via messages that introduce sample delays, much as cables do in VCV Rack.
@@ -319,7 +319,10 @@ Each press of the Double button toggles the state of the button. The leading edg
 
 This is the input that triggers the Rungler. It expects a bipolar clock input, with a high state detected above +1V, and a low state below -1V.
 
+If oversampling is enabled, then interpolation of square unipolar clock input will have enough "bounce" to reset to a negative state. But square unipolar clocks will not work if oversampling is off. Nor will unipolar sine or triangle waves work regardless of oversampling status. There is a "Unipolar clock input" module context menu option available to work with any unipolar clock input.
+
 The Clock input is normaled to the Oscillator 2 pulse output.
+
 
 #### XOR output
 
@@ -353,6 +356,98 @@ The patch below closely emulates the features of the Benjolin version 2 from Aft
 All outputs are constant monophonic 0V when the Benjolin Oscillator is bypassed.
 
 [Return to Table Of Contents](#venom)
+
+
+## BENJOLIN GATES EXPANDER
+![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)  
+Adds additional Rungler gate outputs to the Benjolin Oscillator.
+
+Any number of Gates expanders may be used. All expanders must be placed to the right of the Benjolin Oscillator in a contiguous chain. The upper left LED glows yellow when the expander is successfully connected to a base module.
+
+Note the gate outputs do not participate in oversampling.
+
+### MODE (Gate Mode) button
+This color coded button controls the timing and length of the gate outputs:
+- **Gate** (white, default) - The gate is high as long as the gate logic is true
+- **Clock gate** (yellow) - The gate is high when the gate logic is true and the Rungler clock is high
+- **Inverse clock gate** (orange) - The gate is high when the gate logic is true and the Rungler clock is low
+- **Trigger** (green) - A trigger is sent when the gate logic transitions to true
+- **Clock rise trigger** (light blue) - A trigger is sent when the Rungler clock transitions to high while the gate logic is true
+- **Clock fall trigger** (dark blue) - A trigger is sent when the Rungler clock transitions to low while the gate logic is true
+- **Clock edge trigger** (purple) - A trigger is sent when the Rungler clock tranitions to high or low while the gate logic is true
+
+Triggers are high for 1 msec. But if using a clocked trigger and the clock goes low before the trigger has completed, then the trigger immediately goes low.
+
+### POLAR (Polarity) button
+This color coded button controls the polarity of the gates
+- **Unipolar** (green, default) - Low = 0V and high = 10V
+- **Bipolar** (purple) - Low = -5 V and high = 5 V
+
+### 8 Gate outputs
+The LED in the upper right corner of each output port glows yellow whenever the output gate is high.
+
+Each output port has a context menu to specify which Rungler bits are used, and what logic operator to use. By default the gate logic is used for the port name, and displayed as a label above the port.
+
+#### Gate bits
+You may select up to 4 bits. Once 4 have been selected you cannot select another without first unselecting one.
+
+#### Gate logic
+You must select one of three options:
+- **AND** (&) - The gate logic is true if all selected bits are high
+- **OR** (|) - The gate logic is true if at least one selected bit is high
+- **XOR** (^) - The gate logic is true if exactly one selected bit is high
+
+If only one bit is selected, then all logic operations give the same result - the logic is true if the selected bit is high.
+
+### Factory Presets
+There are four factory presets that default to mode = Gate and polarity = Unipolar
+- All Bits - There is one gate for each Rungler bit
+- AND Gates - AND logic is used with bits 1&2, 2&4, 4&7, 1&2&4&7, 2&3, 3&5, 5&8, 2&3&5&8
+- OR Gates - OR logic is used with bits 1|2, 2|4, 4|7, 1|2|4|7, 2|3, 3|5, 5|8, 2|3|5|8
+- XOR Gates - XOR logic is used with bits 1^2, 2^4, 4^7, 1^2^4^7, 2^3, 3^5, 5^8, 2^3^5^8
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are constant monophonic 0V when the Benjolin Gates Expander is bypassed.
+
+[Return to Table Of Contents](#venom)
+
+
+## BENJOLIN VOLTS EXPANDER
+![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)  
+Adds an additional Rungler CV output to the Benjolin Oscillator. It works as a configurable digital to analog converter.
+
+Any number of Volts expanders may be used. All expanders must be placed to the right of the Benjolin Oscillator in a contiguous chain. The upper left LED glows yellow when the expander is successfully connected to a base module.
+
+Note the output does not participate in oversampling.
+
+### SNAP button
+If on (white), then the Bit knobs snap to powers of 2. If off (gray) then the knobs can be freely set to any decimal value betwen 0 and 128.
+
+### Bit knobs 1-8
+Each knob represents a Rungler bit. The knob assigns a value to the bit between 0 and 128. Knobs (bits) set to 0 do not participate in the digital to analog conversion. The assigned values for all high Rungler bits are summed, and then scaled and offset to a bipolar +/- 5V range (10 VPP).
+
+### RANGE knob
+Scales the peak to peak range of the output to any value between 0 and 10V.
+
+### OFFSET knob
+Offsets the output by any value between -10V and 10V. The Offset is applied after the Range.
+
+### OUT port
+The final computed voltage is ouput here.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+The output is constant monophonic 0V when the Benjolin Volts Expander is bypassed.
+
+[Return to Table Of Contents](#venom)
+
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](doc/BernoulliSwitch.png)  
@@ -852,12 +947,24 @@ The last three DC offset options give identical results when no clipping is appl
 See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 ### C (Clip) button
-The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled for CV or audio according to typical usage, but each option can be used for both audio and CV.
-- **Off** (dark gray - default): The final mix is left untouched, with no limit to the output voltage.
-- **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
-- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V, with saturation, using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
-- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
+The color coded clip button determines how (or if) the final output is clipped.
+- **Off** (dark gray - default)
+- **Hard post-level at 10V** (white)
+- **Soft post-level at 10V** (yellow)
+- **Soft oversampled post-level at 10V** (orange)
+- **Hard pre-level at 10V** (green)
+- **Soft pre-level at 10V** (light blue)
+- **Soft oversampled pre-level at 10V** (dark blue)
+- **Saturate (Soft oversampled post-level at 6V)** (purple)
 
+If clipping is off then there is no limit to the output voltage.
+
+Hard clipping can produce significant aliasing if applied to audio signals.
+
+Soft clipping provides tanh saturation. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to signfcant aliasing.
+
+Soft oversampled clipping also provides saturation, but aliasing is greatly reduced.
+   
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
@@ -2181,6 +2288,25 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 [Return to Table Of Contents](#venom)
 
 
+## THRU
+![THRU module image](doc/Thru.png)  
+A simple utility module with 5 polyphonic input/output pairs suitable for unity mixing of stacked inputs, and/or introduction of sample delays.
+
+### Unity Mixing
+Nothing special here - just taking advantage of VCV Rack's built in capability to stack input cables. But it can be convenient if you need to distributet the unity mix to multiple destinations.
+
+### Add Sample Delays
+Each input starting with the 2nd is normalled to the output above, with a delay of 1 sample added. So an input at port 1 with an output at port 5 will yield 4 sample delays, plus the delay introduced by the module itself, for a total of 5.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+Each input is passed to the output below when the module is bypassed. However, the inputs are ***not*** normalled to the output above when bypassed.
+
+[Return to Table Of Contents](#venom)
+
+
 ## VCA MIX 4
 ![VCA Mix 4 module image](doc/VCAMix4.png)  
 A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
@@ -2252,11 +2378,23 @@ The last three DC offset options give identical results when no clipping is appl
 See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 ### C (Clip) button
-The color coded clip button determines how (or if) the final output is clipped. Clipping occurs after the final mix is attenuated (or amplified) by the Mix level knob. The clipping options are labeled for CV or audio according to typical usage, but each option can be used for both audio and CV.
-- **Off** (dark gray - default): The final mix is left untouched, with no limit to the output voltage.
-- **Hard CV clipping** (white): The final mix is hard clipped at +/-10V. This can produce significant aliasing if applied to audio signals.
-- **Soft audio clipping** (yellow): The final mix is soft clipped at +/-10V, with saturation, using an approximated tanh function. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to significant aliasing.
-- **Soft oversampled CV audio clipping** (orange): The final mix is soft clipped at +/-10V, with saturation, using an oversampled approximated tanh function. This uses significantly more CPU, but also greatly reduces any audible aliasing that would otherwise occur.
+The color coded clip button determines how (or if) the final output is clipped.
+- **Off** (dark gray - default)
+- **Hard post-level at 10V** (white)
+- **Soft post-level at 10V** (yellow)
+- **Soft oversampled post-level at 10V** (orange)
+- **Hard pre-level at 10V** (green)
+- **Soft pre-level at 10V** (light blue)
+- **Soft oversampled pre-level at 10V** (dark blue)
+- **Saturate (Soft oversampled post-level at 6V)** (purple)
+
+If clipping is off then there is no limit to the output voltage.
+
+Hard clipping can produce significant aliasing if applied to audio signals.
+
+Soft clipping provides tanh saturation. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to signfcant aliasing.
+
+Soft oversampled clipping also provides saturation, but aliasing is greatly reduced.
 
 ### X (eXclude) button
 The color coded exclude button determines if patched channel outputs are excluded or included in the final mix.
@@ -2363,26 +2501,6 @@ To further reduce CPU usage, oversampling may be disabled for individual inputs 
 - yellow indicates the input is being oversampled
 - red indicates the input is not being oversampled
 
-### PW (Pulse width range) button
-This color coded button controls the range of pulse width modulation for the square wave shape.
-- **Limited 3%-97%** (dark gray - default)
-- **Full 0%-100%** (yellow)
-
-Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
-
-### MIX (Mix shape mode) button
-This color coded button controls how the Shape Mix controls function
-- **Sum (No shaping)** (yellow)
-- **Saturate Sum** (orange - default)
-- **Fold Sum** (purple)
-- **Average (No shaping)** (light blue)
-- **Saturate Average** (green)
-- **Fold Average** (dark blue)
-
-Summed shaping is best for smooth bipolar shape modulation and maximum shaping effect
-
-Average shaping is best for maintaining 10V peak to peak output, as well as consistent unipolar output when applying Mix offset.
-
 ### DC (DC block) button
 This color coded button controls whether a high pass filter is applied to remove DC offset from all outputs
 - **Off** (dark gray - default)
@@ -2480,7 +2598,33 @@ For each modulation there is a base control knob plus a CV input and bipolar att
 All grid inputs support oversampling that can be disabled via the port context menu.
 
 #### Waveform Shape Modulation
-All four waveforms get slightly different shape modulation.
+All four waveforms get different shape modulation. Each has a color coded Shape Mode button to determine the type of modulation used.
+
+##### Sin, Tri, Saw Shape Mode button
+Controls the type of sigmoidal shaping used. Each imparts its own timbre
+- **log/exp** (yellow - default)
+- **J-curve** (orange)
+- **S-curve** (purple)
+- **Rectify** (light blue)
+- **Normalized Rectify** (dark blue)
+
+The J-curve uses only half (positive or negative portion) of the sigmoidal function.
+
+Rectify yields only 5 volts peak to peak (5 VPP) when shape is 100% or -100%.
+
+Normalized Rectify attempts to keep the output 10 VPP regardless the shape value. It also shifts the output to keep it bipolar, prior to applying any offset.
+
+##### Sin, Tri, Saw Shape CV inputs
+The initial release of VCO Lab required 20 volts peak to peak CV to cover the entire shape range for Sin, Tri, and Saw. Starting with V 2.9.0 these ports now default to 10 volts peak to peak covering the entire range. These ports have a context menu option to revert to old behavior.
+
+##### Sqr Shape Mode button
+Controls the range of pulse width modulation
+- **Limited PWM 3%-97%** (yellow - default)
+- **Full PWM 0%-100%** (dark blue)
+
+Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
+
+Below is a summary of the wave shaping when using the default (yellow) mode for all four waveforms.
 |Waveform|Negative modulation|No modulation|Positive modulation|
 |---|---|---|---|
 |**Sine**|exponential response|mathematical sine|logarithmic response|
@@ -2490,14 +2634,18 @@ All four waveforms get slightly different shape modulation.
 
 ![Waveform shape modulation image](doc/OscillatorShapeModulation.png)
 
-#### Mix Shape Modulation
-The mix shaping is controled by the Mix button in the upper left.
-There are three possibilities:
-- Disabled
-- tanh saturation
-- folding
+#### Mix Shape Modulation button
+The mix also has a color coded Shape Mode button
+- **Sum (No shaping)** (yellow)
+- **Saturate Sum** (orange - default)
+- **Fold Sum** (purple)
+- **Average (No shaping)** (light blue)
+- **Saturate Average** (green)
+- **Fold Average** (dark blue)
 
-In addition, the mix may be the sum of the waveform amounts, or the average.
+Summed shaping is best for smooth bipolar shape modulation and maximum shaping effect
+
+Average shaping is best for maintaining 10V peak to peak output, as well as consistent unipolar output when applying Mix offset.
 
 #### Waveform Phase Modulation
 The image below shows the phase relationship between the four waveforms when no phase modulation is applied.  

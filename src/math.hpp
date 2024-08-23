@@ -39,3 +39,9 @@ inline float sin_01(float t) {
   t = (((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
   return t;
 }
+
+// Normalized Tunable Sigmoid Function: see https://dhemery.github.io/DHE-Modules/technical/sigmoid/#function
+template <typename T1, typename T2>
+T1 normSigmoid(T1 x, T2 k) {
+  return (x - k*x)/(k - 2.f*k*fabs(x) + 1.f);
+}

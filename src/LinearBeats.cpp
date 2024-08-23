@@ -179,8 +179,16 @@ struct LinearBeatsWidget : VenomWidget {
 
   void appendContextMenu(Menu* menu) override {
     LinearBeats* module = static_cast<LinearBeats*>(this->module);
+    menu->addChild(new MenuSeparator);
+    if (module->inMute)
+      menu->addChild(createMenuLabel("Left Linear Beats expander connected"));
+    else
+      menu->addChild(createMenuItem("Add left Linear Beats expander", "", [this](){addExpander(modelLinearBeatsExpander,this,true);}));
+    if (module->outMute)
+      menu->addChild(createMenuLabel("Right Linear Beats expander connected"));
+    else
+      menu->addChild(createMenuItem("Add right Linear Beats expander", "", [this](){addExpander(modelLinearBeatsExpander,this,false);}));
     if (module->inMute || module->outMute) {
-      menu->addChild(new MenuSeparator);
       menu->addChild(createBoolMenuItem("Expander CV toggles button on/off", "",
         [=]() {
           return module->toggleCV;

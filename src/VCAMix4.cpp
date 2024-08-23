@@ -64,8 +64,9 @@ struct VCAMix4 : MixBaseModule {
       "Bipolar linear band limited - CV unclamped", "Bipolar exponential band limited - CV unclamped"
     });
     configSwitch<FixedSwitchQuantity>(DCBLOCK_PARAM, 0.f, 3.f, 0.f, "Mix DC Block", {"Off", "Before clipping", "Before and after clipping", "After clipping"});
-    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 6.f, 0.f, "Mix Clipping", {"Off", "Hard post-level", "Soft post-level", "Soft oversampled post-levl", 
-                                                                                         "Hard pre-level", "Soft pre-level", "Soft oversampled pre-level"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 7.f, 0.f, "Mix Clipping", {"Off", "Hard post-level at 10V", "Soft post-level at 10V", "Soft oversampled post-levl at 10V", 
+                                                                                         "Hard pre-level at 10V", "Soft pre-level at 10V", "Soft oversampled pre-level at 10V",
+                                                                                         "Saturate (Soft oversampled post-level at 6V)"});
     configSwitch<FixedSwitchQuantity>(EXCLUDE_PARAM, 0.f, 1.f, 0.f, "Exclude Patched Outs from Mix", {"Off", "On"});
     configInput(CHAIN_INPUT, "Chain");
     configOutput(MIX_OUTPUT, "Mix");
@@ -298,7 +299,7 @@ struct VCAMix4 : MixBaseModule {
         cv = vcaBandlimit[0][4][c/4].process(cv);
         out = vcaBandlimit[1][4][c/4].process(out);
       }
-      if (clip <= 3) {
+      if (clip <= 3 || clip == 7) {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
         if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
       }
@@ -308,16 +309,16 @@ struct VCAMix4 : MixBaseModule {
         out = clamp(out, -10.f, 10.f);
       if (clip == 2 || clip == 5)
         out = softClip(out);
-      if (clip == 3 || clip == 6){
+      if (clip == 3 || clip >= 6){
         for (int i=0; i<oversample; i++){
           out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
-          out = softClip(out);
+          out = (clip != 7) ? softClip(out) : (softClip(out*1.6667f) / 1.6667f);
           out = outDownSample[c/4].process(out);
         }
       }
       if (dcBlock == 3 || (dcBlock == 2 && clip)) // no oversample applied during DC removal
         out = dcBlockAfterFilter[c/4].process(out);
-      if (clip > 3) {
+      if (clip > 3 && clip < 7) {
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
         if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
       }

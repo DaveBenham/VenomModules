@@ -3,11 +3,12 @@
 
 #include "plugin.hpp"
 #include "Filter.hpp"
+#include "BenjolinModule.hpp"
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
 
-struct BenjolinOsc : VenomModule {
+struct BenjolinOsc : BenjolinModule {
   
   enum ParamId {
     OVER_PARAM,
@@ -59,7 +60,7 @@ struct BenjolinOsc : VenomModule {
         normScale=5.f,
         xorVal=0, rung=0;
   unsigned char asr = rack::random::uniform()*126+1;
-  bool origNormScale=false, chaosIn=false, dblIn=false;
+  bool origNormScale=false, chaosIn=false, dblIn=false, unipolarClock=false;
  
   BenjolinOsc() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -132,7 +133,7 @@ struct BenjolinOsc : VenomModule {
          clockConnected = inputs[CLOCK_INPUT].isConnected(),
          chaos = params[CHAOS_PARAM].getValue(),
          dbl = params[DOUBLE_PARAM].getValue();
-    int trig;
+    int trig=0;
     *cv1In = inputs[CV1_INPUT].getVoltage();
     *cv2In = inputs[CV2_INPUT].getVoltage();
     *clockIn = inputs[CLOCK_INPUT].getVoltage();
@@ -172,7 +173,7 @@ struct BenjolinOsc : VenomModule {
       if (*pul1 != math::sgn(*tri1)) *pul1*=-1.f;
       if (*pul2 != math::sgn(*tri2)) *pul2*=-1.f;
       *pwmOut = *tri2>*tri1 ? 5.f : -5.f;
-      trig = clockTrig.processEvent( clockConnected ? *clockIn : *pul2*normScale, -1.f, 1.f);
+      trig = clockTrig.processEvent( clockConnected ? *clockIn : *pul2*normScale, unipolarClock?0.1f:-1.f, 1.f);
       if (trig>0 || (trig && dbl)){
         float ptrn = chaos ? 0.5f : params[PATTERN_PARAM].getValue();
         unsigned char data = (ptrn>=*tri1 || ptrn>=10.f) ^ (chaos ? ((asr&32)>>5)^((asr&64)>>6) : (asr&128)>>7);
@@ -189,6 +190,73 @@ struct BenjolinOsc : VenomModule {
       else
         outA = osc*5.f;
     }
+    for (BenjolinModule* expndr = rightExpander; expndr; expndr = expndr->rightExpander){
+      if (!expndr->isBypassed() && expndr->model == modelBenjolinGatesExpander){
+        BenjolinGatesExpander* gates = static_cast<BenjolinGatesExpander*>(expndr);
+        float hi = gates->params[GATES_POLARITY_PARAM].getValue() ? 5.f : 10.f;
+        float lo = gates->params[GATES_POLARITY_PARAM].getValue() ? -5.f : 0.f;
+        int mode = static_cast<int>(gates->params[GATES_MODE_PARAM].getValue());
+        unsigned char val;
+        for (int i=0; i<8; i++){
+          val = asr & gates->gateBits[i];
+          switch (gates->gateLogic[i]){
+            case BenjolinGatesExpander::AND:
+              if (val != gates->gateBits[i]) val = 0;
+              break;
+            case BenjolinGatesExpander::XOR:
+              val = gates->setCount(val) == 1;
+              break;
+          }
+          switch (mode){
+            // case 0: gate do nothing
+            case 1: // clock gate
+              val = (val && clockTrig.isHigh());
+              break;
+            case 2: // inverse clock gate
+              val = (val && !clockTrig.isHigh());
+              break;
+            case 3: // trigger
+              if (val != gates->oldVal[i]) {
+                if (val) gates->trigGenerator[i].trigger();
+                gates->oldVal[i] = val;
+              }
+              break;
+            case 4: // clock rise trigger
+              if (val && trig>0) gates->trigGenerator[i].trigger();
+              break;
+            case 5: // clock fall trigger
+              if (val && trig<0) gates->trigGenerator[i].trigger();
+              break;
+            case 6: // clock edge trigger
+              if (val && trig) gates->trigGenerator[i].trigger();
+              break;
+          }
+          if (mode >= 3 /*trigger*/) {
+            if (val)
+              val = gates->trigGenerator[i].process(args.sampleTime);
+            else
+              gates->trigGenerator[i].reset();
+          }
+          gates->outputs[i].setVoltage(val ? hi : lo);
+          gates->lights[GATE_LIGHT+i].setBrightnessSmooth(val!=0, args.sampleTime);
+        }
+      }
+      if (!expndr->isBypassed() && expndr->model == modelBenjolinVoltsExpander){
+        BenjolinVoltsExpander* volts = static_cast<BenjolinVoltsExpander*>(expndr);
+        float val = 0.f;
+        float div = 0.f;
+        for (int i=0; i<8; i++){
+          float v = volts->getBitValue(VOLT_PARAM+i);
+          div += v;
+          if (asr & (1<<i)){
+            val += v;
+          }
+        }
+        if (div)
+          val = (val/div - 0.5f) * volts->params[VOLTS_RANGE_PARAM].getValue();
+        volts->outputs[VOLTS_OUTPUT].setVoltage(val + volts->params[VOLTS_OFFSET_PARAM].getValue());
+      }
+    }
     outputs[TRI1_OUTPUT].setVoltage(*tri1Out);
     outputs[TRI2_OUTPUT].setVoltage(*tri2Out);
     outputs[PULSE1_OUTPUT].setVoltage(*pul1Out);
@@ -201,6 +269,7 @@ struct BenjolinOsc : VenomModule {
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "origNormScale", json_boolean(origNormScale));
+    json_object_set_new(rootJ, "unipolarClock", json_boolean(unipolarClock));
     return rootJ;
   }
 
@@ -212,6 +281,8 @@ struct BenjolinOsc : VenomModule {
     else
       origNormScale=true;
     normScale = origNormScale ? 1.f : 5.f;
+    if ((val = json_object_get(rootJ, "unipolarClock")))
+      unipolarClock = json_boolean_value(val);
   }
 
 };
@@ -268,6 +339,9 @@ struct BenjolinOscWidget : VenomWidget {
         module->normScale = module->origNormScale ? 1.f : 5.f;
       }
     ));
+    menu->addChild(createBoolPtrMenuItem("Unipolar clock input", "", &module->unipolarClock));
+    menu->addChild(createMenuItem("Add Benjolin Gates Expander", "", [this](){addExpander(modelBenjolinGatesExpander,this);}));
+    menu->addChild(createMenuItem("Add Benjolin Volts Expander", "", [this](){addExpander(modelBenjolinVoltsExpander,this);}));
     VenomWidget::appendContextMenu(menu);
   }
 

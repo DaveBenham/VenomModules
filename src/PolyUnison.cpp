@@ -124,7 +124,7 @@ struct PolyUnison : CloneModuleBase {
 };
 
 
-struct PolyUnisonWidget : VenomWidget {
+struct PolyUnisonWidget : CloneModuleWidget {
 
   struct PCCountDisplay : DigitalDisplay18 {
     void step() override {

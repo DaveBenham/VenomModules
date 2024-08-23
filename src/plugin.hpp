@@ -15,6 +15,8 @@ extern Model* modelBayInput;
 extern Model* modelBayNorm;
 extern Model* modelBayOutput;
 extern Model* modelBenjolinOsc;
+extern Model* modelBenjolinGatesExpander;
+extern Model* modelBenjolinVoltsExpander;
 extern Model* modelBernoulliSwitch;
 extern Model* modelBernoulliSwitchExpander;
 extern Model* modelBlocker;
@@ -50,6 +52,7 @@ extern Model* modelRecurseStereo;
 extern Model* modelReformation;
 extern Model* modelRhythmExplorer;
 extern Model* modelShapedVCA;
+extern Model* modelThru;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
 extern Model* modelVenomBlank;
@@ -528,6 +531,19 @@ struct VenomWidget : ModuleWidget {
     }
     Widget::step();
   }
+  
+  void addExpander( Model* model, ModuleWidget* parentModWidget, bool left = false ) {
+    Module* module = model->createModule();
+    APP->engine->addModule(module);
+    ModuleWidget* modWidget = model->createModuleWidget(module);
+    APP->scene->rack->setModulePosForce( modWidget, Vec( parentModWidget->box.pos.x + (left ? -modWidget->box.size.x : parentModWidget->box.size.x), parentModWidget->box.pos.y));
+    APP->scene->rack->addModule(modWidget);
+    history::ModuleAdd* h = new history::ModuleAdd;
+    h->name = "create "+model->name;
+    h->setModule(modWidget);
+    APP->history->push(h);
+  }  
+
 };
 
 struct FixedSwitchQuantity : SwitchQuantity {

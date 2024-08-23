@@ -79,6 +79,8 @@ void init(Plugin* p) {
   p->addModel(modelBayNorm);
   p->addModel(modelBayOutput);
   p->addModel(modelBenjolinOsc);
+  p->addModel(modelBenjolinGatesExpander);
+  p->addModel(modelBenjolinVoltsExpander);
   p->addModel(modelBernoulliSwitch);
   p->addModel(modelBernoulliSwitchExpander);
   p->addModel(modelBlocker);
@@ -114,6 +116,7 @@ void init(Plugin* p) {
   p->addModel(modelReformation);
   p->addModel(modelRhythmExplorer);
   p->addModel(modelShapedVCA);
+  p->addModel(modelThru);
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);
   p->addModel(modelVenomBlank);

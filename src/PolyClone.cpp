@@ -73,7 +73,7 @@ struct PolyClone : CloneModuleBase {
 };
 
 
-struct PolyCloneWidget : VenomWidget {
+struct PolyCloneWidget : CloneModuleWidget {
 
   struct PCCountDisplay : DigitalDisplay18 {
     void step() override {

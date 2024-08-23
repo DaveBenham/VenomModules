@@ -345,8 +345,8 @@ struct LogicWidget : VenomWidget {
     for(int i = 0; i < CHANNEL_COUNT; i++, y += 30.0f){
       addInput(createInputCentered<PolyPort>(Vec(20.718,y), module, Logic::A_INPUT+i));
       addInput(createInputCentered<PolyPort>(Vec(51.109,y), module, Logic::B_INPUT+i));
-      addParam(createParamCentered<RecycleSwitch>(Vec(82.000,y), module, Logic::RECYCLE_PARAM+i));
-      addParam(createParamCentered<OpSwitch>(Vec(113.391,y), module, Logic::OP_PARAM+i));
+      addParam(createLockableParamCentered<RecycleSwitch>(Vec(82.000,y), module, Logic::RECYCLE_PARAM+i));
+      addParam(createLockableParamCentered<OpSwitch>(Vec(113.391,y), module, Logic::OP_PARAM+i));
       addOutput(createOutputCentered<PolyPort>(Vec(144.282,y), module, Logic::GATE_OUTPUT+i));
     }
   }
