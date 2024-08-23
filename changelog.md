@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.9.0
+## 2.9.0 (2024-08-22)
 ### New Modules
 - Benjolin Gates Expander
 - Benjolin Volts Expander

@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.9.dev",
+  "version": "2.9.0",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -10,7 +10,7 @@
   "pluginUrl": "https://github.com/DaveBenham/VenomModules",
   "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md",
   "sourceUrl": "https://github.com/DaveBenham/VenomModules",
-  "donateUrl": "",
+  "donateUrl": "https://paypal.me/DaveBenhamMusic",
   "changelogUrl": "https://github.com/DaveBenham/VenomModules/blob/main/changelog.md",
   "modules": [
     {
