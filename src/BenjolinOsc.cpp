@@ -48,6 +48,7 @@ struct BenjolinOsc : BenjolinModule {
   };
   
   int oversample = -1;
+  int dacMode=0, dacBit1=2, dacBit2=8, dacBit3=64, dacShift1=1, dacShift2=2, dacShift3=4;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
   OversampleFilter_4 upSample, downSampleA, downSampleB;
   dsp::SchmittTrigger clockTrig;
@@ -179,7 +180,7 @@ struct BenjolinOsc : BenjolinModule {
         unsigned char data = (ptrn>=*tri1 || ptrn>=10.f) ^ (chaos ? ((asr&32)>>5)^((asr&64)>>6) : (asr&128)>>7);
         asr = (asr<<1)|data;
         xorVal = asr&1 ? 5.f : -5.f;
-        rung = (((asr&2)>>1)+((asr&8)>>2)+((asr&64)>>4)) * 1.428571f - 5.f;
+        rung = (((asr&dacBit1)>>dacShift1)+((asr&dacBit2)>>dacShift2)+((asr&dacBit3)>>dacShift3)) * 1.428571f - 5.f;
       }
       *xorOut = xorVal;
       *rungOut = rung;
@@ -265,11 +266,12 @@ struct BenjolinOsc : BenjolinModule {
     outputs[PWM_OUTPUT].setVoltage(*pwmOut);
     outputs[RUNG_OUTPUT].setVoltage(*rungOut);
   }
-
+  
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "origNormScale", json_boolean(origNormScale));
     json_object_set_new(rootJ, "unipolarClock", json_boolean(unipolarClock));
+    json_object_set_new(rootJ, "dacMode", json_integer(dacMode));
     return rootJ;
   }
 
@@ -283,6 +285,25 @@ struct BenjolinOsc : BenjolinModule {
     normScale = origNormScale ? 1.f : 5.f;
     if ((val = json_object_get(rootJ, "unipolarClock")))
       unipolarClock = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "dacMode"))){
+      setDacMode(json_integer_value(val));
+      dacBit1 = dacMode ? 16 : 2;
+      dacBit2 = dacMode ? 32 : 8;
+      dacBit3 = 64;
+      dacShift1 = dacMode ? 4 : 1;
+      dacShift2 = dacMode ? 4 : 2;
+      dacShift3 = 4;
+    }
+  }
+
+  void setDacMode(int mode) {
+    dacMode = mode;
+    dacBit1 = mode ? 16 : 2;
+    dacBit2 = mode ? 32 : 8;
+    dacBit3 = 64;
+    dacShift1 = mode ? 4 : 1;
+    dacShift2 = mode ? 4 : 2;
+    dacShift3 = 4;
   }
 
 };
@@ -340,6 +361,12 @@ struct BenjolinOscWidget : VenomWidget {
       }
     ));
     menu->addChild(createBoolPtrMenuItem("Unipolar clock input", "", &module->unipolarClock));
+    menu->addChild(createIndexSubmenuItem(
+      "Rungler DAC configuration",
+      {"bits 2,4,8","bits 6,7,8 (Rob Hordijks original design)"},
+      [=]() {return module->dacMode;},
+      [=](int i) {module->setDacMode(i);}
+    ));
     menu->addChild(createMenuItem("Add Benjolin Gates Expander", "", [this](){addExpander(modelBenjolinGatesExpander,this);}));
     menu->addChild(createMenuItem("Add Benjolin Volts Expander", "", [this](){addExpander(modelBenjolinVoltsExpander,this);}));
     VenomWidget::appendContextMenu(menu);

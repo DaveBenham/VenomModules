@@ -214,8 +214,8 @@ struct BenjolinVoltsExpander : BenjolinModule {
     for (int i=0; i<8; i++) {
       configParam<BitQuantity>(VOLT_PARAM+i, 0.f, 8.f, 0.f, string::f("Bit %d", i + 1), "");
     }
-    configParam(VOLTS_RANGE_PARAM, 0.f, 10.f, 10.f, "Output level", " V");
-    configParam(VOLTS_OFFSET_PARAM, -10.f, 10.f, 0.f, "Output level", " V");
+    configParam(VOLTS_RANGE_PARAM, 0.f, 10.f, 10.f, "Output range", " V");
+    configParam(VOLTS_OFFSET_PARAM, -10.f, 10.f, 0.f, "Output offset", " V");
     configOutput(VOLTS_OUTPUT,"");
   }
 
