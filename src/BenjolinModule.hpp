@@ -212,7 +212,7 @@ struct BenjolinVoltsExpander : BenjolinModule {
     configLight(0, "Left connection indicator");
     configSwitch<FixedSwitchQuantity>(VOLTS_BINARY_PARAM, 0.f, 1.f, 1.f, "Snap to powers of 2", {"Off", "On"});
     for (int i=0; i<8; i++) {
-      configParam<BitQuantity>(VOLT_PARAM+i, 0.f, 8.f, 0.f, string::f("Bit %d", i + 1), "");
+      configParam<BitQuantity>(VOLT_PARAM+i, 0.f, 8.f, 0.f, string::f("Bit %d value", i + 1), "");
     }
     configParam(VOLTS_RANGE_PARAM, 0.f, 10.f, 10.f, "Output range", " V");
     configParam(VOLTS_OFFSET_PARAM, -10.f, 10.f, 0.f, "Output offset", " V");
