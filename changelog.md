@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.9.1 (2024-09-??)
+## 2.9.1 (2024-09-08)
 ### Enhancements
 - Benjolin Oscillator
   - Added menu option to configure Rungler DAC to use bits 6,7,8 as Rob Hordijk's original design instead of bits 2,4,7
