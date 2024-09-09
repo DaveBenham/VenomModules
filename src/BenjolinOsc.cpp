@@ -46,7 +46,8 @@ struct BenjolinOsc : BenjolinModule {
     DOUBLE_LIGHT,
     LIGHTS_LEN
   };
-  
+
+  bool oldTrig = false;  
   int oversample = -1;
   int dacMode=0, dacBit1=2, dacBit2=8, dacBit3=64, dacShift1=1, dacShift2=2, dacShift3=4;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
@@ -191,8 +192,14 @@ struct BenjolinOsc : BenjolinModule {
       else
         outA = osc*5.f;
     }
+    trig = 0;
+    if (clockTrig.isHigh() != oldTrig){
+      trig = clockTrig.isHigh() ? 1 : -1;
+      oldTrig = clockTrig.isHigh();
+    }
     for (BenjolinModule* expndr = rightExpander; expndr; expndr = expndr->rightExpander){
-      if (!expndr->isBypassed() && expndr->model == modelBenjolinGatesExpander){
+      if (!expndr->isBypassed() && expndr->model == modelBenjolinGatesExpander && (trig || expndr->expanderTrig)){
+        expndr->expanderTrig = false;
         BenjolinGatesExpander* gates = static_cast<BenjolinGatesExpander*>(expndr);
         float hi = gates->params[GATES_POLARITY_PARAM].getValue() ? 5.f : 10.f;
         float lo = gates->params[GATES_POLARITY_PARAM].getValue() ? -5.f : 0.f;
@@ -233,6 +240,8 @@ struct BenjolinOsc : BenjolinModule {
               break;
           }
           if (mode >= 3 /*trigger*/) {
+            if (gates->trigGenerator[i].remaining)
+              gates->expanderTrig = true;
             if (val)
               val = gates->trigGenerator[i].process(args.sampleTime);
             else
@@ -242,7 +251,8 @@ struct BenjolinOsc : BenjolinModule {
           gates->lights[GATE_LIGHT+i].setBrightnessSmooth(val!=0, args.sampleTime);
         }
       }
-      if (!expndr->isBypassed() && expndr->model == modelBenjolinVoltsExpander){
+      if (!expndr->isBypassed() && expndr->model == modelBenjolinVoltsExpander && (trig || expndr->expanderTrig)){
+        expndr->expanderTrig = false;
         BenjolinVoltsExpander* volts = static_cast<BenjolinVoltsExpander*>(expndr);
         float val = 0.f;
         float div = 0.f;
@@ -287,23 +297,23 @@ struct BenjolinOsc : BenjolinModule {
       unipolarClock = json_boolean_value(val);
     if ((val = json_object_get(rootJ, "dacMode"))){
       setDacMode(json_integer_value(val));
-      dacBit1 = dacMode ? 16 : 2;
-      dacBit2 = dacMode ? 32 : 8;
-      dacBit3 = 64;
-      dacShift1 = dacMode ? 4 : 1;
-      dacShift2 = dacMode ? 4 : 2;
-      dacShift3 = 4;
+      dacBit1 = dacMode ? 32 : 2;
+      dacBit2 = dacMode ? 64 : 8;
+      dacBit3 = dacMode ? 128 : 64;
+      dacShift1 = dacMode ? 5 : 1;
+      dacShift2 = dacMode ? 5 : 2;
+      dacShift3 = dacMode ? 5 : 4;
     }
   }
 
   void setDacMode(int mode) {
     dacMode = mode;
-    dacBit1 = mode ? 16 : 2;
-    dacBit2 = mode ? 32 : 8;
-    dacBit3 = 64;
-    dacShift1 = mode ? 4 : 1;
-    dacShift2 = mode ? 4 : 2;
-    dacShift3 = 4;
+    dacBit1 = mode ? 32 : 2;
+    dacBit2 = mode ? 64 : 8;
+    dacBit3 = mode ? 128 : 64;
+    dacShift1 = mode ? 5 : 1;
+    dacShift2 = mode ? 5 : 2;
+    dacShift3 = mode ? 5 : 4;
   }
 
 };
@@ -363,7 +373,7 @@ struct BenjolinOscWidget : VenomWidget {
     menu->addChild(createBoolPtrMenuItem("Unipolar clock input", "", &module->unipolarClock));
     menu->addChild(createIndexSubmenuItem(
       "Rungler DAC configuration",
-      {"bits 2,4,8","bits 6,7,8 (Rob Hordijks original design)"},
+      {"bits 2,4,7","bits 6,7,8 (Rob Hordijks original design)"},
       [=]() {return module->dacMode;},
       [=](int i) {module->setDacMode(i);}
     ));
