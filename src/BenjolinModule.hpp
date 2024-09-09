@@ -2,9 +2,6 @@
 
 struct BenjolinModule : VenomModule {
   
-  // expander only
-  bool connected = false;
-  
   enum GatesParamId {
     GATES_MODE_PARAM,
     GATES_POLARITY_PARAM,
@@ -45,11 +42,20 @@ struct BenjolinModule : VenomModule {
   BenjolinModule* leftExpander = NULL;
   BenjolinModule* rightExpander = NULL;
 
+  // expander only
+  bool connected = false;
+  bool expanderTrig = true;
+  float expanderParam[VOLTS_PARAMS_LEN]{};
+
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (e.side)
       rightExpander = dynamic_cast<BenjolinModule*>(getRightExpander().module);
     else
       leftExpander = dynamic_cast<BenjolinModule*>(getLeftExpander().module);
+  }
+  
+  void onUnBypass(const UnBypassEvent& e) override {
+    expanderTrig = true; // don't care about meaningless setting of parent value
   }
 
   inline int setCount(unsigned char num) {
@@ -59,7 +65,7 @@ struct BenjolinModule : VenomModule {
 };
 
 struct BenjolinGatesExpander : BenjolinModule {
-
+  
   enum GateLogic{
     AND,
     OR,
@@ -162,6 +168,7 @@ struct BenjolinGatesExpander : BenjolinModule {
               if (val && setCount(gateBits[portId])<4) gateBits[portId] |= bit;
               else gateBits[portId] &= ~bit;
               setPortName(portId);
+              expanderTrig = true;
             }
           ));
         }
@@ -175,6 +182,7 @@ struct BenjolinGatesExpander : BenjolinModule {
       [=](int val) {
         gateLogic[portId] = val;
         setPortName(portId);
+        expanderTrig = true;
       }
     ));
   }  
@@ -212,10 +220,10 @@ struct BenjolinVoltsExpander : BenjolinModule {
     configLight(0, "Left connection indicator");
     configSwitch<FixedSwitchQuantity>(VOLTS_BINARY_PARAM, 0.f, 1.f, 1.f, "Snap to powers of 2", {"Off", "On"});
     for (int i=0; i<8; i++) {
-      configParam<BitQuantity>(VOLT_PARAM+i, 0.f, 8.f, 0.f, string::f("Bit %d", i + 1), "");
+      configParam<BitQuantity>(VOLT_PARAM+i, 0.f, 8.f, 0.f, string::f("Bit %d value", i + 1), "");
     }
-    configParam(VOLTS_RANGE_PARAM, 0.f, 10.f, 10.f, "Output level", " V");
-    configParam(VOLTS_OFFSET_PARAM, -10.f, 10.f, 0.f, "Output level", " V");
+    configParam(VOLTS_RANGE_PARAM, 0.f, 10.f, 10.f, "Output range", " V");
+    configParam(VOLTS_OFFSET_PARAM, -10.f, 10.f, 0.f, "Output offset", " V");
     configOutput(VOLTS_OUTPUT,"");
   }
 
@@ -241,12 +249,22 @@ struct BenjolinExpanderWidget : VenomWidget {
     if(thisMod && thisMod->connected != connected) {
       thisMod->connected = connected;
       thisMod->lights[0].setBrightness(connected);
-      if (!connected){
+      if (connected)
+        thisMod->expanderTrig = true;
+      else {
         for (int i=0; i<thisMod->getNumOutputs(); i++) {
           thisMod->outputs[i].setVoltage(0.f);
           thisMod->outputs[i].setChannels(1);
           if (thisMod->model == modelBenjolinGatesExpander)
             thisMod->lights[BenjolinModule::GATE_LIGHT+i].setBrightness(0);
+        }
+      }
+    }
+    if (thisMod) {
+      for (int i=0; i<thisMod->getNumParams(); i++) {
+        if (thisMod->params[i].getValue() != thisMod->expanderParam[i]) {
+          thisMod->expanderParam[i] = thisMod->params[i].getValue();
+          thisMod->expanderTrig = true;
         }
       }
     }
