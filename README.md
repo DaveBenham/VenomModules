@@ -2444,7 +2444,7 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 - The mix also has controls/inputs for shape (saturation or folding), global phase, offset, and level
 - All inputs can be driven at audio rates, and nearly all can be oversampled
 - All inputs support polyphony
-- Bipolar level controls can be used as traditional VCAs, or for amplitude or ring modulation.
+- Level controls with configurable VCAs support AM and ring mod.
 - Independent controls/inputs for exponential FM and true linear through 0 FM
 - Linear FM input defaults to AC coupled, with an option for DC coupled
 - Audio rate modulation of phase provides functionality often incorrectly referred to as through 0 linear FM.
@@ -2674,18 +2674,19 @@ The mix also can be offset by as much as +5 or -5 volts, again typically to achi
 
 The offset is applied before any level adjustment
 
-#### Waveform Level Modulation
+#### Waveform and Mix Level control
+
+The sum of the Level knob and the attenuated CV is clamped to +/- 100% by default via hard clipping. There is a module context menu option to disable the limit for the entire module.
+
+Each Level CV port has two context menu options in addition to the "Disable oversampling" option
+- **VCA unity = 5V**: By default this option is disabled, and 10V equates to 100%. If enabled, then 5V equates to 100%. This is especially useful for ring modulation. The LED above and left of the port glows yellow when this option is enabled.
+- **Bipolar VCA (ring mod)**: By default this option is disabled, and the VCA is unipolar, meaning negative CV is ignored. If enabled, then the VCA responds to both negative and positive CV, which allows for ring modulation. The LED below and left of the port glows yellow when this option is enabled.
+
+#### Waveform Level Assignment
 Each waveform has a color coded Lvl Asgn (Level Assign) button that controls how the waveform level attenuation is applied.
 - **Mix Output** (yellow - default) - The level determines how much of the waveform is added to the mix. The waveform output will be unattenuated.
 - **Waveform Output** (dark blue) - The level attenuates the waveform output, and the waveform is excluded from the mix.
 - **Both Waveform and Mix Output** (green) - The level determines how much of the waveform is added to the mix, and also attenuates the waveform output.
-
-The modulation supports bipolar CV so it can be used for ring modulation.
-
-By default the Level CV scales at 10V = unity. The Level CV port context menu has an option to scale at 5V = unity to better support ring modulation. The LED above and to the left of the port glows yellow when the "Ring Mod (5V = unity)" option is enabled.
-
-#### Mix Level Modulation
-The final mix also has bipolar level attenuation to control the final mix output. Again it can be used as a VCA, or for audio rate amplitude modulation or ring modulation.
 
 #### Outputs
 Each waveform has its own dedicated output, plus there is a Mix output.

@@ -170,11 +170,19 @@ struct Oscillator : VenomModule {
     
     LIN_DC_LIGHT,
     
+    SIN_VCA_LIGHT,
+    TRI_VCA_LIGHT,
+    SQR_VCA_LIGHT,
+    SAW_VCA_LIGHT,
+    MIX_VCA_LIGHT,
+
     LIGHTS_LEN
   };
 
+  bool clampLevel = true;
   bool disableOver[INPUTS_LEN]{};
-  bool ringMod[5]{};
+  bool unity5[5]{};
+  bool bipolar[5]{};
   bool oldShpCV[4]{};
   float lvlScale[5]{0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
   float shpScale[4]{0.2f, 0.2f, 0.2f, 0.2f};
@@ -288,14 +296,13 @@ struct Oscillator : VenomModule {
             break;
           case 3: // level
             configParam(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], "%", 0.f, 100.f);
+            configLight(SIN_RM_LIGHT+x, xStr[x]+" VCA unity = 5V indicator");
+            configLight(SIN_VCA_LIGHT+x, xStr[x]+" Bipolar VCA indicator");
             break;
         }
         configParam(GRID_PARAM+y*10+x+5, -1.f, 1.f, 0.f, ((x==4&&y==1)?"Global":xStr[x])+yStr[y]+" CV amount", "%", 0.f, 100.f);
         configInput(GRID_INPUT+y*5+x, ((x==4&&y==1)?"Global":xStr[x])+yStr[y]+" CV");
         configLight(GRID_LIGHT+y*10+x*2, ((x==4&&y==1)?"Global":xStr[x])+yStr[y]+" oversample indicator")->description = "off = N/A, yellow = oversampled, red = disabled";
-        if (y==3) {
-          configLight(SIN_RM_LIGHT+x, xStr[x]+" Ring Mod (5V = unity) indicator");
-        }
       }
     }
     for (int x=0; x<4; x++){
@@ -324,12 +331,17 @@ struct Oscillator : VenomModule {
     for (int i=0; i<4; i++) onceActive[i] = float_4::zero();
   }
 
-  void setRingMod(int indx, bool rm) {
-    ringMod[indx] = rm;
+  void setUnity5(int indx, bool rm) {
+    unity5[indx] = rm;
     lvlScale[indx] = rm ? 0.2f : 0.1f;
     lights[Oscillator::SIN_RM_LIGHT+indx].setBrightness(rm);
   }
   
+  void setBipolar(int indx, bool val) {
+    bipolar[indx] = val;
+    lights[Oscillator::SIN_VCA_LIGHT+indx].setBrightness(val);
+  }
+
   void setOldShpCV(int indx, bool val) {
     oldShpCV[indx] = val;
     shpScale[indx] = val ? 0.1f : 0.2f;
@@ -564,7 +576,10 @@ struct Oscillator : VenomModule {
               levelIn[SIN] = levelUpSample[s][SIN].process(levelIn[SIN]);
             }
           } // else preserve prior levelIn[SIN] value
-          level = levelIn[SIN]*params[SIN_LEVEL_AMT_PARAM].getValue()*lvlScale[SIN] + params[SIN_LEVEL_PARAM].getValue();
+          level = bipolar[SIN] ? levelIn[SIN] : simd::ifelse(levelIn[SIN]>0.f, levelIn[SIN], 0.f);
+          level = level * params[SIN_LEVEL_AMT_PARAM].getValue() * lvlScale[SIN] + params[SIN_LEVEL_PARAM].getValue();
+          if (clampLevel)
+            level = simd::clamp(level, -1.f, 1.f);
           if (params[SIN_ASIGN_PARAM].getValue()!=1) {
             mixOut[s] += sinOut[s] * level;
             mixDiv += simd::fabs(level);
@@ -632,7 +647,10 @@ struct Oscillator : VenomModule {
               levelIn[TRI] = levelUpSample[s][TRI].process(levelIn[TRI]);
             }
           } // else preserve prior levelIn[TRI] value
-          level = levelIn[TRI]*params[TRI_LEVEL_AMT_PARAM].getValue()*lvlScale[TRI] + params[TRI_LEVEL_PARAM].getValue();
+          level = bipolar[TRI] ? levelIn[TRI] : simd::ifelse(levelIn[TRI]>0.f, levelIn[TRI], 0.f);
+          level = level * params[TRI_LEVEL_AMT_PARAM].getValue() * lvlScale[TRI] + params[TRI_LEVEL_PARAM].getValue();
+          if (clampLevel)
+            level = simd::clamp(level, -1.f, 1.f);
           if (params[TRI_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += triOut[s] * level;
             mixDiv += simd::fabs(level);
@@ -681,7 +699,10 @@ struct Oscillator : VenomModule {
               levelIn[SQR] = levelUpSample[s][SQR].process(levelIn[SQR]);
             }
           } // else preserve prior levelIn[SQR] value
-          level = levelIn[SQR]*params[SQR_LEVEL_AMT_PARAM].getValue()*lvlScale[SQR] + params[SQR_LEVEL_PARAM].getValue();
+          level = bipolar[SQR] ? levelIn[SQR] : simd::ifelse(levelIn[SQR]>0.f, levelIn[SQR], 0.f);
+          level = level * params[SQR_LEVEL_AMT_PARAM].getValue() * lvlScale[SQR] + params[SQR_LEVEL_PARAM].getValue();
+          if (clampLevel)
+            level = simd::clamp(level, -1.f, 1.f);
           if (params[SQR_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += sqrOut[s] * level;
             mixDiv += simd::fabs(level);
@@ -748,7 +769,10 @@ struct Oscillator : VenomModule {
               levelIn[SAW] = levelUpSample[s][SAW].process(levelIn[SAW]);
             }
           } // else preserve prior levelIn[SAW] value
-          level = levelIn[SAW]*params[SAW_LEVEL_AMT_PARAM].getValue()*lvlScale[SAW] + params[SAW_LEVEL_PARAM].getValue();
+          level = bipolar[SAW] ? levelIn[SAW] : simd::ifelse(levelIn[SAW]>0.f, levelIn[SAW], 0.f);
+          level = level * params[SAW_LEVEL_AMT_PARAM].getValue() * lvlScale[SAW] + params[SAW_LEVEL_PARAM].getValue();
+          if (clampLevel)
+            level = simd::clamp(level, -1.f, 1.f);
           if (params[SAW_ASIGN_PARAM].getValue()!=1){
             mixOut[s] += sawOut[s] * level;
             mixDiv += simd::fabs(level);
@@ -809,7 +833,11 @@ struct Oscillator : VenomModule {
               levelIn[MIX] = levelUpSample[s][MIX].process(levelIn[MIX]);
             }
           } // else preserve prior levelIn[MIX] value
-          mixOut[s] *= levelIn[MIX]*params[MIX_LEVEL_AMT_PARAM].getValue()*lvlScale[MIX] + params[MIX_LEVEL_PARAM].getValue();
+          level = bipolar[MIX] ? levelIn[MIX] : simd::ifelse(levelIn[MIX]>0.f, levelIn[MIX], 0.f);
+          level = level * params[MIX_LEVEL_AMT_PARAM].getValue() * lvlScale[MIX] + params[MIX_LEVEL_PARAM].getValue();
+          if (clampLevel)
+            level = simd::clamp(level, -1.f, 1.f);
+          mixOut[s] *= level;
         }
 
         // FINAL PROCESSING
@@ -873,9 +901,14 @@ struct Oscillator : VenomModule {
     json_object_set_new(rootJ, "disableOver", array);
     array = json_array();
     for (int i=0; i<5; i++){
-      json_array_append_new(array, json_boolean(ringMod[i]));
+      json_array_append_new(array, json_boolean(unity5[i]));
     }
-    json_object_set_new(rootJ, "ringMod", array);
+    json_object_set_new(rootJ, "unity5", array);
+    array = json_array();
+    for (int i=0; i<5; i++){
+      json_array_append_new(array, json_boolean(bipolar[i]));
+    }
+    json_object_set_new(rootJ, "bipolar", array);
     array = json_array();
     for (int i=0; i<4; i++){
       json_array_append_new(array, json_boolean(oldShpCV[i]));
@@ -883,6 +916,7 @@ struct Oscillator : VenomModule {
     json_object_set_new(rootJ, "oldShpCV", array);
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
+    json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
     return rootJ;
   }
 
@@ -896,10 +930,22 @@ struct Oscillator : VenomModule {
         disableOver[index] = json_boolean_value(val);
       }
     }
-    if ((array = json_object_get(rootJ, "ringMod"))) {
+    if (!(array = json_object_get(rootJ, "unity5"))) {
+      array = json_object_get(rootJ, "ringMod");
+    }
+    if (array) {
       json_array_foreach(array, index, val){
-        setRingMod( index, json_boolean_value(val));
+        setUnity5( index, json_boolean_value(val));
       }
+    }
+    if ((array = json_object_get(rootJ, "bipolar"))) {
+      json_array_foreach(array, index, val){
+        setBipolar( index, json_boolean_value(val));
+      }
+    }
+    else {
+      for (int i=0; i<5; i++)
+        setBipolar(i, true);
     }
     if ((array = json_object_get(rootJ, "oldShpCV"))) {
       json_array_foreach(array, index, val){
@@ -917,6 +963,12 @@ struct Oscillator : VenomModule {
     setMode();
     if ((val = json_object_get(rootJ, "overParam"))) {
       params[OVER_PARAM].setValue(json_integer_value(val));
+    }
+    if ((val = json_object_get(rootJ, "clampLevel"))) {
+      clampLevel = json_boolean_value(val);
+    }
+    else {
+      clampLevel = false;
     }
   }
   
@@ -1019,10 +1071,17 @@ struct OscillatorWidget : VenomWidget {
       menu->addChild(new MenuSeparator);
       menu->addChild(createBoolPtrMenuItem("Disable oversampling", "", &module->disableOver[portId]));
       menu->addChild(createBoolMenuItem(
-        "Ring Mod (5V = unity)", "",
-        [=]() {return module->ringMod[portId-Oscillator::SIN_LEVEL_INPUT];},
+        "VCA unity = 5V", "",
+        [=]() {return module->unity5[portId-Oscillator::SIN_LEVEL_INPUT];},
         [=](bool rm) {
-          module->setRingMod(portId-Oscillator::SIN_LEVEL_INPUT, rm);
+          module->setUnity5(portId-Oscillator::SIN_LEVEL_INPUT, rm);
+        }
+      ));
+      menu->addChild(createBoolMenuItem(
+        "Bipolar VCA (ring mod)", "",
+        [=]() {return module->bipolar[portId-Oscillator::SIN_LEVEL_INPUT];},
+        [=](bool val) {
+          module->setBipolar(portId-Oscillator::SIN_LEVEL_INPUT, val);
         }
       ));
       PolyPort::appendContextMenu(menu);
@@ -1102,13 +1161,13 @@ struct OscillatorWidget : VenomWidget {
             break;
           case 3:
             addInput(createOverInputCentered<LevelPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
+            addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 83.f+dy*y), module, Oscillator::SIN_RM_LIGHT+x));
+            addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 106.f+dy*y), module, Oscillator::SIN_VCA_LIGHT+x));
             break;
           default:
             addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
         }
         addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(143.5f+dx*x, 83.f+dy*y), module, Oscillator::GRID_LIGHT+y*10+x*2));
-        if (y==3)
-          addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 83.f+dy*y), module, Oscillator::SIN_RM_LIGHT+x));
       }
     }
     for (int x=0; x<4; x++) {
@@ -1140,6 +1199,13 @@ struct OscillatorWidget : VenomWidget {
       }
       mod->lights[Oscillator::LIN_DC_LIGHT].setBrightness(mod->linDCCouple);
     }
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    Oscillator* module = dynamic_cast<Oscillator*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolPtrMenuItem("Limit levels to 100%", "", &module->clampLevel));
+    VenomWidget::appendContextMenu(menu);
   }
 
 };

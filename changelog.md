@@ -1,5 +1,16 @@
 # Venom Modules Changelog
 
+## 2.10.0 (2024-??-??)
+### Enhancements
+- VCO Lab
+  - Sum of Level parameter and Level CV now limited to 100%
+    - Module context option to disable Level limit
+    - Old patches default to unlimited
+  - Level CV can now be configured for unipolar or bipolar (ring mod) input
+    - Default is unipolar
+    - Old patches default to bipolar
+  - Level CV Ring Mod context menu option renamed VCA unity = 5V
+
 ## 2.9.1 (2024-09-08)
 ### Enhancements
 - Benjolin Oscillator
