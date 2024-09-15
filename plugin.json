@@ -527,6 +527,18 @@
       ]
     },
     {
+      "slug": "VCOUnit",
+      "name": "VCO Unit",
+      "description": "A smaller version of VCO Lab with only one selectable waveform at a time, and no mixing capabilities",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vco-lab",
+      "tags": [
+        "Function generator",
+        "Low-frequency oscillator",
+        "Oscillator",
+        "Polyphonic"
+      ]
+    },
+    {
       "slug": "VenomBlank",
       "name": "Venom Blank",
       "description": "A 3hp blank with standard Venom themes",

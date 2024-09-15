@@ -55,6 +55,7 @@ extern Model* modelShapedVCA;
 extern Model* modelThru;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
+extern Model* modelVCOUnit;
 extern Model* modelVenomBlank;
 extern Model* modelWidgetMenuExtender;
 extern Model* modelWinComp;
@@ -548,7 +549,7 @@ struct VenomWidget : ModuleWidget {
 
 struct FixedSwitchQuantity : SwitchQuantity {
   std::string getDisplayValueString() override {
-    return labels[getValue()];
+    return labels[getImmediateValue()];
   }
 };
 

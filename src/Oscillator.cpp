@@ -322,7 +322,8 @@ struct Oscillator : VenomModule {
   void setMode() {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
-    params[OVER_PARAM].setValue(modeDefaultOver[mode]);
+    if (!paramExtensions[OVER_PARAM].locked)
+      params[OVER_PARAM].setValue(modeDefaultOver[mode]);
     paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
     paramExtensions[OVER_PARAM].factoryDflt = modeDefaultOver[mode];
     once = (currentMode>2);
@@ -1003,7 +1004,7 @@ struct OscillatorWidget : VenomWidget {
   struct PWSwitch : GlowingSvgSwitchLockable {
     PWSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
     }
   };
 

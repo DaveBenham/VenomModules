@@ -9,3 +9,28 @@ Black       = 000000
 Name, 8, 9, or 10 pt
 Normal Label: arial bold, 6 pt
 Small Label: arial normal, 4 pt
+
+
+control sizes (px):
+
+port        23
+
+huge knob   53 *
+big knob    45
+large knob  35
+knob        28 **
+small knob  22 **
+tiny knob   17 *
+
+Sqr button   24 x 24
+bezel button 21
+light button 18
+small button 11
+
+
+188 display  35 x 24
+18 display   24 x 24
+
+3 horz switch 28 x 13  
+3 vert switch 13 x 28
+2 vert switch 14 x 20

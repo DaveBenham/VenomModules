@@ -33,9 +33,9 @@ Venom modules version 2.9.1 for VCV Rack 2 are copyright 2023, 2024 Dave Benham 
 |----|----|----|----|----|
 |![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|
 
-|[VCO LAB](#vco-lab)|[VENOM<br />BLANK](#venom-blank)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
-|----|----|----|----|
-|![VCO Lab module image](doc/Oscillator.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|
+|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|[VENOM<br />BLANK](#venom-blank)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
+|----|----|----|----|----|
+|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -2622,7 +2622,7 @@ The initial release of VCO Lab required 20 volts peak to peak CV to cover the en
 ##### Sqr Shape Mode button
 Controls the range of pulse width modulation
 - **Limited PWM 3%-97%** (yellow - default)
-- **Full PWM 0%-100%** (dark blue)
+- **Full PWM 0%-100%** (orange)
 
 Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
 
@@ -2698,6 +2698,19 @@ Each waveform has its own dedicated output, plus there is a Mix output.
 All outputs are monophonic 0V if the module is bypassed.
 
 [Return to Table Of Contents](#venom)
+
+## VCO UNIT
+![VCO Unit module image](doc/VCOUnit.png)  
+A smaller version of VCO Lab with only one waveform output at a time, without any mixing.
+
+A Wave switch is added to select between Sine, Triangle, Square, and Saw.
+
+The behavior of the Shape changes depending on the waveform selected.
+
+Pretty much all other VCO Lab functionality is the same, except there is no mix, level assignment, or mix shaping.
+
+[Return to Table Of Contents](#venom)
+
 
 ## VENOM BLANK
 ![VENOM BLANK module image](doc/VenomBlank.PNG)  

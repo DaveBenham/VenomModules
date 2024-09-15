@@ -1,6 +1,9 @@
 # Venom Modules Changelog
 
 ## 2.10.0 (2024-??-??)
+### New Modules
+- VCO Unit
+
 ### Enhancements
 - VCO Lab
   - Sum of Level parameter and Level CV now limited to 100%
@@ -10,6 +13,7 @@
     - Default is unipolar
     - Old patches default to bipolar
   - Level CV Ring Mod context menu option renamed VCA unity = 5V
+  - Square Full PWM shape option color changed from blue to orange to match new VCO Unit module
 
 ## 2.9.1 (2024-09-08)
 ### Enhancements
