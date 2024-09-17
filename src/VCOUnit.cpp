@@ -95,9 +95,22 @@ struct VCOUnit : VenomModule {
   struct ShapeQuantity : ParamQuantity {
     float getDisplayValue() override {
       float val = ParamQuantity::getDisplayValue();
-      if (displayOffset && !(module->params[SHAPE_MODE_PARAM].getValue())) // displayOffset != 0 indicates square wave pulse width
-        val = clamp(val, 3.f, 97.f);
+      if (displayOffset) { // displayOffset != 0 indicates square wave pulse width
+        switch (static_cast<int>(module->params[SHAPE_MODE_PARAM].getValue())) {
+          case 0:
+            val = clamp(val, 3.f, 97.f);
+            break;
+          case 2:
+            val = val*2.f - 100.f;
+            break;
+        }
+      }  
       return val;
+    }
+    void setDisplayValue(float v) override {
+      if (displayOffset && module->params[SHAPE_MODE_PARAM].getValue()==2.f)
+        v = (v+100.f)/2.f;
+      ParamQuantity::setDisplayValue(v);
     }
   };
 
@@ -149,7 +162,7 @@ struct VCOUnit : VenomModule {
     configInput(VOCT_INPUT, "V/Oct");
     configOutput(OUTPUT, "");
 
-    configSwitch<FixedSwitchQuantity>(SHAPE_MODE_PARAM, 0.f, 4.f, 0.f, "Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"});
+    configSwitch<FixedSwitchQuantity>(SHAPE_MODE_PARAM, 0.f, 5.f, 0.f, "Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Temp"});
     configParam<ShapeQuantity>(SHAPE_PARAM, -1.f, 1.f, 0.f, "Shape", "%", 0.f, 100.f, 0.f);
     configParam(SHAPE_AMT_PARAM, -1.f, 1.f, 0.f, "Shape CV amount", "%", 0.f, 100.f);
     configInput(SHAPE_INPUT, "Shape CV");
@@ -199,21 +212,35 @@ struct VCOUnit : VenomModule {
       setLock(false, SHAPE_MODE_PARAM);
     ParamQuantity *q = paramQuantities[SHAPE_PARAM];
     SwitchQuantity *sq = static_cast<SwitchQuantity*>(paramQuantities[SHAPE_MODE_PARAM]);
-    if (wave == 2 ) { // SQR
-      if (sq->getImmediateValue()>1)
-        sq->setImmediateValue(1.f);
-      sq->maxValue = 1.f;
-      sq->labels = {"Limited PWM 3%-97%", "Full PWM 0%-100%"};
-      q->name = "Pulse width";
-      q->displayMultiplier = 50.f;
-      q->displayOffset = 50.f;
-    }
-    else {
-      sq->maxValue = 4.f;
-      sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"};
-      q->name = "Shape";
-      q->displayMultiplier = 100.f;
-      q->displayOffset = 0.f;
+    switch (wave) {
+      case 0: // SIN
+        if (sq->getImmediateValue()>4)
+          sq->setImmediateValue(4.f);
+        sq->maxValue = 4.f;
+        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"};
+        q->displayMultiplier = 100.f;
+        q->displayOffset = 0.f;
+        break;
+      case 1: // TRI
+        sq->maxValue = 5.f;
+        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR"};
+        q->displayMultiplier = 100.f;
+        q->displayOffset = 0.f;
+        break;
+      case 2: // SQR
+        if (sq->getImmediateValue()>2)
+          sq->setImmediateValue(2.f);
+        sq->maxValue = 2.f;
+        sq->labels = {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW"};
+        q->displayMultiplier = 50.f;
+        q->displayOffset = 50.f;
+        break;
+      case 3: // SAW
+        sq->maxValue = 5.f;
+        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SAW <--> EVEN"};
+        q->displayMultiplier = 100.f;
+        q->displayOffset = 0.f;
+        break;
     }
     if (locked)
       setLock(true, SHAPE_MODE_PARAM);
@@ -403,6 +430,7 @@ struct VCOUnit : VenomModule {
           }
         } // else preserve prior phaseIn value
 
+        float_4 shapeSign = 0.f;
         switch (wave) {
           case 0: // SIN
             wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f - 250.f;
@@ -419,9 +447,9 @@ struct VCOUnit : VenomModule {
               case 2: // S curve
                 out[s] = normSigmoid(wavePhasor, -shape*0.9f) * 5.f;
                 break;
-              default: // Rectify
+              default: // 3 Rectify, 4 Normalized Rectify
                 shape = -shape;
-                float_4 shapeSign = simd::sgn(shape);
+                shapeSign = simd::sgn(shape);
                 out[s] = simd::ifelse(shapeSign==0, wavePhasor, -(shapeSign*simd::abs(-wavePhasor+shapeSign-shape)-shapeSign+shape));
                 if (shapeMode==4) // Normalized rectify
                   out[s] = -((1+simd::abs(shape))*-out[s]-shape);
@@ -444,21 +472,44 @@ struct VCOUnit : VenomModule {
               case 2: // S curve
                 out[s] = normSigmoid(wavePhasor*2.f-1.f, -shape*0.8) * 5.f;
                 break;
-              default: // Rectify
+              case 3: // Rectify
+              case 4: // Normalized Rectify
                 shape = -shape;
-                float_4 shapeSign = simd::sgn(shape);
+                shapeSign = simd::sgn(shape);
                 out[s] = wavePhasor*2.f-1.f;
                 out[s] = simd::ifelse(shapeSign==0, out[s], -(shapeSign*simd::abs(-out[s]+shapeSign-shape)-shapeSign+shape));
                 if (shapeMode==4) // Normalized Rectify
                   out[s] = -((1+simd::abs(shape))*-out[s]-shape);
                 out[s] *= 5.f;
-            }
+                break;
+              default: // 5 morph sine <--> triangle <--> square
+                out[s] = (wavePhasor*10.f - 5.f) * (1.f - simd::abs(shape)); // triangle component
+                // sine and square components
+                wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
+                wavePhasor = simd::fmod(wavePhasor - simd::ifelse(shape<=0.f, 250.f, 0.f), 1000.f);
+                wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
+                out[s] += simd::ifelse( shape<=0.f,
+                                        sinSimd_1000(wavePhasor)*5.f * -shape, // sine component
+                                        simd::ifelse(wavePhasor<500.f, 5.f, -5.f) * shape // square component
+                                      );
+            } // end triangle shape switch
             break;
           case 2: // SQR
             wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
             wavePhasor = simd::fmod(wavePhasor, 1000.f);
             wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
-            {
+            if (shapeMode==2) { // morph tri <--> sqr <--> saw
+              out[s] = simd::ifelse(wavePhasor<500.f, 5.f, -5.f) * (1.f - simd::abs(shape)); // square component
+              // triangle and saw components
+              wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
+              wavePhasor = simd::fmod(wavePhasor + simd::ifelse(shape<=0.f, 250.f, 500.f), 1000.f);
+              wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
+              out[s] += simd::ifelse( shape<=0.f, 
+                                      (simd::ifelse(wavePhasor<500.f, wavePhasor, (1000.f-wavePhasor))*.02f - 5.f) * -shape, // triangle component
+                                      (wavePhasor*0.01f - 5.f) * shape // saw component
+                                    );
+                                     
+            } else { // PWM
               float_4 flip = (shapeIn*params[SHAPE_AMT_PARAM].getValue()*shpScale + params[SHAPE_PARAM].getValue() + 1.f) * 500.f;
               if (!shapeMode) flip = clamp( flip, 30.f, 970.f );
               out[s] = simd::ifelse(wavePhasor<flip, 5.f, -5.f);
@@ -479,15 +530,29 @@ struct VCOUnit : VenomModule {
               case 2: // S Curve
                 out[s] = normSigmoid(wavePhasor*2.f-1.f, -shape*0.85) * 5.f;
                 break;
-              default: // Rectify
+              case 3: // Rectify
+              case 4: // Normalized Rectify
                 shape = -shape;
-                float_4 shapeSign = simd::sgn(shape);
+                shapeSign = simd::sgn(shape);
                 out[s] = wavePhasor*2.f-1.f;
                 out[s] = simd::ifelse(shapeSign==0, out[s], -(shapeSign*simd::abs(-out[s]+shapeSign-shape)-shapeSign+shape));
                 if (shapeMode==4) // Normalized Rectify
                   out[s] = -((1+simd::abs(shape))*-out[s]-shape);
                 out[s] *= 5.f;
-            }
+                break;
+              default: // 5 morph square <--> saw <--> even
+                out[s] = (wavePhasor*10.f - 5.f) * simd::ifelse(shape<0.f, 1.f + shape, 1.f); // saw component
+                // square component
+                wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
+                wavePhasor = simd::fmod(wavePhasor + simd::ifelse(shape<=0.f, 500.f, 0.f), 1000.f);
+                wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
+                out[s] += simd::ifelse(wavePhasor<500.f, 5.f, -5.f) * simd::abs(shape) * simd::ifelse(shape<0.f, 1.f, 0.5f);
+                // sine component
+                wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
+                wavePhasor = simd::fmod(wavePhasor, 1000.f);
+                wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
+                out[s] += simd::ifelse(shape<0.f, 0.f, sinSimd_1000(wavePhasor) * 3.175 * shape);
+            } // end saw shape switch
         } // end wave switch
 
         if (s==0 || inputs[LEVEL_INPUT].isPolyphonic()) {
@@ -545,6 +610,7 @@ struct VCOUnit : VenomModule {
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
+    json_object_set_new(rootJ, "shapeModeParam", json_integer(params[SHAPE_MODE_PARAM].getValue()));
     return rootJ;
   }
 
@@ -573,6 +639,10 @@ struct VCOUnit : VenomModule {
     }
     if ((val = json_object_get(rootJ, "clampLevel"))) {
       clampLevel = json_boolean_value(val);
+    }
+    setWave();
+    if ((val = json_object_get(rootJ, "shapeModeParam"))) {
+      params[SHAPE_MODE_PARAM].setValue(json_integer_value(val));
     }
   }
   
@@ -627,6 +697,7 @@ struct VCOUnitWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
     }
   };
 
