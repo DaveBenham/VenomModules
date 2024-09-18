@@ -2627,10 +2627,8 @@ Normalized Rectify attempts to keep the output 10 VPP regardless the shape value
 ##### Sqr Shape Mode button
 Controls the range of pulse width modulation, or the type of waveform morphing
 - **Limited PWM 3%-97%** (yellow - default)
-- **Full PWM 0%-100%** (orange)
+- **Full PWM 0%-100%** (orange) Values of 0% or 100% yield constant low or high output, with no oscillation
 - **Morph triangle <--> square <--> saw** (purple)
-
-Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
 
 ##### Saw Shape Mode button
 - **log/exp** (yellow - default)
@@ -2640,7 +2638,7 @@ Note that at 0% and 100% the square wave output will be a constant high or low v
 - **Normalized Rectify** (dark blue)
 - **Morph square <--> saw <--> even** (pink)
 
-The even waveform consists of the fundamental plus even harmonics.
+The even waveform is the same as what is produced by the Befaco Even module. It consists of the fundamental plus even harmonics.
 
 ##### Sin, Tri, Saw Shape CV inputs
 The initial release of VCO Lab required 20 volts peak to peak CV to cover the entire shape range for Sin, Tri, and Saw. Starting with V 2.9.0 these ports now default to 10 volts peak to peak covering the entire range. These ports have a context menu option to revert to old behavior.
