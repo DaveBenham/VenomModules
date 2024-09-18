@@ -2442,6 +2442,7 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 - Simultaneous outputs for Sine, Triangle, Square, and Saw waveforms, plus a highly configurable Mix
 - Each waveform has controls/inputs for shape, phase, offset, and level
 - The mix also has controls/inputs for shape (saturation or folding), global phase, offset, and level
+- Even waveform (fundamental + even harmonics) available via saw morphing shape mode
 - All inputs can be driven at audio rates, and nearly all can be oversampled
 - All inputs support polyphony
 - Level controls with configurable VCAs support AM and ring mod.
@@ -2602,29 +2603,47 @@ All grid inputs support oversampling that can be disabled via the port context m
 #### Waveform Shape Modulation
 All four waveforms get different shape modulation. Each has a color coded Shape Mode button to determine the type of modulation used.
 
-##### Sin, Tri, Saw Shape Mode button
-Controls the type of sigmoidal shaping used. Each imparts its own timbre
+J-curve and S-curve are based on sigmoidal functions. The J-curve uses only half (positive or negative portion) of the sigmoidal function.
+
+Rectify yields only 5 volts peak to peak (5 VPP) when shape is 100% or -100%.
+
+Normalized Rectify attempts to keep the output 10 VPP regardless the shape value. It also shifts the output to keep it bipolar, prior to applying any offset.
+
+##### Sin Shape Mode button
 - **log/exp** (yellow - default)
 - **J-curve** (orange)
 - **S-curve** (purple)
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
 
-The J-curve uses only half (positive or negative portion) of the sigmoidal function.
+##### Tri Shape Mode button
+- **log/exp** (yellow - default)
+- **J-curve** (orange)
+- **S-curve** (purple)
+- **Rectify** (light blue)
+- **Normalized Rectify** (dark blue)
+- **Morph sine <--> triangle <--> square** (pink)
 
-Rectify yields only 5 volts peak to peak (5 VPP) when shape is 100% or -100%.
+##### Sqr Shape Mode button
+Controls the range of pulse width modulation, or the type of waveform morphing
+- **Limited PWM 3%-97%** (yellow - default)
+- **Full PWM 0%-100%** (orange)
+- **Morph triangle <--> square <--> saw** (purple)
 
-Normalized Rectify attempts to keep the output 10 VPP regardless the shape value. It also shifts the output to keep it bipolar, prior to applying any offset.
+Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
+
+##### Saw Shape Mode button
+- **log/exp** (yellow - default)
+- **J-curve** (orange)
+- **S-curve** (purple)
+- **Rectify** (light blue)
+- **Normalized Rectify** (dark blue)
+- **Morph square <--> saw <--> even** (pink)
+
+The even waveform consists of the fundamental plus even harmonics.
 
 ##### Sin, Tri, Saw Shape CV inputs
 The initial release of VCO Lab required 20 volts peak to peak CV to cover the entire shape range for Sin, Tri, and Saw. Starting with V 2.9.0 these ports now default to 10 volts peak to peak covering the entire range. These ports have a context menu option to revert to old behavior.
-
-##### Sqr Shape Mode button
-Controls the range of pulse width modulation
-- **Limited PWM 3%-97%** (yellow - default)
-- **Full PWM 0%-100%** (orange)
-
-Note that at 0% and 100% the square wave output will be a constant high or low value, with no oscillation.
 
 Below is a summary of the wave shaping when using the default (yellow) mode for all four waveforms.
 |Waveform|Negative modulation|No modulation|Positive modulation|

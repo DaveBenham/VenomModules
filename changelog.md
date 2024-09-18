@@ -6,6 +6,10 @@
 
 ### Enhancements
 - VCO Lab
+  - Add waveform morphing shape modes
+    - Triangle: sine <--> triangle <--> square
+    - Square: triangle <--> square <--> saw
+    - Saw: square <--> saw <--> even
   - Sum of Level parameter and Level CV now limited to 100%
     - Module context option to disable Level limit
     - Old patches default to unlimited
