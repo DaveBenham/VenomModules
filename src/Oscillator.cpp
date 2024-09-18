@@ -248,9 +248,9 @@ struct Oscillator : VenomModule {
     configButton(RESET_POLY_PARAM, "Reset polyphony count");
 
     configSwitch<FixedSwitchQuantity>(SINSHP_PARAM, 0.f, 4.f, 0.f, "Sine Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"});
-    configSwitch<FixedSwitchQuantity>(TRISHP_PARAM, 0.f, 4.f, 0.f, "Triangle Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"});
-    configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 1.f, 0.f, "Square Shape Mode", {"Limited PWM 3%-97%", "Full PWM 0%-100%"});
-    configSwitch<FixedSwitchQuantity>(SAWSHP_PARAM, 0.f, 4.f, 0.f, "Saw Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"});
+    configSwitch<FixedSwitchQuantity>(TRISHP_PARAM, 0.f, 5.f, 0.f, "Triangle Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR"});
+    configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 2.f, 0.f, "Square Shape Mode", {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW"});
+    configSwitch<FixedSwitchQuantity>(SAWSHP_PARAM, 0.f, 5.f, 0.f, "Saw Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SAW <--> EVEN"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
 
     
@@ -279,7 +279,7 @@ struct Oscillator : VenomModule {
           case 0: // shape
             switch (x) {
               case SQR:
-                configParam<PWQuantity>(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, "Square pulse width", "%", 0.f, 50.f, 50.f);
+                configParam<PWQuantity>(GRID_PARAM+y*10+x, -1.f, 1.f, 0.f, xStr[x]+yStr[y], "%", 0.f, 50.f, 50.f);
                 break;
               case MIX:
                 configParam(GRID_PARAM+y*10+x, -1.f, 1.f, -1.f, xStr[x]+yStr[y], "%", 0.f, 50.f, 50.f);
@@ -385,7 +385,8 @@ struct Oscillator : VenomModule {
     float_4 expIn{}, linIn{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn{}, syncIn{}, freq[4]{},
             shapeIn[5]{}, phaseIn[5]{}, offsetIn[5]{}, levelIn[5]{},
             sinOut[4]{}, triOut[4]{}, sqrOut[4]{}, sawOut[4]{}, mixOut[4]{},
-            sinPhasor{}, triPhasor{}, sqrPhasor{}, sawPhasor{}, globalPhasor{};
+            sinPhasor{}, triPhasor{}, sqrPhasor{}, sawPhasor{}, globalPhasor{},
+            shapeSign{};
     float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
     float k =  1000.f * args.sampleTime / oversample;
     
@@ -539,7 +540,6 @@ struct Oscillator : VenomModule {
             }
           } // preserve prior shapeIn[SIN] value
           float_4 shape = clamp(shapeIn[SIN]*params[SIN_SHAPE_AMT_PARAM].getValue()*shpScale[SIN] + params[SIN_SHAPE_PARAM].getValue(), -1.f, 1.f);
-          float_4 shapeSign{};
           if (s==0 || inputs[SIN_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SIN] = (o && !disableOver[SIN_PHASE_INPUT]) ? float_4::zero() : inputs[SIN_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[SIN_PHASE_INPUT]){
@@ -631,14 +631,26 @@ struct Oscillator : VenomModule {
             case 2: // S curve
               triOut[s] = normSigmoid(triPhasor*2.f-1.f, -shape*0.8) * 5.f;
               break;
-            default: // Rectify
+            case 3: // Rectify
+            case 4: // Normalized Rectify
               shape = -shape;
-              float_4 shapeSign = simd::sgn(shape);
+              shapeSign = simd::sgn(shape);
               triOut[s] = triPhasor*2.f-1.f;
               triOut[s] = simd::ifelse(shapeSign==0, triOut[s], -(shapeSign*simd::abs(-triOut[s]+shapeSign-shape)-shapeSign+shape));
               if (triMode==4 /*Normalized Rectify*/)
                 triOut[s] = -((1+simd::abs(shape))*-triOut[s]-shape);
               triOut[s] *= 5.f;
+              break;
+            default: // 5 morph sine <--> triangle <--> square
+              triOut[s] = (triPhasor*10.f - 5.f) * (1.f - simd::abs(shape)); // triangle component
+              // sine and square components
+              triPhasor = phasor[s] + (phaseIn[TRI]*params[SIN_PHASE_AMT_PARAM].getValue() + params[SIN_PHASE_PARAM].getValue()*2.f)*250.f;
+              triPhasor = simd::fmod(triPhasor - simd::ifelse(shape<=0.f, 250.f, 0.f), 1000.f);
+              triPhasor = simd::ifelse(triPhasor<0.f, triPhasor+1000.f, triPhasor);
+              triOut[s] += simd::ifelse( shape<=0.f,
+                                      sinSimd_1000(triPhasor)*5.f * -shape, // sine component
+                                      simd::ifelse(triPhasor<500.f, 5.f, -5.f) * shape // square component
+                                    );
           }
 
           if (s==0 || inputs[TRI_LEVEL_INPUT].isPolyphonic()) {
@@ -679,8 +691,6 @@ struct Oscillator : VenomModule {
               shapeIn[SQR] = shapeUpSample[s][SQR].process(shapeIn[SQR]);
             }
           } // else preserve prior shapeIn[SQR] value
-          float_4 flip = (shapeIn[SQR]*params[SQR_SHAPE_AMT_PARAM].getValue()*shpScale[SQR] + params[SQR_SHAPE_PARAM].getValue() + 1.f) * 500.f;
-          if (!sqrMode) flip = clamp( flip, 30.f, 970.f );
           if (s==0 || inputs[SQR_PHASE_INPUT].isPolyphonic()) {
             phaseIn[SQR] = (o && !disableOver[SQR_PHASE_INPUT]) ? float_4::zero() : inputs[SQR_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[SQR_PHASE_INPUT]){
@@ -691,8 +701,22 @@ struct Oscillator : VenomModule {
           sqrPhasor = globalPhasor + (phaseIn[SQR]*params[SQR_PHASE_AMT_PARAM].getValue() + params[SQR_PHASE_PARAM].getValue()*2.f)*250.f;
           sqrPhasor = simd::fmod(sqrPhasor, 1000.f);
           sqrPhasor = simd::ifelse(sqrPhasor<0.f, sqrPhasor+1000.f, sqrPhasor);
-          sqrOut[s] = simd::ifelse(sqrPhasor<flip, 5.f, -5.f);
-
+          if (sqrMode==2) { // morph tri <--> sqr <--> saw
+            float_4 shape = clamp(shapeIn[SQR]*params[SQR_SHAPE_AMT_PARAM].getValue()*shpScale[SQR] + params[SQR_SHAPE_PARAM].getValue(), -1.f, 1.f);
+            sqrOut[s] = simd::ifelse(sqrPhasor<500.f, 5.f, -5.f) * (1.f - simd::abs(shape)); // square component
+            // triangle and saw components
+            sqrPhasor = phasor[s] + (phaseIn[SQR]*params[SQR_PHASE_AMT_PARAM].getValue() + params[SQR_PHASE_PARAM].getValue()*2.f)*250.f;
+            sqrPhasor = simd::fmod(sqrPhasor + simd::ifelse(shape<=0.f, 250.f, 500.f), 1000.f);
+            sqrPhasor = simd::ifelse(sqrPhasor<0.f, sqrPhasor+1000.f, sqrPhasor);
+            sqrOut[s] += simd::ifelse( shape<=0.f, 
+                                    (simd::ifelse(sqrPhasor<500.f, sqrPhasor, (1000.f-sqrPhasor))*.02f - 5.f) * -shape, // triangle component
+                                    (sqrPhasor*0.01f - 5.f) * shape // saw component
+                                  );
+          } else { // PWM
+            float_4 flip = (shapeIn[SQR]*params[SQR_SHAPE_AMT_PARAM].getValue()*shpScale[SQR] + params[SQR_SHAPE_PARAM].getValue() + 1.f) * 500.f;
+            if (!sqrMode) flip = clamp( flip, 30.f, 970.f );
+            sqrOut[s] = simd::ifelse(sqrPhasor<flip, 5.f, -5.f);
+          }
           if (s==0 || inputs[SQR_LEVEL_INPUT].isPolyphonic()) {
             levelIn[SQR] = (o && !disableOver[SQR_LEVEL_INPUT]) ? float_4::zero() : inputs[SQR_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[SQR_LEVEL_INPUT]){
@@ -753,14 +777,28 @@ struct Oscillator : VenomModule {
             case 2: // S Curve
               sawOut[s] = normSigmoid(sawPhasor*2.f-1.f, -shape*0.85) * 5.f;
               break;
-            default: // Rectify
+            case 3: // Rectify
+            case 4: // Normalized Rectify
               shape = -shape;
-              float_4 shapeSign = simd::sgn(shape);
+              shapeSign = simd::sgn(shape);
               sawOut[s] = sawPhasor*2.f-1.f;
               sawOut[s] = simd::ifelse(shapeSign==0, sawOut[s], -(shapeSign*simd::abs(-sawOut[s]+shapeSign-shape)-shapeSign+shape));
               if (sawMode==4 /*Normalized Rectify*/)
                 sawOut[s] = -((1+simd::abs(shape))*-sawOut[s]-shape);
               sawOut[s] *= 5.f;
+              break;
+            default: // 5 morph square <--> saw <--> even
+              sawOut[s] = (sawPhasor*10.f - 5.f) * simd::ifelse(shape<0.f, 1.f + shape, 1.f); // saw component
+              // square component
+              sawPhasor = phasor[s] + (phaseIn[SAW]*params[SAW_PHASE_AMT_PARAM].getValue() + params[SAW_PHASE_PARAM].getValue()*2.f)*250.f;
+              sawPhasor = simd::fmod(sawPhasor + simd::ifelse(shape<=0.f, 500.f, 0.f), 1000.f);
+              sawPhasor = simd::ifelse(sawPhasor<0.f, sawPhasor+1000.f, sawPhasor);
+              sawOut[s] += simd::ifelse(sawPhasor<500.f, 5.f, -5.f) * simd::abs(shape) * simd::ifelse(shape<0.f, 1.f, 0.5f);
+              // sine component
+              sawPhasor = phasor[s] + (phaseIn[SAW]*params[SAW_PHASE_AMT_PARAM].getValue() + params[SAW_PHASE_PARAM].getValue()*2.f)*250.f;
+              sawPhasor = simd::fmod(sawPhasor, 1000.f);
+              sawPhasor = simd::ifelse(sawPhasor<0.f, sawPhasor+1000.f, sawPhasor);
+              sawOut[s] += simd::ifelse(shape<0.f, 0.f, sinSimd_1000(sawPhasor) * 3.175 * shape);
           }
 
           if (s==0 || inputs[SAW_LEVEL_INPUT].isPolyphonic()) {
@@ -1005,6 +1043,7 @@ struct OscillatorWidget : VenomWidget {
     PWSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
     }
   };
 
@@ -1026,6 +1065,7 @@ struct OscillatorWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
     }
   };
 

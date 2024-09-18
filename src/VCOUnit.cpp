@@ -508,7 +508,6 @@ struct VCOUnit : VenomModule {
                                       (simd::ifelse(wavePhasor<500.f, wavePhasor, (1000.f-wavePhasor))*.02f - 5.f) * -shape, // triangle component
                                       (wavePhasor*0.01f - 5.f) * shape // saw component
                                     );
-                                     
             } else { // PWM
               float_4 flip = (shapeIn*params[SHAPE_AMT_PARAM].getValue()*shpScale + params[SHAPE_PARAM].getValue() + 1.f) * 500.f;
               if (!shapeMode) flip = clamp( flip, 30.f, 970.f );
