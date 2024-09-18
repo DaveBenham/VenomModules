@@ -644,7 +644,7 @@ struct Oscillator : VenomModule {
             default: // 5 morph sine <--> triangle <--> square
               triOut[s] = (triPhasor*10.f - 5.f) * (1.f - simd::abs(shape)); // triangle component
               // sine and square components
-              triPhasor = phasor[s] + (phaseIn[TRI]*params[SIN_PHASE_AMT_PARAM].getValue() + params[SIN_PHASE_PARAM].getValue()*2.f)*250.f;
+              triPhasor = globalPhasor + (phaseIn[TRI]*params[SIN_PHASE_AMT_PARAM].getValue() + params[SIN_PHASE_PARAM].getValue()*2.f)*250.f;
               triPhasor = simd::fmod(triPhasor - simd::ifelse(shape<=0.f, 250.f, 0.f), 1000.f);
               triPhasor = simd::ifelse(triPhasor<0.f, triPhasor+1000.f, triPhasor);
               triOut[s] += simd::ifelse( shape<=0.f,
@@ -705,7 +705,7 @@ struct Oscillator : VenomModule {
             float_4 shape = clamp(shapeIn[SQR]*params[SQR_SHAPE_AMT_PARAM].getValue()*shpScale[SQR] + params[SQR_SHAPE_PARAM].getValue(), -1.f, 1.f);
             sqrOut[s] = simd::ifelse(sqrPhasor<500.f, 5.f, -5.f) * (1.f - simd::abs(shape)); // square component
             // triangle and saw components
-            sqrPhasor = phasor[s] + (phaseIn[SQR]*params[SQR_PHASE_AMT_PARAM].getValue() + params[SQR_PHASE_PARAM].getValue()*2.f)*250.f;
+            sqrPhasor = globalPhasor + (phaseIn[SQR]*params[SQR_PHASE_AMT_PARAM].getValue() + params[SQR_PHASE_PARAM].getValue()*2.f)*250.f;
             sqrPhasor = simd::fmod(sqrPhasor + simd::ifelse(shape<=0.f, 250.f, 500.f), 1000.f);
             sqrPhasor = simd::ifelse(sqrPhasor<0.f, sqrPhasor+1000.f, sqrPhasor);
             sqrOut[s] += simd::ifelse( shape<=0.f, 
@@ -790,12 +790,12 @@ struct Oscillator : VenomModule {
             default: // 5 morph square <--> saw <--> even
               sawOut[s] = (sawPhasor*10.f - 5.f) * simd::ifelse(shape<0.f, 1.f + shape, 1.f); // saw component
               // square component
-              sawPhasor = phasor[s] + (phaseIn[SAW]*params[SAW_PHASE_AMT_PARAM].getValue() + params[SAW_PHASE_PARAM].getValue()*2.f)*250.f;
+              sawPhasor = globalPhasor + (phaseIn[SAW]*params[SAW_PHASE_AMT_PARAM].getValue() + params[SAW_PHASE_PARAM].getValue()*2.f)*250.f;
               sawPhasor = simd::fmod(sawPhasor + simd::ifelse(shape<=0.f, 500.f, 0.f), 1000.f);
               sawPhasor = simd::ifelse(sawPhasor<0.f, sawPhasor+1000.f, sawPhasor);
               sawOut[s] += simd::ifelse(sawPhasor<500.f, 5.f, -5.f) * simd::abs(shape) * simd::ifelse(shape<0.f, 1.f, 0.5f);
               // sine component
-              sawPhasor = phasor[s] + (phaseIn[SAW]*params[SAW_PHASE_AMT_PARAM].getValue() + params[SAW_PHASE_PARAM].getValue()*2.f)*250.f;
+              sawPhasor = globalPhasor + (phaseIn[SAW]*params[SAW_PHASE_AMT_PARAM].getValue() + params[SAW_PHASE_PARAM].getValue()*2.f)*250.f;
               sawPhasor = simd::fmod(sawPhasor, 1000.f);
               sawPhasor = simd::ifelse(sawPhasor<0.f, sawPhasor+1000.f, sawPhasor);
               sawOut[s] += simd::ifelse(shape<0.f, 0.f, sinSimd_1000(sawPhasor) * 3.175 * shape);
