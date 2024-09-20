@@ -2615,6 +2615,7 @@ Normalized Rectify attempts to keep the output 10 VPP regardless the shape value
 - **S-curve** (purple)
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
+- **Morph SQR <--> SIN <--> SAW (pink)
 
 ##### Tri Shape Mode button
 - **log/exp** (yellow - default)
@@ -2622,13 +2623,13 @@ Normalized Rectify attempts to keep the output 10 VPP regardless the shape value
 - **S-curve** (purple)
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
-- **Morph sine <--> triangle <--> square** (pink)
+- **Morph SIN <--> TRI <--> SQR** (pink)
 
 ##### Sqr Shape Mode button
 Controls the range of pulse width modulation, or the type of waveform morphing
 - **Limited PWM 3%-97%** (yellow - default)
 - **Full PWM 0%-100%** (orange) Values of 0% or 100% yield constant low or high output, with no oscillation
-- **Morph triangle <--> square <--> saw** (purple)
+- **Morph TRI <--> SQR <--> SAW** (purple)
 
 ##### Saw Shape Mode button
 - **log/exp** (yellow - default)
@@ -2636,7 +2637,7 @@ Controls the range of pulse width modulation, or the type of waveform morphing
 - **S-curve** (purple)
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
-- **Morph square <--> saw <--> even** (pink)
+- **Morph SQR <--> SAW <--> EVEN** (pink)
 
 The even waveform is the same as what is produced by the Befaco Even module. It consists of the fundamental plus even harmonics.
 

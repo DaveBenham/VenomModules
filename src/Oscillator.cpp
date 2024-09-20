@@ -247,7 +247,7 @@ struct Oscillator : VenomModule {
     configSwitch<FixedSwitchQuantity>(DC_PARAM,   0.f, 1.f, 0.f, "DC Block", {"Off", "On"});
     configButton(RESET_POLY_PARAM, "Reset polyphony count");
 
-    configSwitch<FixedSwitchQuantity>(SINSHP_PARAM, 0.f, 4.f, 0.f, "Sine Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"});
+    configSwitch<FixedSwitchQuantity>(SINSHP_PARAM, 0.f, 5.f, 0.f, "Sine Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW"});
     configSwitch<FixedSwitchQuantity>(TRISHP_PARAM, 0.f, 5.f, 0.f, "Triangle Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR"});
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 2.f, 0.f, "Square Shape Mode", {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW"});
     configSwitch<FixedSwitchQuantity>(SAWSHP_PARAM, 0.f, 5.f, 0.f, "Saw Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SAW <--> EVEN"});
@@ -561,13 +561,25 @@ struct Oscillator : VenomModule {
             case 2: // S curve
               sinOut[s] = normSigmoid(sinPhasor, -shape*0.9f) * 5.f;
               break;
-            default: // Rectify
+            case 3: // Rectify
+            case 4: // Normalized Rectify
               shape = -shape;
-              float_4 shapeSign = simd::sgn(shape);
+              shapeSign = simd::sgn(shape);
               sinOut[s] = simd::ifelse(shapeSign==0, sinPhasor, -(shapeSign*simd::abs(-sinPhasor+shapeSign-shape)-shapeSign+shape));
               if (sinMode==4 /*Normalized Rectify*/)
                 sinOut[s] = -((1+simd::abs(shape))*-sinOut[s]-shape);
               sinOut[s] *= 5.f;
+              break;
+            default: // 5 morph square <--> sine <--> saw
+              sinOut[s] = sinPhasor * 5.f * (1.f - simd::abs(shape)); // sine component
+              // square and saw components
+              sinPhasor = globalPhasor + (phaseIn[SIN]*params[SIN_PHASE_AMT_PARAM].getValue() + params[SIN_PHASE_PARAM].getValue()*2.f)*250.f;
+              sinPhasor = simd::fmod(sinPhasor + simd::ifelse(sinPhasor<0.f, 0.f, 500.f), 1000.f);
+              sinPhasor = simd::ifelse(sinPhasor<0.f, sinPhasor+1000.f, sinPhasor);
+              sinOut[s] += simd::ifelse( shape<=0.f,
+                                         simd::ifelse(sinPhasor<500.f, 5.f, -5.f) * shape, // square component
+                                         (sinPhasor*0.01f - 5.f) * shape // saw component
+                                       );
           }
 
           if (s==0 || inputs[SIN_LEVEL_INPUT].isPolyphonic()) {
@@ -644,14 +656,14 @@ struct Oscillator : VenomModule {
             default: // 5 morph sine <--> triangle <--> square
               triOut[s] = (triPhasor*10.f - 5.f) * (1.f - simd::abs(shape)); // triangle component
               // sine and square components
-              triPhasor = globalPhasor + (phaseIn[TRI]*params[SIN_PHASE_AMT_PARAM].getValue() + params[SIN_PHASE_PARAM].getValue()*2.f)*250.f;
+              triPhasor = globalPhasor + (phaseIn[TRI]*params[TRI_PHASE_AMT_PARAM].getValue() + params[TRI_PHASE_PARAM].getValue()*2.f)*250.f;
               triPhasor = simd::fmod(triPhasor - simd::ifelse(shape<=0.f, 250.f, 0.f), 1000.f);
               triPhasor = simd::ifelse(triPhasor<0.f, triPhasor+1000.f, triPhasor);
               triOut[s] += simd::ifelse( shape<=0.f,
-                                      sinSimd_1000(triPhasor)*5.f * -shape, // sine component
-                                      simd::ifelse(triPhasor<500.f, 5.f, -5.f) * shape // square component
-                                    );
-          }
+                                         sinSimd_1000(triPhasor)*5.f * -shape, // sine component
+                                         simd::ifelse(triPhasor<500.f, 5.f, -5.f) * shape // square component
+                                       );
+              }
 
           if (s==0 || inputs[TRI_LEVEL_INPUT].isPolyphonic()) {
             levelIn[TRI] = (o && !disableOver[TRI_LEVEL_INPUT]) ? float_4::zero() : inputs[TRI_LEVEL_INPUT].getPolyVoltageSimd<float_4>(c);
@@ -709,9 +721,9 @@ struct Oscillator : VenomModule {
             sqrPhasor = simd::fmod(sqrPhasor + simd::ifelse(shape<=0.f, 250.f, 500.f), 1000.f);
             sqrPhasor = simd::ifelse(sqrPhasor<0.f, sqrPhasor+1000.f, sqrPhasor);
             sqrOut[s] += simd::ifelse( shape<=0.f, 
-                                    (simd::ifelse(sqrPhasor<500.f, sqrPhasor, (1000.f-sqrPhasor))*.02f - 5.f) * -shape, // triangle component
-                                    (sqrPhasor*0.01f - 5.f) * shape // saw component
-                                  );
+                                       (simd::ifelse(sqrPhasor<500.f, sqrPhasor, (1000.f-sqrPhasor))*.02f - 5.f) * -shape, // triangle component
+                                       (sqrPhasor*0.01f - 5.f) * shape // saw component
+                                     );
           } else { // PWM
             float_4 flip = (shapeIn[SQR]*params[SQR_SHAPE_AMT_PARAM].getValue()*shpScale[SQR] + params[SQR_SHAPE_PARAM].getValue() + 1.f) * 500.f;
             if (!sqrMode) flip = clamp( flip, 30.f, 970.f );

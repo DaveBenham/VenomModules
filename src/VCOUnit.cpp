@@ -162,7 +162,7 @@ struct VCOUnit : VenomModule {
     configInput(VOCT_INPUT, "V/Oct");
     configOutput(OUTPUT, "");
 
-    configSwitch<FixedSwitchQuantity>(SHAPE_MODE_PARAM, 0.f, 5.f, 0.f, "Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Temp"});
+    configSwitch<FixedSwitchQuantity>(SHAPE_MODE_PARAM, 0.f, 5.f, 0.f, "Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW"});
     configParam<ShapeQuantity>(SHAPE_PARAM, -1.f, 1.f, 0.f, "Shape", "%", 0.f, 100.f, 0.f);
     configParam(SHAPE_AMT_PARAM, -1.f, 1.f, 0.f, "Shape CV amount", "%", 0.f, 100.f);
     configInput(SHAPE_INPUT, "Shape CV");
@@ -214,10 +214,8 @@ struct VCOUnit : VenomModule {
     SwitchQuantity *sq = static_cast<SwitchQuantity*>(paramQuantities[SHAPE_MODE_PARAM]);
     switch (wave) {
       case 0: // SIN
-        if (sq->getImmediateValue()>4)
-          sq->setImmediateValue(4.f);
-        sq->maxValue = 4.f;
-        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify"};
+        sq->maxValue = 5.f;
+        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
         break;
@@ -447,14 +445,26 @@ struct VCOUnit : VenomModule {
               case 2: // S curve
                 out[s] = normSigmoid(wavePhasor, -shape*0.9f) * 5.f;
                 break;
-              default: // 3 Rectify, 4 Normalized Rectify
+              case 3: // Rectify
+              case 4: // Normalized Rectify
                 shape = -shape;
                 shapeSign = simd::sgn(shape);
                 out[s] = simd::ifelse(shapeSign==0, wavePhasor, -(shapeSign*simd::abs(-wavePhasor+shapeSign-shape)-shapeSign+shape));
                 if (shapeMode==4) // Normalized rectify
                   out[s] = -((1+simd::abs(shape))*-out[s]-shape);
                 out[s] *= 5.f;
-            }
+                break;
+              default: // 5 morph square <--> sine <--> saw
+                out[s] = wavePhasor * 5.f * (1.f - simd::abs(shape)); // sine component
+                // square and saw components
+                wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
+                wavePhasor = simd::fmod(wavePhasor + simd::ifelse(wavePhasor<0.f, 0.f, 500.f), 1000.f);
+                wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
+                out[s] += simd::ifelse( shape<=0.f,
+                                        simd::ifelse(wavePhasor<500.f, 5.f, -5.f) * shape, // square component
+                                        (wavePhasor*0.01f - 5.f) * shape // saw component
+                                      );
+            } // end sine shape switch
             break;
           case 1: // TRI
             wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f + 250.f;
