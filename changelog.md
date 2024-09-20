@@ -7,6 +7,7 @@
 ### Enhancements
 - VCO Lab
   - Add waveform morphing shape modes
+    - Sine: square <--> sine <--> saw
     - Triangle: sine <--> triangle <--> square
     - Square: triangle <--> square <--> saw
     - Saw: square <--> saw <--> even
