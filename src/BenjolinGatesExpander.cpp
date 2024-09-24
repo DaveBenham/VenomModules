@@ -99,6 +99,19 @@ struct BenjolinGatesExpanderWidget : BenjolinExpanderWidget {
     addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(6.f, 33.f), module, 0));
   }
   
+  void step() override {
+    BenjolinExpanderWidget::step();
+    if (this->module) {
+      BenjolinGatesExpander* mod = static_cast<BenjolinGatesExpander*>(this->module);
+      for (int i=0; i<8; i++){
+        float bright = mod->lights[i+1].getBrightness();
+        if (mod->outputs[i].getVoltage()<=0.f && bright){
+          mod->lights[i+1].setBrightness(bright>0.25f ? bright/2.f : 0.f);
+        }
+      }
+    }
+  }
+
 };
 
 Model* modelBenjolinGatesExpander = createModel<BenjolinGatesExpander, BenjolinGatesExpanderWidget>("BenjolinGatesExpander");
