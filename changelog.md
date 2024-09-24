@@ -20,6 +20,10 @@
   - Level CV Ring Mod context menu option renamed VCA unity = 5V
   - Square Full PWM shape option color changed from blue to orange to match new VCO Unit module
 
+### Bug Fix
+- Benjolin Gates Expander
+  - Fix LED gate indicators broken in v2.9.1
+
 ## 2.9.1 (2024-09-08)
 ### Enhancements
 - Benjolin Oscillator
