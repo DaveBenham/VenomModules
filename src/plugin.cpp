@@ -106,6 +106,7 @@ void init(Plugin* p) {
   p->addModel(modelNORS_IQ);
   p->addModel(modelNORSIQChord2Scale);
   p->addModel(modelPolyClone);
+  p->addModel(modelPolyFade);
   p->addModel(modelPolyOffset);
   p->addModel(modelPolySHASR);
   p->addModel(modelPolyScale);

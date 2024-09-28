@@ -42,6 +42,7 @@ extern Model* modelOscillator;
 extern Model* modelNORS_IQ;
 extern Model* modelNORSIQChord2Scale;
 extern Model* modelPolyClone;
+extern Model* modelPolyFade;
 extern Model* modelPolyOffset;
 extern Model* modelPolySHASR;
 extern Model* modelPolyScale;
@@ -707,6 +708,15 @@ struct RedBlueLight : TBase {
   RedBlueLight() {
     this->addBaseColor(SCHEME_RED);
     this->addBaseColor(SCHEME_BLUE);
+  }
+};
+
+template <typename TBase = GrayModuleLightWidget>
+struct WhiteYellowRedLight : TBase {
+  WhiteYellowRedLight() {
+    this->addBaseColor(SCHEME_WHITE);
+    this->addBaseColor(SCHEME_YELLOW);
+    this->addBaseColor(SCHEME_RED);
   }
 };
 

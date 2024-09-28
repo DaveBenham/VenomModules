@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.10.0dev4",
+  "version": "2.10.0dev5",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -355,6 +355,18 @@
       "tags": [
         "Polyphonic",
         "Utility"
+      ]
+    },
+    {
+      "slug": "PolyFade",
+      "name": "Poly Fade",
+      "description": "Cross fade between channels of a polyphonic signal",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-fade",
+      "tags": [
+        "Envelope Generator",
+        "Polyphonic",
+        "Sequencer",
+        "Switch"
       ]
     },
     {
