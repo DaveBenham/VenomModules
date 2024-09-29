@@ -2,6 +2,9 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
+#include "Filter.hpp"
+#include "math.hpp"
+#include <float.h>
 
 struct PolyFade : VenomModule {
 
@@ -48,6 +51,25 @@ struct PolyFade : VenomModule {
     ENUMS(CHAN_ACTIVE_LIGHT,16),
     LIGHTS_LEN
   };
+  
+  float phasor = 0.f;
+  float baseFreq = dsp::FREQ_C4/128.f;
+  dsp::SchmittTrigger resetTrig;
+  
+  struct ChannelQuantity : ParamQuantity {
+    std::string getDisplayValueString() override {
+      if (getImmediateValue())
+        return ParamQuantity::getDisplayValueString();
+      else
+        return "Auto";
+    }
+    void setDisplayValueString(std::string val) override {
+      if (rack::string::lowercase(val) == "auto")
+        setValue(0.f);
+      else
+        ParamQuantity::setDisplayValueString(val);
+    }
+  };
 
   PolyFade() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -60,20 +82,17 @@ struct PolyFade : VenomModule {
     configParam(FALL_AMT_PARAM, -1.f, 1.f, 0.f, "Fall CV amount", "%", 0, 100, 0);
     configInput(FALL_INPUT, "Fall CV");
     
-    configParam(WIDTH_PARAM, 0.f, 1.f, 0.f, "Width", "%", 0, 100, 0);
+    configParam(WIDTH_PARAM, -4.f, 4.f, 1.f, "Width", "", 2, 1, 0);
     configParam(WIDTH_AMT_PARAM, -1.f, 1.f, 0.f, "Width CV amount", "%", 0, 100, 0);
     configInput(WIDTH_INPUT, "Width CV");
     
-    configParam(HOLD_PARAM, 0.f, 1.f, 0.f, "Hold", "%", 0, 100, 0);
+    configParam(HOLD_PARAM, 0.f, 1.f, 0.0f, "Hold", "%", 0, 100, 0);
     configParam(HOLD_AMT_PARAM, -1.f, 1.f, 0.f, "Hold CV amount", "%", 0, 100, 0);
     configInput(HOLD_INPUT, "Hold CV");
     
-    configParam(SKEW_PARAM, -1.f, 1.f, 0.f, "Skew", "%", 0, 100, 0);
+    configParam(SKEW_PARAM, 0.f, 1.f, 0.5f, "Skew", "%", 0, 100, 0);
     configParam(SKEW_AMT_PARAM, -1.f, 1.f, 0.f, "Skew CV amount", "%", 0, 100, 0);
     configInput(SKEW_INPUT, "Skew CV");
-    
-    configParam(RATE_PARAM, -5.f, 5.f, 0.f, "Rate" " Hz");
-    configInput(RATE_INPUT, "Rate CV");
     
     for (int i=0; i<16; i++){
       std::string nm = "Channel " + std::to_string(i+1);
@@ -81,13 +100,16 @@ struct PolyFade : VenomModule {
       configLight( CHAN_ACTIVE_LIGHT+i, nm + " active");
     }
 
+    configParam(RATE_PARAM, -5.f, 5.f, 0.f, "Rate", " Hz", 2.f, baseFreq);
+    configInput(RATE_INPUT, "Rate CV");
+    
     configSwitch<FixedSwitchQuantity>(DIR_PARAM, 0.f, 3.f, 0.f, "Direction", {"Forward", "Backward", "Ping Pong", "Off"});
     configInput(DIR_INPUT, "Direction CV");
 
-    configParam(CHAN_PARAM, 0.f, 16.f, 0.f, "Channels");
+    configParam<ChannelQuantity>(CHAN_PARAM, 0.f, 16.f, 0.f, "Channels");
     configInput(CHAN_INPUT, "Channels CV");
 
-    configParam(START_PARAM, 1.f, 16.f, 1.f, "Start channel");
+    configParam(START_PARAM, 0.f, 15.f, 0.f, "Start channel", "", 0.f, 1.f, 1.f);
     configInput(START_INPUT, "Start channel CV");
     
     configInput(PHASOR_INPUT, "Phasor");
@@ -102,6 +124,99 @@ struct PolyFade : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+    float k =  args.sampleTime;
+    float freq = math::clamp(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_INPUT].getVoltage())*baseFreq, 0.001f, 12000.f);
+    int dir = static_cast<int>(params[DIR_PARAM].getValue());
+    phasor = fmod(phasor + freq*k , 1.f);
+    if (resetTrig.process(inputs[RESET_INPUT].getVoltage(), 0.2f, 2.f))
+      phasor = 0.f;
+    float tempPhasor = 0.f;
+    switch (dir){
+      case 0: // forward = rising ramp
+        tempPhasor = phasor;
+        break;
+      case 1: // backward = falling ramp
+        tempPhasor = 1.f - phasor;
+        break;
+      case 2: // ping pong = triangle
+        tempPhasor = ((phasor <= 0.5f) ? phasor : 0.5f - phasor) * 2.f;
+        break;
+      default: // off, reset phasor
+        phasor = 0.f;
+    }
+    tempPhasor = fmod(tempPhasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
+    if (tempPhasor<0.f)
+      tempPhasor += 1.f;
+
+    int channels = static_cast<int>(params[CHAN_PARAM].getValue());
+    if (!channels)
+      channels = std::max(inputs[POLY_INPUT].getChannels(), 1);
+    int startChannel = static_cast<int>(params[START_PARAM].getValue());
+    float chanWidth = 1.f / channels;
+    float width = math::clamp(dsp::exp2_taylor5(params[WIDTH_PARAM].getValue()), 0.f, static_cast<float>(channels)) * chanWidth;
+    float start = (chanWidth - width) / 2.f;
+    float holdWidth = params[HOLD_PARAM].getValue() * width;
+    float riseWidth = params[SKEW_PARAM].getValue() * (width - holdWidth);
+    float fallWidth = width - holdWidth - riseWidth;
+    float endRise = start + riseWidth;
+    float endHold = endRise + holdWidth;
+    float endFall = endHold + fallWidth;
+    float riseShape = params[RISE_PARAM].getValue() * 0.9f;
+    float fallShape = params[FALL_PARAM].getValue() * 0.9f;
+    
+    float out = 0.f;
+    float sum = 0.f;
+    float gate = 0.f;
+    if (tempPhasor > 1 + start)
+      tempPhasor -= 1.f;
+/*      
+    outputs[GATES_OUTPUT].setVoltage(channels,0);
+    outputs[GATES_OUTPUT].setVoltage(startChannel,1);
+    outputs[GATES_OUTPUT].setVoltage(chanWidth,2);
+    outputs[GATES_OUTPUT].setVoltage(width,3);
+    outputs[GATES_OUTPUT].setVoltage(riseWidth,4);
+    outputs[GATES_OUTPUT].setVoltage(holdWidth,5);
+    outputs[GATES_OUTPUT].setVoltage(fallWidth,6);
+    outputs[GATES_OUTPUT].setVoltage(start,7);
+    outputs[GATES_OUTPUT].setVoltage(endRise,8);
+    outputs[GATES_OUTPUT].setVoltage(endHold,9);
+    outputs[GATES_OUTPUT].setVoltage(endFall,10);
+    outputs[GATES_OUTPUT].setVoltage(tempPhasor,11);
+    outputs[GATES_OUTPUT].setChannels(12);
+    return;
+*/    
+    for (int i=0; i<channels; i++) {
+      if (tempPhasor < start){            // pre-start
+        out = 0.f;
+        gate = 0.f;
+      }
+      else if (tempPhasor < endRise) {   // rise
+        out = normSigmoid((tempPhasor - start) / riseWidth, riseShape);
+        gate = 10.f;
+      }
+      else if (tempPhasor <= endHold) {  // hold
+        out = 1.f;
+        gate = 10.f;
+      }
+      else if (tempPhasor < endFall) {   // fall
+        out = normSigmoid(1.f - (tempPhasor - endHold) / fallWidth, fallShape);
+        gate = 10.f;
+      }
+      else {                             // post end
+        out = 0.f;
+        gate = 0.f;
+      }
+      out *= inputs[POLY_INPUT].getNormalVoltage(10.f, (i+startChannel)%16);
+      outputs[POLY_OUTPUT].setVoltage(out, i);
+      outputs[GATES_OUTPUT].setVoltage(gate, i);
+      sum += out;
+      tempPhasor -= chanWidth;
+      if (tempPhasor < start)
+        tempPhasor += 1.f;
+    }
+    outputs[SUM_OUTPUT].setVoltage(sum);
+    outputs[POLY_OUTPUT].setChannels(channels);
+    outputs[GATES_OUTPUT].setChannels(channels);
   }
 
 };
