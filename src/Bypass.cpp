@@ -69,13 +69,18 @@ struct Bypass : VenomModule {
     int buttonEvent = 0;
 
     if (params[TRIG_PARAM].getValue() != buttonVal){
-      buttonVal = !buttonVal;
-      if (buttonVal || params[MOMENT_PARAM].getValue()){
-        restore = bypassed;
-        bypassed = !bypassed;
-        buttonEvent = 1;
-      } else if (params[MOMENT_PARAM].getValue()) {
-        bypassed = restore;
+      if (inputs[TRIG_INPUT].isConnected() || !params[MOMENT_PARAM].getValue()) {
+        buttonVal = !buttonVal;
+        if (buttonVal || params[MOMENT_PARAM].getValue()){
+          restore = bypassed;
+          bypassed = !bypassed;
+          buttonEvent = 1;
+        } else if (params[MOMENT_PARAM].getValue()) {
+          bypassed = restore;
+          buttonEvent = 1;
+        }
+      } else {
+        buttonVal = bypassed = params[TRIG_PARAM].getValue();
         buttonEvent = 1;
       }
     }

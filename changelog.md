@@ -24,6 +24,8 @@
 ### Bug Fix
 - Benjolin Gates Expander
   - Fix LED gate indicators broken in v2.9.1
+- Bypass
+  - Trigger button did not work properly via PatchMaster control when in momentary mode. It now works properly as long as Trigger input not patched.
 
 ## 2.9.1 (2024-09-08)
 ### Enhancements
