@@ -53,6 +53,7 @@ struct PolyFade : VenomModule {
   };
   
   float phasor = 0.f;
+  float prevPhasor = 0.f;
   float baseFreq = dsp::FREQ_C4/128.f;
   dsp::SchmittTrigger resetTrig;
   
@@ -163,6 +164,7 @@ struct PolyFade : VenomModule {
     float endFall = endHold + fallWidth;
     float riseShape = params[RISE_PARAM].getValue() * 0.9f;
     float fallShape = params[FALL_PARAM].getValue() * 0.9f;
+    bool activeLight[16]{};
     
     float out = 0.f;
     float sum = 0.f;
@@ -206,13 +208,22 @@ struct PolyFade : VenomModule {
         out = 0.f;
         gate = 0.f;
       }
-      out *= inputs[POLY_INPUT].getNormalVoltage(10.f, (i+startChannel)%16);
+      int c = (i+startChannel)%16;
+      lights[CHAN_LIGHT+c].setBrightnessSmooth(out, args.sampleTime);
+      lights[CHAN_ACTIVE_LIGHT+c].setBrightness(i==0 ? 1.f : 0.2f);
+      out *= inputs[POLY_INPUT].getNormalVoltage(10.f, c);
       outputs[POLY_OUTPUT].setVoltage(out, i);
       outputs[GATES_OUTPUT].setVoltage(gate, i);
       sum += out;
       tempPhasor -= chanWidth;
       if (tempPhasor < start)
         tempPhasor += 1.f;
+    }
+    for (int c=0; c<16; c++) {
+      if (!activeLight[c]) {
+        lights[CHAN_LIGHT+c].setBrightnessSmooth(0.f, args.sampleTime);
+        lights[CHAN_ACTIVE_LIGHT+c].setBrightnessSmooth(0.f, args.sampleTime);
+      }
     }
     outputs[SUM_OUTPUT].setVoltage(sum);
     outputs[POLY_OUTPUT].setChannels(channels);
@@ -257,7 +268,7 @@ struct PolyFadeWidget : VenomWidget {
     addInput(createInputCentered<MonoPort>(Vec(122.f, 143.f), module, PolyFade::SKEW_INPUT));
     
     for (int i=0; i<16; i++){
-      addChild(createLightCentered<TinyLight<WhiteLight>>(Vec(6.5f+9.1333f*i, 168.f), module, PolyFade::CHAN_ACTIVE_LIGHT+i));
+      addChild(createLightCentered<TinyLight<GreenLight>>(Vec(6.5f+9.1333f*i, 168.f), module, PolyFade::CHAN_ACTIVE_LIGHT+i));
       addChild(createLightCentered<SmallLight<YellowLight>>(Vec(6.5f+9.1333f*i, 174.5f), module, PolyFade::CHAN_LIGHT+i));
     }
     
