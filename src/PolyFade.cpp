@@ -53,7 +53,6 @@ struct PolyFade : VenomModule {
   };
   
   float phasor = 0.f;
-  float prevPhasor = 0.f;
   float baseFreq = dsp::FREQ_C4/128.f;
   dsp::SchmittTrigger resetTrig;
   
@@ -101,7 +100,7 @@ struct PolyFade : VenomModule {
       configLight( CHAN_ACTIVE_LIGHT+i, nm + " active");
     }
 
-    configParam(RATE_PARAM, -5.f, 5.f, 0.f, "Rate", " Hz", 2.f, baseFreq);
+    configParam(RATE_PARAM, -8.f, 8.f, 0.f, "Rate", " Hz", 2.f, baseFreq);
     configInput(RATE_INPUT, "Rate CV");
     
     configSwitch<FixedSwitchQuantity>(DIR_PARAM, 0.f, 3.f, 0.f, "Direction", {"Forward", "Backward", "Ping Pong", "Off"});
@@ -126,6 +125,15 @@ struct PolyFade : VenomModule {
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     float k =  args.sampleTime;
+    
+    // CV overrides change the param value. Ineffective if parameter is locked
+    if (inputs[DIR_INPUT].isConnected() && !paramExtensions[DIR_PARAM].locked)
+      params[DIR_PARAM].setValue(clamp(round(inputs[DIR_INPUT].getVoltage()), 0.f, 3.f));
+    if (inputs[CHAN_INPUT].isConnected() && !paramExtensions[CHAN_PARAM].locked)
+      params[CHAN_PARAM].setValue(clamp(round(inputs[CHAN_INPUT].getVoltage()*2.f), 0.f, 16.f));
+    if (inputs[START_INPUT].isConnected() && !paramExtensions[START_PARAM].locked)
+      params[START_PARAM].setValue(clamp(round(inputs[START_INPUT].getVoltage()*2.f)-1.f, 0.f, 15.f));
+    
     float freq = math::clamp(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_INPUT].getVoltage())*baseFreq, 0.001f, 12000.f);
     int dir = static_cast<int>(params[DIR_PARAM].getValue());
     phasor = fmod(phasor + freq*k , 1.f);
@@ -154,18 +162,32 @@ struct PolyFade : VenomModule {
       channels = std::max(inputs[POLY_INPUT].getChannels(), 1);
     int startChannel = static_cast<int>(params[START_PARAM].getValue());
     float chanWidth = 1.f / channels;
-    float width = math::clamp(dsp::exp2_taylor5(params[WIDTH_PARAM].getValue()), 0.f, static_cast<float>(channels)) * chanWidth;
+    float width = dsp::exp2_taylor5(params[WIDTH_PARAM].getValue());
+    if (inputs[WIDTH_INPUT].isConnected())
+      width += inputs[WIDTH_INPUT].getVoltage() * params[WIDTH_AMT_PARAM].getValue();
+    width = math::clamp(width, 0.0625f, static_cast<float>(channels)) * chanWidth;
     float start = (chanWidth - width) / 2.f;
-    float holdWidth = params[HOLD_PARAM].getValue() * width;
-    float riseWidth = params[SKEW_PARAM].getValue() * (width - holdWidth);
+    float holdWidth = params[HOLD_PARAM].getValue();
+    if (inputs[HOLD_INPUT].isConnected())
+      holdWidth = clamp(holdWidth + inputs[HOLD_INPUT].getVoltage() * params[HOLD_AMT_PARAM].getValue() / 5.f, 0.f, 1.f);
+    holdWidth *= width;
+    float riseWidth = params[SKEW_PARAM].getValue();
+    if (inputs[SKEW_INPUT].isConnected())
+      riseWidth = clamp(riseWidth + inputs[SKEW_INPUT].getVoltage() * params[SKEW_AMT_PARAM].getValue() / 5.f, 0.f, 1.f); 
+    riseWidth *= (width - holdWidth);
     float fallWidth = width - holdWidth - riseWidth;
     float endRise = start + riseWidth;
     float endHold = endRise + holdWidth;
     float endFall = endHold + fallWidth;
-    float riseShape = params[RISE_PARAM].getValue() * 0.9f;
-    float fallShape = params[FALL_PARAM].getValue() * 0.9f;
+    float riseShape = params[RISE_PARAM].getValue();
+    if (inputs[RISE_INPUT].isConnected())
+      riseShape = clamp(riseShape + inputs[RISE_INPUT].getVoltage() * params[RISE_AMT_PARAM].getValue() / 5, -1.f, 1.f);
+    riseShape *= 0.9f;  
+    float fallShape = params[FALL_PARAM].getValue();
+    if (inputs[FALL_INPUT].isConnected())
+      fallShape = clamp(fallShape + inputs[FALL_INPUT].getVoltage() * params[FALL_AMT_PARAM].getValue() / 5, -1.f, 1.f);
+    fallShape *= 0.9f;  
     bool activeLight[16]{};
-    
     float out = 0.f;
     float sum = 0.f;
     float gate = 0.f;
@@ -188,7 +210,7 @@ struct PolyFade : VenomModule {
     return;
 */    
     for (int i=0; i<channels; i++) {
-      if (tempPhasor < start){            // pre-start
+      if (tempPhasor < start){            // pre rise
         out = 0.f;
         gate = 0.f;
       }
@@ -201,10 +223,10 @@ struct PolyFade : VenomModule {
         gate = 10.f;
       }
       else if (tempPhasor < endFall) {   // fall
-        out = normSigmoid(1.f - (tempPhasor - endHold) / fallWidth, fallShape);
+        out = normSigmoid((endFall - tempPhasor) / fallWidth, fallShape);
         gate = 10.f;
       }
-      else {                             // post end
+      else {                             // post fall
         out = 0.f;
         gate = 0.f;
       }
