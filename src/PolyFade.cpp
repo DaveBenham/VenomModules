@@ -44,6 +44,7 @@ struct PolyFade : VenomModule {
     GATES_OUTPUT,
     POLY_OUTPUT,
     SUM_OUTPUT,
+    PHASOR_OUTPUT,
     OUTPUTS_LEN
   };
   enum LightId {
@@ -116,6 +117,7 @@ struct PolyFade : VenomModule {
     configInput(POLY_INPUT, "Poly");
     configInput(RESET_INPUT, "Reset");
     
+    configOutput(PHASOR_OUTPUT, "Phasor");
     configOutput(GATES_OUTPUT, "Gates");
     configOutput(POLY_OUTPUT, "Poly");
     configOutput(SUM_OUTPUT, "Sum");
@@ -156,6 +158,7 @@ struct PolyFade : VenomModule {
     tempPhasor = fmod(tempPhasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
     if (tempPhasor<0.f)
       tempPhasor += 1.f;
+    outputs[PHASOR_OUTPUT].setVoltage(tempPhasor * 10.f);  
 
     int channels = static_cast<int>(params[CHAN_PARAM].getValue());
     if (!channels)
@@ -310,9 +313,10 @@ struct PolyFadeWidget : VenomWidget {
     addInput(createInputCentered<PolyPort>(Vec(75.f, 288.5f), module, PolyFade::POLY_INPUT));
     addInput(createInputCentered<MonoPort>(Vec(118.f, 288.5f), module, PolyFade::RESET_INPUT));
 
-    addOutput(createOutputCentered<PolyPort>(Vec(32.f, 335.5f), module, PolyFade::GATES_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(75.f, 335.5f), module, PolyFade::POLY_OUTPUT));
-    addOutput(createOutputCentered<MonoPort>(Vec(118.f, 335.5f), module, PolyFade::SUM_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(23.5f, 335.5f), module, PolyFade::PHASOR_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(57.8333f, 335.5f), module, PolyFade::GATES_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(92.1667f, 335.5f), module, PolyFade::POLY_OUTPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(126.5f, 335.5f), module, PolyFade::SUM_OUTPUT));
     
   }
 
