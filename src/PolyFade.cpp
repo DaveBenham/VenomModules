@@ -23,6 +23,8 @@ struct PolyFade : VenomModule {
     DIR_PARAM,
     CHAN_PARAM,
     START_PARAM,
+    LEVEL_PARAM,
+    LEVEL_AMT_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -38,6 +40,7 @@ struct PolyFade : VenomModule {
     PHASOR_INPUT,
     POLY_INPUT,
     RESET_INPUT,
+    LEVEL_INPUT,
     INPUTS_LEN
   };
   enum OutputId {
@@ -45,6 +48,7 @@ struct PolyFade : VenomModule {
     POLY_OUTPUT,
     SUM_OUTPUT,
     PHASOR_OUTPUT,
+    ENV_OUTPUT,
     OUTPUTS_LEN
   };
   enum LightId {
@@ -83,6 +87,10 @@ struct PolyFade : VenomModule {
     configParam(FALL_AMT_PARAM, -1.f, 1.f, 0.f, "Fall CV amount", "%", 0, 100, 0);
     configInput(FALL_INPUT, "Fall CV");
     
+    configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "Level", "%", 0, 100, 0);
+    configParam(LEVEL_AMT_PARAM, -1.f, 1.f, 0.f, "Level CV amount", "%", 0, 100, 0);
+    configInput(LEVEL_INPUT, "Level CV");
+    
     configParam(WIDTH_PARAM, -4.f, 4.f, 1.f, "Width", "", 2, 1, 0);
     configParam(WIDTH_AMT_PARAM, -1.f, 1.f, 0.f, "Width CV amount", "%", 0, 100, 0);
     configInput(WIDTH_INPUT, "Width CV");
@@ -114,13 +122,14 @@ struct PolyFade : VenomModule {
     configInput(START_INPUT, "Start channel CV");
     
     configInput(PHASOR_INPUT, "Phasor");
-    configInput(POLY_INPUT, "Poly");
     configInput(RESET_INPUT, "Reset");
+    configInput(POLY_INPUT, "Poly");
+    configOutput(SUM_OUTPUT, "Sum");
     
     configOutput(PHASOR_OUTPUT, "Phasor");
     configOutput(GATES_OUTPUT, "Gates");
+    configOutput(ENV_OUTPUT, "Envelopes");
     configOutput(POLY_OUTPUT, "Poly");
-    configOutput(SUM_OUTPUT, "Sum");
 
   }
 
@@ -158,8 +167,11 @@ struct PolyFade : VenomModule {
     tempPhasor = fmod(tempPhasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
     if (tempPhasor<0.f)
       tempPhasor += 1.f;
-    outputs[PHASOR_OUTPUT].setVoltage(tempPhasor * 10.f);  
+    outputs[PHASOR_OUTPUT].setVoltage(tempPhasor * 10.f);
 
+    float level = params[LEVEL_PARAM].getValue();
+    if (inputs[LEVEL_INPUT].isConnected())
+      level = clamp(level + inputs[LEVEL_INPUT].getVoltage() * params[LEVEL_AMT_PARAM].getValue()/10.f, 0.f, 1.f);
     int channels = static_cast<int>(params[CHAN_PARAM].getValue());
     if (!channels)
       channels = std::max(inputs[POLY_INPUT].getChannels(), 1);
@@ -236,7 +248,8 @@ struct PolyFade : VenomModule {
       int c = (i+startChannel)%16;
       lights[CHAN_LIGHT+c].setBrightnessSmooth(out, args.sampleTime);
       lights[CHAN_ACTIVE_LIGHT+c].setBrightness(i==0 ? 1.f : 0.2f);
-      out *= inputs[POLY_INPUT].getNormalVoltage(10.f, c);
+      outputs[ENV_OUTPUT].setVoltage(out*10.f, i);
+      out *= inputs[POLY_INPUT].getVoltage(c) * level;
       outputs[POLY_OUTPUT].setVoltage(out, i);
       outputs[GATES_OUTPUT].setVoltage(gate, i);
       sum += out;
@@ -253,6 +266,7 @@ struct PolyFade : VenomModule {
     outputs[SUM_OUTPUT].setVoltage(sum);
     outputs[POLY_OUTPUT].setChannels(channels);
     outputs[GATES_OUTPUT].setChannels(channels);
+    outputs[ENV_OUTPUT].setChannels(channels);
   }
 
 };
@@ -272,13 +286,17 @@ struct PolyFadeWidget : VenomWidget {
     setModule(module);
     setVenomPanel("PolyFade");
 
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(41.f, 47.5f), module, PolyFade::RISE_PARAM));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(62.f, 47.5f), module, PolyFade::RISE_AMT_PARAM));
-    addInput(createInputCentered<MonoPort>(Vec(51.5f, 73.5f), module, PolyFade::RISE_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(17.5f, 47.5f), module, PolyFade::RISE_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(38.5f, 47.5f), module, PolyFade::RISE_AMT_PARAM));
+    addInput(createInputCentered<MonoPort>(Vec(28.f, 73.5f), module, PolyFade::RISE_INPUT));
     
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(88.f, 47.5f), module, PolyFade::FALL_PARAM));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(109.f, 47.5f), module, PolyFade::FALL_AMT_PARAM));
-    addInput(createInputCentered<MonoPort>(Vec(98.5f, 73.5f), module, PolyFade::FALL_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(64.5f, 47.5f), module, PolyFade::FALL_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(85.5f, 47.5f), module, PolyFade::FALL_AMT_PARAM));
+    addInput(createInputCentered<MonoPort>(Vec(75.f, 73.5f), module, PolyFade::FALL_INPUT));
+    
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(111.5f, 47.5f), module, PolyFade::LEVEL_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(132.5f, 47.5f), module, PolyFade::LEVEL_AMT_PARAM));
+    addInput(createInputCentered<MonoPort>(Vec(122.f, 73.5f), module, PolyFade::LEVEL_INPUT));
 
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(17.5f, 117.f), module, PolyFade::WIDTH_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(38.5f, 117.f), module, PolyFade::WIDTH_AMT_PARAM));
@@ -309,14 +327,15 @@ struct PolyFadeWidget : VenomWidget {
     addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(126.5f, 211.5f), module, PolyFade::START_PARAM));
     addInput(createInputCentered<MonoPort>(Vec(126.5f, 242.f), module, PolyFade::START_INPUT));
 
-    addInput(createInputCentered<MonoPort>(Vec(32.f, 288.5f), module, PolyFade::PHASOR_INPUT));
-    addInput(createInputCentered<PolyPort>(Vec(75.f, 288.5f), module, PolyFade::POLY_INPUT));
-    addInput(createInputCentered<MonoPort>(Vec(118.f, 288.5f), module, PolyFade::RESET_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(23.5f, 288.5f), module, PolyFade::PHASOR_INPUT));
+    addInput(createInputCentered<MonoPort>(Vec(57.8333f, 288.5f), module, PolyFade::RESET_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(92.1667f, 288.5f), module, PolyFade::POLY_INPUT));
+    addOutput(createOutputCentered<MonoPort>(Vec(126.5f, 288.5f), module, PolyFade::SUM_OUTPUT));
 
     addOutput(createOutputCentered<MonoPort>(Vec(23.5f, 335.5f), module, PolyFade::PHASOR_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(57.8333f, 335.5f), module, PolyFade::GATES_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(92.1667f, 335.5f), module, PolyFade::POLY_OUTPUT));
-    addOutput(createOutputCentered<MonoPort>(Vec(126.5f, 335.5f), module, PolyFade::SUM_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(92.1667f, 335.5f), module, PolyFade::ENV_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(126.5f, 335.5f), module, PolyFade::POLY_OUTPUT));
     
   }
 
