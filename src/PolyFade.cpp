@@ -145,30 +145,6 @@ struct PolyFade : VenomModule {
     if (inputs[START_INPUT].isConnected() && !paramExtensions[START_PARAM].locked)
       params[START_PARAM].setValue(clamp(round(inputs[START_INPUT].getVoltage()*2.f)-1.f, 0.f, 15.f));
     
-    float freq = math::clamp(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_INPUT].getVoltage())*baseFreq, 0.001f, 12000.f);
-    int dir = static_cast<int>(params[DIR_PARAM].getValue());
-    phasor = fmod(phasor + freq*k , 1.f);
-    if (resetTrig.process(inputs[RESET_INPUT].getVoltage(), 0.2f, 2.f))
-      phasor = 0.f;
-    float tempPhasor = 0.f;
-    switch (dir){
-      case 0: // forward = rising ramp
-        tempPhasor = phasor;
-        break;
-      case 1: // backward = falling ramp
-        tempPhasor = 1.f - phasor;
-        break;
-      case 2: // ping pong = triangle
-        tempPhasor = ((phasor <= 0.5f) ? phasor : 0.5f - phasor) * 2.f;
-        break;
-      default: // off, reset phasor
-        phasor = 0.f;
-    }
-    tempPhasor = fmod(tempPhasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
-    if (tempPhasor<0.f)
-      tempPhasor += 1.f;
-    outputs[PHASOR_OUTPUT].setVoltage(tempPhasor * 10.f);
-
     float level = params[LEVEL_PARAM].getValue();
     if (inputs[LEVEL_INPUT].isConnected())
       level = clamp(level + inputs[LEVEL_INPUT].getVoltage() * params[LEVEL_AMT_PARAM].getValue()/10.f, 0.f, 1.f);
@@ -197,33 +173,44 @@ struct PolyFade : VenomModule {
     float riseShape = params[RISE_PARAM].getValue();
     if (inputs[RISE_INPUT].isConnected())
       riseShape = clamp(riseShape + inputs[RISE_INPUT].getVoltage() * params[RISE_AMT_PARAM].getValue() / 5, -1.f, 1.f);
-    riseShape *= 0.9f;  
+    riseShape *= -0.9f;  
     float fallShape = params[FALL_PARAM].getValue();
     if (inputs[FALL_INPUT].isConnected())
       fallShape = clamp(fallShape + inputs[FALL_INPUT].getVoltage() * params[FALL_AMT_PARAM].getValue() / 5, -1.f, 1.f);
-    fallShape *= 0.9f;  
+    fallShape *= -0.9f;  
     bool activeLight[16]{};
     float out = 0.f;
     float sum = 0.f;
     float gate = 0.f;
+
+    float tempPhasor = 0.f;
+    int dir = static_cast<int>(params[DIR_PARAM].getValue());
+    if (dir == 3 ) { //off
+      phasor = 0.f;
+    } else {
+      float freq = math::clamp(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_INPUT].getVoltage())*baseFreq, 0.001f, 12000.f);
+      phasor = fmod(phasor + freq*k , 1.f);
+      if (resetTrig.process(inputs[RESET_INPUT].getVoltage(), 0.2f, 2.f))
+        phasor = 0.f;
+      switch (dir){
+        case 0: // forward = rising ramp
+          tempPhasor = phasor;
+          break;
+        case 1: // backward = falling ramp
+          tempPhasor = 1.f - phasor;
+          break;
+        case 2: // ping pong = triangle
+          tempPhasor = ((phasor <= 0.5f) ? phasor : 0.5f - phasor) * 2.f;
+          break;
+      }
+    }
+    tempPhasor = fmod(tempPhasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
+    if (tempPhasor<0.f)
+      tempPhasor += 1.f;
+    outputs[PHASOR_OUTPUT].setVoltage(tempPhasor * 10.f);
     if (tempPhasor > 1 + start)
       tempPhasor -= 1.f;
-/*      
-    outputs[GATES_OUTPUT].setVoltage(channels,0);
-    outputs[GATES_OUTPUT].setVoltage(startChannel,1);
-    outputs[GATES_OUTPUT].setVoltage(chanWidth,2);
-    outputs[GATES_OUTPUT].setVoltage(width,3);
-    outputs[GATES_OUTPUT].setVoltage(riseWidth,4);
-    outputs[GATES_OUTPUT].setVoltage(holdWidth,5);
-    outputs[GATES_OUTPUT].setVoltage(fallWidth,6);
-    outputs[GATES_OUTPUT].setVoltage(start,7);
-    outputs[GATES_OUTPUT].setVoltage(endRise,8);
-    outputs[GATES_OUTPUT].setVoltage(endHold,9);
-    outputs[GATES_OUTPUT].setVoltage(endFall,10);
-    outputs[GATES_OUTPUT].setVoltage(tempPhasor,11);
-    outputs[GATES_OUTPUT].setChannels(12);
-    return;
-*/    
+    
     for (int i=0; i<channels; i++) {
       if (tempPhasor < start){            // pre rise
         out = 0.f;
