@@ -109,7 +109,7 @@ struct PolyFade : VenomModule {
       configLight( CHAN_ACTIVE_LIGHT+i, nm + " active");
     }
 
-    configParam(RATE_PARAM, -8.f, 8.f, 0.f, "Rate", " Hz", 2.f, baseFreq);
+    configParam(RATE_PARAM, -8.f, 4.f, 0.f, "Rate", " Hz", 2.f, baseFreq);
     configInput(RATE_INPUT, "Rate CV");
     
     configSwitch<FixedSwitchQuantity>(DIR_PARAM, 0.f, 3.f, 0.f, "Direction", {"Forward", "Backward", "Ping Pong", "Off"});
