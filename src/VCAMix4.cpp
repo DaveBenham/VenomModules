@@ -126,7 +126,7 @@ struct VCAMix4 : MixBaseModule {
     bool exclude = static_cast<bool>(params[EXCLUDE_PARAM].getValue());
     float preOff[4], postOff[4];
     for (int i=0; i<4; i++) {
-      int cnt = mode == 1 ? inputs[INPUTS+i].getChannels() : 1;
+      int cnt = mode == 1 ? std::max({1,inputs[INPUTS+i].getChannels()}) : 1;
       preOff[i] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+i].getValue() * cnt : 0.f;
       postOff[i] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+i].getValue() * cnt : 0.f;
     }
@@ -155,7 +155,7 @@ struct VCAMix4 : MixBaseModule {
           cv = simd::clamp(cv, 0.f, 1.f);
         if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
           cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
-        channel[i] = preOff[i] + mode == 1 ? inputs[INPUTS+i].getVoltageSum() : inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c);
+        channel[i] = preOff[i] + (mode == 1 ? inputs[INPUTS+i].getVoltageSum() : inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c));
         if (vcaMode >= 4) {
           cv = vcaBandlimit[0][i][c/4].process(cv);
           channel[i] = vcaBandlimit[1][i][c/4].process(channel[i]);

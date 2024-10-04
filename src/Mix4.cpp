@@ -101,7 +101,7 @@ struct Mix4 : MixBaseModule {
     int dcBlock = static_cast<int>(params[DCBLOCK_PARAM].getValue());
     float preOff[4], postOff[4];
     for (int i=0; i<4; i++) {
-      int Cnt = mode == 1 ? inputs[INPUTS+i].getChannels() : 1;
+      int Cnt = mode == 1 ? std::max({1,inputs[INPUTS+i].getChannels()}) : 1;
       preOff[i] = offsetExpander ? offsetExpander->params[PRE_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
       postOff[i] = offsetExpander ? offsetExpander->params[POST_OFFSET_PARAM+i].getValue() * Cnt : 0.f;
     }
