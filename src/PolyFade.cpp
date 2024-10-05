@@ -188,7 +188,7 @@ struct PolyFade : VenomModule {
     if (dir == 3 ) { //off
       phasor = 0.f;
     } else {
-      float freq = math::clamp(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_INPUT].getVoltage())*baseFreq, 0.001f, 12000.f);
+      float freq = math::clamp(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_INPUT].getVoltage())*baseFreq, 0.0015f, 12000.f);
       phasor = fmod(phasor + freq*k , 1.f);
       if (resetTrig.process(inputs[RESET_INPUT].getVoltage(), 0.2f, 2.f))
         phasor = 0.f;
