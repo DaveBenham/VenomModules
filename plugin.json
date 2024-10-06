@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.10.0dev6",
+  "version": "2.10.0dev7",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -421,6 +421,20 @@
         "Controller",
         "Polyphonic",
         "Utility"
+      ]
+    },
+    {
+      "slug": "QuadVCPolarizer",
+      "name": "Quad VC Polarizer",
+      "description": "Compact polyphonic bipolar VCA and mixer inspired by Mutable Instruments Blinds",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#quad-vc-polarizer",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Ring modulator",
+        "Utility",
+        "Voltage-controlled amplifier"
       ]
     },
     {

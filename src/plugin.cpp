@@ -112,6 +112,7 @@ void init(Plugin* p) {
   p->addModel(modelPolyScale);
   p->addModel(modelPolyUnison);
   p->addModel(modelPush5);
+  p->addModel(modelQuadVCPolarizer);
   p->addModel(modelRecurse);
   p->addModel(modelRecurseStereo);
   p->addModel(modelReformation);

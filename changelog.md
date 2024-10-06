@@ -3,6 +3,7 @@
 ## 2.10.0 (2024-??-??)
 ### New Modules
 - Poly Fade
+- Quad VC Polarizer
 - VCO Unit
 
 ### Enhancements

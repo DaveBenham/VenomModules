@@ -48,6 +48,7 @@ extern Model* modelPolySHASR;
 extern Model* modelPolyScale;
 extern Model* modelPolyUnison;
 extern Model* modelPush5;
+extern Model* modelQuadVCPolarizer;
 extern Model* modelRecurse;
 extern Model* modelRecurseStereo;
 extern Model* modelReformation;
