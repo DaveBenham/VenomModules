@@ -1937,7 +1937,7 @@ Both left and right inputs are passed unchanged to the outputs when RECURSE STER
 
 
 ## QUAD VC POLARIZER
-![Quad VC Polarizer module image](doc/QuadVCPolarizer.PNG)  
+![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)  
 Compact polyphonic bipolar VCA and mixer inspired by Mutable Instruments Blinds
 
 ### Standard Venom Context Menus
