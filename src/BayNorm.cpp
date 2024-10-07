@@ -8,8 +8,8 @@ struct BayNorm : BayOutputModule {
   BayNorm() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < OUTPUTS_LEN; i++) {
-      configInput(POLY_INPUT+i, defaultPortName[i]);
-      configOutput(POLY_OUTPUT+i, defaultNormalName[i]);
+      configInput(POLY_INPUT+i, defaultNormalName[i]);
+      configOutput(POLY_OUTPUT+i, defaultPortName[i]);
       modName = "Bay Norm";
     }
     clockDivider.setDivision(32);

@@ -217,8 +217,11 @@ struct BayOutputModule : BayModule {
         PortInfo* ii = inputInfos[i];
         PortExtension* ie = &inputExtensions[i];
         propagate = (ii->name == ie->factoryName);
-        if (ie->factoryName != oi->name + "normal") {
-          ie->factoryName = oi->name + " normal";
+        int ilen = ie->factoryName.length();
+        int olen = oi->name.length();
+        std::string suffix=" normal";
+        if (ilen != olen+7 || ie->factoryName.compare(0,olen,oi->name) || ie->factoryName.compare(olen,7,suffix)) {
+          ie->factoryName = oi->name + suffix;
           if (propagate)
             ii->name = ie->factoryName;
         }
