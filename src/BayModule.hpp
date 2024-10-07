@@ -24,6 +24,8 @@ struct BayModule : VenomModule {
   
   static std::map<int64_t, BayInput*> sources;
   std::string modName;
+  std::string defaultPortName[8]{"Port 1","Port 2","Port 3","Port 4","Port 5","Port 6","Port 7","Port 8"};
+  std::string defaultNormalName[8]{"Port 1 normal","Port 2 normal","Port 3 normal","Port 4 normal","Port 5 normal","Port 6 normal","Port 7 normal","Port 8 normal"};
 
 };
 
@@ -35,7 +37,7 @@ struct BayInput : BayModule {
   BayInput() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, 0, LIGHTS_LEN);
     for (int i=0; i < INPUTS_LEN; i++) {
-      configInput(POLY_INPUT+i, string::f("Port %d", i + 1));
+      configInput(POLY_INPUT+i, defaultPortName[i]);
     }
     modName = "Bay Input";
   }
@@ -197,19 +199,29 @@ struct BayOutputModule : BayModule {
       PortInfo* oi = outputInfos[i];
       PortExtension* oe = &outputExtensions[i];
       bool propagate = (oi->name == oe->factoryName);
-      if (srcMod)
-        oe->factoryName = srcMod->inputInfos[i]->name;
-      else
-        oe->factoryName = string::f("Port %d", i+1);
-      if (propagate)
-        oi->name = oe->factoryName;
+      if (srcMod) {
+        if (oe->factoryName != srcMod->inputInfos[i]->name) {
+          oe->factoryName = srcMod->inputInfos[i]->name;
+          if (propagate)
+            oi->name = oe->factoryName;
+        }
+      }
+      else {
+        if (oe->factoryName != defaultPortName[i]) {
+          oe->factoryName = defaultPortName[i];
+          if (propagate)
+            oi->name = oe->factoryName;
+        }
+      }
       if (bayOutputType) {
         PortInfo* ii = inputInfos[i];
         PortExtension* ie = &inputExtensions[i];
         propagate = (ii->name == ie->factoryName);
-        ie->factoryName = oi->name + " normal";
-        if (propagate)
-          ii->name = ie->factoryName;
+        if (ie->factoryName != oi->name + "normal") {
+          ie->factoryName = oi->name + " normal";
+          if (propagate)
+            ii->name = ie->factoryName;
+        }
       }  
     }
   }

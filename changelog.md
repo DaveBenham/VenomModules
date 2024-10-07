@@ -23,6 +23,8 @@
   - Square Full PWM shape option color changed from blue to orange to match new VCO Unit module
 
 ### Bug Fix
+- Bay Modules
+  - Fix crash on some platforms when a linked Bay Input is deleted.
 - Benjolin Gates Expander
   - Fix LED gate indicators broken in v2.9.1
 - Bypass

@@ -4,11 +4,11 @@
 #include "BayModule.hpp"
 
 struct BayOutput : BayOutputModule {
-
+  
   BayOutput() {
     venomConfig(PARAMS_LEN, 0, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < OUTPUTS_LEN; i++) {
-      configOutput(POLY_OUTPUT+i, string::f("Port %d", i + 1));
+      configOutput(POLY_OUTPUT+i, defaultPortName[i]);
       modName = "Bay Output";
     }
     clockDivider.setDivision(32);

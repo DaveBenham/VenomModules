@@ -4,12 +4,12 @@
 #include "BayModule.hpp"
 
 struct BayNorm : BayOutputModule {
-
+  
   BayNorm() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i < OUTPUTS_LEN; i++) {
-      configInput(POLY_INPUT+i, string::f("Port %d normal", i + 1));
-      configOutput(POLY_OUTPUT+i, string::f("Port %d", i + 1));
+      configInput(POLY_INPUT+i, defaultPortName[i]);
+      configOutput(POLY_OUTPUT+i, defaultNormalName[i]);
       modName = "Bay Norm";
     }
     clockDivider.setDivision(32);
