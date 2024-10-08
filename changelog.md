@@ -7,6 +7,8 @@
 - VCO Unit
 
 ### Enhancements
+- Mix Pan Expander
+  - Add polyphony support to CV inputs
 - VCO Lab
   - Add waveform morphing shape modes
     - Sine: square <--> sine <--> saw

@@ -278,54 +278,50 @@ struct VCAMix4Stereo : MixBaseModule {
             break;
           case MIXPAN_TYPE:
             for (int i=0; i<4; i++) {
-              float pan = clamp(exp->params[PAN_PARAM+i].getValue() + exp->inputs[PAN_INPUT+i].getVoltage()*exp->params[PAN_CV_PARAM+i].getValue()/5.f, -1.f, 1.f);
+              simd::float_4 pan = simd::clamp(exp->params[PAN_PARAM+i].getValue() + exp->inputs[PAN_INPUT+i].getPolyVoltageSimd<simd::float_4>(c)*exp->params[PAN_CV_PARAM+i].getValue()/5.f, -1.f, 1.f);
               int panLaw = !inputs[RIGHT_INPUTS+i].isConnected() || stereoPanLaw==10 ? monoPanLaw : stereoPanLaw;
               switch (panLaw) {
                 case 0: // 0 dB
-                  leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f;
-                  rightChannel[i] *= pan<0 ? 1.f + pan : 1.f;
+                  leftChannel[i]  *= simd::ifelse(pan>0, 1.f - pan, 1.f);
+                  rightChannel[i] *= simd::ifelse(pan<0, 1.f + pan, 1.f);
                   break;
                 case 1: // +1.5 dB side
-                  leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f - pan*0.25f;
-                  rightChannel[i] *= pan<0 ? 1.f + pan : 1.f + pan*0.25f;
+                  leftChannel[i]  *= simd::ifelse(pan>0, 1.f - pan, 1.f - pan*0.25f);
+                  rightChannel[i] *= simd::ifelse(pan<0, 1.f + pan, 1.f + pan*0.25f);
                   break;
                 case 2: // +3 dB side
-                  leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f - pan*0.5f;
-                  rightChannel[i] *= pan<0 ? 1.f + pan : 1.f + pan*0.5f;
+                  leftChannel[i]  *= simd::ifelse(pan>0, 1.f - pan, 1.f - pan*0.5f);
+                  rightChannel[i] *= simd::ifelse(pan<0, 1.f + pan, 1.f + pan*0.5f);
                   break;
                 case 3: // +4.5 dB side
-                  leftChannel[i]  *= pan>0 ? 1.f - pan : 1.f - pan*0.75f;
-                  rightChannel[i] *= pan<0 ? 1.f + pan : 1.f + pan*0.75f;
+                  leftChannel[i]  *= simd::ifelse(pan>0, 1.f - pan, 1.f - pan*0.75f);
+                  rightChannel[i] *= simd::ifelse(pan<0, 1.f + pan, 1.f + pan*0.75f);
                   break;
                 case 4: // +6 dB side
                   leftChannel[i]  *= 1 - pan;
                   rightChannel[i] *= 1 + pan;
                   break;
                 case 5: // -1.5 dB center
-                  leftChannel[i]  *= (pan>0 ? 1.f - pan : 1.f - pan*0.25f) * 0.875f;
-                  rightChannel[i] *= (pan<0 ? 1.f + pan : 1.f + pan*0.25f) * 0.875f;
+                  leftChannel[i]  *= simd::ifelse(pan>0, 1.f - pan, 1.f - pan*0.25f) * 0.875f;
+                  rightChannel[i] *= simd::ifelse(pan<0, 1.f + pan, 1.f + pan*0.25f) * 0.875f;
                   break;
                 case 6: // -3 dB center
-                  leftChannel[i]  *= (pan>0 ? 1.f - pan : 1.f - pan*0.5f) * 0.75f;
-                  rightChannel[i] *= (pan<0 ? 1.f + pan : 1.f + pan*0.5f) * 0.75f;
+                  leftChannel[i]  *= simd::ifelse(pan>0, 1.f - pan, 1.f - pan*0.5f) * 0.75f;
+                  rightChannel[i] *= simd::ifelse(pan<0, 1.f + pan, 1.f + pan*0.5f) * 0.75f;
                   break;
                 case 7: // -4.5 dB center
-                  leftChannel[i]  *= (pan>0 ? 1.f - pan : 1.f - pan*0.75f) * 0.625f;
-                  rightChannel[i] *= (pan<0 ? 1.f + pan : 1.f + pan*0.75f) * 0.625f;
+                  leftChannel[i]  *= simd::ifelse(pan>0, 1.f - pan, 1.f - pan*0.75f) * 0.625f;
+                  rightChannel[i] *= simd::ifelse(pan<0, 1.f + pan, 1.f + pan*0.75f) * 0.625f;
                   break;
                 case 8: // -6 dB center
                   leftChannel[i]  *= (1 - pan)*0.5f;
                   rightChannel[i] *= (1 + pan)*0.5f;
                   break;
                 case 9: // True stereo pan
-                  if (pan>0) {
-                    rightChannel[i] += leftChannel[i] * pan;
-                    leftChannel[i]  *= 1.f - pan;
-                  }
-                  else {
-                    leftChannel[i]  += rightChannel[i] * -pan;
-                    rightChannel[i] *= 1.f + pan;
-                  }
+                  rightChannel[i] += simd::ifelse(pan>0, leftChannel[i] * pan, simd::float_4::zero());
+                  rightChannel[i] *= 1.f + simd::ifelse(pan>0, simd::float_4::zero(), pan);
+                  leftChannel[i] += simd::ifelse(pan>0, simd::float_4::zero(), rightChannel[i] * -pan);
+                  leftChannel[i] *= 1.f - simd::ifelse(pan>0, pan, simd::float_4::zero());
               }
             }
             break;

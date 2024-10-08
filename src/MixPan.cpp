@@ -38,10 +38,10 @@ struct MixPanWidget : MixExpanderWidget {
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(13.5f, 222.179f), module, MixModule::PAN_CV_PARAM+1));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(13.5f, 271.081f), module, MixModule::PAN_CV_PARAM+2));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(13.5f, 319.983f), module, MixModule::PAN_CV_PARAM+3));
-    addInput(createInputCentered<MonoPort>(Vec(28.5f, 195.82f), module, MixModule::PAN_INPUT+0));
-    addInput(createInputCentered<MonoPort>(Vec(28.5f, 244.721f), module, MixModule::PAN_INPUT+1));
-    addInput(createInputCentered<MonoPort>(Vec(28.5f, 293.623f), module, MixModule::PAN_INPUT+2));
-    addInput(createInputCentered<MonoPort>(Vec(28.5f, 342.525f), module, MixModule::PAN_INPUT+3));
+    addInput(createInputCentered<PolyPort>(Vec(28.5f, 195.82f), module, MixModule::PAN_INPUT+0));
+    addInput(createInputCentered<PolyPort>(Vec(28.5f, 244.721f), module, MixModule::PAN_INPUT+1));
+    addInput(createInputCentered<PolyPort>(Vec(28.5f, 293.623f), module, MixModule::PAN_INPUT+2));
+    addInput(createInputCentered<PolyPort>(Vec(28.5f, 342.525f), module, MixModule::PAN_INPUT+3));
   }
 };
 
