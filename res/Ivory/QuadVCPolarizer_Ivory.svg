@@ -225,7 +225,7 @@
        aria-label="N"
        id="text78710-5"
        style="font-weight:bold;font-size:17.6389px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#252525;fill-opacity:1;stroke-width:2.64583"
-       transform="translate(-9.9810022e-7,12.258097)"
+       transform="translate(31.380162,12.258097)"
        inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"
        inkscape:export-xdpi="150.063"
        inkscape:export-ydpi="150.063">
@@ -238,7 +238,7 @@
        aria-label="V"
        id="text78710-2"
        style="font-weight:bold;font-size:17.6389px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#252525;fill-opacity:1;stroke-width:2.64583"
-       transform="translate(-9.9810022e-7,12.258097)"
+       transform="translate(22.683978,12.258097)"
        inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"
        inkscape:export-xdpi="150.063"
        inkscape:export-ydpi="150.063">
@@ -251,7 +251,7 @@
        aria-label="U"
        id="text78710-57"
        style="font-weight:bold;font-size:17.6389px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#252525;fill-opacity:1;stroke-width:2.64583"
-       transform="translate(-9.9810022e-7,12.258097)"
+       transform="translate(13.987821,12.258097)"
        inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"
        inkscape:export-xdpi="150.063"
        inkscape:export-ydpi="150.063">
@@ -264,7 +264,7 @@
        aria-label="C"
        id="text78710-6"
        style="font-weight:bold;font-size:17.6389px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#252525;fill-opacity:1;stroke-width:2.64583"
-       transform="translate(-9.9810022e-7,12.258097)"
+       transform="translate(5.2915913,12.258097)"
        inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"
        inkscape:export-xdpi="150.063"
        inkscape:export-ydpi="150.063">
@@ -626,6 +626,15 @@
          d="m 195.42993,722.37891 v -15.15156 h 2.97656 l 6.20119,10.11826 v -10.11826 h 2.8422 v 15.15156 h -3.06958 l -6.10817,-9.88055 v 9.88055 z"
          id="path1642-9" />
     </g>
+    <g
+       aria-label="O"
+       id="text119792"
+       style="font-weight:bold;font-size:17.6389px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;fill:#252525;stroke-width:2.64583"
+       transform="translate(5.2916652)">
+      <path
+         d="m 14.459588,80.682113 q 0,-1.929255 0.577054,-3.238392 0.430637,-0.964627 1.171333,-1.731162 0.749309,-0.766534 1.636421,-1.136882 1.179946,-0.499539 2.721628,-0.499539 2.790529,0 4.461401,1.731161 1.679485,1.731162 1.679485,4.814525 0,3.057524 -1.662259,4.788686 -1.66226,1.722548 -4.444177,1.722548 -2.816367,0 -4.478627,-1.713936 -1.662259,-1.722549 -1.662259,-4.737009 z m 2.626887,-0.08613 q 0,2.144574 0.990465,3.255618 0.990466,1.102431 2.514922,1.102431 1.524456,0 2.497696,-1.093818 0.981853,-1.102432 0.981853,-3.298682 0,-2.170411 -0.956015,-3.238392 -0.947402,-1.06798 -2.523534,-1.06798 -1.576132,0 -2.54076,1.085206 -0.964627,1.076593 -0.964627,3.255617 z"
+         id="path124160" />
+    </g>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -973,7 +982,7 @@
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.695;stroke-opacity:1"
        id="path1065-7-2-3-2-8"
-       cx="31.166668"
+       cx="25.874914"
        cy="101.07583"
        r="9.1525002"
        inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"
@@ -982,7 +991,7 @@
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.695;stroke-opacity:1"
        id="path1065-7-2-3-2-8-4"
-       cx="76.534775"
+       cx="62.546829"
        cy="101.07583"
        r="9.1525002"
        inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"
@@ -991,7 +1000,7 @@
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.695;stroke-opacity:1"
        id="path1065-7-2-3-2-8-40"
-       cx="167.27098"
+       cx="172.56258"
        cy="101.07583"
        r="9.1525002"
        inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"
@@ -1000,7 +1009,16 @@
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.695;stroke-opacity:1"
        id="path1065-7-2-3-2-8-8"
-       cx="121.90289"
+       cx="99.21875"
+       cy="101.07583"
+       r="9.1525002"
+       inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"
+       inkscape:export-xdpi="150.063"
+       inkscape:export-ydpi="150.063" />
+    <circle
+       style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.695;stroke-opacity:1"
+       id="path1065-7-2-3-2-8-8-4"
+       cx="135.89067"
        cy="101.07583"
        r="9.1525002"
        inkscape:export-filename="D:\Users\david\Documents\Quad VC Polarizer.png"

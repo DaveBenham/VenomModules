@@ -14,6 +14,7 @@ struct QuadVCPolarizer : VenomModule {
     CLIP_PARAM,
     ENUMS(LEVEL_PARAM,4),
     ENUMS(LEVEL_AMT_PARAM,4),
+    OVER_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -29,11 +30,15 @@ struct QuadVCPolarizer : VenomModule {
     LIGHTS_LEN
   };
   
-  OversampleFilter_4 clipUpSample[4][4]{}, clipDownSample[4][4]{};
+  int oversample = -1;
+  int oversampleEnd = 0;
+  int oversampleValues[6]{1,2,4,8,16,32};
+  OversampleFilter_4 inUpSample[4][4]{}, cvUpSample[4][4]{}, outDownSample[4][4]{};
   
   QuadVCPolarizer() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     
+    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 0.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
     configSwitch<FixedSwitchQuantity>(NORM_PARAM, 0.f, 1.f, 0.f, "Input normal", {"5V", "10V"});
     configSwitch<FixedSwitchQuantity>(VCA_MODE_PARAM, 0.f, 2.f, 2.f, "VCA CV", {"Unipolar clamped", "Bipolar clamped", "Bipolar unbounded"});
     configSwitch<FixedSwitchQuantity>(UNITY_PARAM, 0.f, 1.f, 0.f, "Unity voltage", {"5V", "10V"});
@@ -44,18 +49,24 @@ struct QuadVCPolarizer : VenomModule {
       configInput(LEVEL_INPUT+i, string::f("Level %d CV", i + 1));
       configInput(POLY_INPUT+i, string::f("Poly %d", i + 1));
       configOutput(POLY_OUTPUT+i, string::f("Poly %d", i + 1));
-      for (int j=0; j<4; j++){
-        clipUpSample[i][j].setOversample(4);
-        clipDownSample[i][j].setOversample(4);
-      }
     }
   }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     using float_4 = simd::float_4;
-    float_4 out[4][4]{};
     int channels[4]{}, outPort[4]{-1,-1,-1,-1};
+    if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
+      oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
+      oversampleEnd = oversample-1;
+      for (int i=0; i<4; i++){
+        for (int j=0; j<4; j++){
+          inUpSample[i][j].setOversample(oversample);
+          cvUpSample[i][j].setOversample(oversample);
+          outDownSample[i][j].setOversample(oversample);
+        }
+      }
+    }
     for (int i=3, j=2; i>=0; i=j--){
       if (outputs[POLY_OUTPUT+i].isConnected()){
         outPort[i] = i;
@@ -70,35 +81,53 @@ struct QuadVCPolarizer : VenomModule {
     float unity = params[UNITY_PARAM].getValue() ? 10.f : 5.f;
     int vca = static_cast<int>(params[VCA_MODE_PARAM].getValue());
     int clip = static_cast<int>(params[CLIP_PARAM].getValue());
-    for (int i=0; i<4 && outPort[i]>=0; i++){
-      for (int c=0, j=0; c<channels[outPort[i]]; c+=4, j++){
-        float_4 cv = inputs[LEVEL_INPUT+i].getPolyVoltageSimd<float_4>(c)/unity * params[LEVEL_AMT_PARAM+i].getValue();
-        if (vca<2)
-          cv = simd::clamp(cv, vca ? -1.f : 0.f, 1.f);
-        out[outPort[i]][j] += inputs[POLY_INPUT+i].getNormalPolyVoltageSimd<float_4>(norm, c) * simd::clamp(cv + params[LEVEL_PARAM+i].getValue(), -2.f, 2.f);
-        if (i == outPort[i]){
-          switch(clip) {
-            case 1: // hard 10V
-              out[i][j] = clamp(out[i][j], -10.f, 10.f);
-              break;
-            case 2: // hard 5V
-              out[i][j] = clamp(out[i][j], -5.f, 5.f);
-              break;
-            case 3: // soft 10V
-            case 4: // soft 6V
-              float limit = 10.f / (clip==3 ? 12.f : 6.f);
-              for (int o=0; o<4; o++){
-                out[i][j] = clipUpSample[i][j].process(o ? simd::float_4::zero() : out[i][j]*4.f);
-                out[i][j] = softClip(out[i][j]*limit) / limit;
-                out[i][j] = clipDownSample[i][j].process(out[i][j]);
-              }
-              break;
+    for (int o=0; o<oversample; o++){
+      float_4 out[4][4]{};
+      for (int i=0; i<4 && outPort[i]>=0; i++){
+        float_4 cv{};
+        float_4 in{};
+        for (int c=0, j=0; c<channels[outPort[i]]; c+=4, j++){
+          if (c==0 || inputs[LEVEL_INPUT+i].isPolyphonic()){
+            cv = o ? float_4::zero() : inputs[LEVEL_INPUT+i].getPolyVoltageSimd<float_4>(c);
+            if (oversample>1){
+              if (!o) cv*=oversample;
+              cv = cvUpSample[i][j].process(cv);
+            }
           }
-          outputs[POLY_OUTPUT+i].setVoltageSimd(out[i][j], c);
+          cv *= params[LEVEL_AMT_PARAM+i].getValue()/unity;
+          if (vca<2)
+            cv = simd::clamp(cv, vca ? -1.f : 0.f, 1.f);
+          if (c==0 || inputs[POLY_INPUT+i].isPolyphonic()){
+            in = o ? float_4::zero() : inputs[POLY_INPUT+i].getNormalPolyVoltageSimd<float_4>(norm, c);
+            if (oversample>1){
+              if (!o) in*=oversample;
+              in = inUpSample[i][j].process(in);
+            }
+          }
+          out[outPort[i]][j] += in * simd::clamp(cv + params[LEVEL_PARAM+i].getValue(), -2.f, 2.f);
+          if (i == outPort[i]){
+            switch(clip) {
+              case 1: // hard 10V
+                out[i][j] = clamp(out[i][j], -10.f, 10.f);
+                break;
+              case 2: // hard 5V
+                out[i][j] = clamp(out[i][j], -5.f, 5.f);
+                break;
+              case 3: // soft 10V
+              case 4: // soft 6V
+                float limit = 10.f / (clip==3 ? 12.f : 6.f);
+                out[i][j] = softClip(out[i][j]*limit) / limit;
+                break;
+            }
+            if (oversample>1)
+              out[i][j] = outDownSample[i][j].process(out[i][j]);
+            if (o==oversampleEnd)  
+              outputs[POLY_OUTPUT+i].setVoltageSimd(out[i][j], c);
+          }
         }
+        if (o==oversampleEnd && i == outPort[i])
+          outputs[POLY_OUTPUT+i].setChannels(channels[i]);
       }
-      if (i == outPort[i])
-        outputs[POLY_OUTPUT+i].setChannels(channels[i]);
     }
   }
 
@@ -147,6 +176,17 @@ struct QuadVCPolarizerWidget : VenomWidget {
     }
   };
 
+  struct OverSwitch : GlowingSvgSwitchLockable {
+    OverSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+    }
+  };
+
   struct NormSwitch : GlowingSvgSwitchLockable {
     NormSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
@@ -188,10 +228,11 @@ struct QuadVCPolarizerWidget : VenomWidget {
     text->box.size = box.size;
     addChild(text);
 
-    addParam(createLockableParamCentered<NormSwitch>(Vec(11.778f,38.202f), module, QuadVCPolarizer::NORM_PARAM));
-    addParam(createLockableParamCentered<VCASwitch>(Vec(28.927f,38.202f), module, QuadVCPolarizer::VCA_MODE_PARAM));
-    addParam(createLockableParamCentered<UnitySwitch>(Vec(46.074f,38.202f), module, QuadVCPolarizer::UNITY_PARAM));
-    addParam(createLockableParamCentered<ClipSwitch>(Vec(63.221f,38.202f), module, QuadVCPolarizer::CLIP_PARAM));
+    addParam(createLockableParamCentered<OverSwitch>(Vec(9.78f,38.202f), module, QuadVCPolarizer::OVER_PARAM));
+    addParam(createLockableParamCentered<NormSwitch>(Vec(23.64f,38.202f), module, QuadVCPolarizer::NORM_PARAM));
+    addParam(createLockableParamCentered<VCASwitch>(Vec(37.50f,38.202f), module, QuadVCPolarizer::VCA_MODE_PARAM));
+    addParam(createLockableParamCentered<UnitySwitch>(Vec(51.36f,38.202f), module, QuadVCPolarizer::UNITY_PARAM));
+    addParam(createLockableParamCentered<ClipSwitch>(Vec(65.22f,38.202f), module, QuadVCPolarizer::CLIP_PARAM));
 
     for (int i=0; i<4; i++){
       addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(15.f, 56.f + 80.f*i), module, QuadVCPolarizer::LEVEL_PARAM+i));
