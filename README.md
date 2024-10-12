@@ -1942,7 +1942,50 @@ Both left and right inputs are passed unchanged to the outputs when RECURSE STER
 ![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)  
 Compact polyphonic bipolar VCA and mixer inspired by Mutable Instruments Blinds.
 
+### General operation - Blinds emulation
 
+There are 4 independent channels, each with an Input, Output, Level attenuverter, plus Level CV with Level Amount attenuverter.
+
+Out<sub>V</sub> = In<sub>V</sub> x NetLevel%
+
+where NetLevel% = (Level% + CV<sub>V</sub>/Unity<sub>V</sub> x CV%), clamped to +/- 200%
+
+The input port is normalled to either 5V or 10V. The way the math works, you can attenuate an input signal and add an offset by patching the input to the Level CV input, and leaving the Input port unpatched. The Level knob becomes the offset, and the CV Level knob the attenuator.
+
+Each output is normalled to the output below so you can mix the outputs.
+
+### O (Oversample) button
+Sets the level of oversamping to apply to all inputs and outputs. Oversampling can be useful for controlling aliasing that would otherwise be introduced by ring modulation and/or clipping.
+- **Off** (dark gray, default)
+- **x2** (yellow)
+- **x4** (green)
+- **x8** (light blue)
+- **x16** (dark blue)
+- **x32** (purple)
+
+### N (Normal input value) button
+Sets the input voltage if the port is not patched
+- **5V** (yellow, default)
+- **10V** (light blue)
+
+### V (VCA CV) button
+Determines the type of CV input that is accepted, where unity is 5V or 10V
+- **Unipolar clamped** (green) = 0V to unity
+- **Bipolar clamped** (orange) = -unity to unity
+- **Bipolar unlimited** (purple, default)
+
+### U (Unity) button
+Determines the CV voltage that represents 100%
+- **5V** (yellow, default)
+- **10V** (light blue)
+
+### C (Clippping) button
+Optional clipping applied to the output
+- **Off** (dark gray, default)
+- **Hard +/- 10V** (white)
+- **Hard +/- 5V** (yellow)
+- **Soft +/- 12V** (light blue) = tanh saturation
+- **Soft +/- 6V** (dark blue) = tanh saturation
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
