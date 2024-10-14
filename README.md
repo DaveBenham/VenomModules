@@ -1871,11 +1871,11 @@ All outputs are constant monophonic 0 V when PUSH 5 is bypassed.
 
 ## QUAD VC POLARIZER
 ![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)  
-Compact polyphonic bipolar VCA and mixer inspired by Mutable Instruments Blinds.
+Compact polyphonic bipolar VCA (ring modulator) and mixer inspired by Mutable Instruments Blinds.
 
 ### General operation - Blinds emulation
 
-If using all the option defaults and monophonic input, this module will behave the same as the Audible Instruments Quad VC Polarizer, which in turn emulates the Mutable Instruments Blinds. All the functionality has been shrunk down to 5hp, very similar to the Southpole Bandana module that was never officially ported to VCV 2.
+By default this module behaves the same as the Audible Instruments Quad VC Polarizer, which in turn emulates the Mutable Instruments Blinds hardware. All the functionality has been shrunk down to 5hp, very similar to the Southpole Bandana module that was never officially ported to VCV 2.
 
 There are 4 independent module channels, each with an Input, Output, Level attenuverter, and Level CV with Level Amount attenuverter.
 
@@ -1912,7 +1912,7 @@ Sets the input voltage if the port is not patched
 - **10V** (light blue)
 
 ### V (VCA CV) button
-Determines the type of CV input that is accepted, where unity is 5V or 10V
+Determines the type of CV input that is accepted, where unity is 5V or 10V. The unipolar mode effectively creates more typical 2 quadrant VCAs instead of the default 4 quadrant VCAs (ring modulators)
 - **Unipolar clamped** (green) = 0V to unity
 - **Bipolar clamped** (orange) = -unity to unity
 - **Bipolar unlimited** (purple, default)
