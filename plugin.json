@@ -308,6 +308,16 @@
       ]
     },
     {
+      "slug": "MousePad",
+      "name": "Mouse Pad",
+      "description": "Use your mouse as a controller",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mouse-pad",
+      "tags": [
+        "Controller",
+        "Utility"
+      ]
+    },
+    {
       "slug": "MultiMerge",
       "name": "Multi Merge",
       "description": "Merge one or more sets of mono and/or poly inputs into polyphonic outputs",

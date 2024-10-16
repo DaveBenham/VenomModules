@@ -36,6 +36,7 @@ extern Model* modelMixOffset;
 extern Model* modelMixPan;
 extern Model* modelMixSend;
 extern Model* modelMixSolo;
+extern Model* modelMousePad;
 extern Model* modelMultiMerge;
 extern Model* modelMultiSplit;
 extern Model* modelOscillator;

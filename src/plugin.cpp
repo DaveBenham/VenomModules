@@ -100,6 +100,7 @@ void init(Plugin* p) {
   p->addModel(modelMixPan);
   p->addModel(modelMixSend);
   p->addModel(modelMixSolo);
+  p->addModel(modelMousePad);
   p->addModel(modelMultiMerge);
   p->addModel(modelMultiSplit);
   p->addModel(modelOscillator);
