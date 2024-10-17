@@ -59,17 +59,17 @@ struct MousePad : VenomModule {
     configSwitch<FixedSwitchQuantity>(SHIFT_PARAM, 0.f, 1.f, 0.f, "Shift activation", {"Off", "On"});
     configSwitch<FixedSwitchQuantity>(TOG_PARAM, 0.f, 1.f, 0.f, "Toggle activation", {"Off", "On"});
     configSwitch<FixedSwitchQuantity>(CTRL_PARAM, 0.f, 1.f, 0.f, "Control activation", {"Off", "On"});
-    configSwitch<FixedSwitchQuantity>(ALT_PARAM, 0.f, 1.f, 0.f, "Alt activation", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(ALT_PARAM, 0.f, 1.f, 1.f, "Alt activation", {"Off", "On"});
 
     configParam(XSCALE_PARAM, -2.f, 2.f, 1.f, "X scale");
     configParam(YSCALE_PARAM, -2.f, 2.f, 1.f, "Y scale");
     configParam(XORIGIN_PARAM, 0.f, 1.f, 0.5f, "X origin", "%", 0, 100, 0);
     configParam(YORIGIN_PARAM, 0.f, 1.f, 0.5f, "Y origin", "%", 0, 100, 0);
 
-    configSwitch<FixedSwitchQuantity>(XABS_PARAM, 0.f, 1.f, 0.f, "X absolute position", {"Off", "On"});
-    configSwitch<FixedSwitchQuantity>(YABS_PARAM, 0.f, 1.f, 0.f, "Y absolute position", {"Off", "On"});
-    configSwitch<FixedSwitchQuantity>(XRETURN_PARAM, 0.f, 1.f, 1.f, "X return on release", {"Off", "On"});
-    configSwitch<FixedSwitchQuantity>(YRETURN_PARAM, 0.f, 1.f, 1.f, "Y return on release", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(XABS_PARAM, 0.f, 1.f, 1.f, "X absolute position", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(YABS_PARAM, 0.f, 1.f, 1.f, "Y absolute position", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(XRETURN_PARAM, 0.f, 1.f, 0.f, "X return on release", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(YRETURN_PARAM, 0.f, 1.f, 0.f, "Y return on release", {"Off", "On"});
 
     configOutput(GATE_OUTPUT, "Gate");
     configOutput(X_OUTPUT, "X");
