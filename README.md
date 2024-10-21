@@ -1156,7 +1156,7 @@ The Return inputs have a Chain button that changes the behavior of the expander 
 
 [Return to Table Of Contents](#venom)
 
-## MULTI MERGE
+## MOUSE PAD
 ![Mouse Pad module image](doc/MousePad.png)  
 Use your mouse as a controller.
 
