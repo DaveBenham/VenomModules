@@ -1492,7 +1492,7 @@ For each parameter in this section there are two knobs and one monophonic input.
 Note that this section is labeled assuming that the phasor is going in a forward (ascending channel) direction. When phasing in reverse, the rise is actually the fall, and vice versa.
 
 #### Width
-Establishes the overall width of each channel's envelope, expressed as the number of channel slots to occupy. A value of 1 results in continuous sound, but without any overlap of channels. Less than 1 results in momements of silence between channels. Values greater than 1 result in channels overlapping. If the value matches the number of input channels, then each channel will play throughout the entire phasor cycle, but each channel envelope will still have a different phase.
+Establishes the overall width of each channel's envelope, expressed as the number of channel slots to occupy. A value of 1 results in continuous sound, but without any overlap of channels. Less than 1 results in moments of silence between channels. Values greater than 1 result in channels overlapping. If the value matches the number of input channels, then each channel will play throughout the entire phasor cycle, but each channel envelope will still have a different phase.
 
 The CV is scaled to 1 channel slot per 0.5V.
 
