@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.10.0 (2024-??-??)
+## 2.10.0 (2024-10-25)
 ### New Modules
 - Mouse Pad
 - Poly Fade
