@@ -1,5 +1,9 @@
 # Venom Modules Changelog
 
+## 2.??.?? (????-??-??)
+### Bug Fixes
+- Repaired saved default themes system that was broken in v2.4.1
+
 ## 2.10.0 (2024-10-25)
 ### New Modules
 - Mouse Pad
@@ -25,7 +29,7 @@
   - Level CV Ring Mod context menu option renamed VCA unity = 5V
   - Square Full PWM shape option color changed from blue to orange to match new VCO Unit module
 
-### Bug Fix
+### Bug Fixes
 - Bay Modules
   - Fix crash on some platforms when a linked Bay Input is deleted.
 - Benjolin Gates Expander
@@ -60,7 +64,7 @@
   - Rearranged faceplate to be more logical
   - Changed Sin, Tri, and Saw shape CV so 10 VPP covers full range, with option for old behavior
   
-### Bug Fix
+### Bug Fixes
 - VCO Lab
   - Fix Polyphonic CV level when level input is monophonic
 - Logic
