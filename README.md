@@ -39,7 +39,7 @@ Venom modules version 2.11.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham
 
 |[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
 |----|----|----|----|
-|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
+|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -3021,7 +3021,7 @@ A 3hp blank with standard Venom themes.
 
 
 ## WAVE FOLDER
-![WAVE FOLDER module image](doc/WaveFolder.PNG)  
+![WAVE FOLDER module image](doc/WaveFolder.png)  
 A polyphonic configurable wave folder.
 
 ### Standard Venom Context Menus
