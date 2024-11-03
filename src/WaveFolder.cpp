@@ -38,7 +38,7 @@ struct WaveFolder : VenomModule {
   int oversampleValues[6]{1,2,4,8,16,32};
   OversampleFilter_4 upSample[4]{}, downSample[4]{};
   float stageRaw = -1.f;
-  float stageParm = 1.f;
+  simd::float_4 stageParm{};
 
   WaveFolder() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -81,6 +81,11 @@ struct WaveFolder : VenomModule {
       stageRaw = params[STAGE_PARAM].getValue();
       stageParm = pow(10.f, stageRaw);
     }
+    float preParm = params[PRE_PARAM].getValue(),
+          preAmt = params[PRE_AMT_PARAM].getValue(),
+          stageAmt = params[STAGE_AMT_PARAM].getValue(),
+          biasParm = params[BIAS_PARAM].getValue(),
+          biasAmt = params[BIAS_AMT_PARAM].getValue();
     
     int stages = static_cast<int>(params[STAGES_PARAM].getValue())+2;
     int channels = 1;
@@ -89,11 +94,11 @@ struct WaveFolder : VenomModule {
     
     float_4 in[4]{}, out[4]{}, pre[4]{}, stage[4]{}, bias[4]{};
     for (int o=0; o<oversample; o++) {
-      for (int i=0, c=0; c<channels; i+=4, c++){
+      for (int i=0, c=0; c<channels; i++, c+=4){
         if (!o) {
-          pre[i] = params[PRE_PARAM].getValue() + params[PRE_AMT_PARAM].getValue() * inputs[PRE_INPUT].getPolyVoltageSimd<float_4>(i);
-          stage[i] = stageParm + params[STAGE_AMT_PARAM].getValue() * inputs[STAGE_INPUT].getPolyVoltageSimd<float_4>(i);
-          bias[i] = params[BIAS_PARAM].getValue() + params[BIAS_AMT_PARAM].getValue() * inputs[BIAS_INPUT].getPolyVoltageSimd<float_4>(i);
+          pre[i] = inputs[PRE_INPUT].getPolyVoltageSimd<float_4>(c) * preAmt + preParm;
+          stage[i] = inputs[STAGE_INPUT].getPolyVoltageSimd<float_4>(c) * stageAmt + stageParm;
+          bias[i] = inputs[BIAS_INPUT].getPolyVoltageSimd<float_4>(c) * biasAmt + biasParm;
           in[i] = inputs[POLY_INPUT].getPolyVoltageSimd<float_4>(c) * oversample;
         }
         if (oversample > 1)
@@ -106,7 +111,7 @@ struct WaveFolder : VenomModule {
           out[i] = downSample[i].process(out[i]);
       }
     }
-    for (int i=0, c=0; c<channels; i+=4, c++)
+    for (int i=0, c=0; c<channels; i++, c+=4)
       outputs[POLY_OUTPUT].setVoltageSimd(out[i], c);
     outputs[POLY_OUTPUT].setChannels(channels);
   }
