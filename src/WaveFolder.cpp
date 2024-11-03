@@ -60,6 +60,8 @@ struct WaveFolder : VenomModule {
 
     configInput(POLY_INPUT, "Poly");
     configOutput(POLY_OUTPUT, "Poly");
+
+    configBypass(POLY_INPUT, POLY_OUTPUT);
   }
 
   void process(const ProcessArgs& args) override {

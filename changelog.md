@@ -1,6 +1,9 @@
 # Venom Modules Changelog
 
 ## 2.??.?? (????-??-??)
+### New Modules
+- Wave Folder
+
 ### Bug Fixes
 - Repaired saved default themes system that was broken in v2.4.1
 
