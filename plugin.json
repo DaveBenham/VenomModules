@@ -587,7 +587,7 @@
     {
       "slug": "WaveFolder",
       "name": "Wave Folder",
-      "description": "Wave folder",
+      "description": "A polyphonic configurable wave folder",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-extender",
       "tags": [
         "Polyphonic",

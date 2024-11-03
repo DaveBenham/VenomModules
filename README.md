@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.10.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.11.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
@@ -37,9 +37,9 @@ Venom modules version 2.10.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham
 |----|----|----|----|
 |![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|
 
-|[VENOM<br />BLANK](#venom-blank)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
-|----|----|----|
-|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
+|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
+|----|----|----|----|
+|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -3018,6 +3018,20 @@ Pretty much all other VCO Lab functionality is the same, except there is no mix,
 A 3hp blank with standard Venom themes.
 
 [Return to Table Of Contents](#venom)
+
+
+## WAVE FOLDER
+![WAVE FOLDER module image](doc/WaveFolder.PNG)  
+A polyphonic configurable wave folder.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+The poly input is passed through to the output if Wave Folder is bypassed.
+
+[Return to Table Of Contents](#venom)
+
 
 ## WIDGET MENU EXTENDER
 ![WIDGET MENU EXTENDER module image](doc/WidgetMenuExtender.png)  
