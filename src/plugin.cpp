@@ -112,6 +112,7 @@ void init(Plugin* p) {
   p->addModel(modelVCAMix4Stereo);
   p->addModel(modelVCOUnit);
   p->addModel(modelVenomBlank);
+  p->addModel(modelWaveFolder);
   p->addModel(modelWidgetMenuExtender);
   p->addModel(modelWinComp);
 

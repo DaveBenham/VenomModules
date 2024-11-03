@@ -374,6 +374,7 @@
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-fade",
       "tags": [
         "Envelope Generator",
+        "Low-frequency oscillator",
         "Polyphonic",
         "Sequencer",
         "Switch"
@@ -581,6 +582,16 @@
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#venom-blank",
       "tags": [
         "Blank"
+      ]
+    },
+    {
+      "slug": "WaveFolder",
+      "name": "Wave Folder",
+      "description": "Wave folder",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-extender",
+      "tags": [
+        "Polyphonic",
+        "Waveshaper"
       ]
     },
     {

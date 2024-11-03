@@ -60,6 +60,7 @@ extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;
 extern Model* modelVCOUnit;
 extern Model* modelVenomBlank;
+extern Model* modelWaveFolder;
 extern Model* modelWidgetMenuExtender;
 extern Model* modelWinComp;
 
