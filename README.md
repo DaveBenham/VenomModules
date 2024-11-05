@@ -39,7 +39,7 @@ Venom modules version 2.11.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham
 
 |[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
 |----|----|----|----|
-|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.PNG)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
+|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -3023,7 +3023,7 @@ A 3hp blank with standard Venom themes.
 
 
 ## WAVE FOLDER
-![WAVE FOLDER module image](doc/WaveFolder.PNG)  
+![WAVE FOLDER module image](doc/WaveFolder.png)  
 A polyphonic configurable wave folder.
 
 The incoming signal is amplified and then folded at +/-5 volts a fixed number of stages. Increasing amplification increases the number of folds, with a limit set by the Stages count. The signal can be amplified once before any folding, and/or once for each folding stage. Any remaining voltage outside of +/-5V after the last stage is soft clipped at 6V by tanh saturation. The folding can be made asymmetric by applying a bias voltage to the signal prior to any amplification.
