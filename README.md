@@ -1554,7 +1554,9 @@ The bottom row of larger yellow LEDs indicate which channels are currently produ
 ### Lower Section - Phasor control, channel selection, and outputs
 
 #### Rate knob and input
-Controls the frequency of the internal LFO phasor. The knob ranges from 0.0079842 Hz to 32.703 Hz (C1). The default is 2.044 Hz. 
+Controls the frequency of the internal LFO phasor. The knob ranges from 0.0079842 Hz to 32.703 Hz (C1). The default is 2.044 Hz.
+
+Note that the ping pong (triangle LFO) rate is actually half the displayed frequency so as to maintain a constant rate of channel switching relative to forward and backward modes. 
 
 The 1V/Oct CV input can drive the rate both lower and higher. The minimum rate is 0.0015 Hz (11.1 minutes per cycle). The maximum rate is 12 kHz, however there is no anti-aliasing. So mid to high audio rates can lead to harsh results with lots of aliasing.
 
@@ -3023,6 +3025,62 @@ A 3hp blank with standard Venom themes.
 ## WAVE FOLDER
 ![WAVE FOLDER module image](doc/WaveFolder.PNG)  
 A polyphonic configurable wave folder.
+
+The incoming signal is amplified and then folded at +/-5 volts a fixed number of stages. Increasing amplification increases the number of folds, with a limit set by the Stages count. The signal can be amplified once before any folding, and/or once for each folding stage. Any remaining voltage outside of +/-5V after the last stage is soft clipped at 6V by tanh saturation. The folding can be made asymmetric by applying a bias voltage to the signal prior to any amplification.
+
+### STAGES button
+Controls the maximum amount of folding stages, which in turn limits the maximum number of folds. There are five possible values
+- 2
+- 3 (default)
+- 4
+- 5
+- 6
+
+### OVERSAMPLE button
+Wave folding introduces many harmonics, which can lead to aliasing. Oversampling can be used to limit the amount of aliasing.
+- Off
+- x2
+- x4 (default)
+- x8
+- x16
+- x32
+
+Note that CV inputs are ***not*** oversampled, so audio rate modulation may introduce significant aliasing.
+
+### Polyphony
+Wave Folder is fully polyphonic. The number of output channels is the maximum number of polyphony channels found accross all inputs.
+
+Inputs that match the output polyphony behave as expected. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels get constant 0V for any missing channels.
+
+### PRE-AMP knob and CV input
+Sets the amount of amplification applied to the input prior to any folding stages.
+
+The total amplification is the sum of the knob and CV values. The CV can be attenuated and/or inverted by the Pre-amp CV Amount knob.
+
+The knob ranges from 1 to 10, but the CV is not limited, so the net amplification is unconstrained.
+
+### STAGE AMP knob and CV input
+Sets the amount of amplification applied at each stage of folding.
+
+The total amplification is the sum of the knob and CV values. The CV can be attenuated and/or inverted by the Stage Amp CV Amount knob.
+
+The knob ranges from 1 to 10, but the CV is not limited, so the net amplification is unconstrained.
+
+Note that the Stage Amp knob is scaled exponentially, but the CV is linear. The exponential knob scale makes it easier to dial-in the most useful values between 1 and 2.
+
+### BIAS knob and CV input
+
+Sets the amount of bias voltage to add to the input signal prior to any amplification. Non-zero bias leads to assymetric folding.
+
+The total bias is the sum of the knob and CV values. The CV can be attenuated and/or inverted by the Bias CV Amount knob.
+
+The knob ranges from -5 to 5, but the CV is not limited, so the net bias is unconstrained.
+
+### IN input
+This is the input signal to be folded.
+
+### OUT output
+This is the final result of the wave folding.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.

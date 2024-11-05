@@ -58,6 +58,7 @@ struct PolyFade : VenomModule {
   };
   
   float phasor = 0.f;
+  int masterDir = 0; // forward
   float baseFreq = dsp::FREQ_C4/128.f;
   dsp::SchmittTrigger resetTrig;
   
@@ -187,22 +188,36 @@ struct PolyFade : VenomModule {
     int dir = static_cast<int>(params[DIR_PARAM].getValue());
     if (dir == 3 ) { //off
       phasor = 0.f;
+      masterDir = 1.f;
     } else {
       float freq = math::clamp(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_INPUT].getVoltage())*baseFreq, 0.0015f, 12000.f);
-      phasor = fmod(phasor + freq*k , 1.f);
+      if (dir < 2)
+        masterDir = dir;
+      if (!masterDir) { // forward
+        phasor += freq * k;
+        if (phasor > 1.f) {
+          if (dir == 2) { // ping pong overflow
+            phasor = 2.f - phasor;
+            masterDir = 1; // switch dir
+          }  
+          else // forward overflow
+            phasor -= 1.f;
+        }
+      }
+      else { // backward
+        phasor -= freq * k;
+        if (phasor < 0.f) {
+          if (dir == 2) { // ping pong underflow
+            phasor = -phasor;
+            masterDir = 0; // switch dir
+          }  
+          else // backward underflow
+            phasor += 1.f;
+        }
+      }
       if (resetTrig.process(inputs[RESET_INPUT].getVoltage(), 0.2f, 2.f))
         phasor = 0.f;
-      switch (dir){
-        case 0: // forward = rising ramp
-          tempPhasor = phasor;
-          break;
-        case 1: // backward = falling ramp
-          tempPhasor = 1.f - phasor;
-          break;
-        case 2: // ping pong = triangle
-          tempPhasor = ((phasor <= 0.5f) ? phasor : 0.5f - phasor) * 2.f;
-          break;
-      }
+      tempPhasor = phasor;
     }
     tempPhasor = fmod(tempPhasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
     if (tempPhasor<0.f)

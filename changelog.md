@@ -1,8 +1,13 @@
 # Venom Modules Changelog
 
-## 2.??.?? (????-??-??)
+## 2.11.0 (????-??-??)
 ### New Modules
 - Wave Folder
+
+### Enhancements
+- Poly Fade
+  - Removed audio pops when changing internal phasor direction
+  - ***(breaking change)*** Ping pong internal phasor rate is now 1/2 displayed rate to preserve constant rate of channel switching
 
 ### Bug Fixes
 - Repaired saved default themes system that was broken in v2.4.1
