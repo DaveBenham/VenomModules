@@ -57,6 +57,7 @@ struct PolyFade : VenomModule {
     LIGHTS_LEN
   };
   
+  bool resetIfOff = true;
   float phasor = 0.f;
   int masterDir = 0; // forward
   float baseFreq = dsp::FREQ_C4/128.f;
@@ -186,10 +187,11 @@ struct PolyFade : VenomModule {
 
     float tempPhasor = 0.f;
     int dir = static_cast<int>(params[DIR_PARAM].getValue());
-    if (dir == 3 ) { //off
-      phasor = 0.f;
-      masterDir = 1.f;
-    } else {
+    if (dir == 3) { // off
+      if (resetIfOff)
+        phasor = 0.f;
+    }
+    else { 
       float freq = math::clamp(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_INPUT].getVoltage())*baseFreq, 0.0015f, 12000.f);
       if (dir < 2)
         masterDir = dir;
@@ -215,11 +217,10 @@ struct PolyFade : VenomModule {
             phasor += 1.f;
         }
       }
-      if (resetTrig.process(inputs[RESET_INPUT].getVoltage(), 0.2f, 2.f))
-        phasor = 0.f;
-      tempPhasor = phasor;
     }
-    tempPhasor = fmod(tempPhasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
+    if (resetTrig.process(inputs[RESET_INPUT].getVoltage(), 0.2f, 2.f))
+      phasor = 0.f;
+    tempPhasor = fmod(phasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
     if (tempPhasor<0.f)
       tempPhasor += 1.f;
     outputs[PHASOR_OUTPUT].setVoltage(tempPhasor * 10.f);
@@ -269,6 +270,19 @@ struct PolyFade : VenomModule {
     outputs[POLY_OUTPUT].setChannels(channels);
     outputs[GATES_OUTPUT].setChannels(channels);
     outputs[ENV_OUTPUT].setChannels(channels);
+  }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "resetIfOff", json_boolean(resetIfOff));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val = json_object_get(rootJ, "resetIfOff");
+    if (val)
+      resetIfOff = json_boolean_value(val);
   }
 
 };
@@ -339,6 +353,13 @@ struct PolyFadeWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(92.1667f, 335.5f), module, PolyFade::ENV_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(126.5f, 335.5f), module, PolyFade::POLY_OUTPUT));
     
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    PolyFade* module = dynamic_cast<PolyFade*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolPtrMenuItem("Reset if direction off", "", &module->resetIfOff));
+    VenomWidget::appendContextMenu(menu);
   }
 
 };

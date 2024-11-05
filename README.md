@@ -1570,9 +1570,11 @@ There are four possible values
 - Forward (right arrow, default) = a rising ramp saw wave = 0V CV
 - Backward (left arrow) = a falling ramp saw wave = 1V CV
 - Ping Pong (bidirectional arrow) = a triangle wave = 2V CV
-- Off (dashed line) = disables the internal phasor = 3V CV
+- Off (dashed line) = disables (freezes) the internal phasor = 3V CV
 
 CV values are rounded to the closest valid value.
+
+If the direction is Off then by default the internal phasor is reset to 0. The module has a context menu option to disable the "Reset if direction off" so that you can freeze the internal phasor at its current position and then later pick up where you left off.
 
 #### Chan (Channel count) knob and monophonic input
 
