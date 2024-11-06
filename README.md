@@ -457,7 +457,7 @@ The output is constant monophonic 0V when the Benjolin Volts Expander is bypasse
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](doc/BernoulliSwitch.png)  
-The Bernoulli Switch randomly routes two inputs to two outputs.
+The Bernoulli Switch stochastically routes two inputs to two outputs.
 
 ### General Operation
 Upon receiving a trigger or gate, a virtual coin toss determines if input A goes to output A and B to B (no-swap), or if A goes to B and B to A (swap). Each input can be attenuated and/or inverted by a bipolar SCALE knob ranging from -1 to 1, and offset by an OFFSET knob, ranging from -10 to 10. The A input is normalled to the TRIG input and the B input is normalled to 0V, so if both inputs are left unpatched, the Bernoulli Switch will function as a "traditional" Bernoulli Gate. A "latched" mode may be achieved by leaving the B input at 0V and setting the A input SCALE to 0 and the A OFFSET to 10V.
@@ -1602,6 +1602,13 @@ CV is scaled at 0.5V per channel, with 0.5 representing 1. Values are rounded to
 
 The phasor input is summed with the internal LFO phasor to establish the effective phasor that controls the fade. Bipolar signals can be used. A value of 0 represents phase 0, and the phase increases linearly as the voltage increases until a value of 10V loops back to phase 0. The phase is cyclical, so values above 10V or below 0V effectively wrap around.
 
+#### Phasor input slew rate button (unlabled)
+A small color coded button below and to the right of the Phasor input controls slew that can be applied to the phasor input before it is summed with the internal LFO. Slew can be helpful for reducing audio pops created by sudden changes within the incoming phasor signal.
+- **Off** (gray - default)
+- **3 msec/V** (yellow)
+- **6 msec/V** (orange)
+- **10 msec/V** (purple)
+
 #### Reset monphonic input
 
 The rising edge of a trigger at this input instantly resets the internal LFO phasor back to phase 0.
@@ -1616,7 +1623,7 @@ This is the sum of the polyphonic crossfaded channel outputs.
 
 #### Phasor monophonic output
 
-This is the effective phasor - the sum (unit mix) of the internal LFO phasor and the phasor input. This is guaranteed to have a unipolar output between 0V and 10V.
+This is the effective phasor - the sum (unity mix) of the internal LFO phasor and the phasor input. This is guaranteed to have a unipolar output between 0V and 10V.
 
 #### Gates polyphonic output
 
@@ -2150,7 +2157,7 @@ The Input is passed unchanged to the Output when REFORMATION is bypassed.
 
 ## Rhythm Explorer
 ![Rhythm Explorer module image](doc/RhythmExplorer.PNG)  
-Rhythm Explorer is a trigger sequencer that randomly generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
+Rhythm Explorer is a trigger sequencer that stochastically generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
 
 ### Basic Operation
 Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 ppqn clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.

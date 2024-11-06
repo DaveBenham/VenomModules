@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.10.0",
+  "version": "2.11.dev",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -87,7 +87,7 @@
     {
       "slug": "BernoulliSwitch",
       "name": "Bernoulli Switch",
-      "description": "Randomly route two inputs to two outputs, with built in scaling and offset capabilities",
+      "description": "Stochastically route two inputs to two outputs, with built in scaling and offset capabilities",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bernoulli-switch",
       "tags": [
         "Attenuator",
@@ -489,7 +489,7 @@
     {
       "slug": "RhythmExplorer",
       "name": "Rhythm Explorer",
-      "description": "Random rhythm generator, trigger sequencer and clock divider",
+      "description": "Stochastic rhythm generator, trigger sequencer and clock divider",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#rhythm-explorer",
       "tags": [
         "Clock modulator",
