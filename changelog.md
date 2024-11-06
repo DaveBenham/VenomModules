@@ -9,6 +9,7 @@
   - New context menu option to disable "Reset if direction off"
   - New phasor input slew rate parameter, defaults to off
   - Removed audio pops when changing internal phasor direction
+  - Reduced audio pops when changing channels or start channel
   - ***(breaking change)*** Ping pong internal phasor rate is now 1/2 displayed rate to preserve constant rate of channel switching
 
 ### Bug Fixes

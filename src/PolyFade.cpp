@@ -26,7 +26,6 @@ struct PolyFade : VenomModule {
     LEVEL_PARAM,
     LEVEL_AMT_PARAM,
     SLEW_PARAM,
-    TEMP_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -67,6 +66,11 @@ struct PolyFade : VenomModule {
   float baseFreq = dsp::FREQ_C4/128.f;
   dsp::SchmittTrigger resetTrig;
   dsp::SlewLimiter slew;
+  int channels=0, startChannel=0, oldChan=0, oldStart=0;
+  float outSave[16]{}; // saved channel levels
+  float fadeRemaining = 0.f; // time remaining to crossfade from old channel levels to new channel levels
+  float fadeTime = 0.002f;
+  float fadeAmt = 0.f;
   
   struct ChannelQuantity : ParamQuantity {
     std::string getDisplayValueString() override {
@@ -86,8 +90,6 @@ struct PolyFade : VenomModule {
   PolyFade() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     
-    configParam(TEMP_PARAM, 1.f, 10.f, 3.f, "De-click time", "msec");
-
     configParam(RISE_PARAM, -1.f, 1.f, 0.f, "Rise shape", "%", 0, 100, 0);
     configParam(RISE_AMT_PARAM, -1.f, 1.f, 0.f, "Rise CV amount", "%", 0, 100, 0);
     configInput(RISE_INPUT, "Rise CV");
@@ -163,10 +165,24 @@ struct PolyFade : VenomModule {
     float level = params[LEVEL_PARAM].getValue();
     if (inputs[LEVEL_INPUT].isConnected())
       level = clamp(level + inputs[LEVEL_INPUT].getVoltage() * params[LEVEL_AMT_PARAM].getValue()/10.f, 0.f, 1.f);
-    int channels = static_cast<int>(params[CHAN_PARAM].getValue());
-    if (!channels)
-      channels = std::max(inputs[POLY_INPUT].getChannels(), 1);
-    int startChannel = static_cast<int>(params[START_PARAM].getValue());
+
+    if (fadeRemaining <= 0.f) {
+      fadeAmt = 0.f;
+      channels = static_cast<int>(params[CHAN_PARAM].getValue());
+      if (!channels)
+        channels = std::max(inputs[POLY_INPUT].getChannels(), 1);
+      startChannel = static_cast<int>(params[START_PARAM].getValue());
+      if (channels != oldChan || startChannel != oldStart) {
+        for (int i=oldChan; i<channels; i++)
+          outSave[i] = 0.f;
+        fadeRemaining = fadeTime - args.sampleTime;
+      }
+    }
+    if (fadeRemaining > 0.f) {
+      fadeAmt = fadeRemaining / fadeTime;
+      fadeRemaining -= args.sampleTime;
+    }
+
     float chanWidth = 1.f / channels;
     float width = dsp::exp2_taylor5(params[WIDTH_PARAM].getValue());
     if (inputs[WIDTH_INPUT].isConnected())
@@ -267,10 +283,18 @@ struct PolyFade : VenomModule {
       int c = (i+startChannel)%16;
       lights[CHAN_LIGHT+c].setBrightnessSmooth(out, args.sampleTime);
       lights[CHAN_ACTIVE_LIGHT+c].setBrightness(i==0 ? 1.f : 0.2f);
+      outputs[GATES_OUTPUT].setVoltage(gate, i);
       outputs[ENV_OUTPUT].setVoltage(out*10.f, i);
       out *= inputs[POLY_INPUT].getVoltage(c) * level;
+      if (fadeAmt > 0.f){
+        out += (outSave[i] - out) * fadeAmt;
+        if (fadeRemaining <= 0.f)
+          outSave[i] = out;
+      }
+      else {
+        outSave[i] = out;
+      }
       outputs[POLY_OUTPUT].setVoltage(out, i);
-      outputs[GATES_OUTPUT].setVoltage(gate, i);
       sum += out;
       tempPhasor -= chanWidth;
       if (tempPhasor < start)
@@ -282,8 +306,21 @@ struct PolyFade : VenomModule {
         lights[CHAN_ACTIVE_LIGHT+c].setBrightnessSmooth(0.f, args.sampleTime);
       }
     }
+    if (fadeAmt > 0.f) {
+      for (int i=channels; i<oldChan; i++) {
+        out = outSave[i] * fadeAmt;
+        outputs[POLY_OUTPUT].setVoltage(out, i);
+        sum += out;
+      }
+      outputs[POLY_OUTPUT].setChannels(std::max(channels, oldChan));
+      if (fadeRemaining <= 0.f) {
+        oldChan = channels;
+        oldStart = startChannel;
+      }
+    }
+    else
+      outputs[POLY_OUTPUT].setChannels(channels);
     outputs[SUM_OUTPUT].setVoltage(sum);
-    outputs[POLY_OUTPUT].setChannels(channels);
     outputs[GATES_OUTPUT].setChannels(channels);
     outputs[ENV_OUTPUT].setChannels(channels);
   }
@@ -326,8 +363,6 @@ struct PolyFadeWidget : VenomWidget {
   PolyFadeWidget(PolyFade* module) {
     setModule(module);
     setVenomPanel("PolyFade");
-
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(132.5f, 10.f), module, PolyFade::TEMP_PARAM));
 
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(17.5f, 47.5f), module, PolyFade::RISE_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(38.5f, 47.5f), module, PolyFade::RISE_AMT_PARAM));
