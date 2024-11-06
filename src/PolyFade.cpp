@@ -25,6 +25,8 @@ struct PolyFade : VenomModule {
     START_PARAM,
     LEVEL_PARAM,
     LEVEL_AMT_PARAM,
+    SLEW_PARAM,
+    TEMP_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -59,9 +61,12 @@ struct PolyFade : VenomModule {
   
   bool resetIfOff = true;
   float phasor = 0.f;
+  float slewRate[4]{0.f, 333.f, 167.f, 100.f};
+  float curSlew = -1.f;
   int masterDir = 0; // forward
   float baseFreq = dsp::FREQ_C4/128.f;
   dsp::SchmittTrigger resetTrig;
+  dsp::SlewLimiter slew;
   
   struct ChannelQuantity : ParamQuantity {
     std::string getDisplayValueString() override {
@@ -81,6 +86,8 @@ struct PolyFade : VenomModule {
   PolyFade() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     
+    configParam(TEMP_PARAM, 1.f, 10.f, 3.f, "De-click time", "msec");
+
     configParam(RISE_PARAM, -1.f, 1.f, 0.f, "Rise shape", "%", 0, 100, 0);
     configParam(RISE_AMT_PARAM, -1.f, 1.f, 0.f, "Rise CV amount", "%", 0, 100, 0);
     configInput(RISE_INPUT, "Rise CV");
@@ -124,6 +131,7 @@ struct PolyFade : VenomModule {
     configInput(START_INPUT, "Start channel CV");
     
     configInput(PHASOR_INPUT, "Phasor");
+    configSwitch<FixedSwitchQuantity>(SLEW_PARAM, 0.f, 3.f, 0.f, "Phasor input slew", {"Off", "3 msec/V", "6 msec/V", "10 msec/V"});
     configInput(RESET_INPUT, "Reset");
     configInput(POLY_INPUT, "Poly");
     configOutput(SUM_OUTPUT, "Sum");
@@ -132,7 +140,6 @@ struct PolyFade : VenomModule {
     configOutput(GATES_OUTPUT, "Gates");
     configOutput(ENV_OUTPUT, "Envelopes");
     configOutput(POLY_OUTPUT, "Poly");
-
   }
 
   void process(const ProcessArgs& args) override {
@@ -146,6 +153,12 @@ struct PolyFade : VenomModule {
       params[CHAN_PARAM].setValue(clamp(round(inputs[CHAN_INPUT].getVoltage()*2.f), 0.f, 16.f));
     if (inputs[START_INPUT].isConnected() && !paramExtensions[START_PARAM].locked)
       params[START_PARAM].setValue(clamp(round(inputs[START_INPUT].getVoltage()*2.f)-1.f, 0.f, 15.f));
+      
+    if (params[SLEW_PARAM].getValue() != curSlew){
+      curSlew = params[SLEW_PARAM].getValue();
+      float rate = slewRate[static_cast<int>(curSlew)];
+      slew.setRiseFall(rate,rate);
+    }
     
     float level = params[LEVEL_PARAM].getValue();
     if (inputs[LEVEL_INPUT].isConnected())
@@ -220,7 +233,10 @@ struct PolyFade : VenomModule {
     }
     if (resetTrig.process(inputs[RESET_INPUT].getVoltage(), 0.2f, 2.f))
       phasor = 0.f;
-    tempPhasor = fmod(phasor + inputs[PHASOR_INPUT].getVoltage()/10.f, 1.f);
+    tempPhasor = inputs[PHASOR_INPUT].getVoltage();
+    if (curSlew)
+      tempPhasor = slew.process(args.sampleTime, tempPhasor);
+    tempPhasor = fmod(phasor + tempPhasor/10.f, 1.f);
     if (tempPhasor<0.f)
       tempPhasor += 1.f;
     outputs[PHASOR_OUTPUT].setVoltage(tempPhasor * 10.f);
@@ -298,9 +314,20 @@ struct PolyFadeWidget : VenomWidget {
     }
   };
 
+  struct SlewSwitch : GlowingSvgSwitchLockable {
+    SlewSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+    }
+  };
+
   PolyFadeWidget(PolyFade* module) {
     setModule(module);
     setVenomPanel("PolyFade");
+
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(132.5f, 10.f), module, PolyFade::TEMP_PARAM));
 
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(17.5f, 47.5f), module, PolyFade::RISE_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(38.5f, 47.5f), module, PolyFade::RISE_AMT_PARAM));
@@ -344,6 +371,7 @@ struct PolyFadeWidget : VenomWidget {
     addInput(createInputCentered<MonoPort>(Vec(126.5f, 242.f), module, PolyFade::START_INPUT));
 
     addInput(createInputCentered<MonoPort>(Vec(23.5f, 288.5f), module, PolyFade::PHASOR_INPUT));
+    addParam(createLockableParamCentered<SlewSwitch>(Vec(36.5f,302.f), module, PolyFade::SLEW_PARAM));
     addInput(createInputCentered<MonoPort>(Vec(57.8333f, 288.5f), module, PolyFade::RESET_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(92.1667f, 288.5f), module, PolyFade::POLY_INPUT));
     addOutput(createOutputCentered<MonoPort>(Vec(126.5f, 288.5f), module, PolyFade::SUM_OUTPUT));

@@ -6,9 +6,10 @@
 
 ### Enhancements
 - Poly Fade
+  - New context menu option to disable "Reset if direction off"
+  - New phasor input slew rate parameter, defaults to off
   - Removed audio pops when changing internal phasor direction
   - ***(breaking change)*** Ping pong internal phasor rate is now 1/2 displayed rate to preserve constant rate of channel switching
-  - New context menu option to disable "Reset if direction off"
 
 ### Bug Fixes
 - Repaired saved default themes system that was broken in v2.4.1
