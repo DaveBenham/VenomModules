@@ -3066,7 +3066,7 @@ Sets the amount of amplification applied to the input prior to any folding stage
 
 The total amplification is the sum of the knob and CV values. The CV can be attenuated and/or inverted by the Pre-amp CV Amount knob.
 
-The knob ranges from 1 to 10, but the CV is not limited, so the net amplification is unconstrained.
+The knob ranges from 0 to 10, with a default of 1 (unity). But the CV is not limited, so the net amplification is unconstrained.
 
 ### STAGE AMP knob and CV input
 Sets the amount of amplification applied at each stage of folding.
@@ -3079,7 +3079,7 @@ Note that the Stage Amp knob is scaled exponentially, but the CV is linear. The 
 
 ### BIAS knob and CV input
 
-Sets the amount of bias voltage to add to the input signal prior to any amplification. Non-zero bias leads to assymetric folding.
+Sets the amount of bias voltage to add to the input signal prior to any amplification. Non-zero bias leads to asymmetric folding.
 
 The total bias is the sum of the knob and CV values. The CV can be attenuated and/or inverted by the Bias CV Amount knob.
 

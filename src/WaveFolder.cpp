@@ -46,7 +46,7 @@ struct WaveFolder : VenomModule {
     configSwitch<FixedSwitchQuantity>(STAGES_PARAM, 0.f, 4.f, 1.f, "Stages", {"2", "3", "4", "5", "6"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 2.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
 
-    configParam(PRE_PARAM, 1.f, 10.f, 1.f, "Pre-amp");
+    configParam(PRE_PARAM, 0.f, 10.f, 1.f, "Pre-amp");
     configParam(STAGE_PARAM, 0.f, 1.f, 0.f, "Stage amp", "", 10, 1, 0);
     configParam(BIAS_PARAM, -5.f, 5.f, 0.f, "Bias", "V");
     
