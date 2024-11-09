@@ -3083,9 +3083,9 @@ Sets the amount of amplification applied at each stage of folding.
 
 The total amplification is the sum of the knob and CV values. The CV can be attenuated and/or inverted by the Stage Amp CV Amount knob. CV can be driven at audio rates.
 
-The knob ranges from 1 to 10, but the CV is not limited, so the net amplification is unconstrained.
+The knob ranges from 0.5 to 10, but the CV is not limited, so the net amplification is unconstrained.
 
-Note that the Stage Amp knob is scaled exponentially, but the CV is linear. The exponential knob scale makes it easier to dial-in the most useful values between 1 and 2.
+Note that the Stage Amp knob is scaled exponentially, but the CV is linear. The exponential knob scale makes it easier to dial-in the most useful values between 0.5 and 2.
 
 By default, the Stage Amp VCA is unipolar, meaning any net amplification level less than zero is treated as zero. The port has a context menu option to use a bipolar VCA instead that can process negative values and invert the signal. The LED above and to the left of the port glows yellow if bipolar mode is enabled. 
 
