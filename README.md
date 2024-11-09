@@ -3035,7 +3035,7 @@ A 3hp blank with standard Venom themes.
 ![WAVE FOLDER module image](doc/WaveFolder.png)  
 A polyphonic configurable wave folder and VCA.
 
-The incoming signal is amplified and then folded at +/-5 volts a fixed number of stages. Increasing amplification increases the number of folds, with a limit set by the Stages count. The signal can be amplified once before any folding, and/or once for each folding stage. Any remaining voltage outside of +/-5V after the last stage is soft clipped at 6V by tanh saturation. The folding can be made asymmetric by applying a bias voltage to the signal prior to any amplification.
+The incoming signal is amplified and then folded at +/-5 volts a fixed number of stages. Increasing amplification increases the number of folds, with a limit set by the Stages count. The signal can be amplified once before any folding, and/or once for each folding stage. The folding can be made asymmetric by applying a bias voltage to the signal prior to any amplification. The final result is soft clipped at +/-6V by tanh saturation.
 
 All amplification can be controlled via CV, thus making the wavefolder a VCA as well. The VCAs can be configured to be unipolar or bipolar, and they can process audio rate CV, so the module can also perform wave folded amplitude modulation or wave folded ring modulation.
 
