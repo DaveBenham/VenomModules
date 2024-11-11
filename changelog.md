@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.11.0 (????-??-??)
+## 2.11.0 (2024-11-11)
 ### New Modules
 - Wave Folder
 
@@ -14,7 +14,7 @@
   - ***(breaking change)*** Ping pong internal phasor rate is now 1/2 displayed rate to preserve constant rate of channel switching
 
 ### Bug Fixes
-- Repaired saved default themes system that was broken in v2.4.1
+- Repaired default themes system that was broken in v2.4.1
 
 ## 2.10.0 (2024-10-25)
 ### New Modules

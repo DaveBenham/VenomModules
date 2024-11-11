@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.11.dev2",
+  "version": "2.11.0",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -591,6 +591,7 @@
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-extender",
       "tags": [
         "Polyphonic",
+        "Ring modulator",
         "Voltage-controlled amplifier",
         "Waveshaper"
       ]
@@ -601,7 +602,7 @@
       "description": "Extend context menus to support parameter/port renaming and parameter custom defaults",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-extender",
       "tags": [
-        "Blank"
+        "Utility"
       ]
     },
     {
