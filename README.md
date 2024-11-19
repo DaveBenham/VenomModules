@@ -3039,6 +3039,8 @@ The incoming signal is amplified and then folded at +/-5 volts a fixed number of
 
 All amplification can be controlled via CV, thus making the wavefolder a VCA as well. The VCAs can be configured to be unipolar or bipolar, and they can process audio rate CV, so the module can also perform wave folded amplitude modulation or wave folded ring modulation.
 
+Watch [this video for a brief introduction and some example use cases](https://www.youtube.com/watch?v=HLTyiIAUELs). But please do read the rest of the documentation for some more details.
+
 ### STAGES button
 Controls the maximum amount of folding stages, which in turn limits the maximum number of folds. There are five possible values
 - 2
