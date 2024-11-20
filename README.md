@@ -3081,17 +3081,24 @@ The Pre-Amp CV port also has the context menu option to disable oversampling, wi
 
 
 ### STAGE AMP knob and CV input
-Sets the amount of amplification applied at each stage of folding.
+Sets the amount of amplification applied at each stage of folding. See the note at the bottom of this section if you are interested in the exact mathematical formula.
 
-The total amplification is the sum of the knob and CV values. The CV can be attenuated and/or inverted by the Stage Amp CV Amount knob. CV can be driven at audio rates.
+The total stage amplification is the sum of the knob and CV values. The CV can be attenuated and/or inverted by the Stage Amp CV Amount knob. CV can be driven at audio rates.
 
 The knob ranges from 0.5 to 10, but the CV is not limited, so the net amplification is unconstrained.
 
-Note that the Stage Amp knob is scaled exponentially, but the CV is linear. The exponential knob scale makes it easier to dial-in the most useful values between 0.5 and 2.
+Note that the Stage Amp knob is scaled exponentially, but the CV is linear. The exponential knob scale makes it easier to dial-in the most useful values between 1 and 2.
 
 By default, the Stage Amp VCA is unipolar, meaning any net amplification level less than zero is treated as zero. The port has a context menu option to use a bipolar VCA instead that can process negative values and invert the signal. The LED above and to the left of the port glows yellow if bipolar mode is enabled. 
 
 The Stage Amp CV port also has the context menu option to disable oversampling, with the LED above and to the right indicating oversampling state.
+
+***Actual stage folding formula***
+
+*Without any stage amplification, the folding formula for each stage is V<sub>out</sub> = clip(V<sub>in</sub>) - (V<sub>in</sub> - clip(V<sub>in</sub>)), where clipping occurs at +/-5 volts.  
+This can be re-written as V<sub>out</sub> = 2 x clip(V<sub>in</sub>) - V<sub>in</sub>*
+
+*The stage amplification is only applied to the clip expression as follows: V<sub>out</sub> = 2 x clip(V<sub>in</sub> x Amp<sub>stage</sub>) - V<sub>in</sub>*
 
 ### BIAS knob and CV input
 
