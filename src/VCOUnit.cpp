@@ -72,7 +72,7 @@ struct VCOUnit : VenomModule {
   bool alternate = false;
   bool aliasSuppress = false;
   using float_4 = simd::float_4;
-  int oversample = -1, oversampleStages = 3;
+  int oversample = -1, oversampleStages = 5;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4]{}, phaseUpSample[4]{}, offsetUpSample[4]{}, levelUpSample[4]{},
