@@ -70,9 +70,9 @@ struct VCOUnit : VenomModule {
   float shpScale = 0.2f;
   bool softSync = false;
   bool alternate = false;
-  bool lfo = false;
+  bool aliasSuppress = false;
   using float_4 = simd::float_4;
-  int oversample = -1;
+  int oversample = -1, oversampleStages = 3;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4]{}, phaseUpSample[4]{}, offsetUpSample[4]{}, levelUpSample[4]{},
@@ -90,7 +90,6 @@ struct VCOUnit : VenomModule {
   bool gated = false;
   float_4 onceActive[4]{};
   int modeDefaultOver[3] = {2, 0, 2};
-  static constexpr float maxFreq = 12000.f;
   
   struct ShapeQuantity : ParamQuantity {
     float getDisplayValue() override {
@@ -122,11 +121,10 @@ struct VCOUnit : VenomModule {
         freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mod->mode];
       else
         freq = mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
-      return freq < maxFreq ? freq : maxFreq;
+      return freq;
     }
     void setDisplayValue(float v) override {
       VCOUnit* mod = reinterpret_cast<VCOUnit*>(this->module);
-      if (v > maxFreq) v = maxFreq;
       if (mod->mode < 2)
         setValue(clamp(std::log2f(v / mod->modeFreq[mod->mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
       else
@@ -195,6 +193,7 @@ struct VCOUnit : VenomModule {
   void setMode() {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
+    aliasSuppress = !mode;
     if (!paramExtensions[OVER_PARAM].locked)
       params[OVER_PARAM].setValue(modeDefaultOver[mode]);
     paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
@@ -254,6 +253,46 @@ struct VCOUnit : VenomModule {
     bipolar = val;
     lights[VCOUnit::VCA_LIGHT].setBrightness(val);
   }
+  
+  void setOversample(){
+    for (int i=0; i<4; i++){
+      expUpSample[i].setOversample(oversample, oversampleStages);
+      linUpSample[i].setOversample(oversample, oversampleStages);
+      revUpSample[i].setOversample(oversample, oversampleStages);
+      syncUpSample[i].setOversample(oversample, oversampleStages);
+      shapeUpSample[i].setOversample(oversample, oversampleStages);
+      phaseUpSample[i].setOversample(oversample, oversampleStages);
+      offsetUpSample[i].setOversample(oversample, oversampleStages);
+      levelUpSample[i].setOversample(oversample, oversampleStages);
+      outDownSample[i].setOversample(oversample, oversampleStages);
+    }
+  }
+  
+  void loadPhases(float_4* phases, float_4 phasor, float_4 delta){
+    phases[0] = phasor - 2 * delta + ifelse(phasor < 2 * delta, 1.f, ifelse(phasor > (1+2*delta),-1.f,0.f));
+    phases[1] = phasor - delta + ifelse(phasor < delta, 1.f, ifelse(phasor > (1+delta),-1.f,0.f));
+    phases[2] = phasor;
+  }
+
+  float_4 aliasSuppressedSaw(float_4* phases, float_4 denInv) {
+    float_4 sawBuffer[3];
+    for (int i = 0; i < 3; ++i) {
+      float_4 p = phases[i] + phases[i] - 1.0;
+      sawBuffer[i] = (p * p * p - p) / 6.0;
+    }
+    return ((sawBuffer[0] - sawBuffer[1] - sawBuffer[1] + sawBuffer[2])*denInv + 1.f) / 2.f;
+  }
+
+  float_4 aliasSuppressedOffsetSaw(float_4* phases, float_4 pw, float_4 denInv) {
+    float_4 buffer[3];
+    for (int i = 0; i < 3; ++i) {
+      float_4 p = phases[i] + phases[i] - 1.0f;
+      p += pw + pw;
+      p += ifelse(p>1.f, -2.f, 0.f);
+      buffer[i] = (p * p * p - p) / 6.0f;
+    }
+    return ((buffer[0] - buffer[1] - buffer[1] + buffer[2])*denInv + 1.f) / 2.f;
+  }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
@@ -267,17 +306,7 @@ struct VCOUnit : VenomModule {
 
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
-      for (int i=0; i<4; i++){
-        expUpSample[i].setOversample(oversample);
-        linUpSample[i].setOversample(oversample);
-        revUpSample[i].setOversample(oversample);
-        syncUpSample[i].setOversample(oversample);
-        shapeUpSample[i].setOversample(oversample);
-        phaseUpSample[i].setOversample(oversample);
-        offsetUpSample[i].setOversample(oversample);
-        levelUpSample[i].setOversample(oversample);
-        outDownSample[i].setOversample(oversample);
-      }
+      setOversample();
     }
     // get channel count
     int channels = 1;
@@ -291,9 +320,10 @@ struct VCOUnit : VenomModule {
     int simdCnt = (channels+3)/4;
     
     float_4 expIn{}, linIn{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn{}, syncIn{}, freq[4]{},
-            shapeIn{}, phaseIn{}, offsetIn{}, levelIn{}, out[4]{}, wavePhasor{};
+            shapeIn{}, phaseIn{}, offsetIn{}, levelIn{}, out[4]{}, wavePhasor{}, sawPhasor{}, offsetSawPhasor{};
     float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
     float k =  1000.f * args.sampleTime / oversample;
+    float_4 basePhaseDelta{}, lowFreq{}, denInv{};
     
     if (alternate != (mode==2)) {
       alternate = !alternate;
@@ -392,10 +422,16 @@ struct VCOUnit : VenomModule {
           freq[s] = (vOctParm + vOctIn[s])*biasFreq + linIn*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
         }
         freq[s] *= modeFreq[mode];
-        freq[s] = simd::ifelse(freq[s] > maxFreq, maxFreq, freq[s]);
         phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
         phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
-        phasor[s] += freq[s] * phasorDir[s] * k;
+        basePhaseDelta = freq[s] * phasorDir[s] * k;
+        phasor[s] += basePhaseDelta;
+        if (aliasSuppress) {
+          basePhaseDelta *= 0.001f;
+          lowFreq = simd::abs(basePhaseDelta) < 1e-3;
+          denInv = 1.f/basePhaseDelta;
+          denInv = denInv * denInv * 0.25;
+        }
         float_4 tempPhasor = simd::fmod(phasor[s], 1000.f);
         tempPhasor = simd::ifelse(tempPhasor<0.f, tempPhasor+1000.f, tempPhasor);
         if (once)
@@ -429,6 +465,7 @@ struct VCOUnit : VenomModule {
         } // else preserve prior phaseIn value
 
         float_4 shapeSign = 0.f;
+        float_4 phases[3]{};
         switch (wave) {
           case 0: // SIN
             wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f - 250.f;
@@ -521,7 +558,13 @@ struct VCOUnit : VenomModule {
             } else { // PWM
               float_4 flip = (shapeIn*params[SHAPE_AMT_PARAM].getValue()*shpScale + params[SHAPE_PARAM].getValue() + 1.f) * 500.f;
               if (!shapeMode) flip = clamp( flip, 30.f, 970.f );
-              out[s] = simd::ifelse(wavePhasor<flip, 5.f, -5.f);
+              out[s] = ifelse(wavePhasor<flip, 5.f, -5.f);
+              if (aliasSuppress) {
+                loadPhases(phases, wavePhasor * 0.001f, basePhaseDelta);
+                sawPhasor = aliasSuppressedSaw(phases, denInv);
+                offsetSawPhasor = aliasSuppressedOffsetSaw(phases, 1.f - flip*0.001f, denInv);
+                out[s] = ifelse(lowFreq, out[s], (offsetSawPhasor - sawPhasor + flip*0.001f - 0.5f) * 10.f);
+              }
             }
             break;
           default: // 3 SAW
@@ -529,6 +572,10 @@ struct VCOUnit : VenomModule {
             wavePhasor = simd::fmod(wavePhasor, 1000.f);
             wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
             wavePhasor *= 0.001f;
+            if (aliasSuppress && shapeMode < 3) {
+              loadPhases(phases, wavePhasor, basePhaseDelta);
+              wavePhasor = ifelse(lowFreq, wavePhasor, aliasSuppressedSaw(phases, denInv));
+            }
             switch (shapeMode) {
               case 0:  // exp/log
                 out[s] = crossfade(wavePhasor, ifelse(shape>0.f, 11.f*wavePhasor/(10.f*simd::abs(wavePhasor)+1.f), simd::sgn(wavePhasor)*simd::pow(wavePhasor,4)), ifelse(shape>0.f, shape, -shape))*10.f-5.f;
@@ -620,6 +667,7 @@ struct VCOUnit : VenomModule {
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
     json_object_set_new(rootJ, "shapeModeParam", json_integer(params[SHAPE_MODE_PARAM].getValue()));
+    json_object_set_new(rootJ, "oversampleStages", json_integer(oversampleStages));
     return rootJ;
   }
 
@@ -653,6 +701,8 @@ struct VCOUnit : VenomModule {
     if ((val = json_object_get(rootJ, "shapeModeParam"))) {
       params[SHAPE_MODE_PARAM].setValue(json_integer_value(val));
     }
+    val = json_object_get(rootJ, "oversampleStages");
+    oversampleStages = val ? json_integer_value(val) : 3;
   }
   
 };
@@ -849,6 +899,16 @@ struct VCOUnitWidget : VenomWidget {
     VCOUnit* module = dynamic_cast<VCOUnit*>(this->module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("Limit level to 100%", "", &module->clampLevel));
+    menu->addChild(createIndexSubmenuItem("Oversample filter quality",
+      {"6th order", "8th order", "10th order"},
+      [=]() {
+        return module->oversampleStages-3;
+      },
+      [=](int val) {
+        module->oversampleStages = val + 3;
+        module->setOversample();
+      }
+    ));
     VenomWidget::appendContextMenu(menu);
   }
 
