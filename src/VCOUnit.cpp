@@ -82,7 +82,7 @@ struct VCOUnit : VenomModule {
   bool linDCCouple = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
   float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
-  int currentMode = 0;
+  int currentMode = -1;
   int mode = 0;
   int wave = 0;
   bool once = false;
