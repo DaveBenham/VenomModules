@@ -40,7 +40,7 @@ struct VCAMix4 : MixBaseModule {
   float scale = 1.f;
   float offset = 0.f;
   int oversample = 4;
-  OversampleFilter_4 outUpSample[4]{}, outDownSample[4]{}, vcaBandlimit[2][5][4]{};
+  OversampleFilter_4 outUpSample[4]{}, outDownSample[4]{}, cvVcaBandlimit[5][4]{}, inVcaBandlimit[5][4]{}, outVcaBandlimit[5][4];
   DCBlockFilter_4 dcBlockBeforeFilter[4]{}, dcBlockAfterFilter[4]{};
 
   VCAMix4() {
@@ -72,23 +72,25 @@ struct VCAMix4 : MixBaseModule {
     configOutput(MIX_OUTPUT, "Mix");
     for (int i=0; i<4; i++)
       configBypass(INPUTS+i, OUTPUTS+i);
-    initOversample();
+    oversampleStages = 5;
+    setOversample();
   }
 
-  void initOversample(){
+  void setOversample() override {
     for (int i=0; i<4; i++){
-      outUpSample[i].setOversample(oversample);
-      outDownSample[i].setOversample(oversample);
+      outUpSample[i].setOversample(oversample, oversampleStages);
+      outDownSample[i].setOversample(oversample, oversampleStages);
       for (int j=0; j<5; j++){
-        vcaBandlimit[0][j][i].setOversample(1);
-        vcaBandlimit[1][j][i].setOversample(1);
+        cvVcaBandlimit[j][i].setOversample(oversample, oversampleStages);
+        inVcaBandlimit[j][i].setOversample(oversample, oversampleStages);
+        outVcaBandlimit[j][i].setOversample(oversample, oversampleStages);
       }
     }
   }
 
   void onReset(const ResetEvent& e) override {
     mode = -1;
-    initOversample();
+    setOversample();
     Module::onReset(e);
   }
 
@@ -150,17 +152,23 @@ struct VCAMix4 : MixBaseModule {
     for (int c=0; c<loopChannels; c+=4){
       out = mode==1 ? inputs[CHAIN_INPUT].getVoltageSum() : inputs[CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       for (int i=0; i<4; i++){
-        cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
-        if (vcaMode <= 1)
-          cv = simd::clamp(cv, 0.f, 1.f);
-        if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
-          cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
+        cv = inputs[CV_INPUTS+i].isConnected() ? (mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f) : 1.0f;
         channel[i] = preOff[i] + (mode == 1 ? inputs[INPUTS+i].getVoltageSum() : inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c));
-        if (vcaMode >= 4) {
-          cv = vcaBandlimit[0][i][c/4].process(cv);
-          channel[i] = vcaBandlimit[1][i][c/4].process(channel[i]);
+        int vcaOversample = vcaMode>=4 && inputs[CV_INPUTS+i].isConnected() && inputs[INPUTS+i].isConnected() ? 4 : 1;
+        for (int s=0; s<vcaOversample; s++){
+          if (vcaOversample > 1) {
+            cv = cvVcaBandlimit[i][c/4].process(s ? 0.f : cv*vcaOversample);
+            channel[i] = inVcaBandlimit[i][c/4].process( s ? 0.f : channel[i]*vcaOversample);
+          }
+          if (vcaMode <= 1)
+            cv = simd::clamp(cv, 0.f, 1.f);
+          if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
+            cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
+          channel[i] *= (params[LEVEL_PARAMS+i].getValue()+offset)*scale*cv;
+          if (vcaOversample > 1) {
+            channel[i] = outVcaBandlimit[i][c/4].process(channel[i]);
+          }
         }
-        channel[i] *= (params[LEVEL_PARAMS+i].getValue()+offset)*scale*cv;
         channel[i] += postOff[i];
         outputs[OUTPUTS+i].setVoltageSimd(channel[i], c);
         if (exclude && outputs[OUTPUTS+i].isConnected())
@@ -288,40 +296,63 @@ struct VCAMix4 : MixBaseModule {
             fadeLevel[4] = fade[4].out = !muteMod->params[MUTE_MIX_PARAM].getValue();
         }
       }
-      out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
 
-      cv = inputs[MIX_CV_INPUT].isConnected() ? mode == 1 ? inputs[MIX_CV_INPUT].getVoltage()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
-      if (vcaMode <= 1)
-        cv = simd::clamp(cv, 0.f, 1.f);
-      if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
-        cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
-      if (vcaMode >= 4) {
-        cv = vcaBandlimit[0][4][c/4].process(cv);
-        out = vcaBandlimit[1][4][c/4].process(out);
-      }
-      if (clip <= 3 || clip == 7) {
-        out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
-        if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
-      }
-      if (dcBlock && dcBlock <= 2) // no oversample applied during DC removal
+      out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
+      cv = inputs[MIX_CV_INPUT].isConnected() ? (mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c)/10.f) : 1.0f;
+      int vcaOversample = vcaMode>=4 && inputs[MIX_CV_INPUT].isConnected() ? 4 : 1;
+
+      if (dcBlock && dcBlock < 3)
         out = dcBlockBeforeFilter[c/4].process(out);
-      if (clip == 1 || clip == 4)
+
+      if (clip == 4) // hard pre
         out = clamp(out, -10.f, 10.f);
-      if (clip == 2 || clip == 5)
+      if (clip == 5) // soft pre
         out = softClip(out);
-      if (clip == 3 || clip >= 6){
+      if (clip==6 && vcaOversample==1) { // soft pre
         for (int i=0; i<oversample; i++){
           out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
-          out = (clip != 7) ? softClip(out) : (softClip(out*1.6667f) / 1.6667f);
+          out = softClip(out);
           out = outDownSample[c/4].process(out);
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip)) // no oversample applied during DC removal
-        out = dcBlockAfterFilter[c/4].process(out);
-      if (clip > 3 && clip < 7) {
+      for (int s=0; s<vcaOversample; s++) {
+        if (vcaOversample > 1) {
+          cv = cvVcaBandlimit[4][c/4].process(s ? 0.f : cv*vcaOversample);
+          out = inVcaBandlimit[4][c/4].process( s ? 0.f : out*vcaOversample);
+        }
+        if (vcaMode <= 1)
+          cv = simd::clamp(cv, 0.f, 1.f);
+        if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
+          cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
+        if (clip == 6 && vcaOversample>1)
+          out = softClip(out);
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
-        if (offsetExpander) out += offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue();
+        if (clip==1 && vcaOversample>1)
+          out = softClip(out);
+        if (clip==7 && vcaOversample>1)
+          out = softClip(out*1.6667f) / 1.6667f;
+        if (vcaOversample > 1) {
+          out = outVcaBandlimit[4][c/4].process(out);
+        }
       }
+
+      if (clip == 1) // hard post
+        out = clamp(out, -10.f, 10.f);
+      if (clip == 5) // soft post
+        out = softClip(out);
+      if ((clip==3 || clip==7) && vcaOversample==1) { // soft post
+        for (int i=0; i<oversample; i++){
+          out = outUpSample[c/4].process(i ? simd::float_4::zero() : out*oversample);
+          if (clip==7)
+            out = softClip(out*1.6667f) / 1.6667f;
+          else
+            out = softClip(out);
+          out = outDownSample[c/4].process(out);
+        }
+      }  
+
+      if (dcBlock == 3 || (dcBlock == 2 && clip))
+        out = dcBlockAfterFilter[c/4].process(out);
       out *= fadeLevel[4]; // Mix fade factor
       outputs[MIX_OUTPUT].setVoltageSimd(out, c);
     }
