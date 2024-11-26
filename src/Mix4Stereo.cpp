@@ -59,21 +59,22 @@ struct Mix4Stereo : MixBaseModule {
                                                                                          "Saturate (Soft oversampled post-level at 6V)"});
     configOutput(LEFT_OUTPUT, "Left Mix");
     configOutput(RIGHT_OUTPUT, "Right Mix");
-    initOversample();
+    oversampleStages = 5;
+    setOversample();
   }
 
-  void initOversample(){
+  void setOversample() override {
     for (int i=0; i<4; i++){
-      leftUpSample[i].setOversample(oversample);
-      leftDownSample[i].setOversample(oversample);
-      rightUpSample[i].setOversample(oversample);
-      rightDownSample[i].setOversample(oversample);
+      leftUpSample[i].setOversample(oversample, oversampleStages);
+      leftDownSample[i].setOversample(oversample, oversampleStages);
+      rightUpSample[i].setOversample(oversample, oversampleStages);
+      rightDownSample[i].setOversample(oversample, oversampleStages);
     }
   }
 
   void onReset(const ResetEvent& e) override {
     mode = -1;
-    initOversample();
+    setOversample();
     Module::onReset(e);
   }
 

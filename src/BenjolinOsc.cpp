@@ -88,6 +88,8 @@ struct BenjolinOsc : BenjolinModule {
     configOutput(XOR_OUTPUT,"XOR");
     configOutput(PWM_OUTPUT,"PWM");
     configOutput(RUNG_OUTPUT,"Rungler");
+    
+    oversampleStages = 5;
   }
 
   void onSampleRateChange() override {
@@ -120,14 +122,18 @@ struct BenjolinOsc : BenjolinModule {
     switchQuant->maxValue = maxOver;
     switchQuant->labels = labels;
   }
+  
+  void setOversample() override {
+    upSample.setOversample(oversample, oversampleStages);
+    downSampleA.setOversample(oversample, oversampleStages);
+    downSampleB.setOversample(oversample, oversampleStages);
+  }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
-      upSample.setOversample(oversample);
-      downSampleA.setOversample(oversample);
-      downSampleB.setOversample(oversample);
+      setOversample();
     }
     simd::float_4 k = triMask * 60.f * args.sampleTime / oversample;
     bool cv1Connected = inputs[CV1_INPUT].isConnected(),

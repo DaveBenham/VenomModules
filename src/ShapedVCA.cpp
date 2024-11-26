@@ -73,11 +73,24 @@ struct ShapedVCA : VenomModule {
     configSwitch<FixedSwitchQuantity>(OFFSET_PARAM, 0.f, 2.f, 0.f, "Output offset", {"None", "-5 V", "+5 V"});
     configBypass(LEFT_INPUT, LEFT_OUTPUT);
     configBypass(inputs[RIGHT_INPUT].isConnected() ? RIGHT_INPUT : LEFT_INPUT, RIGHT_OUTPUT);
+    
+    oversampleStages = 5;
   }
 
   void onPortChange(const PortChangeEvent& e) override {
     if (e.type == Port::INPUT && e.portId == RIGHT_INPUT)
       bypassRoutes[1].inputId = e.connecting ? RIGHT_INPUT : LEFT_INPUT;
+  }
+  
+  void setOversample() override {
+    for (int i=0; i<4; i++){
+      levelUpSample[i].setOversample(oversample, oversampleStages);
+      curveUpSample[i].setOversample(oversample, oversampleStages);
+      leftUpSample[i].setOversample(oversample, oversampleStages);
+      rightUpSample[i].setOversample(oversample, oversampleStages);
+      leftDownSample[i].setOversample(oversample, oversampleStages);
+      rightDownSample[i].setOversample(oversample, oversampleStages);
+    }
   }
 
   void process(const ProcessArgs& args) override {
@@ -91,14 +104,7 @@ struct ShapedVCA : VenomModule {
     if (params[OVER_PARAM].getValue() != oldOversample) {
       oldOversample = params[OVER_PARAM].getValue();
       oversample = overVals[static_cast<int>(oldOversample)];
-      for (int i=0; i<4; i++){
-        levelUpSample[i].setOversample(oversample);
-        curveUpSample[i].setOversample(oversample);
-        leftUpSample[i].setOversample(oversample);
-        rightUpSample[i].setOversample(oversample);
-        leftDownSample[i].setOversample(oversample);
-        rightDownSample[i].setOversample(oversample);
-      }
+      setOversample();
     }
     
     // configure level

@@ -53,19 +53,20 @@ struct Mix4 : MixBaseModule {
                                                                                          "Hard pre-level at 10V", "Soft pre-level at 10V", "Soft oversampled pre-level at 10V",
                                                                                          "Saturate (Soft oversampled post-level at 6V)"});
     configOutput(MIX_OUTPUT, "Mix");
-    initOversample();
+    oversampleStages = 5;
+    setOversample();
   }
 
-  void initOversample(){
+  void setOversample() override {
     for (int i=0; i<4; i++){
-      outUpSample[i].setOversample(oversample);
-      outDownSample[i].setOversample(oversample);
+      outUpSample[i].setOversample(oversample, oversampleStages);
+      outDownSample[i].setOversample(oversample, oversampleStages);
     }
   }
 
   void onReset(const ResetEvent& e) override {
     mode = -1;
-    initOversample();
+    setOversample();
     Module::onReset(e);
   }
   

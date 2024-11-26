@@ -70,6 +70,22 @@ struct Reformation : VenomModule {
     configInput(LEVEL_INPUT, "Level");
     configOutput(OUT_OUTPUT, "Signal");
     configBypass(IN_INPUT, OUT_OUTPUT);
+    oversampleStages = 5;
+  }
+  
+  void setOversample() override {
+    for (int i=0; i<MAP_COUNT; i++){
+      for (int j=0; j<4; j++){
+        cv1UpSample[j][i].setOversample(oversample, oversampleStages);
+        cv2UpSample[j][i].setOversample(oversample, oversampleStages);
+        if (i==0){
+          inUpSample[j].setOversample(oversample, oversampleStages);
+          driveUpSample[j].setOversample(oversample, oversampleStages);
+          levelUpSample[j].setOversample(oversample, oversampleStages);
+          outDownSample[j].setOversample(oversample, oversampleStages);
+        }
+      }
+    }
   }
 
   void process(const ProcessArgs& args) override {
@@ -84,18 +100,7 @@ struct Reformation : VenomModule {
     if (params[OVER_PARAM].getValue() != oldOversample) {
       oldOversample = params[OVER_PARAM].getValue();
       oversample = oversampleValues[static_cast<int>(oldOversample)];
-      for (int i=0; i<MAP_COUNT; i++){
-        for (int j=0; j<4; j++){
-          cv1UpSample[j][i].setOversample(oversample);
-          cv2UpSample[j][i].setOversample(oversample);
-          if (i==0){
-            inUpSample[j].setOversample(oversample);
-            driveUpSample[j].setOversample(oversample);
-            levelUpSample[j].setOversample(oversample);
-            outDownSample[j].setOversample(oversample);
-          }
-        }
-      }
+      setOversample();
     }
     
     // get channel count

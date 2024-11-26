@@ -85,21 +85,21 @@ struct WinComp : VenomModule {
 
   dsp::ClockDivider lightDivider;
 
-  void initializeOversample(){
+  void setOversample() override {
     for (int c=0; c<4; c++){
-      aUpSample[c].setOversample(oversample);
-      bUpSample[c].setOversample(oversample);
-      tolUpSample[c].setOversample(oversample);
-      minDownSample[c].setOversample(oversample);
-      maxDownSample[c].setOversample(oversample);
-      clampDownSample[c].setOversample(oversample);
-      overDownSample[c].setOversample(oversample);
-      eqDownSample[c].setOversample(oversample);
-      neqDownSample[c].setOversample(oversample);
-      leqDownSample[c].setOversample(oversample);
-      geqDownSample[c].setOversample(oversample);
-      lsDownSample[c].setOversample(oversample);
-      grDownSample[c].setOversample(oversample);
+      aUpSample[c].setOversample(oversample, oversampleStages);
+      bUpSample[c].setOversample(oversample, oversampleStages);
+      tolUpSample[c].setOversample(oversample, oversampleStages);
+      minDownSample[c].setOversample(oversample, oversampleStages);
+      maxDownSample[c].setOversample(oversample, oversampleStages);
+      clampDownSample[c].setOversample(oversample, oversampleStages);
+      overDownSample[c].setOversample(oversample, oversampleStages);
+      eqDownSample[c].setOversample(oversample, oversampleStages);
+      neqDownSample[c].setOversample(oversample, oversampleStages);
+      leqDownSample[c].setOversample(oversample, oversampleStages);
+      geqDownSample[c].setOversample(oversample, oversampleStages);
+      lsDownSample[c].setOversample(oversample, oversampleStages);
+      grDownSample[c].setOversample(oversample, oversampleStages);
     }
   }
 
@@ -138,8 +138,10 @@ struct WinComp : VenomModule {
     configLight(GR_LIGHT, "A>B indicator")->description = "yellow = mono, blue = poly";
     configLight(LS_LIGHT, "A<B indicator")->description = "yellow = mono, blue = poly";
 
-    initializeOversample();
+    setOversample();
     lightDivider.setDivision(32);
+    
+    oversampleStages = 5;
   }
 
   void process(const ProcessArgs& args) override {
@@ -376,7 +378,7 @@ struct WinComp : VenomModule {
     if (val)
       gateType = json_integer_value(val);
 
-    initializeOversample();
+    setOversample();
   }
 
 };
@@ -468,7 +470,7 @@ struct WinCompWidget : VenomWidget {
         },
       [=](int i) {
           module->oversample = module->oversampleValues[i];
-          module->initializeOversample();
+          module->setOversample();
         }
     ));
     VenomWidget::appendContextMenu(menu);

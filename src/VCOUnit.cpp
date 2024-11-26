@@ -72,7 +72,7 @@ struct VCOUnit : VenomModule {
   bool alternate = false;
   bool aliasSuppress = false;
   using float_4 = simd::float_4;
-  int oversample = -1, oversampleStages = 5;
+  int oversample = -1;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4]{}, phaseUpSample[4]{}, offsetUpSample[4]{}, levelUpSample[4]{},
@@ -182,6 +182,8 @@ struct VCOUnit : VenomModule {
     configLight(LEVEL_LIGHT, "Level oversample indicator")->description = "off = N/A, yellow = oversampled, red = disabled";
     configLight(RM_LIGHT, "VCA unity = 5V indicator");
     configLight(VCA_LIGHT, "Bipolar VCA indicator");
+    
+    oversampleStages = 5;
   }
 
   float_4 sinSimd_1000(float_4 t) {
@@ -254,7 +256,7 @@ struct VCOUnit : VenomModule {
     lights[VCOUnit::VCA_LIGHT].setBrightness(val);
   }
   
-  void setOversample(){
+  void setOversample() override {
     for (int i=0; i<4; i++){
       expUpSample[i].setOversample(oversample, oversampleStages);
       linUpSample[i].setOversample(oversample, oversampleStages);
@@ -667,7 +669,6 @@ struct VCOUnit : VenomModule {
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
     json_object_set_new(rootJ, "shapeModeParam", json_integer(params[SHAPE_MODE_PARAM].getValue()));
-    json_object_set_new(rootJ, "oversampleStages", json_integer(oversampleStages));
     return rootJ;
   }
 
@@ -701,8 +702,6 @@ struct VCOUnit : VenomModule {
     if ((val = json_object_get(rootJ, "shapeModeParam"))) {
       params[SHAPE_MODE_PARAM].setValue(json_integer_value(val));
     }
-    val = json_object_get(rootJ, "oversampleStages");
-    oversampleStages = val ? json_integer_value(val) : 3;
   }
   
 };
@@ -899,16 +898,6 @@ struct VCOUnitWidget : VenomWidget {
     VCOUnit* module = dynamic_cast<VCOUnit*>(this->module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("Limit level to 100%", "", &module->clampLevel));
-    menu->addChild(createIndexSubmenuItem("Oversample filter quality",
-      {"6th order", "8th order", "10th order"},
-      [=]() {
-        return module->oversampleStages-3;
-      },
-      [=](int val) {
-        module->oversampleStages = val + 3;
-        module->setOversample();
-      }
-    ));
     VenomWidget::appendContextMenu(menu);
   }
 
