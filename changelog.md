@@ -1,5 +1,18 @@
 # Venom Modules Changelog
 
+## 2.11.1 (????-??-??)
+### Enhancements
+- All modules with oversampling options
+  - New context menu option to select the quality of the oversampling filters
+    - New patches default to 10th order (better)
+    - Pre-existing patches use 6th order
+- VCO Lab and VCO Unit
+  - Improved audio quality of square and saw waves
+  - Removed max frequency limit
+
+### Bug Fixes
+- VCA Mix 4 and VCA Mix 4 Stereo: Band limiting (oversampling) VCA Mode options were improperly implemented
+
 ## 2.11.0 (2024-11-11)
 ### New Modules
 - Wave Folder
