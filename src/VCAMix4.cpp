@@ -297,7 +297,9 @@ struct VCAMix4 : MixBaseModule {
         }
       }
 
-      out += channel[0] + channel[1] + channel[2] + channel[3] + (offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f);
+      float preMixOff = offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f;
+      float postMixOff = offsetExpander ? offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue() : 0.f;
+      out += channel[0] + channel[1] + channel[2] + channel[3] + preMixOff;
       cv = inputs[MIX_CV_INPUT].isConnected() ? (mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c)/10.f) : 1.0f;
       int vcaOversample = vcaMode>=4 && inputs[MIX_CV_INPUT].isConnected() ? 4 : 1;
 
@@ -327,7 +329,8 @@ struct VCAMix4 : MixBaseModule {
         if (clip == 6 && vcaOversample>1)
           out = softClip(out);
         out *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
-        if (clip==1 && vcaOversample>1)
+        out += postMixOff;
+        if (clip==3 && vcaOversample>1)
           out = softClip(out);
         if (clip==7 && vcaOversample>1)
           out = softClip(out*1.6667f) / 1.6667f;
@@ -338,7 +341,7 @@ struct VCAMix4 : MixBaseModule {
 
       if (clip == 1) // hard post
         out = clamp(out, -10.f, 10.f);
-      if (clip == 5) // soft post
+      if (clip == 2) // soft post
         out = softClip(out);
       if ((clip==3 || clip==7) && vcaOversample==1) { // soft post
         for (int i=0; i<oversample; i++){
