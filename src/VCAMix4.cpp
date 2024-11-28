@@ -300,7 +300,7 @@ struct VCAMix4 : MixBaseModule {
       float preMixOff = offsetExpander ? offsetExpander->params[PRE_MIX_OFFSET_PARAM].getValue() : 0.f;
       float postMixOff = offsetExpander ? offsetExpander->params[POST_MIX_OFFSET_PARAM].getValue() : 0.f;
       out += channel[0] + channel[1] + channel[2] + channel[3] + preMixOff;
-      cv = inputs[MIX_CV_INPUT].isConnected() ? (mode == 1 ? inputs[MIX_CV_INPUT].getVoltageSum()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c)/10.f) : 1.0f;
+      cv = inputs[MIX_CV_INPUT].isConnected() ? (mode == 1 ? inputs[MIX_CV_INPUT].getVoltage()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c)/10.f) : 1.0f;
       int vcaOversample = vcaMode>=4 && inputs[MIX_CV_INPUT].isConnected() ? 4 : 1;
 
       if (dcBlock && dcBlock < 3)
