@@ -113,7 +113,8 @@ Most Venom modules that use oversampling have parameters on the faceplate to cho
 All of the Venom modules with oversampling also have a context menu option to specify the quality of the filter used. There are three options available:
 - 10th order with a cutoff at 80% of the Nyquist frequency. This is the default value used by all Venom modules.
 - 8th order with a cutoff at 80% of the Nyquist frequency.
-- 6th order with a cutoff at 50% of the Nyquist frequency.  
+- 6th order with a cutoff at 50% of the Nyquist frequency.
+
 Again, feel free to experiment to find what works best for you.
 
 ## Limitations of DC offset removal
@@ -304,6 +305,10 @@ This small color coded switch controls how much oversampling is applied to reduc
 - x32 (purple)
 
 Aliasing might not be noticeable with chaotic and/or low frequency outputs. But the aliasing can become painfully obvious when producing high frequency coherent output unless oversampling is used. But oversampling is rather CPU intensive, so you want to use the minimum amount that gives good results. An oversample value of x8 uses reasonable CPU with VCV running at 48 kHz, and provides clean output in all but the most extreme cases.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 Due to float arithmetic limitations, the oscillators would stall at the lowest frequency if the VCV sample rate is set above 48 kHz and high oversample rates are used. To compensate, the maximum allowed oversampling is reduced as the VCV sample rate increases. This enables the oscillators to cover their full range regardless what VCV sample rate is used.
 
@@ -526,6 +531,10 @@ The yellow lights only monitor a single channel - by default they monitor channe
 
 ### Audio Processing
 By default Bernoulli Switch is configured for switching gates or CV signals, but it can also process audio signals. If you switch audio at slow rates you may get unwanted pops. If you switch audio at audio rates then you may get unwanted aliasing. The module context menu has Audio Process options to reduce or eliminate these artifacts: Antipop crossfade for slow switching, and various oversampling options for audio rate switching. A small LED between the OUTPUT ports glows red when Anti-Pop Switching is in effect, and blue when any of the oversampling options is enabled. The LED is off (black) when the Audio Process is set to Off (the default).
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 ### Factory Presets
 The following factory presets are available that emulate the four configurations available to the Mutable Instruments Branches module:
@@ -861,6 +870,10 @@ Controls how much oversampling is applied to reduce aliasing when using the outp
 - **16x (dark blue)**
 - **32x (purple)**
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 ### RANGE button
 Controls the output voltages used for high and low states. Unipolar outputs are typically used for CV, and bipolar for audio.
 - **0-1 (yellow)**: unipolar low = 0, high = 1
@@ -986,6 +999,10 @@ Hard clipping can produce significant aliasing if applied to audio signals.
 Soft clipping provides tanh saturation. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to signfcant aliasing.
 
 Soft oversampled clipping also provides saturation, but aliasing is greatly reduced.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
    
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
@@ -1731,6 +1748,10 @@ This color coded button controls how much oversampling is applied to minimize al
 - **16x (dark blue)**
 - **32x (purple)**
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 ### RND (Random Range) button
 This color coded button controls the output range of the internal random number generator
 - **0-1 V (yellow)**
@@ -1977,6 +1998,10 @@ Sets the level of oversamping to apply to all inputs and outputs. Oversampling c
 - **x16** (dark blue)
 - **x32** (purple)
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 ### N (Normal input value) button
 Sets the input voltage if the port is not patched
 - **5V** (yellow, default)
@@ -2156,6 +2181,10 @@ The color coded OVER button specifies the amount of oversampling that is done to
 Oversampling is relatively CPU intensive, and should only be applied when needed. Control voltage and low to medium frequency audio typically do not need oversampling. But the quality of moderately high frequency output can be improved by oversampling.
 
 Note that oversampling cannot remove aliasing that may be present in inputs driven at audio rates. To get the best possible results, make sure that all audio signals at the IN, CV, DRIVE, or LEVEL inputs is clean.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 ### Polyphony
 
@@ -2464,7 +2493,9 @@ Oversampling is typically not needed for most VCA operations. But it may be usef
 
 Oversampling uses significant CPU resources, so it is best to use the minimum oversampling value that gives the desired output.
 
-Note that oversampling cannot compensate for inputs that already contain aliasing.
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 ### Level knob
 Sets the maximum gain applied to the input signal(s). The range is dependent on the Range paramater. The default value is unity gain, regardless which range is chosen.
@@ -2713,6 +2744,14 @@ The color coded exclude button determines if patched channel outputs are exclude
 - **Off** (dark gray - default): patched output channels are included in the final mix
 - **On** (red): patched output channels are excluded from the final mix
 
+### Oversampling filter quality options
+Oversampling is used by some Clip options as well as the VCA bandlimitted options. These options always use 4x oversampling.
+
+There is a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
+
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
@@ -2806,6 +2845,10 @@ This color coded button controls how much oversampling is applied to control ali
 - **x8** (light blue)
 - **x16** (dark blue)
 - **x32** (purple)
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 Note that oversampling is CPU intensive, so best to use the lowest amount of oversampling that gives satisfactory results.
 
@@ -3074,6 +3117,10 @@ Wave folding, ring modulation, and amplitude modulation can introduce many harmo
 - x16
 - x32
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 By default, oversampling is applied to all inputs.
 
 Oversampling has a significant CPU cost, so best to apply the minimum amount that sounds good. LFO rate modulation should not need oversampling. The three CV input ports have a context menu option to disable oversampling for that port. These ports have a LED above and to the right of the port. It is off if there is no patched input, or if the OverSample button is set to Off. It is yellow if there is input and oversampling is applied. It is red if there is input and oversampling is active for the module, but disabled for that port.
@@ -3249,6 +3296,10 @@ The gate high and low values are 0V and 10V by default. The module context menu 
 By default WINCOMP is configured to output CV values, without any anti-aliasing. But if producing audio output, then the output may have unacceptable aliasing artifacts. The context menu has an option to enable oversampling to greatly reduce aliasing in audio outputs. The oversampling applies to all the outputs, including gate outputs.
 
 Oversampling uses significant CPU, so there are multiple options to choose from: x2, x4, x8, and x16. The higher the oversample rate, the better the result, but more CPU is used.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 An LED glows blue above the output ports if oversampling is enabled. The LED is black when oversampling is off.
 
