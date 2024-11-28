@@ -7,7 +7,9 @@
     - New patches default to 10th order (better)
     - Pre-existing patches use 6th order
 - VCO Lab and VCO Unit
-  - Improved audio quality of square and saw waves
+  - Improved audio quality of square and saw waves with DPW anti-aliasing
+    - Added context menu option to disable DPW
+    - Pre-existing patches default to DPW disabled
   - Removed max frequency limit
 
 ### Bug Fixes
