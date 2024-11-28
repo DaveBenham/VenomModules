@@ -2863,7 +2863,7 @@ To further reduce CPU usage, oversampling may be disabled for individual inputs 
 Square and Saw waves have the highest high frequency harmonic content that can lead to more aliasing. To further reduce aliasing, VCO Lab uses DPW (Differentiated
 Polynomial Waveforms) when generating saw or pulse waves in audio mode.
 
-DPW does not work well at low frequencies due to single precision floating point limitations, so DPW processing is automatically disabled when low frequency audio rates are used. This point varies depending on the sample rate and amount of oversampling.
+DPW does not work well at low frequencies due to single precision floating point limitations, so DPW processing is automatically disabled when producing low frequency audio. This point varies depending on the sample rate and amount of oversampling.
 
 DPW is always disabled when using any of the LFO modes, regardless the frequency. DPW is also disabled if the shape modulation is set to a morphing waveform, or one of the rectify modes.
 
