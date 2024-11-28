@@ -2830,6 +2830,8 @@ This color coded button controls the overall mode of the oscillator
 
 In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input or phase CV input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
 
+Phase distortion synthesis can be explored via the 0 Hz carrier mode. Setting the phase input attenuator to 40% will cause a 10V phasor change to exactly produce one wave cycle. The smoothest results will be achieved if all anti-aliasing is disabled for both the driving phasor, as well as the VCO Lab in 0 Hz carrier mode. For VCO Lab this means turning oversampling off, and disabling DPW anti-alias suppression.
+
 If using any of the one shot modes, then the oscillator will not produce any output until it receives a trigger or gate at the Sync input.
  - Triggered one shots will output exactly one complete cycle and then stop until the next trigger is received. If the cycle has not yet completed when a sync trigger is received, then the trigger is ignored. This works well for creating undertone or subharmonic series!
  - Retriggered one shots will output one complete cycle and then stop until the next trigger is received. If another trigger is received before the cycle completion, then the wave will be reset to phase 0 and retriggered.
@@ -2857,6 +2859,16 @@ To further reduce CPU usage, oversampling may be disabled for individual inputs 
 - yellow indicates the input is being oversampled
 - red indicates the input is not being oversampled
 
+### DPW alias supression
+Square and Saw waves have the highest high frequency harmonic content that can lead to more aliasing. To further reduce aliasing, VCO Lab uses DPW (Differentiated
+Polynomial Waveforms) when generating saw or pulse waves in audio mode.
+
+DPW does not work well at low frequencies due to single precision floating point limitations, so DPW processing is automatically disabled when low frequency audio rates are used. This point varies depending on the sample rate and amount of oversampling.
+
+DPW is always disabled when using any of the LFO modes, regardless the frequency. DPW is also disabled if the shape modulation is set to a morphing waveform, or one of the rectify modes.
+
+There is a context menu option to disable DPW entirely for all audio modes.
+
 ### DC (DC block) button
 This color coded button controls whether a high pass filter is applied to remove DC offset from all outputs
 - **Off** (dark gray - default)
@@ -2866,9 +2878,9 @@ See this note on current [Limitations of DC offset removal](#limitations-of-dc-o
 
 ### Frequency limits
 
-Regardless what mode, the VCO Lab has a hard upper frequency limit of 12 kHz. The frequency cannot be modulated above this limit.
+Like any digital oscillator, there is a hard upper frequency limit at 50% of the sample rate called the Nyquist frequency. However, VCO Lab does not limit any V/Oct voltage, so the oscillator may attempt to produce higher frequencies. If oversampling is not enabled, then the high frequencies are reflected back below the Nyquist frequency. If oversampling is enabled, then the amplitude of high frequencies is attenuated dramatically as the Nyquist frequency is approached.
 
-There is no fixed lower frequency limit. However, at very low frequencies the oscillator will stall due to the limits of single precision floating point numbers. The stall point varies depending on the VCV engine sample rate, and the amount of oversampling. The stall point rises as the engine sample rate rises and/or as the oversampling rises.
+Similarly, the module does not limit the low frequencies either. But here again there is a practical limit due to the limitations of single precision floating point numbers. When at very low frequencies, the oscillator may stall and cease oscillating. The stall point varies depending on the VCV engine sample rate, and the amount of oversampling. The stall point rises as the engine sample rate rises and/or as the oversampling rises.
 
 ### FREQ/BIAS (Frequency/Bias) knob
 Sets the base frequency of the oscillator. The knob range varies depending on the Frequency Mode and the current selected Octave. Normally the knob uses an exponential scale, but in 0 Hz carrier mode it is a linear Bias with a very small range. Below are the knob ranges by mode when the Octave is at 0. Note that the Octave does not modify the bias frequency when in 0 Hz carrier mode.
