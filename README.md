@@ -6,6 +6,7 @@ Venom modules version 2.11.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham
 [Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Venom Expander Modules](#venom-expander-modules)  
+[Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
 [Limitations of DC offset removal](#limitations-of-dc-offset-removal)  
 [Acknowledgments](#acknowledgments)  
 
