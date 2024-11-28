@@ -46,7 +46,9 @@ struct VCAMix4Stereo : MixBaseModule {
   int oversample = 4;
   OversampleFilter_4 leftUpSample[4]{}, leftDownSample[4]{}, 
                      rightUpSample[4]{}, rightDownSample[4]{},
-                     leftVcaBandlimit[2][5][4]{}, rightVcaBandlimit[2][5][4]{};
+                     cvVcaBandlimit[5][4]{},
+                     inLeftVcaBandlimit[5][4]{}, inRightVcaBandlimit[5][4]{},
+                     outLeftVcaBandlimit[5][4]{}, outRightVcaBandlimit[5][4]{};
   DCBlockFilter_4 leftDcBlockBeforeFilter[4]{}, leftDcBlockAfterFilter[4]{}, 
                   rightDcBlockBeforeFilter[4]{}, rightDcBlockAfterFilter[4]{};
 
@@ -88,27 +90,29 @@ struct VCAMix4Stereo : MixBaseModule {
     for (int i=0; i<4; i++){
       configBypass(inputs[RIGHT_INPUTS+i].isConnected() ? RIGHT_INPUTS+i : LEFT_INPUTS+i, RIGHT_OUTPUTS+i);
     }
-    initOversample();
+    oversampleStages = 5;
+    setOversample();
   }
 
-  void initOversample(){
+  void setOversample() override {
     for (int i=0; i<4; i++){
-      leftUpSample[i].setOversample(oversample);
-      leftDownSample[i].setOversample(oversample);
-      rightUpSample[i].setOversample(oversample);
-      rightDownSample[i].setOversample(oversample);
+      leftUpSample[i].setOversample(oversample, oversampleStages);
+      leftDownSample[i].setOversample(oversample, oversampleStages);
+      rightUpSample[i].setOversample(oversample, oversampleStages);
+      rightDownSample[i].setOversample(oversample, oversampleStages);
       for (int j=0; j<5; j++){
-        leftVcaBandlimit[0][j][i].setOversample(1);
-        leftVcaBandlimit[1][j][i].setOversample(1);
-        rightVcaBandlimit[0][j][i].setOversample(1);
-        rightVcaBandlimit[1][j][i].setOversample(1);
+        cvVcaBandlimit[j][i].setOversample(oversample, oversampleStages);
+        inLeftVcaBandlimit[j][i].setOversample(oversample, oversampleStages);
+        outLeftVcaBandlimit[j][i].setOversample(oversample, oversampleStages);
+        inRightVcaBandlimit[j][i].setOversample(oversample, oversampleStages);
+        outRightVcaBandlimit[j][i].setOversample(oversample, oversampleStages);
       }
     }
   }
 
   void onReset(const ResetEvent& e) override {
     mode = -1;
-    initOversample();
+    setOversample();
     Module::onReset(e);
   }
 
@@ -170,98 +174,57 @@ struct VCAMix4Stereo : MixBaseModule {
           channels = inChannels[i];
       }
     }
-    simd::float_4 leftOut, rightOut, leftRtn, rightRtn, cv, leftChannel[4], rightChannel[4];
+    simd::float_4 leftOut, rightOut, leftRtn, rightRtn, cv, leftChannel[4]{}, rightChannel[4]{};
     bool sendChain;
     float channelScale;
     float fadeLevel[5];
     fadeLevel[4] = 1.f; //initialize final mix fade factor
     bool isFadeType = fadeExpander && fadeExpander->mixType == MIXFADE_TYPE;
     for (int c=0; c<loopChannels; c+=4){
+      int vcaOversample = 0;
       leftOut = mode==1 ? inputs[LEFT_CHAIN_INPUT].getVoltageSum() : inputs[LEFT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       if (inputs[RIGHT_CHAIN_INPUT].isConnected())
         rightOut = mode==1 ? inputs[RIGHT_CHAIN_INPUT].getVoltageSum() : inputs[RIGHT_CHAIN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
       else
         rightOut = leftOut;
-      if (mode == 1){
-        for (int i=0; i<4; i++){
-          cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
-          leftChannel[i] = inputs[LEFT_INPUTS+i].getVoltageSum() + preOff[i];
-          channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
+      for (int i=0; i<4; i++){
+        cv = inputs[CV_INPUTS+i].isConnected() ? (mode==1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c)/10.f) : 1.0f;
+        if (inputs[RIGHT_INPUTS+i].isConnected()) {
+          leftChannel[i] = (mode==1 ? inputs[LEFT_INPUTS+i].getVoltageSum() : inputs[LEFT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c)) + preOff[i];
+          rightChannel[i] = (mode==1 ? inputs[RIGHT_INPUTS+i].getVoltageSum() : inputs[RIGHT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c)) + preOff[i];
+        }
+        else {
+          leftChannel[i] = (mode==1 ? inputs[LEFT_INPUTS+i].getVoltageSum() : inputs[LEFT_INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c)) + preOff[i];
+          rightChannel[i] = leftChannel[i];
+        }
+        vcaOversample = vcaMode>=4 && inputs[CV_INPUTS+i].isConnected() && (inputs[LEFT_INPUTS+i].isConnected() || inputs[RIGHT_INPUTS+i].isConnected()) ? 4 : 1;
+        channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
+        for (int s=0; s<vcaOversample; s++) {
+          if (vcaOversample > 1) {
+            cv = cvVcaBandlimit[i][c/4].process(s ? 0.f : cv*vcaOversample);
+            leftChannel[i] = inLeftVcaBandlimit[i][c/4].process(s ? 0.f : leftChannel[i]*vcaOversample);
+            rightChannel[i] = inRightVcaBandlimit[i][c/4].process(s ? 0.f : rightChannel[i]*vcaOversample);
+          }
           if (vcaMode <= 1)
             cv = simd::clamp(cv, 0.f, 1.f);
           if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
             cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
-          if (vcaMode >= 4) {
-            cv = leftVcaBandlimit[0][i][c/4].process(cv);
-            leftChannel[i] = leftVcaBandlimit[1][i][c/4].process(leftChannel[i]);
-          }
-          leftChannel[i] *= channelScale * cv;
-          leftChannel[i] += postOff[i];
-          outputs[LEFT_OUTPUTS+i].setVoltageSimd(leftChannel[i], c);
-
-          if(inputs[RIGHT_INPUTS+i].isConnected()){
-            rightChannel[i] = inputs[RIGHT_INPUTS+i].getVoltageSum() + preOff[i];
-            if (vcaMode >= 4)
-              rightChannel[i] = rightVcaBandlimit[1][i][c/4].process(rightChannel[i]);
-            rightChannel[i] *= channelScale * cv;
-            rightChannel[i] += postOff[i];
-          }
-          else rightChannel[i] = leftChannel[i];
-          outputs[RIGHT_OUTPUTS+i].setVoltageSimd(rightChannel[i], c);
-          if (exclude && outputs[LEFT_OUTPUTS+i].isConnected())
-            leftChannel[i] = 0.f;
-          if (exclude && outputs[RIGHT_OUTPUTS+i].isConnected())
-            rightChannel[i] = 0.f;
-        }
-      }
-      else {
-        for (int i=0; i<4; i++){
-          cv = inputs[CV_INPUTS+i].isConnected() ? mode == 1 ? inputs[CV_INPUTS+i].getVoltageSum()/10.f : inputs[CV_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) / 10.f : 1.0f;
-          if (vcaMode <= 1)
-            cv = simd::clamp(cv, 0.f, 1.f);
-          if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
-            cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
-          channelScale = (params[LEVEL_PARAMS+i].getValue()+offset)*scale;
-          if (connected[i]){
-            leftChannel[i] = inputs[LEFT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) + preOff[i];
-            if (vcaMode >= 4){
-              cv = leftVcaBandlimit[0][i][c/4].process(cv);
-              leftChannel[i] = leftVcaBandlimit[1][i][c/4].process(leftChannel[i]);
-            }
-            leftChannel[i] *= channelScale * cv;
-            leftChannel[i] += postOff[i];
-            outputs[LEFT_OUTPUTS+i].setVoltageSimd(leftChannel[i], c);
-            if (inputs[RIGHT_INPUTS+i].isConnected()){
-              rightChannel[i] = inputs[RIGHT_INPUTS+i].getPolyVoltageSimd<simd::float_4>(c) + preOff[i];
-              if (vcaMode >= 4)
-                rightChannel[i] = rightVcaBandlimit[1][i][c/4].process(rightChannel[i]);
-              rightChannel[i] *= channelScale * cv;
-              rightChannel[i] += postOff[i];
-            }
-            else rightChannel[i] = leftChannel[i];
-            outputs[RIGHT_OUTPUTS+i].setVoltageSimd(rightChannel[i], c);
-            if (exclude && outputs[LEFT_OUTPUTS+i].isConnected())
-              leftChannel[i] = 0.f;
-            if (exclude && outputs[RIGHT_OUTPUTS+i].isConnected())
-              rightChannel[i] = 0.f;
-          }
-          else {
-            leftChannel[i] = normal * channelScale + preOff[i];
-            if (vcaMode >= 4)
-              cv = leftVcaBandlimit[0][i][c/4].process(cv);
-            leftChannel[i] *= cv;
-            leftChannel[i] += postOff[i];
-            rightChannel[i] = leftChannel[i];
-            outputs[LEFT_OUTPUTS+i].setVoltageSimd(leftChannel[i], c);
-            outputs[RIGHT_OUTPUTS+i].setVoltageSimd(rightChannel[i], c);
-            if (exclude && outputs[LEFT_OUTPUTS+i].isConnected())
-              leftChannel[i] = 0.f;
-            if (exclude && outputs[RIGHT_OUTPUTS+i].isConnected())
-              rightChannel[i] = 0.f;
+          leftChannel[i] *= channelScale*cv;
+          rightChannel[i] *= channelScale*cv;
+          if (vcaOversample > 1){
+            leftChannel[i] = outLeftVcaBandlimit[i][c/4].process(leftChannel[i]);
+            rightChannel[i] = outRightVcaBandlimit[i][c/4].process(rightChannel[i]);
           }
         }
+        leftChannel[i] += postOff[i];
+        outputs[LEFT_OUTPUTS+i].setVoltageSimd(leftChannel[i], c);
+        if (exclude && outputs[LEFT_OUTPUTS+i].isConnected())
+          leftChannel[i] = 0.f;
+        rightChannel[i] += postOff[i];
+        outputs[RIGHT_OUTPUTS+i].setVoltageSimd(rightChannel[i], c);
+        if (exclude && outputs[RIGHT_OUTPUTS+i].isConnected())
+          rightChannel[i] = 0.f;
       }
-      
       for (unsigned int x=0; x<expanders.size(); x++){
         MixModule* exp = expanders[x];
         MixModule* soloMod = NULL;
@@ -450,48 +413,94 @@ struct VCAMix4Stereo : MixBaseModule {
       leftOut += leftChannel[0] + leftChannel[1] + leftChannel[2] + leftChannel[3] + preMixOff;
       rightOut += rightChannel[0] + rightChannel[1] + rightChannel[2] + rightChannel[3] + preMixOff;
 
-      cv = inputs[MIX_CV_INPUT].isConnected() ? (mode == 1 ? inputs[MIX_CV_INPUT].getVoltage()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c) / 10.f) : 1.0f;
-      if (vcaMode <= 1)
-        cv = simd::clamp(cv, 0.f, 1.f);
-      if (vcaMode == 1 || vcaMode == 3)
-        cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
-      if (vcaMode >= 4)
-        cv = leftVcaBandlimit[0][4][c/4].process(cv);
+      cv = inputs[MIX_CV_INPUT].isConnected() ? (mode == 1 ? inputs[MIX_CV_INPUT].getVoltage()/10.f : inputs[MIX_CV_INPUT].getPolyVoltageSimd<simd::float_4>(c)/10.f) : 1.0f;
+      vcaOversample = vcaMode>=4 && inputs[MIX_CV_INPUT].isConnected() ? 4 : 1;
 
-      if (clip <= 3 || clip == 7) {
-        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
-        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
-      }
-      if (dcBlock && dcBlock <= 2){ // no oversample applied during DC removal
+      if (dcBlock && dcBlock < 3) {
         leftOut = leftDcBlockBeforeFilter[c/4].process(leftOut);
         rightOut = rightDcBlockBeforeFilter[c/4].process(rightOut);
       }
-      if (clip == 1 || clip == 4){
+
+      if (clip == 4) { // hard pre
         leftOut = clamp(leftOut, -10.f, 10.f);
         rightOut = clamp(rightOut, -10.f, 10.f);
       }
-      if (clip == 2 || clip ==5 ){
+      if (clip == 5) { // soft pre
         leftOut = softClip(leftOut);
         rightOut = softClip(rightOut);
       }
-      if (clip == 3 || clip >= 6){
+      if (clip==6 && vcaOversample==1) { // soft pre
         for (int i=0; i<oversample; i++){
           leftOut = leftUpSample[c/4].process(i ? simd::float_4::zero() : leftOut*oversample);
-          leftOut = (clip != 7) ? softClip(leftOut) : (softClip(leftOut*1.6667f) / 1.6667f);
+          leftOut = softClip(leftOut);
           leftOut = leftDownSample[c/4].process(leftOut);
           rightOut = rightUpSample[c/4].process(i ? simd::float_4::zero() : rightOut*oversample);
-          rightOut = (clip != 7) ? softClip(rightOut) : (softClip(rightOut*1.6667f) / 1.6667f);
+          rightOut = softClip(rightOut);
           rightOut = rightDownSample[c/4].process(rightOut);
         }
       }
-      if (dcBlock == 3 || (dcBlock == 2 && clip)){ // no oversample applied during DC removal
+      for (int s=0; s<vcaOversample; s++) {
+        if (vcaOversample > 1) {
+          cv = cvVcaBandlimit[4][c/4].process(s ? 0.f : cv*vcaOversample);
+          leftOut = inLeftVcaBandlimit[4][c/4].process( s ? 0.f : leftOut*vcaOversample);
+          rightOut = inRightVcaBandlimit[4][c/4].process( s ? 0.f : rightOut*vcaOversample);
+        }
+        if (vcaMode <= 1)
+          cv = simd::clamp(cv, 0.f, 1.f);
+        if (vcaMode == 1 || vcaMode == 3 || vcaMode == 5)
+          cv = simd::sgn(cv)*simd::pow(simd::abs(cv), 4);
+        if (clip == 6 && vcaOversample>1) {
+          leftOut = softClip(leftOut);
+          rightOut = softClip(rightOut);
+        }
+        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+        leftOut += postMixOff;
+        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv;
+        rightOut += postMixOff;
+        if (clip==3 && vcaOversample>1) {
+          leftOut = softClip(leftOut);
+          rightOut = softClip(rightOut);
+        }
+        if (clip==7 && vcaOversample>1) {
+          leftOut = softClip(leftOut*1.6667f) / 1.6667f;
+          rightOut = softClip(rightOut*1.6667f) / 1.6667f;
+        }
+        if (vcaOversample > 1) {
+          leftOut = outLeftVcaBandlimit[4][c/4].process(leftOut);
+          rightOut = outRightVcaBandlimit[4][c/4].process(rightOut);
+        }
+      }
+
+      if (clip == 1) { // hard post
+        leftOut = clamp(leftOut, -10.f, 10.f);
+        rightOut = clamp(rightOut, -10.f, 10.f);
+      }    
+      if (clip == 2) { // { soft post
+        leftOut = softClip(leftOut);
+        rightOut = softClip(rightOut);
+      }    
+      if ((clip==3 || clip==7) && vcaOversample==1) { // soft post
+        for (int i=0; i<oversample; i++){
+          leftOut = leftUpSample[c/4].process(i ? simd::float_4::zero() : leftOut*oversample);
+          rightOut = rightUpSample[c/4].process(i ? simd::float_4::zero() : rightOut*oversample);
+          if (clip==7) {
+            leftOut = softClip(leftOut*1.6667f) / 1.6667f;
+            rightOut = softClip(rightOut*1.6667f) / 1.6667f;
+          }
+          else {
+            leftOut = softClip(leftOut);
+            rightOut = softClip(rightOut);
+          }
+          leftOut = leftDownSample[c/4].process(leftOut);
+          rightOut = rightDownSample[c/4].process(rightOut);
+        }
+      }  
+
+      if (dcBlock == 3 || (dcBlock == 2 && clip)) {
         leftOut = leftDcBlockAfterFilter[c/4].process(leftOut);
         rightOut = rightDcBlockAfterFilter[c/4].process(rightOut);
       }
-      if (clip > 3 && clip < 7) {
-        leftOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
-        rightOut *= (params[MIX_LEVEL_PARAM].getValue()+offset)*scale*cv + postMixOff;
-      }
+
       leftOut  *= fadeLevel[4]; // Mix fade factor
       rightOut *= fadeLevel[4]; // Mix fade factor
       outputs[LEFT_MIX_OUTPUT].setVoltageSimd(leftOut, c);
