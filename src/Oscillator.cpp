@@ -180,6 +180,7 @@ struct Oscillator : VenomModule {
   };
 
   bool clampLevel = true;
+  bool disableDPW = false;
   bool disableOver[INPUTS_LEN]{};
   bool unity5[5]{};
   bool bipolar[5]{};
@@ -320,10 +321,12 @@ struct Oscillator : VenomModule {
     return -(((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
   }
   
-  void setMode() {
+  void setMode(bool aliasSuppressOnly = false) {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
-    aliasSuppress = !mode;
+    aliasSuppress = !mode && !disableDPW;
+    if (aliasSuppressOnly)
+      return;
     if (!paramExtensions[OVER_PARAM].locked)
       params[OVER_PARAM].setValue(modeDefaultOver[mode]);
     paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
@@ -1017,6 +1020,7 @@ struct Oscillator : VenomModule {
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
+    json_object_set_new(rootJ, "disableDPW", json_boolean(disableDPW));
     return rootJ;
   }
 
@@ -1060,16 +1064,14 @@ struct Oscillator : VenomModule {
     if ((val = json_object_get(rootJ, "linDCCouple"))) {
       linDCCouple = json_boolean_value(val);
     }
+    val = json_object_get(rootJ, "disableDPW");
+    disableDPW = val ? json_boolean_value(val) : true;
     setMode();
     if ((val = json_object_get(rootJ, "overParam"))) {
       params[OVER_PARAM].setValue(json_integer_value(val));
     }
-    if ((val = json_object_get(rootJ, "clampLevel"))) {
-      clampLevel = json_boolean_value(val);
-    }
-    else {
-      clampLevel = false;
-    }
+    val = json_object_get(rootJ, "clampLevel");
+    clampLevel = val ? json_boolean_value(val) : false;
   }
   
 };
@@ -1307,6 +1309,15 @@ struct OscillatorWidget : VenomWidget {
     Oscillator* module = dynamic_cast<Oscillator*>(this->module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("Limit levels to 100%", "", &module->clampLevel));
+    menu->addChild(createBoolMenuItem("Disable DPW anti-alias", "",
+      [=]() {
+        return module->disableDPW;
+      },
+      [=](bool val) {
+        module->disableDPW = val;
+        module->setMode(true);
+      }
+    ));    
     VenomWidget::appendContextMenu(menu);
   }
 

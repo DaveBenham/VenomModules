@@ -70,6 +70,7 @@ struct VCOUnit : VenomModule {
   float shpScale = 0.2f;
   bool softSync = false;
   bool alternate = false;
+  bool disableDPW = false;
   bool aliasSuppress = false;
   using float_4 = simd::float_4;
   int oversample = -1;
@@ -192,10 +193,12 @@ struct VCOUnit : VenomModule {
     return -(((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
   }
   
-  void setMode() {
+  void setMode(bool aliasSuppressOnly = false) {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
-    aliasSuppress = !mode;
+    aliasSuppress = !(mode || disableDPW);
+    if (aliasSuppressOnly)
+      return;
     if (!paramExtensions[OVER_PARAM].locked)
       params[OVER_PARAM].setValue(modeDefaultOver[mode]);
     paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
@@ -668,6 +671,7 @@ struct VCOUnit : VenomModule {
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
+    json_object_set_new(rootJ, "disableDPW", json_boolean(disableDPW));
     json_object_set_new(rootJ, "shapeModeParam", json_integer(params[SHAPE_MODE_PARAM].getValue()));
     return rootJ;
   }
@@ -691,6 +695,8 @@ struct VCOUnit : VenomModule {
     if ((val = json_object_get(rootJ, "linDCCouple"))) {
       linDCCouple = json_boolean_value(val);
     }
+    val = json_object_get(rootJ, "disableDPW");
+    disableDPW = val ? json_boolean_value(val) : true;
     setMode();
     if ((val = json_object_get(rootJ, "overParam"))) {
       params[OVER_PARAM].setValue(json_integer_value(val));
@@ -898,6 +904,15 @@ struct VCOUnitWidget : VenomWidget {
     VCOUnit* module = dynamic_cast<VCOUnit*>(this->module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("Limit level to 100%", "", &module->clampLevel));
+    menu->addChild(createBoolMenuItem("Disable DPW anti-alias", "",
+      [=]() {
+        return module->disableDPW;
+      },
+      [=](bool val) {
+        module->disableDPW = val;
+        module->setMode(true);
+      }
+    ));    
     VenomWidget::appendContextMenu(menu);
   }
 
