@@ -113,7 +113,7 @@ Most Venom modules that use oversampling have parameters on the faceplate to cho
 All of the Venom modules with oversampling also have a context menu option to specify the quality of the filter used. There are three options available:
 - 10th order with a cutoff at 80% of the Nyquist frequency. This is the default value used by all Venom modules.
 - 8th order with a cutoff at 80% of the Nyquist frequency.
-- 6th order with a cutoff at 50% of the Nyquist frequency.
+- 6th order with a cutoff at 50% of the Nyquist frequency.  
 Again, feel free to experiment to find what works best for you.
 
 ## Limitations of DC offset removal
