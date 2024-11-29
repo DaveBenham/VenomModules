@@ -2812,10 +2812,10 @@ VCO LAB is fully polyphonic - All inputs can process polyphonic signals.
 
 The number of output channels is the maximum number of channels found across all inputs.
 
-Monophonic inputs are replicated to match the number of output channels. Polyphonic inputs that have fewer channels use 0V for missing channels.
+Monophonic inputs are replicated to match the number of output channels. Polyphonic inputs that have fewer channels use constant 0V for missing channels.
 
 ### Reset Poly (Reset Polyphony count) button
-Momentarily forces all outputs to be monophonic - useful when the input polyphony count is reduced when the VCO Lab has feedback. After release, the correct output poly count will be computed. Without the Reset Poly button it would require temporary removal of the feedback to restore the correct poly count.
+Momentarily forces all outputs to be monophonic - useful when the input polyphony count is reduced while the VCO Lab has feedback. The reset forces the correct output poly count to be computed. Without the Reset Poly button it would require temporary removal of all feedback to restore the correct poly count.
 
 ### FRQ (Frequency Mode) button
 This color coded button controls the overall mode of the oscillator
