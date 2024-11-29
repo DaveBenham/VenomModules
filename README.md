@@ -2899,9 +2899,9 @@ When in audio or low frequency mode, the Octave knob adds or subtracts octaves t
 When in 0 Hz carrier mode the knob sets the range for the linear FM depth. Low frequency modulation requires a smaller range, and higher frequency modulation a higher range to achieve the same degree of FM "folding"
 
 ### Soft Sync input
-This port functions as a Schmitt trigger that goes high above 2V and goes low below 0.2V. The soft sync reverses the waveforms each time the signal transitions to a high state.
+The soft Sync reverses the waveforms upon the leading edge of an incomming trigger.
 
-The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be used.
+The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used.
 
 This port supports oversampling that can be disabled via the port context menu.
 
@@ -2947,11 +2947,10 @@ When in 0 Hz Carrier mode the input modulates the linear Bias at 0.02 Hz per vol
 This port does not support oversampling.
 
 ### Sync (Hard Sync) input
-This port functions as a Schmitt trigger that goes high above 2V and goes low below 0.2V. The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be used.
+The Sync input resets the master oscillator phase to 0 upon the leading edge of an incomming trigger.  
+If using any of the one shot modes, the Sync is used to trigger the start of a wave cycle.
 
-The sync resets the master oscillator phase to 0 upon transition to high.
-
-The Sync input also triggers the oscillator when using any of the four one shot modes.
+The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used.
 
 This port supports oversampling that can be disabled via the port context menu.
 
@@ -3010,6 +3009,7 @@ The even waveform is the same as what is produced by the Befaco Even module. It 
 The initial release of VCO Lab required 20 volts peak to peak CV to cover the entire shape range for Sin, Tri, and Saw. Starting with V 2.9.0 these ports now default to 10 volts peak to peak covering the entire range. These ports have a context menu option to revert to old behavior.
 
 Below is a summary of the wave shaping when using the default (yellow) mode for all four waveforms.
+
 |Waveform|Negative modulation|No modulation|Positive modulation|
 |---|---|---|---|
 |**Sine**|exponential response|mathematical sine|logarithmic response|
@@ -3039,6 +3039,8 @@ The image below shows the phase relationship between the four waveforms when no 
 The phase of each waveform can be modulated relative to the other waveforms. This can have a dramatic impact on any resultant mix.
 
 Each waveform can also be independently modulated at audio rates to achieve what is commonly mislabeled as linear through 0 frequency modulation. The effect is similar to, but definitely not the same as true through 0 frequency modulation.
+
+When in 0 Hz carrier mode, phase modulation can be used to explore the world of phase distortion synthesis. Set the attenuator to 40% so that a 10V phasor delta equates to exactly one waveform cycle. Anti-aliasing on either the incoming phasor or the 0 Hz carrier will lead to unwanted distortion at phase discontinuities. So to get smooth results, oversampling should be off and DPW disabled when doing phase distortion synthesis.
 
 #### Global (Mix) Phase Modulation
 The Mix phase modulation is actually a global modulation that is applied to all waveforms prior to mixing.
