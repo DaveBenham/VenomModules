@@ -3090,7 +3090,7 @@ A smaller version of VCO Lab with only one waveform output at a time, without an
 
 A Wave switch is added to select between Sine, Triangle, Square, and Saw.
 
-The behavior of the Shape changes depending on the waveform selected.
+The behavior of Shape modulation changes depending on the waveform selected.
 
 Pretty much all other VCO Lab functionality is the same, except there is no mix, level assignment, or mix shaping.
 
