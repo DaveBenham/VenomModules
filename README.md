@@ -2868,7 +2868,7 @@ To further reduce CPU usage, oversampling may be disabled for individual inputs 
 - red indicates the input is not being oversampled
 
 ### DPW alias supression
-Square and Saw waves have the highest high frequency harmonic content that can lead to more aliasing. To further reduce aliasing, VCO Lab uses DPW (Differentiated
+Square and Saw waves have the most high frequency harmonic content that can lead to more aliasing. To further reduce aliasing, VCO Lab uses DPW (Differentiated
 Polynomial Waveforms) when generating saw or pulse waves in audio mode.
 
 DPW does not work well at low frequencies due to single precision floating point limitations, so DPW processing is automatically disabled when producing low frequency audio. This point varies depending on the sample rate and amount of oversampling.
