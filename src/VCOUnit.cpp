@@ -68,6 +68,7 @@ struct VCOUnit : VenomModule {
   bool bipolar = false;
   float lvlScale = 0.1f;
   float shpScale = 0.2f;
+  float syncHi = 2.0f, syncLo = 0.2f;
   bool softSync = false;
   bool alternate = false;
   bool disableDPW = false;
@@ -404,7 +405,7 @@ struct VCOUnit : VenomModule {
             }
           } // else preserve prior value
           for (int i=0; i<4; i++){
-            rev[i] = revTrig[c+i].process(revIn[i], 0.2f, 2.f);
+            rev[i] = revTrig[c+i].process(revIn[i], syncLo, syncHi);
           }
         }
         float_4 sync{};
@@ -417,7 +418,7 @@ struct VCOUnit : VenomModule {
             }
           } // else preserve prior syncIn value
           for (int i=0; i<4; i++){
-            sync[i] = syncTrig[c+i].process(syncIn[i], 0.2f, 2.f) && !(noRetrigger && onceActive[s][i]);
+            sync[i] = syncTrig[c+i].process(syncIn[i], syncLo, syncHi) && !(noRetrigger && onceActive[s][i]);
           }
         } else onceActive[s] = float_4::zero();
         if (!alternate) {
@@ -672,6 +673,7 @@ struct VCOUnit : VenomModule {
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
     json_object_set_new(rootJ, "disableDPW", json_boolean(disableDPW));
+    json_object_set_new(rootJ, "syncAt0", json_boolean(syncLo<0.f));
     json_object_set_new(rootJ, "shapeModeParam", json_integer(params[SHAPE_MODE_PARAM].getValue()));
     return rootJ;
   }
@@ -703,6 +705,10 @@ struct VCOUnit : VenomModule {
     }
     if ((val = json_object_get(rootJ, "clampLevel"))) {
       clampLevel = json_boolean_value(val);
+    }
+    if ((val = json_object_get(rootJ, "syncAt0"))) {
+      syncHi = json_boolean_value(val) ? 0.f : 2.f;
+      syncLo = json_boolean_value(val) ? -2.f : 0.2f;
     }
     setWave();
     if ((val = json_object_get(rootJ, "shapeModeParam"))) {
@@ -913,6 +919,15 @@ struct VCOUnitWidget : VenomWidget {
         module->setMode(true);
       }
     ));    
+    menu->addChild(createIndexSubmenuItem(
+      "Sync trigger threshold",
+      {"High 2V, Low 0.2V", "High 0V, Low -2V"},
+      [=]() {return module->syncLo<0.f ? 1 : 0;},
+      [=](int val) {
+        module->syncHi = val ? 0.f : 2.f;
+        module->syncLo = val ? -2.f : 0.2f;
+      }
+    ));
     VenomWidget::appendContextMenu(menu);
   }
 

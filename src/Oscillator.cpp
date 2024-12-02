@@ -185,6 +185,7 @@ struct Oscillator : VenomModule {
   bool unity5[5]{};
   bool bipolar[5]{};
   bool oldShpCV[4]{};
+  float syncHi = 2.0f, syncLo = 0.2f;
   float lvlScale[5]{0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
   float shpScale[4]{0.2f, 0.2f, 0.2f, 0.2f};
   bool softSync = false;
@@ -208,7 +209,6 @@ struct Oscillator : VenomModule {
   bool gated = false;
   float_4 onceActive[4]{};
   int modeDefaultOver[3] = {2, 0, 2};
-  static constexpr float maxFreq = 12000.f;
   
   struct PWQuantity : ParamQuantity {
     float getDisplayValue() override {
@@ -518,7 +518,7 @@ struct Oscillator : VenomModule {
             }
           } // else preserve prior value
           for (int i=0; i<4; i++){
-            rev[i] = revTrig[c+i].process(revIn[i], 0.2f, 2.f);
+            rev[i] = revTrig[c+i].process(revIn[i], syncLo, syncHi);
           }
         }
         float_4 sync{};
@@ -531,7 +531,7 @@ struct Oscillator : VenomModule {
             }
           } // else preserve prior syncIn value
           for (int i=0; i<4; i++){
-            sync[i] = syncTrig[c+i].process(syncIn[i], 0.2f, 2.f) && !(noRetrigger && onceActive[s][i]);
+            sync[i] = syncTrig[c+i].process(syncIn[i], syncLo, syncHi) && !(noRetrigger && onceActive[s][i]);
           }
         } else onceActive[s] = float_4::zero();
         if (!alternate) {
@@ -1020,6 +1020,7 @@ struct Oscillator : VenomModule {
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
+    json_object_set_new(rootJ, "syncAt0", json_boolean(syncLo<0.f));
     json_object_set_new(rootJ, "disableDPW", json_boolean(disableDPW));
     return rootJ;
   }
@@ -1063,6 +1064,10 @@ struct Oscillator : VenomModule {
     }
     if ((val = json_object_get(rootJ, "linDCCouple"))) {
       linDCCouple = json_boolean_value(val);
+    }
+    if ((val = json_object_get(rootJ, "syncAt0"))) {
+      syncHi = json_boolean_value(val) ? 0.f : 2.f;
+      syncLo = json_boolean_value(val) ? -2.f : 0.2f;
     }
     val = json_object_get(rootJ, "disableDPW");
     disableDPW = val ? json_boolean_value(val) : true;
@@ -1318,6 +1323,15 @@ struct OscillatorWidget : VenomWidget {
         module->setMode(true);
       }
     ));    
+    menu->addChild(createIndexSubmenuItem(
+      "Sync trigger threshold",
+      {"High 2V, Low 0.2V", "High 0V, Low -2V"},
+      [=]() {return module->syncLo<0.f ? 1 : 0;},
+      [=](int val) {
+        module->syncHi = val ? 0.f : 2.f;
+        module->syncLo = val ? -2.f : 0.2f;
+      }
+    ));
     VenomWidget::appendContextMenu(menu);
   }
 
