@@ -2903,7 +2903,7 @@ When in 0 Hz carrier mode the knob sets the range for the linear FM depth. Low f
 ### Soft Sync input
 The soft Sync reverses the waveforms upon the leading edge of an incomming trigger.
 
-The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used.
+The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point.
 
 This port supports oversampling that can be disabled via the port context menu.
 
@@ -2952,7 +2952,7 @@ This port does not support oversampling.
 The Sync input resets the master oscillator phase to 0 upon the leading edge of an incomming trigger.  
 If using any of the one shot modes, the Sync is used to trigger the start of a wave cycle.
 
-The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used.
+The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point.
 
 This port supports oversampling that can be disabled via the port context menu.
 
