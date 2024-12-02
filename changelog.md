@@ -10,6 +10,9 @@
   - Improved audio quality of square and saw waves with DPW anti-aliasing
     - Added context menu option to disable DPW
     - Pre-existing patches default to DPW disabled
+  - Added option to set the sync trigger thresholds
+    - Default continues to be 2V high, 0.2V low, which works for both unipolar and bipolar triggers
+    - 0V high, -2V low triggers at 0 crossing point, but only works with bipolar triggers
   - Removed max frequency limit
 
 ### Bug Fixes
