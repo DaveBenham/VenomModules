@@ -2568,7 +2568,7 @@ This color coded switch can apply an offset to the final output. The output offs
 
 ### Some Example Use Cases (just the tip of the iceberg)
 #### "Normal" VCA
-Set VCA Mode button to Bipolar 0-10V  
+Set VCA Mode button to Unipolar 0-10V  
 Set Bias knob to 0V  
 Patch envelope or other CV to Level CV input  
 Patch audio or CV to Left and/or Right input.  
@@ -2638,7 +2638,7 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 A simple utility module with 5 polyphonic input/output pairs suitable for unity mixing of stacked inputs, and/or introduction of sample delays.
 
 ### Unity Mixing
-Nothing special here - just taking advantage of VCV Rack's built in capability to stack input cables. But it can be convenient if you need to distributet the unity mix to multiple destinations.
+Nothing special here - just taking advantage of VCV Rack's built in capability to stack input cables. But it can be convenient if you need to distribute the unity mix to multiple destinations.
 
 ### Add Sample Delays
 Each input starting with the 2nd is normalled to the output above, with a delay of 1 sample added. So an input at port 1 with an output at port 5 will yield 4 sample delays, plus the delay introduced by the module itself, for a total of 5.
