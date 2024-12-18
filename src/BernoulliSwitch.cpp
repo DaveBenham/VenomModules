@@ -96,6 +96,7 @@ struct BernoulliSwitch : VenomModule {
     lights[POLY_SENSE_ALL_LIGHT].setBrightness(false);
     for (int i=0; i<PORT_MAX_CHANNELS; i++)
       fade[i].rise = fade[i].fall = FADE_RATE;
+    oversampleStages = 5;
   }
 
   void onPortChange(const PortChangeEvent& e) override {
@@ -107,6 +108,16 @@ struct BernoulliSwitch : VenomModule {
     oldChannels = 0;
     lights[NO_SWAP_LIGHT].setBrightness(true);
     lights[SWAP_LIGHT].setBrightness(false);
+  }
+  
+  void setOversample() override {
+    for (int c=0; c<4; c++) {
+      aUpSample[c].setOversample(oversample, oversampleStages);
+      bUpSample[c].setOversample(oversample, oversampleStages);
+      aDownSample[c].setOversample(oversample, oversampleStages);
+      bDownSample[c].setOversample(oversample, oversampleStages);
+      trigUpSample[c].setOversample(oversample, oversampleStages);
+    }
   }
   
   void process(const ProcessArgs& args) override {
@@ -184,13 +195,7 @@ struct BernoulliSwitch : VenomModule {
       deClick = (audioProc == 1);
       lights[AUDIO_LIGHT].setBrightness(deClick);
       lights[AUDIO_LIGHT+1].setBrightness(audioProc>1);
-      for (int c=0; c<4; c++) {
-        aUpSample[c].setOversample(oversample);
-        bUpSample[c].setOversample(oversample);
-        aDownSample[c].setOversample(oversample);
-        bDownSample[c].setOversample(oversample);
-        trigUpSample[c].setOversample(oversample);
-      }
+      setOversample();
     }
     lights[POLY_SENSE_ALL_LIGHT].setBrightness(inputPolyControl);
 

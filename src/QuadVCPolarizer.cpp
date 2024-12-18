@@ -50,6 +50,17 @@ struct QuadVCPolarizer : VenomModule {
       configInput(POLY_INPUT+i, string::f("Poly %d", i + 1));
       configOutput(POLY_OUTPUT+i, string::f("Poly %d", i + 1));
     }
+    oversampleStages = 5;
+  }
+  
+  void setOversample() override {
+    for (int i=0; i<4; i++){
+      for (int j=0; j<4; j++){
+        inUpSample[i][j].setOversample(oversample, oversampleStages);
+        cvUpSample[i][j].setOversample(oversample, oversampleStages);
+        outDownSample[i][j].setOversample(oversample, oversampleStages);
+      }
+    }
   }
 
   void process(const ProcessArgs& args) override {
@@ -59,13 +70,7 @@ struct QuadVCPolarizer : VenomModule {
     if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
       oversampleEnd = oversample-1;
-      for (int i=0; i<4; i++){
-        for (int j=0; j<4; j++){
-          inUpSample[i][j].setOversample(oversample);
-          cvUpSample[i][j].setOversample(oversample);
-          outDownSample[i][j].setOversample(oversample);
-        }
-      }
+      setOversample();
     }
     for (int i=3, j=2; i>=0; i=j--){
       if (outputs[POLY_OUTPUT+i].isConnected()){

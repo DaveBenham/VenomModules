@@ -1,5 +1,23 @@
 # Venom Modules Changelog
 
+## 2.11.1 (2024-12-17)
+### Enhancements
+- All modules with oversampling options
+  - New context menu option to select the quality of the oversampling filters
+    - New patches default to 10th order (better)
+    - Pre-existing patches use 6th order
+- VCO Lab and VCO Unit
+  - Improved audio quality of square and saw waves with DPW anti-aliasing
+    - Added context menu option to disable DPW
+    - Pre-existing patches default to DPW disabled
+  - Added option to set the sync trigger thresholds
+    - Default continues to be 2V high, 0.2V low, which works for both unipolar and bipolar triggers
+    - 0V high, -2V low triggers at 0 crossing point, but only works with bipolar triggers
+  - Removed max frequency limit
+
+### Bug Fixes
+- VCA Mix 4 and VCA Mix 4 Stereo: Band limiting (oversampling) VCA Mode options were improperly implemented
+
 ## 2.11.0 (2024-11-11)
 ### New Modules
 - Wave Folder

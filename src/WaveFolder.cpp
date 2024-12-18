@@ -76,6 +76,20 @@ struct WaveFolder : VenomModule {
     configOutput(POLY_OUTPUT, "Poly");
 
     configBypass(POLY_INPUT, POLY_OUTPUT);
+    
+    oversampleStages = 5;
+  }
+  
+  void setOversample() override {
+    if (oversample > 1) {
+      for (int i=0; i<4; i++){
+        preUpSample[i].setOversample(oversample, oversampleStages);
+        stageUpSample[i].setOversample(oversample, oversampleStages);
+        biasUpSample[i].setOversample(oversample, oversampleStages);
+        upSample[i].setOversample(oversample, oversampleStages);
+        downSample[i].setOversample(oversample, oversampleStages);
+      }
+    }
   }
 
   void process(const ProcessArgs& args) override {
@@ -85,15 +99,7 @@ struct WaveFolder : VenomModule {
     float limit = 10.f / 6.f;
     if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
-      if (oversample > 1) {
-        for (int i=0; i<4; i++){
-          preUpSample[i].setOversample(oversample);
-          stageUpSample[i].setOversample(oversample);
-          biasUpSample[i].setOversample(oversample);
-          upSample[i].setOversample(oversample);
-          downSample[i].setOversample(oversample);
-        }
-      }
+      setOversample();
     }
     
     if (stageRaw != params[STAGE_PARAM].getValue()) {

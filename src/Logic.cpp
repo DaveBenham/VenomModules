@@ -91,6 +91,20 @@ struct Logic : VenomModule {
       configOutput(GATE_OUTPUT + i, "Gate " + i_s);
       recycleLabels.push_back("Gate " + i_s + " output");
     }
+    
+    oversampleStages = 5;
+  }
+  
+  void setOversample() override {
+    highUpSample.setOversample(oversample, oversampleStages);
+    lowUpSample.setOversample(oversample, oversampleStages);
+    for (int c=0; c<CHANNEL_COUNT; c++){
+      for (int pi=0; pi<4; pi++){
+        aUpSample[c][pi].setOversample(oversample, oversampleStages);
+        bUpSample[c][pi].setOversample(oversample, oversampleStages);
+        outDownSample[c][pi].setOversample(oversample, oversampleStages);
+      }
+    }
   }
 
   void process(const ProcessArgs& args) override {
@@ -99,15 +113,7 @@ struct Logic : VenomModule {
     using int32_4 = simd::int32_4;
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
-      highUpSample.setOversample(oversample);
-      lowUpSample.setOversample(oversample);
-      for (int c=0; c<CHANNEL_COUNT; c++){
-        for (int pi=0; pi<4; pi++){
-          aUpSample[c][pi].setOversample(oversample);
-          bUpSample[c][pi].setOversample(oversample);
-          outDownSample[c][pi].setOversample(oversample);
-        }
-      }
+      setOversample();
     }
 
     int channelMap[CHANNEL_COUNT];

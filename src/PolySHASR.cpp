@@ -52,6 +52,17 @@ struct PolySHASR : VenomModule {
         ->description = i ? "Normalled to random value if trigger patched, else to previous row hold output" : "Normalled to random value";
       configOutput(OUTPUT+i, "Hold "+iStr);
     }
+    oversampleStages = 5;
+  }
+  
+  void setOversample() override {
+    for (int c=0; c<CHANNEL_COUNT; c++){
+      for (int pi=0; pi<4; pi++){
+        trigUpSample[c][pi].setOversample(oversample, oversampleStages);
+        inUpSample[c][pi].setOversample(oversample, oversampleStages);
+        outDownSample[c][pi].setOversample(oversample, oversampleStages);
+      }
+    }
   }
 
   void process(const ProcessArgs& args) override {
@@ -59,13 +70,7 @@ struct PolySHASR : VenomModule {
     VenomModule::process(args);
     if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
-      for (int c=0; c<CHANNEL_COUNT; c++){
-        for (int pi=0; pi<4; pi++){
-          trigUpSample[c][pi].setOversample(oversample);
-          inUpSample[c][pi].setOversample(oversample);
-          outDownSample[c][pi].setOversample(oversample);
-        }
-      }
+      setOversample();
     }
     int range = params[RANGE_PARAM].getValue();
     float scale = rangeScale[range], offset = rangeOffset[range];

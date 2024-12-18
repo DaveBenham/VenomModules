@@ -3,46 +3,85 @@
 
 #pragma once
 #include "rack.hpp"
-#define OVERSAMPLE_CUTOFF 0.25f
 
 class OversampleFilter {
   public:
-    void setOversample(int oversample) {
-      float cutoff = OVERSAMPLE_CUTOFF / oversample;
-      f[0].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, .51763809f, 1);
-      f[1].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.70710678f, 1);
-      f[2].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 1.9318517f, 1);
+    int stages = 3;
+    void setOversample(int oversample, int stageCnt = 3) {
+      stages = stageCnt;
+      float cutoff = 1.f / oversample;
+      switch (stages) {
+        case 3:
+          cutoff *= 0.25f;
+          f[0].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, .51763809f, 1);
+          f[1].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.70710678f, 1);
+          f[2].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 1.9318517f, 1);
+          break;
+        case 4:
+          cutoff *= 0.4f;
+          f[0].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.5098f, 1);
+          f[1].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.6013f, 1);
+          f[2].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.9000f, 1);
+          f[3].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 2.5268f, 1);
+          break;
+        default: // 5
+          cutoff *= 0.4;
+          f[0].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.5062f, 1);
+          f[1].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.5612f, 1);
+          f[2].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.7071f, 1);
+          f[3].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 1.1013f, 1);
+          f[4].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 3.1970f, 1);
+      }
     }
 
     float process(float x) {
-      x = f[0].process(x);
-      x = f[1].process(x);
-      x = f[2].process(x);
+      for (int i=0; i<stages; i++)
+        x = f[i].process(x);
       return x;
     }
 
   private:
-    rack::dsp::TBiquadFilter<float> f[3]{};
+    rack::dsp::TBiquadFilter<float> f[5]{};
 };
 
 class OversampleFilter_4 {
   public:
-    void setOversample(int oversample) {
-      float cutoff = OVERSAMPLE_CUTOFF / oversample;
-      f[0].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, .51763809f, 1);
-      f[1].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.70710678f, 1);
-      f[2].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 1.9318517f, 1);
+    int stages = 3;
+    void setOversample(int oversample, int stageCnt = 3) {
+      stages = stageCnt;
+      float cutoff = 1.f / oversample;
+      switch (stages) {
+        case 3:
+          cutoff *= 0.25f;
+          f[0].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.51763809f, 1);
+          f[1].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.70710678f, 1);
+          f[2].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 1.9318517f, 1);
+          break;
+        case 4:
+          cutoff *= 0.4f;
+          f[0].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.5098f, 1);
+          f[1].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.6013f, 1);
+          f[2].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.9000f, 1);
+          f[3].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 2.5268f, 1);
+          break;
+        default: // 5
+          cutoff *= 0.4;
+          f[0].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.5062f, 1);
+          f[1].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.5612f, 1);
+          f[2].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.7071f, 1);
+          f[3].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 1.1013f, 1);
+          f[4].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 3.1970f, 1);
+      }
     }
 
     rack::simd::float_4 process(rack::simd::float_4 x) {
-      x = f[0].process(x);
-      x = f[1].process(x);
-      x = f[2].process(x);
+      for (int i=0; i<stages; i++)
+        x = f[i].process(x);
       return x;
     }
 
   private:
-    rack::dsp::TBiquadFilter<rack::simd::float_4> f[3]{};
+    rack::dsp::TBiquadFilter<rack::simd::float_4> f[5]{};
 };
 
 /*

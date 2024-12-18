@@ -257,6 +257,7 @@ struct MixBaseModule : MixModule {
       monoPanLaw = json_integer_value(val);
     if ((val = json_object_get(rootJ, "stereoPanLaw")))
       stereoPanLaw = json_integer_value(val);
+    setOversample();
   }
 
 };

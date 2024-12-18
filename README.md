@@ -6,6 +6,7 @@ Venom modules version 2.11.0 for VCV Rack 2 are copyright 2023, 2024 Dave Benham
 [Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Venom Expander Modules](#venom-expander-modules)  
+[Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
 [Limitations of DC offset removal](#limitations-of-dc-offset-removal)  
 [Acknowledgments](#acknowledgments)  
 
@@ -100,10 +101,32 @@ VCV Rack supports two different mechanisms for implementinig expander modules:
 
 All Venom expanders are implemented using the second method where the base module directly accesses the expander, so Venom expanders do not introduce sample delays.
 
+[Return to Table Of Contents](#venom)
+
+## Anti-aliasing via oversampling
+All digital synthesis techniques must deal with anti-aliasing to get the best possible audio output. Frequencies above 50% of the sample rate (the Nyquist frequency) cannot be represented, and instead are reflected back below the Nyquist frequency. Harmonically rich wave forms like a saw wave can have harmonics above the Nyquist frequency that create inharmonic audible tones when reflected, called aliasing. These reflections are typically not wanted, so most digital systems use one or more techniques to greatly reduce the amplitude of aliased harmonics so as to make them inaudible.
+
+Venom uses oversampling as the primary anti-alias technique. Incoming signals are upsampled by factors of 2 with interpolation to get an effective sample rate with a much higher Nyquist frequency. All the digital computations are done at this higher frequency. The end result is filtered by a low pass filter with a cutoff below the true sample rate Nyquist frequency. This process removes the high frequency content before it can be aliased, and then it is downsampled to return to the actual sample rate. Note that any pre-existing aliasing at the inputs cannot be removed - high frequency content must be removed before it is ever aliased.
+
+The higher the degree of oversampling, the better the result, but at the cost of higer CPU usage. Another factor is the slope of the low pass filters that are used for both the upsampling interpolation and the bandlimited downsampling. The higer the filter order, the steeper the slope, which allows for preservation of more high frequency content below the Nyquist frequency. But the higher filter orders also require more CPU. So it is a balancing act to select the minimum oversampling rate and filter order that gives good results.
+
+Most Venom modules that use oversampling have parameters on the faceplate to chose the oversample rate. A few modules have context menu options instead. For most applications, an oversample rate of 4x or 8x gives good results, without using excessive CPU. But don't be afraid to try out more or less. In some cases you may be able to turn off oversampling entirely, and still get good results, thus saving considerable CPU.
+
+All of the Venom modules with oversampling also have a context menu option to specify the quality of the filter used. There are three options available:
+- 10th order with a cutoff at 80% of the Nyquist frequency. This is the default value used by all Venom modules.
+- 8th order with a cutoff at 80% of the Nyquist frequency.
+- 6th order with a cutoff at 50% of the Nyquist frequency.
+
+Again, feel free to experiment to find what works best for you.
+
+[Return to Table Of Contents](#venom)
+
 ## Limitations of DC offset removal
-Currently Venom uses a naive implamentation of a highpass filter for DC offset removal - it does not compensate for sample rate or oversampling rate. So expect different results if you change the sample rate and/or the oversample rate. Additionally, the DC offset removal attenuates bass tones more and more as you increase sample rate or oversampling.
+Currently Venom uses a naive implementation of a highpass filter for DC offset removal - it does not compensate for sample rate or oversampling rate. So expect different results if you change the sample rate and/or the oversample rate. Additionally, the DC offset removal attenuates bass tones more and more as you increase sample rate or oversampling.
 
 I have a better version that gives much more consistent results for all sample rates and oversample rates, as well as minimal bass attenuation. But for some mysterious reason it works beatifully on some machines, yet not at all on others. So we are stuck with the inferior DC offset removal for now.
+
+[Return to Table Of Contents](#venom)
 
 ## Acknowledgments
 Special thanks to Andrew Hanson of [PathSet modules](https://library.vcvrack.com/?brand=Path%20Set) for setting up my GitHub repository, providing advice and ideas for the Rhythm Explorer and plugins in general, and for writing the initial prototype code for the Rhythm Explorer.
@@ -114,7 +137,9 @@ Thanks to Jacky Ligon and Andreya Ek Frisk over on the Surge Discord server for 
 
 Super thanks to Benjamin Dill for his open source Stoermelder PackOne plugin. I could never have developed the Widget Menu Extender module or the Bypass module without his tips and source code to study.
 
-Finally a thanks to Paul Dempsey for his MenuTextField struct from the pachde1 plugin that allows text entry in a menu. In turn that was developed using code/ideas from the SubmarineFree plugin by David O'Rourke.
+Thanks to Paul Dempsey for his MenuTextField struct from the pachde1 plugin that allows text entry in a menu. In turn that was developed using code/ideas from the SubmarineFree plugin by David O'Rourke.
+
+Finally thanks to Ewan Hemingway. Through discussions and studying the Befaco Even VCO source code I was able to improve the sound quality of VCO Lab and VCO Unit by adding DPW alias suppression to supplement oversampling.
 
 [Return to Table Of Contents](#venom)
 
@@ -288,6 +313,10 @@ This small color coded switch controls how much oversampling is applied to reduc
 - x32 (purple)
 
 Aliasing might not be noticeable with chaotic and/or low frequency outputs. But the aliasing can become painfully obvious when producing high frequency coherent output unless oversampling is used. But oversampling is rather CPU intensive, so you want to use the minimum amount that gives good results. An oversample value of x8 uses reasonable CPU with VCV running at 48 kHz, and provides clean output in all but the most extreme cases.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 Due to float arithmetic limitations, the oscillators would stall at the lowest frequency if the VCV sample rate is set above 48 kHz and high oversample rates are used. To compensate, the maximum allowed oversampling is reduced as the VCV sample rate increases. This enables the oscillators to cover their full range regardless what VCV sample rate is used.
 
@@ -510,6 +539,10 @@ The yellow lights only monitor a single channel - by default they monitor channe
 
 ### Audio Processing
 By default Bernoulli Switch is configured for switching gates or CV signals, but it can also process audio signals. If you switch audio at slow rates you may get unwanted pops. If you switch audio at audio rates then you may get unwanted aliasing. The module context menu has Audio Process options to reduce or eliminate these artifacts: Antipop crossfade for slow switching, and various oversampling options for audio rate switching. A small LED between the OUTPUT ports glows red when Anti-Pop Switching is in effect, and blue when any of the oversampling options is enabled. The LED is off (black) when the Audio Process is set to Off (the default).
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 ### Factory Presets
 The following factory presets are available that emulate the four configurations available to the Mutable Instruments Branches module:
@@ -845,6 +878,10 @@ Controls how much oversampling is applied to reduce aliasing when using the outp
 - **16x (dark blue)**
 - **32x (purple)**
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 ### RANGE button
 Controls the output voltages used for high and low states. Unipolar outputs are typically used for CV, and bipolar for audio.
 - **0-1 (yellow)**: unipolar low = 0, high = 1
@@ -970,6 +1007,10 @@ Hard clipping can produce significant aliasing if applied to audio signals.
 Soft clipping provides tanh saturation. At moderate saturation levels there is little to no audible aliasing. But very hot signals can still lead to signfcant aliasing.
 
 Soft oversampled clipping also provides saturation, but aliasing is greatly reduced.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
    
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
@@ -1715,6 +1756,10 @@ This color coded button controls how much oversampling is applied to minimize al
 - **16x (dark blue)**
 - **32x (purple)**
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 ### RND (Random Range) button
 This color coded button controls the output range of the internal random number generator
 - **0-1 V (yellow)**
@@ -1961,6 +2006,10 @@ Sets the level of oversamping to apply to all inputs and outputs. Oversampling c
 - **x16** (dark blue)
 - **x32** (purple)
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 ### N (Normal input value) button
 Sets the input voltage if the port is not patched
 - **5V** (yellow, default)
@@ -2140,6 +2189,10 @@ The color coded OVER button specifies the amount of oversampling that is done to
 Oversampling is relatively CPU intensive, and should only be applied when needed. Control voltage and low to medium frequency audio typically do not need oversampling. But the quality of moderately high frequency output can be improved by oversampling.
 
 Note that oversampling cannot remove aliasing that may be present in inputs driven at audio rates. To get the best possible results, make sure that all audio signals at the IN, CV, DRIVE, or LEVEL inputs is clean.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 ### Polyphony
 
@@ -2448,7 +2501,9 @@ Oversampling is typically not needed for most VCA operations. But it may be usef
 
 Oversampling uses significant CPU resources, so it is best to use the minimum oversampling value that gives the desired output.
 
-Note that oversampling cannot compensate for inputs that already contain aliasing.
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 ### Level knob
 Sets the maximum gain applied to the input signal(s). The range is dependent on the Range paramater. The default value is unity gain, regardless which range is chosen.
@@ -2519,7 +2574,7 @@ This color coded switch can apply an offset to the final output. The output offs
 
 ### Some Example Use Cases (just the tip of the iceberg)
 #### "Normal" VCA
-Set VCA Mode button to Bipolar 0-10V  
+Set VCA Mode button to Unipolar 0-10V  
 Set Bias knob to 0V  
 Patch envelope or other CV to Level CV input  
 Patch audio or CV to Left and/or Right input.  
@@ -2589,7 +2644,7 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 A simple utility module with 5 polyphonic input/output pairs suitable for unity mixing of stacked inputs, and/or introduction of sample delays.
 
 ### Unity Mixing
-Nothing special here - just taking advantage of VCV Rack's built in capability to stack input cables. But it can be convenient if you need to distributet the unity mix to multiple destinations.
+Nothing special here - just taking advantage of VCV Rack's built in capability to stack input cables. But it can be convenient if you need to distribute the unity mix to multiple destinations.
 
 ### Add Sample Delays
 Each input starting with the 2nd is normalled to the output above, with a delay of 1 sample added. So an input at port 1 with an output at port 5 will yield 4 sample delays, plus the delay introduced by the module itself, for a total of 5.
@@ -2697,6 +2752,14 @@ The color coded exclude button determines if patched channel outputs are exclude
 - **Off** (dark gray - default): patched output channels are included in the final mix
 - **On** (red): patched output channels are excluded from the final mix
 
+### Oversampling filter quality options
+Oversampling is used by some Clip options as well as the VCA bandlimitted options. These options always use 4x oversampling.
+
+There is a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
+
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
@@ -2757,10 +2820,10 @@ VCO LAB is fully polyphonic - All inputs can process polyphonic signals.
 
 The number of output channels is the maximum number of channels found across all inputs.
 
-Monophonic inputs are replicated to match the number of output channels. Polyphonic inputs that have fewer channels use 0V for missing channels.
+Monophonic inputs are replicated to match the number of output channels. Polyphonic inputs that have fewer channels use constant 0V for missing channels.
 
 ### Reset Poly (Reset Polyphony count) button
-Momentarily forces all outputs to be monophonic - useful when the input polyphony count is reduced when the VCO Lab has feedback. After release, the correct output poly count will be computed. Without the Reset Poly button it would require temporary removal of the feedback to restore the correct poly count.
+Momentarily forces all outputs to be monophonic - useful when the input polyphony count is reduced while the VCO Lab has feedback. The reset forces the correct output poly count to be computed. Without the Reset Poly button it would require temporary removal of all feedback to restore the correct poly count.
 
 ### FRQ (Frequency Mode) button
 This color coded button controls the overall mode of the oscillator
@@ -2775,12 +2838,20 @@ This color coded button controls the overall mode of the oscillator
 
 In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input or phase CV input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
 
+Phase distortion synthesis can be explored via the 0 Hz carrier mode. Setting the phase input attenuator to 40% will cause a 10V phasor change to exactly produce one wave cycle. The smoothest results will be achieved if all anti-aliasing is disabled for both the driving phasor, as well as the VCO Lab in 0 Hz carrier mode. For VCO Lab this means turning oversampling off, and disabling DPW anti-alias suppression.
+
 If using any of the one shot modes, then the oscillator will not produce any output until it receives a trigger or gate at the Sync input.
  - Triggered one shots will output exactly one complete cycle and then stop until the next trigger is received. If the cycle has not yet completed when a sync trigger is received, then the trigger is ignored. This works well for creating undertone or subharmonic series!
  - Retriggered one shots will output one complete cycle and then stop until the next trigger is received. If another trigger is received before the cycle completion, then the wave will be reset to phase 0 and retriggered.
  - Gated one shots work the same as retriggered except they only output as much of a single wave cycle as fits within the high gate period.
 
 Regardless what mode is chosen, the full oscillator frequency range is accessible via CV modulation.
+
+### Frequency limits
+
+Like any digital oscillator, there is a hard upper frequency limit at 50% of the sample rate called the Nyquist frequency. However, VCO Lab does not limit any V/Oct voltage, so the oscillator may attempt to produce higher frequencies. If oversampling is not enabled, then the high frequencies are reflected back below the Nyquist frequency. If oversampling is enabled, then the amplitude of high frequencies is attenuated dramatically as the Nyquist frequency is approached.
+
+Similarly, the module does not limit the low frequencies either. But here again there is a practical limit due to the limitations of single precision floating point numbers. When at very low frequencies, the oscillator may stall and cease oscillating. The stall point varies depending on the VCV engine sample rate, and the amount of oversampling. The stall point rises as the engine sample rate rises and/or as the oversampling rises.
 
 ### OVR (Oversample) button
 This color coded button controls how much oversampling is applied to control aliasing of audio output.
@@ -2791,6 +2862,10 @@ This color coded button controls how much oversampling is applied to control ali
 - **x16** (dark blue)
 - **x32** (purple)
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 Note that oversampling is CPU intensive, so best to use the lowest amount of oversampling that gives satisfactory results.
 
 To further reduce CPU usage, oversampling may be disabled for individual inputs that are not being modulated at audio rates. Inputs that support oversampling have a context menu option to enable or disable oversampling, and an LED next to the port to indicate the current oversampling state:
@@ -2798,18 +2873,22 @@ To further reduce CPU usage, oversampling may be disabled for individual inputs 
 - yellow indicates the input is being oversampled
 - red indicates the input is not being oversampled
 
+### DPW alias supression
+Square and Saw waves have the most high frequency harmonic content that can lead to more aliasing. To further reduce aliasing, VCO Lab uses DPW (Differentiated
+Polynomial Waveforms) when generating saw or pulse waves in audio mode.
+
+DPW does not work well at low frequencies due to single precision floating point limitations, so DPW processing is automatically disabled when producing low frequency audio. This point varies depending on the sample rate and amount of oversampling.
+
+DPW is always disabled when using any of the LFO modes, regardless the frequency. DPW is also disabled if the shape modulation is set to a morphing waveform, or one of the rectify modes.
+
+There is a context menu option to disable DPW entirely for all audio modes.
+
 ### DC (DC block) button
 This color coded button controls whether a high pass filter is applied to remove DC offset from all outputs
 - **Off** (dark gray - default)
 - **On** (yellow)
 
 See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
-
-### Frequency limits
-
-Regardless what mode, the VCO Lab has a hard upper frequency limit of 12 kHz. The frequency cannot be modulated above this limit.
-
-There is no fixed lower frequency limit. However, at very low frequencies the oscillator will stall due to the limits of single precision floating point numbers. The stall point varies depending on the VCV engine sample rate, and the amount of oversampling. The stall point rises as the engine sample rate rises and/or as the oversampling rises.
 
 ### FREQ/BIAS (Frequency/Bias) knob
 Sets the base frequency of the oscillator. The knob range varies depending on the Frequency Mode and the current selected Octave. Normally the knob uses an exponential scale, but in 0 Hz carrier mode it is a linear Bias with a very small range. Below are the knob ranges by mode when the Octave is at 0. Note that the Octave does not modify the bias frequency when in 0 Hz carrier mode.
@@ -2828,9 +2907,9 @@ When in audio or low frequency mode, the Octave knob adds or subtracts octaves t
 When in 0 Hz carrier mode the knob sets the range for the linear FM depth. Low frequency modulation requires a smaller range, and higher frequency modulation a higher range to achieve the same degree of FM "folding"
 
 ### Soft Sync input
-This port functions as a Schmitt trigger that goes high above 2V and goes low below 0.2V. The soft sync reverses the waveforms each time the signal transitions to a high state.
+The soft Sync reverses the waveforms upon the leading edge of an incomming trigger.
 
-The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be used.
+The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point.
 
 This port supports oversampling that can be disabled via the port context menu.
 
@@ -2876,11 +2955,10 @@ When in 0 Hz Carrier mode the input modulates the linear Bias at 0.02 Hz per vol
 This port does not support oversampling.
 
 ### Sync (Hard Sync) input
-This port functions as a Schmitt trigger that goes high above 2V and goes low below 0.2V. The Schmitt trigger thresholds allow for both unipolar and bipolar signals to be used.
+The Sync input resets the master oscillator phase to 0 upon the leading edge of an incomming trigger.  
+If using any of the one shot modes, the Sync is used to trigger the start of a wave cycle.
 
-The sync resets the master oscillator phase to 0 upon transition to high.
-
-The Sync input also triggers the oscillator when using any of the four one shot modes.
+The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point.
 
 This port supports oversampling that can be disabled via the port context menu.
 
@@ -2939,6 +3017,7 @@ The even waveform is the same as what is produced by the Befaco Even module. It 
 The initial release of VCO Lab required 20 volts peak to peak CV to cover the entire shape range for Sin, Tri, and Saw. Starting with V 2.9.0 these ports now default to 10 volts peak to peak covering the entire range. These ports have a context menu option to revert to old behavior.
 
 Below is a summary of the wave shaping when using the default (yellow) mode for all four waveforms.
+
 |Waveform|Negative modulation|No modulation|Positive modulation|
 |---|---|---|---|
 |**Sine**|exponential response|mathematical sine|logarithmic response|
@@ -2968,6 +3047,8 @@ The image below shows the phase relationship between the four waveforms when no 
 The phase of each waveform can be modulated relative to the other waveforms. This can have a dramatic impact on any resultant mix.
 
 Each waveform can also be independently modulated at audio rates to achieve what is commonly mislabeled as linear through 0 frequency modulation. The effect is similar to, but definitely not the same as true through 0 frequency modulation.
+
+When in 0 Hz carrier mode, phase modulation can be used to explore the world of phase distortion synthesis. Set the attenuator to 40% so that a 10V phasor delta equates to exactly one waveform cycle. Anti-aliasing on either the incoming phasor or the 0 Hz carrier will lead to unwanted distortion at phase discontinuities. So to get smooth results, oversampling should be off and DPW disabled when doing phase distortion synthesis.
 
 #### Global (Mix) Phase Modulation
 The Mix phase modulation is actually a global modulation that is applied to all waveforms prior to mixing.
@@ -3017,7 +3098,7 @@ A smaller version of VCO Lab with only one waveform output at a time, without an
 
 A Wave switch is added to select between Sine, Triangle, Square, and Saw.
 
-The behavior of the Shape changes depending on the waveform selected.
+The behavior of Shape modulation changes depending on the waveform selected.
 
 Pretty much all other VCO Lab functionality is the same, except there is no mix, level assignment, or mix shaping.
 
@@ -3057,6 +3138,10 @@ Wave folding, ring modulation, and amplitude modulation can introduce many harmo
 - x8
 - x16
 - x32
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 By default, oversampling is applied to all inputs.
 
@@ -3233,6 +3318,10 @@ The gate high and low values are 0V and 10V by default. The module context menu 
 By default WINCOMP is configured to output CV values, without any anti-aliasing. But if producing audio output, then the output may have unacceptable aliasing artifacts. The context menu has an option to enable oversampling to greatly reduce aliasing in audio outputs. The oversampling applies to all the outputs, including gate outputs.
 
 Oversampling uses significant CPU, so there are multiple options to choose from: x2, x4, x8, and x16. The higher the oversample rate, the better the result, but more CPU is used.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
 
 An LED glows blue above the output ports if oversampling is enabled. The LED is black when oversampling is off.
 

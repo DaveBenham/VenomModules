@@ -133,6 +133,8 @@ struct VenomModule : Module {
   int defaultDarkTheme = getDefaultDarkTheme();
   int prevTheme = -1;
   int prevDarkTheme = -1;
+  int oversampleStages = 0; // default to 0 = unused
+  virtual void setOversample(){};
   bool drawn = false;
   bool paramsInitialized = false;
   bool extProcNeeded = true;
@@ -386,6 +388,8 @@ struct VenomModule : Module {
       json_object_set_new(rootJ, nm.c_str(), json_string(pi->name.c_str()));
     }
     json_object_set_new(rootJ, "currentTheme", json_integer(currentTheme));
+    if (oversampleStages)
+      json_object_set_new(rootJ, "oversampleStages", json_integer(oversampleStages));
     return rootJ;
   }
 
@@ -440,7 +444,11 @@ struct VenomModule : Module {
     if (val)
       currentTheme = json_integer_value(val);
     extProcNeeded = true;
-    drawn = false;  
+    drawn = false;
+    if (oversampleStages) {
+      val = json_object_get(rootJ, "oversampleStages");
+      oversampleStages = val ? json_integer_value(val) : 3;
+    }
   }
 
 };
@@ -449,22 +457,35 @@ struct VenomWidget : ModuleWidget {
   std::string moduleName;
   void draw(const DrawArgs & args) override {
     ModuleWidget::draw(args);
-    if (module) dynamic_cast<VenomModule*>(this->module)->drawn = true;
+    if (module) static_cast<VenomModule*>(this->module)->drawn = true;
   }
 
   void setVenomPanel(std::string name){
     moduleName = name;
-    VenomModule* mod = dynamic_cast<VenomModule*>(this->module);
+    VenomModule* mod = this->module ? static_cast<VenomModule*>(this->module) : NULL;
     if (mod) mod->moduleName = name;
     setPanel(createPanel(
-      asset::plugin( pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr() : themes[getDefaultTheme()])),
-      asset::plugin( pluginInstance, faceplatePath(name, module ? dynamic_cast<VenomModule*>(this->module)->currentThemeStr(true) : themes[getDefaultDarkTheme()]))
+      asset::plugin( pluginInstance, faceplatePath(name, mod ? mod->currentThemeStr() : themes[getDefaultTheme()])),
+      asset::plugin( pluginInstance, faceplatePath(name, mod ? mod->currentThemeStr(true) : themes[getDefaultDarkTheme()]))
     ));
   }
 
   void appendContextMenu(Menu* menu) override {
-    VenomModule* module = dynamic_cast<VenomModule*>(this->module);
-    assert(module);
+    VenomModule* module = static_cast<VenomModule*>(this->module);
+    
+    if (module->oversampleStages){
+      menu->addChild(new MenuSeparator);
+      menu->addChild(createIndexSubmenuItem("Oversample filter quality",
+        {"6th order", "8th order", "10th order"},
+        [=]() {
+          return module->oversampleStages - 3;
+        },
+        [=](int val) {
+          module->oversampleStages = val + 3;
+          module->setOversample();
+        }
+      ));
+    }
 
     if (module->lockableParams){
       menu->addChild(new MenuSeparator);
