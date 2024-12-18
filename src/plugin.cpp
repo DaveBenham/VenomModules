@@ -4,7 +4,7 @@
 #include "plugin.hpp"
 
 Plugin* pluginInstance;
-static std::string venomSettingsFileName = asset::user("VenomTest.json");
+static std::string venomSettingsFileName = asset::user("Venom.json");
 int defaultTheme = 0;
 int defaultDarkTheme = 1;
 

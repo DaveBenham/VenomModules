@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.11.1 (????-??-??)
+## 2.11.1 (2024-12-17)
 ### Enhancements
 - All modules with oversampling options
   - New context menu option to select the quality of the oversampling filters
