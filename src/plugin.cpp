@@ -62,6 +62,7 @@ void init(Plugin* p) {
   pluginInstance = p;
 
   // Add modules here
+#if !defined(METAMODULE)
   p->addModel(modelAuxClone);
   p->addModel(modelBayInput);
   p->addModel(modelBayNorm);
@@ -115,6 +116,34 @@ void init(Plugin* p) {
   p->addModel(modelWaveFolder);
   p->addModel(modelWidgetMenuExtender);
   p->addModel(modelWinComp);
+#else
+  // These modules are not expanders or blanks, and are useful without poly
+  p->addModel(modelBenjolinOsc);
+  p->addModel(modelBernoulliSwitch);
+  p->addModel(modelHQ);
+  p->addModel(modelKnob5);
+  p->addModel(modelLinearBeats);
+  p->addModel(modelLogic);
+  p->addModel(modelMix4);
+  p->addModel(modelMix4Stereo);
+  p->addModel(modelOscillator);
+  p->addModel(modelNORS_IQ);
+  p->addModel(modelPolyFade);
+  p->addModel(modelPolySHASR);
+  p->addModel(modelPush5);
+  p->addModel(modelQuadVCPolarizer);
+  p->addModel(modelRecurse);
+  p->addModel(modelRecurseStereo);
+  p->addModel(modelReformation);
+  p->addModel(modelRhythmExplorer);
+  p->addModel(modelShapedVCA);
+  p->addModel(modelThru);
+  p->addModel(modelVCAMix4);
+  p->addModel(modelVCAMix4Stereo);
+  p->addModel(modelVCOUnit);
+  p->addModel(modelWaveFolder);
+  p->addModel(modelWinComp);
+#endif
 
   // Any other plugin initialization may go here.
   // As an alternative, consider lazy-loading assets and lookup tables when your module is created to reduce startup times of Rack.
