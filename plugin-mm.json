@@ -1,0 +1,316 @@
+{
+    "MetaModulePluginMaintainer": "4ms Company",
+    "MetaModulePluginMaintainerEmail": "4ms@4mscompany.com",
+    "MetaModulePluginMaintainerUrl": "",
+    "MetaModuleDescription": "",
+    "MetaModuleIncludedModules": [
+    {
+      "slug": "BenjolinOsc",
+      "name": "Benjolin Oscillator",
+      "description": "Complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#benjolin-oscillator",
+      "tags": [
+        "Low-frequency oscillator",
+        "Oscillator",
+        "Random",
+        "Sequencer"
+      ]
+    },
+    {
+      "slug": "BernoulliSwitch",
+      "name": "Bernoulli Switch",
+      "description": "Stochastically route two inputs to two outputs, with built in scaling and offset capabilities",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#bernoulli-switch",
+      "tags": [
+        "Attenuator",
+        "Controller",
+        "Logic",
+        "Polyphonic",
+        "Random",
+        "Switch",
+        "Utility",
+        "Waveshaper"
+      ]
+    },
+    {
+      "slug": "HQ",
+      "name": "HQ - Harmonic Quantizer",
+      "description": "Computes a selected harmonic or subharmonic partial relative to a root V/Oct, or quantizes input V/Oct to the nearest partial relative to the root",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#harmonic-quantizer",
+      "tags": [
+        "Polyphonic",
+        "Quantizer"
+      ]
+    },
+    {
+      "slug": "Knob5",
+      "name": "Knob 5",
+      "description": "5 configurable constant voltage knobs",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#knob-5",
+      "tags": [
+        "Controller",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "LinearBeats",
+      "name": "Linear Beats",
+      "description": "Convert multiple trigger/gate channels into a linear drumming pattern",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#linear-beats",
+      "tags": [
+        "Logic",
+        "Polyphonic",
+        "Sample and hold"
+      ]
+    },
+    {
+      "slug": "Logic",
+      "name": "Logic",
+      "description": "Flexible logic gate processor suitable for both CV and audio applications",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#logic",
+      "tags": [
+        "Logic",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "Mix4",
+      "name": "Mix 4",
+      "description": "Compact audio or CV mixer, attenuator, inverter, amplifier, and/or offset",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-4",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "Mix4Stereo",
+      "name": "Mix 4 Stereo",
+      "description": "Stereo compact audio or CV mixer, attenuator, inverter, amplifier, and/or offset",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#mix-4-stereo",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "NORS_IQ",
+      "name": "Non-Octave-Repeating Scale Intervallic Quantizer",
+      "description": "Quantizer for any scale defined by up to 13 intervals between notes",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#non-octave-repeating-scale-intervallic-quantizer",
+      "tags": [
+        "Quantizer",
+        "Polyphonic"
+      ]
+    },
+    {
+      "slug": "PolyFade",
+      "name": "Poly Fade",
+      "description": "Cross fade between channels of a polyphonic signal",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-fade",
+      "tags": [
+        "Envelope Generator",
+        "Low-frequency oscillator",
+        "Polyphonic",
+        "Sequencer",
+        "Switch"
+      ]
+    },
+    {
+      "slug": "PolySHASR",
+      "name": "Poly Sample & Hold Analog Shift Register",
+      "description": "Ten channel polyphonic sample and hold combined with a shift register",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-sample--hold-analog-shift-register",
+      "tags": [
+        "Polyphonic",
+        "Random",
+        "Sample and hold"
+      ]
+    },
+    {
+      "slug": "Push5",
+      "name": "Push 5",
+      "description": "5 configurable push buttons",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#push-5",
+      "tags": [
+        "Controller",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "QuadVCPolarizer",
+      "name": "Quad VC Polarizer",
+      "description": "Compact polyphonic bipolar VCA and mixer inspired by Mutable Instruments Blinds",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#quad-vc-polarizer",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Ring modulator",
+        "Utility",
+        "Voltage-controlled amplifier"
+      ]
+    },
+    {
+      "slug": "Recurse",
+      "name": "Recurse",
+      "description": "Recursively process an input via Send/Return, with built in scaling and offset cababilities",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#recurse",
+      "tags": [
+        "Effect",
+        "Polyphonic",
+        "Ring modulator",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "RecurseStereo",
+      "name": "Recurse Stereo",
+      "description": "Recursively process mono or stereo input via Send/Return, with built in scaling and offset cababilities",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#recurse-stereo",
+      "tags": [
+        "Effect",
+        "Polyphonic",
+        "Ring modulator",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "Reformation",
+      "name": "Reformation",
+      "description": "Transform CV or audio by mapping way point voltages to new values",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#reformation",
+      "tags": [
+        "Distortion",
+        "Effect",
+        "Polyphonic",
+        "Utility",
+        "Voltage-controlled amplifier",
+        "Waveshaper"
+      ]
+    },
+    {
+      "slug": "RhythmExplorer",
+      "name": "Rhythm Explorer",
+      "description": "Stochastic rhythm generator, trigger sequencer and clock divider",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#rhythm-explorer",
+      "tags": [
+        "Clock modulator",
+        "Random",
+        "Sequencer"
+      ]
+    },
+    {
+      "slug": "ShapedVCA",
+      "name": "Shaped VCA",
+      "description": "Stereo VCA with a variable response curve, hard/soft clipping, ring modulation, and oversampling",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#shaped-vca",
+      "tags": [
+        "Attenuator",
+        "Polyphonic",
+        "Ring modulator",
+        "Utility",
+        "Voltage-controlled amplifier",
+        "Waveshaper"
+      ]
+    },
+    {
+      "slug": "Thru",
+      "name": "Thru",
+      "description": "5 polyphonic input/output pairs suitable for stacked input unity mixes and/or introduction of sample delays",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#thru",
+      "tags": [
+        "Delay",
+        "Mixer",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "VCAMix4",
+      "name": "VCA Mix 4",
+      "description": "Compact audio or CV VCA, mixer, attenuator, inverter, amplifier, and/or offset",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vca-mix-4",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Ring modulator",
+        "Utility",
+        "Voltage-controlled amplifier"
+      ]
+    },
+    {
+      "slug": "VCAMix4Stereo",
+      "name": "VCA Mix 4 Stereo",
+      "description": "Stereo compact audio or CV VCA, mixer, attenuator, inverter, amplifier, and/or offset",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vca-mix-4-stereo",
+      "tags": [
+        "Attenuator",
+        "Mixer",
+        "Polyphonic",
+        "Ring modulator",
+        "Utility",
+        "Voltage-controlled amplifier"
+      ]
+    },
+    {
+      "slug": "Oscillator",
+      "name": "VCO Lab",
+      "description": "Audio or low frequency oscillator with 4 simultaneous waveforms, mixing, linear/exponential FM, phase modulation, hard/soft sync, PWM, and more",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vco-lab",
+      "tags": [
+        "Function generator",
+        "Low-frequency oscillator",
+        "Oscillator",
+        "Polyphonic"
+      ]
+    },
+    {
+      "slug": "VCOUnit",
+      "name": "VCO Unit",
+      "description": "A smaller version of VCO Lab with only one selectable waveform at a time, and no mixing capabilities",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#vco-lab",
+      "tags": [
+        "Function generator",
+        "Low-frequency oscillator",
+        "Oscillator",
+        "Polyphonic"
+      ]
+    },
+    {
+      "slug": "WaveFolder",
+      "name": "Wave Folder",
+      "description": "A polyphonic configurable wave folder",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-extender",
+      "tags": [
+        "Polyphonic",
+        "Ring modulator",
+        "Voltage-controlled amplifier",
+        "Waveshaper"
+      ]
+    },
+    {
+      "slug": "WinComp",
+      "name": "WinComp",
+      "description": "Windowed comparator and rectifier",
+      "manualURL": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#wincomp",
+      "tags": [
+        "Distortion",
+        "Limiter",
+        "Logic",
+        "Polyphonic",
+        "Utility",
+        "Waveshaper"
+      ]
+    }
+    ]
+}
+
