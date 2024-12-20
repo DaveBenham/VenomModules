@@ -4,3 +4,5 @@
 /plugin.dylib
 /plugin.dll
 .DS_Store
+
+metamodule-plugins/
