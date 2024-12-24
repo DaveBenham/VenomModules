@@ -616,7 +616,11 @@ struct DigitalDisplay : Widget {
   void draw(const DrawArgs& args) override {
     // Background
     nvgBeginPath(args.vg);
+#if defined(METAMODULE)
+    nvgRect(args.vg, 0, 0, box.size.x, box.size.y);
+#else
     nvgRoundedRect(args.vg, 0, 0, box.size.x, box.size.y, 2);
+#endif
     nvgFillColor(args.vg, nvgRGB(0x19, 0x19, 0x19));
     nvgFill(args.vg);
 
