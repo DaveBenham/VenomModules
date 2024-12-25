@@ -66,6 +66,7 @@ struct VCOUnit : VenomModule {
   bool disableOver[INPUTS_LEN]{};
   bool unity5 = false;
   bool bipolar = false;
+  bool lfoAsBPM = false;
   float lvlScale = 0.1f;
   float shpScale = 0.2f;
   float syncHi = 2.0f, syncLo = 0.2f;
@@ -83,7 +84,7 @@ struct VCOUnit : VenomModule {
   DCBlockFilter_4 linDcBlockFilter[4]{}, outDcBlockFilter[4]{};
   bool linDCCouple = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
-  float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
+  float modeFreq[2][3] = {{dsp::FREQ_C4, 2.f, 100.f},{dsp::FREQ_C4, 120.f, 100.f}}, biasFreq = 0.02f;
   int currentMode = -1;
   int mode = 0;
   int wave = 0;
@@ -99,9 +100,11 @@ struct VCOUnit : VenomModule {
       if (displayOffset) { // displayOffset != 0 indicates square wave pulse width
         switch (static_cast<int>(module->params[SHAPE_MODE_PARAM].getValue())) {
           case 0:
+          case 3:
             val = clamp(val, 3.f, 97.f);
             break;
           case 2:
+          case 5:
             val = val*2.f - 100.f;
             break;
         }
@@ -109,7 +112,7 @@ struct VCOUnit : VenomModule {
       return val;
     }
     void setDisplayValue(float v) override {
-      if (displayOffset && module->params[SHAPE_MODE_PARAM].getValue()==2.f)
+      if (displayOffset && (static_cast<int>(module->params[SHAPE_MODE_PARAM].getValue())%3)==2.f)
         v = (v+100.f)/2.f;
       ParamQuantity::setDisplayValue(v);
     }
@@ -120,7 +123,7 @@ struct VCOUnit : VenomModule {
       VCOUnit* mod = reinterpret_cast<VCOUnit*>(this->module);
       float freq = 0.f;
       if (mod->mode < 2)
-        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mod->mode];
+        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mod->lfoAsBPM][mod->mode];
       else
         freq = mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
       return freq;
@@ -128,7 +131,7 @@ struct VCOUnit : VenomModule {
     void setDisplayValue(float v) override {
       VCOUnit* mod = reinterpret_cast<VCOUnit*>(this->module);
       if (mod->mode < 2)
-        setValue(clamp(std::log2f(v / mod->modeFreq[mod->mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
+        setValue(clamp(std::log2f(v / mod->modeFreq[mod->lfoAsBPM][mod->mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
       else
         setValue(clamp(v / mod->biasFreq, -4.f, 4.f));
     }
@@ -194,11 +197,12 @@ struct VCOUnit : VenomModule {
     return -(((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
   }
   
-  void setMode(bool aliasSuppressOnly = false) {
+  void setMode(bool shortCircuit = false) {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
     aliasSuppress = !(mode || disableDPW);
-    if (aliasSuppressOnly)
+    paramQuantities[FREQ_PARAM]->unit = mode==1 && lfoAsBPM ? " BPM" : " Hz";
+    if (shortCircuit)
       return;
     if (!paramExtensions[OVER_PARAM].locked)
       params[OVER_PARAM].setValue(modeDefaultOver[mode]);
@@ -219,27 +223,21 @@ struct VCOUnit : VenomModule {
     SwitchQuantity *sq = static_cast<SwitchQuantity*>(paramQuantities[SHAPE_MODE_PARAM]);
     switch (wave) {
       case 0: // SIN
-        sq->maxValue = 5.f;
         sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
         break;
       case 1: // TRI
-        sq->maxValue = 5.f;
         sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
         break;
       case 2: // SQR
-        if (sq->getImmediateValue()>2)
-          sq->setImmediateValue(2.f);
-        sq->maxValue = 2.f;
-        sq->labels = {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW"};
+        sq->labels = {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW", "Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW"};
         q->displayMultiplier = 50.f;
         q->displayOffset = 50.f;
         break;
       case 3: // SAW
-        sq->maxValue = 5.f;
         sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SAW <--> EVEN"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
@@ -427,7 +425,7 @@ struct VCOUnit : VenomModule {
         } else {
           freq[s] = (vOctParm + vOctIn[s])*biasFreq + linIn*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
         }
-        freq[s] *= modeFreq[mode];
+        freq[s] *= modeFreq[0][mode];
         phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
         phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
         basePhaseDelta = freq[s] * phasorDir[s] * k;
@@ -548,6 +546,7 @@ struct VCOUnit : VenomModule {
             } // end triangle shape switch
             break;
           case 2: // SQR
+            shapeMode %= 3;
             wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
             wavePhasor = simd::fmod(wavePhasor, 1000.f);
             wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
@@ -675,6 +674,7 @@ struct VCOUnit : VenomModule {
     json_object_set_new(rootJ, "disableDPW", json_boolean(disableDPW));
     json_object_set_new(rootJ, "syncAt0", json_boolean(syncLo<0.f));
     json_object_set_new(rootJ, "shapeModeParam", json_integer(params[SHAPE_MODE_PARAM].getValue()));
+    json_object_set_new(rootJ, "lfoAsBPM", json_boolean(lfoAsBPM));
     return rootJ;
   }
 
@@ -699,6 +699,9 @@ struct VCOUnit : VenomModule {
     }
     val = json_object_get(rootJ, "disableDPW");
     disableDPW = val ? json_boolean_value(val) : true;
+    if ((val = json_object_get(rootJ, "lfoAsBPM"))) {
+      lfoAsBPM = json_boolean_value(val);
+    }
     setMode();
     if ((val = json_object_get(rootJ, "overParam"))) {
       params[OVER_PARAM].setValue(json_integer_value(val));
@@ -909,6 +912,15 @@ struct VCOUnitWidget : VenomWidget {
   void appendContextMenu(Menu* menu) override {
     VCOUnit* module = dynamic_cast<VCOUnit*>(this->module);
     menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolMenuItem("LFO frequency as BPM", "",
+      [=]() {
+        return module->lfoAsBPM;
+      },
+      [=](bool val) {
+        module->lfoAsBPM = val;
+        module->setMode(true);
+      }
+    ));    
     menu->addChild(createBoolPtrMenuItem("Limit level to 100%", "", &module->clampLevel));
     menu->addChild(createBoolMenuItem("Disable DPW anti-alias", "",
       [=]() {

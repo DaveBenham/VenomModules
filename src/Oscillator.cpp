@@ -185,6 +185,7 @@ struct Oscillator : VenomModule {
   bool unity5[5]{};
   bool bipolar[5]{};
   bool oldShpCV[4]{};
+  bool lfoAsBPM = false;
   float syncHi = 2.0f, syncLo = 0.2f;
   float lvlScale[5]{0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
   float shpScale[4]{0.2f, 0.2f, 0.2f, 0.2f};
@@ -201,7 +202,7 @@ struct Oscillator : VenomModule {
   DCBlockFilter_4 dcBlockFilter[4][6]{}; // Sin, Tri, Sqr, Saw, Mix, Lin FM Input
   bool linDCCouple = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
-  float modeFreq[3] = {dsp::FREQ_C4, 2.f, 100.f}, biasFreq = 0.02f;
+  float modeFreq[2][3] = {{dsp::FREQ_C4, 2.f, 100.f},{dsp::FREQ_C4, 120.f, 100.f}}, biasFreq = 0.02f;
   int currentMode = -1;
   int mode = 0;
   bool once = false;
@@ -224,7 +225,7 @@ struct Oscillator : VenomModule {
       Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
       float freq = 0.f;
       if (mod->mode < 2)
-        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mod->mode];
+        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mod->lfoAsBPM][mod->mode];
       else
         freq = mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
       return freq;
@@ -232,7 +233,7 @@ struct Oscillator : VenomModule {
     void setDisplayValue(float v) override {
       Oscillator* mod = reinterpret_cast<Oscillator*>(this->module);
       if (mod->mode < 2)
-        setValue(clamp(std::log2f(v / mod->modeFreq[mod->mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
+        setValue(clamp(std::log2f(v / mod->modeFreq[mod->lfoAsBPM][mod->mode]) - mod->params[OCTAVE_PARAM].getValue(), -4.f, 4.f));
       else
         setValue(clamp(v / mod->biasFreq, -4.f, 4.f));
     }
@@ -252,7 +253,6 @@ struct Oscillator : VenomModule {
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 2.f, 0.f, "Square Shape Mode", {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW"});
     configSwitch<FixedSwitchQuantity>(SAWSHP_PARAM, 0.f, 5.f, 0.f, "Saw Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SAW <--> EVEN"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
-
     
     configParam<FreqQuantity>(FREQ_PARAM, -4.f, 4.f, 0.f, "Frequency", " Hz");
     configParam(OCTAVE_PARAM, -4.f, 4.f, 0.f, "Octave");
@@ -321,11 +321,12 @@ struct Oscillator : VenomModule {
     return -(((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
   }
   
-  void setMode(bool aliasSuppressOnly = false) {
+  void setMode(bool shortCircuit = false) {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
     aliasSuppress = !mode && !disableDPW;
-    if (aliasSuppressOnly)
+    paramQuantities[FREQ_PARAM]->unit = mode==1 && lfoAsBPM ? " BPM" : " Hz";
+    if (shortCircuit)
       return;
     if (!paramExtensions[OVER_PARAM].locked)
       params[OVER_PARAM].setValue(modeDefaultOver[mode]);
@@ -540,7 +541,7 @@ struct Oscillator : VenomModule {
         } else {
           freq[s] = (vOctParm + vOctIn[s])*biasFreq + linIn*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
         }
-        freq[s] *= modeFreq[mode];
+        freq[s] *= modeFreq[0][mode];
         phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
         phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
         basePhaseDelta = freq[s] * phasorDir[s] * k;
@@ -1022,6 +1023,7 @@ struct Oscillator : VenomModule {
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
     json_object_set_new(rootJ, "syncAt0", json_boolean(syncLo<0.f));
     json_object_set_new(rootJ, "disableDPW", json_boolean(disableDPW));
+    json_object_set_new(rootJ, "lfoAsBPM", json_boolean(lfoAsBPM));
     return rootJ;
   }
 
@@ -1071,6 +1073,9 @@ struct Oscillator : VenomModule {
     }
     val = json_object_get(rootJ, "disableDPW");
     disableDPW = val ? json_boolean_value(val) : true;
+    if ((val = json_object_get(rootJ, "lfoAsBPM"))) {
+      lfoAsBPM = json_boolean_value(val);
+    }
     setMode();
     if ((val = json_object_get(rootJ, "overParam"))) {
       params[OVER_PARAM].setValue(json_integer_value(val));
@@ -1313,6 +1318,15 @@ struct OscillatorWidget : VenomWidget {
   void appendContextMenu(Menu* menu) override {
     Oscillator* module = dynamic_cast<Oscillator*>(this->module);
     menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolMenuItem("LFO frequency as BPM", "",
+      [=]() {
+        return module->lfoAsBPM;
+      },
+      [=](bool val) {
+        module->lfoAsBPM = val;
+        module->setMode(true);
+      }
+    ));    
     menu->addChild(createBoolPtrMenuItem("Limit levels to 100%", "", &module->clampLevel));
     menu->addChild(createBoolMenuItem("Disable DPW anti-alias", "",
       [=]() {

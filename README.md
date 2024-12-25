@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.11.1 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.11.2 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
@@ -2811,6 +2811,8 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 - Square pulse width range can be 0-100% or 3-97%
 - Optional DC offset removal for the outputs
 
+Watch this [demo/tutorial video from Omri Cohen](https://www.youtube.com/watch?v=iTE15_leyXQ) for an introduction to many of the VCO Lab features. It uses a slightly older version of VCO Lab, but it is still instructive.
+
 Global controls and inputs are generally to the left.
 
 The grid of controls, inputs, and outputs to the right control each waveform as well as the overall mix. One major exception is the Mix Phase controls on the far right are actually global phase controls.
@@ -2891,12 +2893,16 @@ This color coded button controls whether a high pass filter is applied to remove
 See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 ### FREQ/BIAS (Frequency/Bias) knob
-Sets the base frequency of the oscillator. The knob range varies depending on the Frequency Mode and the current selected Octave. Normally the knob uses an exponential scale, but in 0 Hz carrier mode it is a linear Bias with a very small range. Below are the knob ranges by mode when the Octave is at 0. Note that the Octave does not modify the bias frequency when in 0 Hz carrier mode.
+Sets the base frequency of the oscillator. The knob range varies depending on the Frequency Mode and the current selected Octave. Normally the knob uses an exponential scale, but in 0 Hz carrier mode it is a linear Bias with a very small range.
+
+There is a module context menu option to measure the frequency in BPM (beats per minute) instead of Hz when using any of the LFO modes.
+
+Below are the knob ranges by mode when the Octave is at 0. Note that the Octave does not modify the bias frequency when in 0 Hz carrier mode.
 
 |Mode|Minimum|Default|Maximum|
 |---|---|---|---|
 |Audio frequency|16.352 Hz (C0)|261.63 Hz (C4)|4186 Hz (C8)|
-|Low frequency|0.125 Hz|2 Hz|32 Hz|
+|Low frequency|0.125 Hz<br />(7.5 BPM)|2 Hz<br />(120 BPM)|32 Hz<br />(1920 BPM)|
 |0 Hz carrier bias|-0.08 Hz|0 Hz|0.08 Hz|
 
 When in 0 Hz carrier mode, a 0 Hz bias produces a static linear FM sound. A non 0 bias provides a rhythmic motion to the sound - the higher the bias magnitude, the faster the rhythm.
@@ -3098,7 +3104,7 @@ A smaller version of VCO Lab with only one waveform output at a time, without an
 
 A Wave switch is added to select between Sine, Triangle, Square, and Saw.
 
-The behavior of Shape modulation changes depending on the waveform selected.
+The behavior of Shape modulation changes depending on the waveform selected. When Square waveform is selected, the three shape mode options are replicated for a total of 6 options, like all the other waveforms.
 
 Pretty much all other VCO Lab functionality is the same, except there is no mix, level assignment, or mix shaping.
 
@@ -3121,6 +3127,7 @@ The incoming signal is amplified and then folded at +/-5 volts a fixed number of
 All amplification can be controlled via CV, thus making the wavefolder a VCA as well. The VCAs can be configured to be unipolar or bipolar, and they can process audio rate CV, so the module can also perform wave folded amplitude modulation or wave folded ring modulation.
 
 Watch [this video for a brief introduction and some example use cases](https://www.youtube.com/watch?v=HLTyiIAUELs). But please do read the rest of the documentation for some more details.
+Also watch [this Omri Cohen video](https://www.youtube.com/watch?v=BHY5gI--D-c) demonstrating a number of applications for the Wave Folder.
 
 ### STAGES button
 Controls the maximum amount of folding stages, which in turn limits the maximum number of folds. There are five possible values

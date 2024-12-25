@@ -1,5 +1,12 @@
 # Venom Modules Changelog
 
+## 2.11.2 (????-??-??)
+### Enhancements
+- VCO Lab and VCO Unit
+  - Added a module context menu option to measure LFO frequency in BPM instead of Hz
+- VCO Unit
+  - Shape mode now always has 6 options, regardless which waveform is selected. The square waveform replicates the three options to make 6.
+
 ## 2.11.1 (2024-12-17)
 ### Enhancements
 - All modules with oversampling options
