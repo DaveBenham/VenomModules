@@ -2811,6 +2811,8 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 - Square pulse width range can be 0-100% or 3-97%
 - Optional DC offset removal for the outputs
 
+Watch this [demo/tutorial video from Omri Cohen](https://www.youtube.com/watch?v=iTE15_leyXQ) for an introduction to many of the VCO Lab features. It uses a slightly older version of VCO Lab, but it is still instructive.
+
 Global controls and inputs are generally to the left.
 
 The grid of controls, inputs, and outputs to the right control each waveform as well as the overall mix. One major exception is the Mix Phase controls on the far right are actually global phase controls.
@@ -3121,6 +3123,7 @@ The incoming signal is amplified and then folded at +/-5 volts a fixed number of
 All amplification can be controlled via CV, thus making the wavefolder a VCA as well. The VCAs can be configured to be unipolar or bipolar, and they can process audio rate CV, so the module can also perform wave folded amplitude modulation or wave folded ring modulation.
 
 Watch [this video for a brief introduction and some example use cases](https://www.youtube.com/watch?v=HLTyiIAUELs). But please do read the rest of the documentation for some more details.
+Also watch [this Omri Cohen video](https://www.youtube.com/watch?v=BHY5gI--D-c) demonstrating a number of applications for the Wave Folder.
 
 ### STAGES button
 Controls the maximum amount of folding stages, which in turn limits the maximum number of folds. There are five possible values
