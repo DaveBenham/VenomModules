@@ -1526,7 +1526,7 @@ Crossfade between channels of a polyphonic signal.
 
 A unipolar phasor from 0 to 10V drives the crossfade between the channels of a polyphonic input. The phasor can be the internal LFO, an external Phasor input, or the sum of both. The current phasor voltage determines which channel(s) are playing at that moment. An envelope controls how each channel fades in and out. For an input with N channels, the 10V phasor range is divided into N equal voltage ranges, one for each channel. That range represents 1 width unit. The width of the channel envelopes can vary, and is expressed in the channel width units. An envelope width of 1 means that the channel envelopes abut each other, but never overlap. Widths greater than 1 result in channel envelopes overlapping each other. Widths less than 1 result in gaps between channel envelopes. The shape of the channel envelopes is controlled by Hold, Skew, Rise shape, and Fall shape controls. There are outputs for the net phasor, the polyphonic channel gates, the polyphonic channel envelopes, the polyphonic final output, and the monophonic mix of final outputs. Level control and a VCA can be used to adjust the output volume and/or to apply amplitude modulation effects.
 
-Poly Fade can run with slow LFO rates, or high audio rates, but there is no anti-aliasing applied. So even mid range audio rates can generate harsh sounds with significant aliasing.
+Poly Fade can run with slow LFO rates, or high audio rates, but there is no anti-aliasing applied.
 
 ### Upper Section - Envelope and Level control
 
@@ -1670,15 +1670,32 @@ This is the effective phasor - the sum (unity mix) of the internal LFO phasor an
 
 #### Gates polyphonic output
 
-This port outputs a high 10V gate for each channel that currently has a non-zero envelope. The gate for the input Start channel is always assigned to channel 1 of the output.
+This port outputs a high 10V gate for each channel that currently has a non-zero envelope.
 
 #### Envs (envelopes) polyphonic output
 
-This port outputs the envelope for each of the channels. The envelope for the input Start channel is always assigned to channel 1 of the output.
+This port outputs the envelope for each of the channels.
 
 #### Out polyphonic output
 
-This port outputs the crossfaded outputs for each of the channels. The output for the input Start channel is always assigned to channel 1 of the output.
+This port outputs the crossfaded outputs for each of the channels.
+
+### Polyphony Rules
+
+#### Polyphonic Input
+The effective number of input channels is the greatest of the following values:
+- The number of poly channels at the input
+- The selected number of crossfaded channels
+- The selected start channel.
+
+If the actual input is monophonic, then the input is replicated to match the effective input channel count.
+
+If the actual input is polyphonic with fewer channels than the effective input channel count, then missing channels are assigned constant 0V.
+
+#### Polyphonic Outputs
+The number of output channels matches the effective input channel count by default. In this case the effective input channels map directly to the output channels. Unused channels are constant 0V.
+
+A module context menu option is available to minimize the number of output channels to match the selected number of crossfaded channels. In this case the start channel is always assigned to output channel 1, and there are no unused channels in the output.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.

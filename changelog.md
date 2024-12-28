@@ -6,6 +6,10 @@
   - Added a module context menu option to measure LFO frequency in BPM instead of Hz
 - VCO Unit
   - Shape mode now always has 6 options, regardless which waveform is selected. The square waveform replicates the three options to make 6.
+- Poly Fade
+  - Poly outputs now preserve all input channels by default
+  - Added context menu option to minimize output channels like old behavior
+    - Old patches automatically minimize output channels
 - Multi Merge
   - Add context menu options to explicitly set the number of channels on inputs, overriding the actual input channel count.
 
