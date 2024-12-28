@@ -208,11 +208,9 @@ struct MultiSplitWidget : VenomWidget {
         return current;
       },
       [=](int cnt) {
-        if (cnt<16){
-          for (int i=0; i<16; i++){
-            module->outChannels[i] = cnt;
-            module->setOutputDescription(i);
-          }
+        for (int i=0; i<16; i++){
+          module->outChannels[i] = cnt;
+          module->setOutputDescription(i);
         }
       }
     ));
