@@ -1693,9 +1693,9 @@ If the actual input is monophonic, then the input is replicated to match the eff
 If the actual input is polyphonic with fewer channels than the effective input channel count, then missing channels are assigned constant 0V.
 
 #### Polyphonic Outputs
-The number of output channels matches the effective input channel count by default. In this case the effective input channels map directly to the output channels. Unused channels are constant 0V.
+By default the number of output channels is minimized to match the selected number of crossfaded channels. In this case the start channel is always assigned to output channel 1, and there are no unused channels in the output.
 
-A module context menu option is available to minimize the number of output channels to match the selected number of crossfaded channels. In this case the start channel is always assigned to output channel 1, and there are no unused channels in the output.
+A module context menu option is available to disable the output channel minimization. In this case the effective input channels map directly to the output channels. Unused input channels become constant 0V in the output.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.

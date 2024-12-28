@@ -59,7 +59,7 @@ struct PolyFade : VenomModule {
   };
   
   bool resetIfOff = true;
-  bool minimizeChannels = false, oldMinimizeChannels = false;
+  bool minimizeChannels = true, oldMinimizeChannels = true;
   float phasor = 0.f;
   float slewRate[4]{0.f, 333.f, 167.f, 100.f};
   float curSlew = -1.f;
@@ -343,8 +343,6 @@ struct PolyFade : VenomModule {
       resetIfOff = json_boolean_value(val);
     if((val = json_object_get(rootJ, "minimizeChannels")))
       minimizeChannels = json_boolean_value(val);
-    else
-      minimizeChannels = true;
   }
 
 };
