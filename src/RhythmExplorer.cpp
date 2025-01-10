@@ -23,7 +23,12 @@ static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/4 Triplet",
   "1/8 Triplet",
   "1/16 Triplet",
-  "1/32 Triplet"
+  "1/32 Triplet",
+  "dotted 1/2",
+  "dotted 1/4",
+  "dotted 1/8",
+  "dotted 1/16",
+  "dotted 1/32"
 };
 
 static const std::vector<std::string> CHANNEL_MODE_LABELS = {
@@ -41,7 +46,8 @@ static const std::vector<std::string> POLY_MODE_LABELS = {
   "Offbeat"
 };
 
-static const int GATE_LENGTH [10] = { //Assuming 24 PPQN
+/*
+static const int GATE_LENGTH [14] = { //Assuming 24 PPQN
   48,
   24,
   12,
@@ -51,7 +57,31 @@ static const int GATE_LENGTH [10] = { //Assuming 24 PPQN
   16,
   8,
   4,
-  2
+  2,
+  72,
+  36,
+  18,
+  9
+};
+*/
+static const int ppqn_div[3]{4,2,1};
+
+static const int GATE_LENGTH [15] = { //Assuming 96 PPQN
+  192,
+  96,
+  48,
+  24,
+  12,
+  128,
+  64,
+  32,
+  16,
+  8,
+  288,
+  144,
+  72,
+  36,
+  18
 };
 
 struct RhythmExplorer : VenomModule {
@@ -216,7 +246,7 @@ struct RhythmExplorer : VenomModule {
     configInput(MODE_CHANNEL_INPUT, "Unused Mode CV 1");
     for(int si = 0; si < SLIDER_COUNT; si++){
       std::string si_s = std::to_string(si+1);
-      configSwitch<FixedSwitchQuantity>(RATE_PARAM + si, 0, 9, si+1, "Division " + si_s, CHANNEL_DIVISION_LABELS);
+      configSwitch<FixedSwitchQuantity>(RATE_PARAM + si, 0, 14, si+1, "Division " + si_s, CHANNEL_DIVISION_LABELS);
       configParam(DENSITY_PARAM + si, 0.f, 10.f, 0.f, "Density " + si_s, "%", 0.f, 10.f);
       lights[DENSITY_LIGHT + si].setBrightness(LIGHT_DIM);
       configOutput(GATE_OUTPUT + si, "Gate " + si_s);
@@ -249,7 +279,7 @@ struct RhythmExplorer : VenomModule {
   
   void setPPQN(int val) {
     ppqn = val;
-    getInputInfo(CLOCK_INPUT)->name = val ? "48 PPQN Clock" : "24 PPQN Clock";
+    getInputInfo(CLOCK_INPUT)->name = val==2 ? "96 PPQN Clock" : (val ? "48 PPQN Clock" : "24 PPQN Clock");
   }  
 
   void onReset(const ResetEvent& e) override {
@@ -446,6 +476,8 @@ struct RhythmExplorer : VenomModule {
     for (int i=0; i<SLIDER_COUNT; i++) {
       if(i>0 && inputs[MODE_CHANNEL_INPUT + i].isConnected())
         params[MODE_CHANNEL_PARAM + i].setValue(rack::math::clamp(static_cast<int>(inputs[MODE_CHANNEL_INPUT + i].getVoltage()), 0, 3));
+      if (ppqn==0 && static_cast<int>(params[RATE_PARAM + i].getValue())==14)
+        params[MUTE_CHANNEL_PARAM + i].setValue(1);
       lights[MUTE_CHANNEL_LIGHT + i].setBrightness(params[MUTE_CHANNEL_PARAM + i].getValue()>0.f ? 1.f : LIGHT_OFF);
     }
     if(inputs[MODE_POLY_INPUT].isConnected())
@@ -524,7 +556,7 @@ struct RhythmExplorer : VenomModule {
     if(clockEvent && runGateActive){
 
       currentPulse++;
-      int resetDelay = resetTiming > 1 ? GATE_LENGTH[resetTiming-2] * (ppqn+1) : 9999;
+      int resetDelay = resetTiming > 1 ? GATE_LENGTH[resetTiming-2] / ppqn_div[ppqn] : 9999;
       if(resetArmed && (
           resetTiming == 0 ||
           currentPulse % resetDelay == 0
@@ -573,7 +605,7 @@ struct RhythmExplorer : VenomModule {
       int outChannel = 0;
       int outGateCount[8] = {0,0,0,0,0,0,0,0};
       for(int si = 0; si < SLIDER_COUNT; si++){
-        int gateLength = GATE_LENGTH[ static_cast<int>(params[RATE_PARAM + si].getValue()) ] * (ppqn+1);
+        int gateLength = GATE_LENGTH[ static_cast<int>(params[RATE_PARAM + si].getValue()) ] / ppqn_div[ppqn];
         int clockWidthCnt = clockWidth ? gateLength / 2 : 0;
         int gateWidthCnt = gateWidth == 0 ? 0 : gateWidth == 1 ? gateLength / 2 : gateLength;
         int globalMode = rack::math::clamp(
@@ -732,6 +764,11 @@ struct RhythmExplorerWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_7.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_8.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_9.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_10.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_11.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_12.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_13.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/rate_14.svg")));
     }
   };
 
@@ -873,9 +910,14 @@ struct RhythmExplorerWidget : VenomWidget {
     std::vector<std::string> ppqnLabels;
     ppqnLabels.push_back("24");
     ppqnLabels.push_back("48");
+    ppqnLabels.push_back("96");
     menu->addChild(createIndexSubmenuItem("Clock input PPQN", ppqnLabels,
       [=]() {return module->ppqn;},
-      [=](int i) {module->setPPQN(i);}
+      [=](int i) {
+        module->setPPQN(i);
+        if (i==0 && module->resetTiming==16)
+          module->resetTiming = 0;
+      }
     ));
 
     std::vector<std::string> clockWidthLabels;
@@ -908,6 +950,12 @@ struct RhythmExplorerWidget : VenomWidget {
     resetLabels.push_back("1/8 Triplet");
     resetLabels.push_back("1/16 Triplet");
     resetLabels.push_back("1/32 Triplet");
+    resetLabels.push_back("Dotted 1/2");
+    resetLabels.push_back("Dotted 1/4");
+    resetLabels.push_back("Dotted 1/8");
+    resetLabels.push_back("Dotted 1/16");
+    if (module->ppqn)
+      resetLabels.push_back("Dotted 1/32");
     menu->addChild(createIndexSubmenuItem("Reset timing", resetLabels,
       [=]() {return module->resetTiming;},
       [=](int i) {module->resetTiming = i;}

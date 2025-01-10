@@ -10,6 +10,9 @@
   - Added context menu option to disable output channel minimization
 - Multi Merge
   - Add context menu options to explicitly set the number of channels on inputs, overriding the actual input channel count.
+- Rhythm Explorer
+  - Added 96 ppqn clock option
+  - Added dotted rate options
 
 ## 2.11.1 (2024-12-17)
 ### Enhancements

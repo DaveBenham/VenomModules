@@ -2232,7 +2232,7 @@ The Input is passed unchanged to the Output when REFORMATION is bypassed.
 Rhythm Explorer is a trigger sequencer that stochastically generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
 
 ### Basic Operation
-Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 ppqn clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
+Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 PPQN clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
 
 ### Basic Principles
 Random Rhythm uses a pseudo Random Number Generator (RNG) to establish a sequence of seemingly random numbers. However, the "random" sequence is dictated by a seed number - every time the RNG is reseeded with the same number, it generates the exact same sequence. With the initial setup, the reseed occurs after each set of 4 quarter notes, thus establishing a pattern. When the DICE button is pressed, a new seed number is generated, so the pattern will change.
@@ -2245,7 +2245,7 @@ All trigger and gate inputs have a transition to high threshold of 2 volts and t
 Trigger and gate high outputs are 10 volts, and low outputs 0 volts.
 
 ### CLOCK Input
-The Rhythm Explorer will not run properly until a 24 or 48 PPQN (pulses per quarter note) clock is patched into the CLOCK input. By default Rhythm Explorer expects 24 PPQN. The "Clock input PPQN" option within the module context menu gives options for either 24 or 48 PPQN. 
+The Rhythm Explorer will not run properly until a 24, 48, or 96 PPQN (pulses per quarter note) clock is patched into the CLOCK input. By default Rhythm Explorer expects 24 PPQN. The "Clock input PPQN" option within the module context menu gives options for 24, 48 or 96 PPQN. 
 
 ### RUN
 If the RUN input is not patched, then every press of the RUN button will toggle the run state on or off. The RUN button will be brightly lit while running, and off (actually very dimly lit) when not running.
@@ -2262,8 +2262,8 @@ The run state is preserved across sessions, and stored with each patch and prese
 
 ### RESET
 
-Pressing the RESET button or sending a CV trigger to the RESET input arms the sequencer to perform a reset and restart the phrase pattern from the beginning. The RESET button will glow brightly while in an armed state. By default the reset action will wait until the leading edge of the next 24 ppqn clock. For typical tempos, a 24 ppqn clock is fast enough that the reset is perceived as nearly instantaneous. The module context menu has a Reset Timing option where you can specify a different value for when the reset is applied:
-- Clock (24 ppqn)
+Pressing the RESET button or sending a CV trigger to the RESET input arms the sequencer to perform a reset and restart the phrase pattern from the beginning. The RESET button will glow brightly while in an armed state. By default the reset action will wait until the leading edge of the next clock pulse. For typical tempos, a 24 PPQN clock is fast enough that the reset is perceived as nearly instantaneous. The module context menu has a Reset Timing option where you can specify a different value for when the reset is applied:
+- Clock
 - Bar
 - 1/2
 - 1/4
@@ -2275,6 +2275,11 @@ Pressing the RESET button or sending a CV trigger to the RESET input arms the se
 - 1/8 Triplet
 - 1/16 Triplet
 - 1/32 Triplet
+- Dotted 1/2
+- Dotted 1/4
+- Dotted 1/8
+- Dotted 1/16
+- Dotted 1/32 (Not available for 24 PPQN clock)
 
 A 1 ms trigger is sent to the RESET output upon every reset action.
 
@@ -2312,7 +2317,7 @@ Both BAR and PHRASE can be modulated via bipolar CV at the inputs below the knob
 
 ### BAR START and PHRASE START
 
-The BAR START output issues a high gate lasting one 24 ppqn clock pulse at the start of every bar. Likewise the PHRASE START output issues a gate at the start of each phrase.
+The BAR START output issues a high gate lasting one clock pulse at the start of every bar. Likewise the PHRASE START output issues a gate at the start of each phrase.
 
 The phrase start pulse is also sent to channel 9, and the bar start pulse to channel 10 of the GLOBAL polyphonic clock output.
 
@@ -2322,7 +2327,7 @@ There is a matrix with 8 columns, each column representing a single division. Ea
 
 #### DIVISION Button
 
-The square division button at the top of each column indicates the currently selected division value for that column. Pressing the button cycles through the 10 available values, and right clicking presents a menu allowing you to directly select one of the values. The available values are
+The square division button at the top of each column indicates the currently selected division value for that column. Pressing the button cycles through the 14 available values, and right clicking presents a menu allowing you to directly select one of the values. The available values are
 - 1/2 Note
 - 1/4 Note
 - 1/8 Note
@@ -2333,8 +2338,31 @@ The square division button at the top of each column indicates the currently sel
 - 1/8 Note Triplet
 - 1/16 Note Triplet
 - 1/32 Note Triplet
+- Dotted 1/2 Note
+- Dotted 1/4 Note
+- Dotted 1/8 Note
+- Dotted 1/16 Note
+- Dotted 1/32 Note - Automatically disables (mutes) column if clock is 24 PPQN
 
-Note that sometimes you may want to reuse the same division for multiple columns. Also note that the order of the columns can make a difference in the result depending on the mode selection (described later)
+Some divisions will give irregular results if the division does not divide evenly into the total phrase length (phrase x bar)
+
+Some 50% or 100% clock or gate widths will be incorrect and/or inconsistent if the clock PPQN is not high enough. (Gate/Clock widths are described later)
+
+The table below lists the divisions with special requirements for regular divisions and/or consistent widths.
+
+|Division|Total Phrase Length|Clock PPQN|
+|---|---|---|
+|1/2|Multiple of 2|Any|
+|1/32|Any|48 or 96 PPQN|
+|1/2 Triplet|Multiple of 4|Any|
+|1/4 Triplet|Multiple of 2|Any|
+|Dotted 1/2|Multiple of 3|Any|
+|Dotted 1/4|Multiple of 3|Any|
+|Dotted 1/8|Multiple of 3|Any|
+|Dotted 1/16|Multiple of 3|48 or 96 PPQN|
+|Dotted 1/32|Multiple of 3|96 PPQN|
+
+Note that you may reuse the same division for multiple columns. Also note that the order of the columns can make a difference in the result depending on the mode selection (described later)
 
 #### DENSITY Slider
 Each slider specifies a threshold at which any given division beat is likely to issue a high gate. Typically the values are unipolar ranging from 0 to 100%. Each density can be modulated by the division density CV input, and/or the Global density CV input.
@@ -2395,7 +2423,7 @@ By default both the CLOCK and GATE output gate widths match the input clock gate
   - 50%
   - 100% (consecutive high gates are tied together)
 
-Note that if the input clock PPQN is set to 24 and the output width is 50%, then the 1/32 division will actually have a 33.3% width. Using a 48 PPQN clock guarantees 50% is accurate for all divisions.
+Some divisions have special requirements for total phrase lengths and/or minimum clock PPQN in order to achieve correct and consistent widths. See the Division Button section above.
 
 ### GLOBAL Column
 
