@@ -2327,7 +2327,7 @@ There is a matrix with 8 columns, each column representing a single division. Ea
 
 #### DIVISION Button
 
-The square division button at the top of each column indicates the currently selected division value for that column. Pressing the button cycles through the 14 available values, and right clicking presents a menu allowing you to directly select one of the values. The available values are
+The square division button at the top of each column indicates the currently selected division value for that column. Pressing the button cycles through the 15 available values, and right clicking presents a menu allowing you to directly select one of the values. The available values are
 - 1/2 Note
 - 1/4 Note
 - 1/8 Note
@@ -2344,11 +2344,13 @@ The square division button at the top of each column indicates the currently sel
 - Dotted 1/16 Note
 - Dotted 1/32 Note - Automatically disables (mutes) column if clock is 24 PPQN
 
-Some divisions will give irregular results if the division does not divide evenly into the total phrase length (phrase x bar)
+Note that you may reuse the same division for multiple columns. Also note that the order of the columns can make a difference in the result depending on the mode selection (described later)
+
+Some divisions will give irregular intervals if the division does not divide evenly into the total phrase length (phrase x bar)
 
 Some 50% or 100% clock or gate widths will be incorrect and/or inconsistent if the clock PPQN is not high enough. (Gate/Clock widths are described later)
 
-The table below lists the divisions with special requirements for regular divisions and/or consistent widths.
+The table below lists the divisions with special requirements for regular intervals and/or consistent widths.
 
 |Division|Total Phrase Length|Clock PPQN|
 |---|---|---|
@@ -2361,8 +2363,6 @@ The table below lists the divisions with special requirements for regular divisi
 |Dotted 1/8|Multiple of 3|Any|
 |Dotted 1/16|Multiple of 3|48 or 96 PPQN|
 |Dotted 1/32|Multiple of 3|96 PPQN|
-
-Note that you may reuse the same division for multiple columns. Also note that the order of the columns can make a difference in the result depending on the mode selection (described later)
 
 #### DENSITY Slider
 Each slider specifies a threshold at which any given division beat is likely to issue a high gate. Typically the values are unipolar ranging from 0 to 100%. Each density can be modulated by the division density CV input, and/or the Global density CV input.
