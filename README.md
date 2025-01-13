@@ -1894,7 +1894,7 @@ Monophonic bipolar CV modulates the unison count, with each 1/3 volt representin
 Sets the detune spread for each source channel, measured in semitones. This parameter has no effect if the unison count is 1. The unison voices will be distributed evenly across the spread. The increment between voices = Spread / (Count - 1).
 
 ### DETUNE input
-Monophonic V/Oct bipolar input modulates the detune spread. The CV input is summed with the detune knob value to determine the effective detune spread. The effective spread is not constrained by the knob range.
+Monophonic bipolar input modulates the detune spread. The CV input is scaled so that 10V matches the DETUNE knob range, and then summed with the detune knob value to determine the effective detune spread. A module context menu option is available to use a V/Oct scale for the CV instead.
 
 ### DIR (Detune Direction) button
 This color coded button specifies how the detune spread is applied to each replication set.

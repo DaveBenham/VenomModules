@@ -13,6 +13,9 @@
 - Rhythm Explorer
   - Added 96 ppqn clock option
   - Added dotted rate options
+- Poly Unison
+  - Detune CV now scales 10V to match the detune knob range
+    - Old patches default to old behavior of V/Oct for Detune CV
 
 ## 2.11.1 (2024-12-17)
 ### Enhancements
