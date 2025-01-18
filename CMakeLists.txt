@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.22)
 
-if (DEFINED ENV{METAMODULE_SDK_DIR})
+if(NOT "${METAMODULE_SDK_DIR}" STREQUAL "")
+	message("METAMODULE_SDK_DIR set by CMake variable ${METAMODULE_SDK_DIR}")
+elseif (DEFINED ENV{METAMODULE_SDK_DIR})
     set(METAMODULE_SDK_DIR "$ENV{METAMODULE_SDK_DIR}")
-elseif("${METAMODULE_SDK_DIR}" STREQUAL "")
+	message("METAMODULE_SDK_DIR set by environment variable ${METAMODULE_SDK_DIR}")
+else()
     set(METAMODULE_SDK_DIR "${CMAKE_CURRENT_LIST_DIR}/../metamodule-plugin-sdk")
+	message("METAMODULE_SDK_DIR set to default: ${METAMODULE_SDK_DIR}")
 endif()
+
 include(${METAMODULE_SDK_DIR}/plugin.cmake)
 
 project(VenomMetaModulePlugin 
