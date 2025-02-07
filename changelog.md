@@ -5,7 +5,7 @@
 - VCO Lab and VCO Unit
   - Added a module context menu option to measure LFO frequency in BPM instead of Hz
 - VCO Unit
-  - Shape mode now always has 6 options, regardless which waveform is selected. The square waveform replicates the three options to make 6.
+  - Shape mode now always has 6 options, regardless which waveform is selected. The square waveform replicates the original 3 options to make 6.
 - Poly Fade
   - Added context menu option to disable output channel minimization
 - Multi Merge
