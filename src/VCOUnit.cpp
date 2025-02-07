@@ -80,7 +80,7 @@ struct VCOUnit : VenomModule {
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4]{}, phaseUpSample[4]{}, offsetUpSample[4]{}, levelUpSample[4]{},
                      outDownSample[4]{};
-  float_4 phasor[4]{}, phasorDir[4]{1.f, 1.f, 1.f, 1.f};
+  float_4 phasor[4]{}, phasorDir[4]{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}};
   DCBlockFilter_4 linDcBlockFilter[4]{}, outDcBlockFilter[4]{};
   bool linDCCouple = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];

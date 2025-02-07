@@ -198,7 +198,7 @@ struct Oscillator : VenomModule {
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4][5]{}, phaseUpSample[4][5]{}, offsetUpSample[4][5]{}, levelUpSample[4][5]{},
                      outDownSample[4][5]{};
-  float_4 phasor[4]{}, phasorDir[4]{1.f, 1.f, 1.f, 1.f};
+  float_4 phasor[4]{}, phasorDir[4]{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}};
   DCBlockFilter_4 dcBlockFilter[4][6]{}; // Sin, Tri, Sqr, Saw, Mix, Lin FM Input
   bool linDCCouple = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
