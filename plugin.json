@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.11.2dev",
+  "version": "2.12.0dev",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -137,6 +137,16 @@
       "tags": [
         "Polyphonic",
         "Utility"
+      ]
+    },
+    {
+      "slug": "CrossFade3D",
+      "name": "Cross Fade 3D",
+      "description": "Cross fade 8 inputs to 1 output using X, Y, and Z axes",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#cross-fade-3d",
+      "tags": [
+        "Mixer",
+        "Polyphonic"
       ]
     },
     {
@@ -277,6 +287,7 @@
         "Attenuator",
         "Expander",
         "Mixer",
+        "Panning",
         "Polyphonic",
         "Utility"
       ]
@@ -354,6 +365,16 @@
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#norsiq_chord_to_scale",
       "tags": [
         "Quantizer",
+        "Polyphonic"
+      ]
+    },
+    {
+      "slug": "Pan3D",
+      "name": "Pan 3D",
+      "description": "Pan 1 input to 8 outputs using X, Y, and Z axes",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#pan-3d",
+      "tags": [
+        "Panning",
         "Polyphonic"
       ]
     },

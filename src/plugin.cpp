@@ -74,6 +74,7 @@ void init(Plugin* p) {
   p->addModel(modelBlocker);
   p->addModel(modelBypass);
   p->addModel(modelCloneMerge);
+  p->addModel(modelCrossFade3D);
   p->addModel(modelHQ);
   p->addModel(modelKnob5);
   p->addModel(modelLinearBeats);
@@ -94,6 +95,7 @@ void init(Plugin* p) {
   p->addModel(modelOscillator);
   p->addModel(modelNORS_IQ);
   p->addModel(modelNORSIQChord2Scale);
+  p->addModel(modelPan3D);
   p->addModel(modelPolyClone);
   p->addModel(modelPolyFade);
   p->addModel(modelPolyOffset);

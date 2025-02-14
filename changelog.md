@@ -1,6 +1,10 @@
 # Venom Modules Changelog
 
-## 2.11.2 (????-??-??)
+## 2.12.0 (????-??-??)
+### New Modules
+- 3D Cross Fade
+- 3D Pan
+
 ### Enhancements
 - VCO Lab and VCO Unit
   - Added a module context menu option to measure LFO frequency in BPM instead of Hz
