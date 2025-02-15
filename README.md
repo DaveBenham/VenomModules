@@ -692,7 +692,35 @@ If Clone Merge is bypassed then the output is constant monophonic 0V.
 ## CROSS FADE 3D
 ![Cross Fade 3D module image](doc/CrossFade3D.png)  
 
-Cross fade 8 inputs to 1 output using X, Y, and Z axes.
+Eight inputs in three dimensional space are cross faded to a single output. The inputs are placed at the vertices of a virtual cube. X, Y, and Z controls specify a focus point within the volume of the cube. The distance from the focus point to an input dictates the proportional amount that input contributes to the final output. The fades function linearly in amplitude, ranging from 0% to 100%. When all three controls are at the midpoint, the focus is at the center of the cube, and each input is attenuated the same amount before it is summed to the final output. A final Level control can further attenuate the final output.
+
+### Polyphony
+Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
+
+### INPUTS
+The faceplate has a perspective view of a cube with an input at each of the eight vertices. The inputs are not individually labeled on the faceplate, but when you hover over an input a name is displayed that identies whether the input is left or right, bottom or top, and front or back.
+
+### X, Y, Z fader controls and CV inputs
+X controls the left to right ratio, and is measured as percent right.  
+Y controls the bottom to top ratio, and is measured as percent top.  
+Z controls the front to back ratio, and is measured as percent back.  
+
+Each fader control ranges from 0% to 100%, with the default 50% at noon.
+
+Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
+
+### MONO OUTPUT button
+By default, polyphonic channels are preserved at the output. If the Mono Output button is enabled, then polyphonic output channels are summed to a monophonic output signal.
+
+### LEVEL control
+The final output level can be attenuated with the Level control. This may be especially useful when working with polyphonic inputs that are summed to a mono output.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+The output is constant monophonic 0V if the module is bypassed.
 
 [Return to Table Of Contents](#venom)
 
@@ -1498,7 +1526,35 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 ## PAN 3D
 ![Pan 3D module image](doc/Pan3D.png)  
 
-Pan 1 input to 8 outputs using X, Y, and Z axes.
+A single input is panned across eight outputs in three dimensional space. The output ports are placed at the vertices of a virtual cube. X, Y, and Z panner controls specify an origin within the volume of the cube. The distance from the origin to an output dictates the proportional amount of input that is sent to the output. The panners function linearly in amplitude, ranging from 0% to 100%. When all three controls are at the midpoint, the origin is at the center of the cube, and each output receives the same amount of input. A final Level control can further attenuate the final outputs.
+
+### Polyphony
+Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
+
+### OUTPUTS
+The faceplate has a perspective view of a cube with an output at each of the eight vertices. The outputs are not individually labeled on the faceplate, but when you hover over an output a name is displayed that identies whether the output is left or right, bottom or top, and front or back.
+
+### X, Y, Z panner controls and CV inputs
+X controls the left to right ratio, and is measured as percent right.  
+Y controls the bottom to top ratio, and is measured as percent top.  
+Z controls the front to back ratio, and is measured as percent back.  
+
+Each panner control ranges from 0% to 100%, with the default 50% at noon.
+
+Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
+
+### MONO OUTPUT button
+By default, polyphonic channels are preserved at the outputs. If the Mono Output button is enabled, then polyphonic output channels are summed to a monophonic output signal.
+
+### LEVEL control
+The final output levels can be attenuated with the Level control. Each output is attenuated the same amount. This control may be especially useful when working with polyphonic outputs that are summed to a mono output.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are constant monophonic 0V if Pan 3D is bypassed.
 
 [Return to Table Of Contents](#venom)
 
