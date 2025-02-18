@@ -692,7 +692,7 @@ If Clone Merge is bypassed then the output is constant monophonic 0V.
 ## CROSS FADE 3D
 ![Cross Fade 3D module image](doc/CrossFade3D.png)  
 
-Eight inputs in three dimensional space are cross faded to a single output. The inputs are placed at the vertices of a virtual cube. X, Y, and Z controls specify a focus point within the volume of the cube. The distance from the focus point to an input dictates the proportional amount that input contributes to the final output. The fades function linearly in amplitude, ranging from 0% to 100%. When all three controls are at the midpoint, the focus is at the center of the cube, and each input is attenuated the same amount before it is summed to the final output. A final Level control can further attenuate the final output.
+Eight inputs in three dimensional space are cross faded to a single output. The inputs are placed at the vertices of a virtual cube. X, Y, and Z controls independently cross fade between inputs on opposite faces of the cube. Each fader functions linearly in amplitude, ranging from 0% to 100%. The orthoganal faders are multiplicative, such that when all three controls are at an extreme, then 100% of the output comes from a single input. When all three controls are at 50% then each input contributes 12.5% to the output. A final Level control can further attenuate the final output.
 
 ### Polyphony
 Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
@@ -1537,7 +1537,7 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 ## PAN 3D
 ![Pan 3D module image](doc/Pan3D.png)  
 
-A single input is panned across eight outputs in three dimensional space. The output ports are placed at the vertices of a virtual cube. X, Y, and Z panner controls specify an origin within the volume of the cube. The distance from the origin to an output dictates the proportional amount of input that is sent to the output. The panners function linearly in amplitude, ranging from 0% to 100%. When all three controls are at the midpoint, the origin is at the center of the cube, and each output receives the same amount of input. A final Level control can further attenuate the final outputs.
+A single input is panned across eight outputs in three dimensional space. The output ports are placed at the vertices of a virtual cube. X, Y, and Z panner controls indepently pan the input between outputs on opposite faces of the cube. The panners function linearly in amplitude, ranging from 0% to 100%. The three orthoganal panners are multiplicative. When all three controls are at an extreme, 100% of the input is panned to a single output. When all three controls are at 50%, then each output receives 12.5% of the input. A final Level control can further attenuate the final outputs.
 
 ### Polyphony
 Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
