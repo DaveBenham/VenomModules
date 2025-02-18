@@ -86,12 +86,12 @@ struct Pan3D : VenomModule {
       float_4 front  = 1.f - back;
       float_4 in = inputs[PAN_INPUT].getNormalPolyVoltageSimd(zero, c) * level;
       outputs[BLF_OUTPUT].setVoltageSimd(in * bottom * left * front, c);
-      outputs[TLF_OUTPUT].setVoltageSimd(in * top * left * front, c);
       outputs[BRF_OUTPUT].setVoltageSimd(in * bottom * right * front, c);
+      outputs[TLF_OUTPUT].setVoltageSimd(in * top * left * front, c);
       outputs[TRF_OUTPUT].setVoltageSimd(in * top * right * front, c);
       outputs[BLB_OUTPUT].setVoltageSimd(in * bottom * left * back, c);
-      outputs[BRB_OUTPUT].setVoltageSimd(in * top * left * back, c);
-      outputs[TLB_OUTPUT].setVoltageSimd(in * bottom * right * back, c);
+      outputs[BRB_OUTPUT].setVoltageSimd(in * bottom * right * back, c);
+      outputs[TLB_OUTPUT].setVoltageSimd(in * top * left * back, c);
       outputs[TRB_OUTPUT].setVoltageSimd(in * top * right * back, c);
     }
     for (int i=0; i<8; i++){

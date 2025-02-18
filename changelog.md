@@ -2,8 +2,8 @@
 
 ## 2.12.0 (????-??-??)
 ### New Modules
-- 3D Cross Fade
-- 3D Pan
+- Cross Fade 3D
+- Pan 3D
 
 ### Enhancements
 - VCO Lab and VCO Unit

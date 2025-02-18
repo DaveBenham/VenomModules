@@ -72,10 +72,19 @@ struct CrossFade3D : VenomModule {
     VenomModule::process(args);
     using float_4 = simd::float_4;
     float_4 zero = simd::float_4::zero();
-    int channels=1;
-    for (int i=0; i<INPUTS_LEN; i++)
-      channels = std::max(channels, inputs[i].getChannels());
     bool mono = params[MONO_PARAM].getValue();
+    bool onePolyInput = inputs[BLF_INPUT].isConnected() && !(
+        inputs[TLF_INPUT].isConnected() || 
+        inputs[BRF_INPUT].isConnected() || 
+        inputs[TRF_INPUT].isConnected() || 
+        inputs[BLB_INPUT].isConnected() || 
+        inputs[TLB_INPUT].isConnected() || 
+        inputs[BRB_INPUT].isConnected() || 
+        inputs[TRB_INPUT].isConnected()
+      );
+    int channels=1;
+    for (int i=0; i < (onePolyInput ? 3 : INPUTS_LEN); i++)
+      channels = std::max(channels, inputs[i].getChannels());
     float level = params[LEVEL_PARAM].getValue();
     for (int c=0; c<channels; c+=4){
       float_4 right  = simd::clamp(params[X_PARAM].getValue() + inputs[X_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[X_AMT_PARAM].getValue());
@@ -84,16 +93,28 @@ struct CrossFade3D : VenomModule {
       float_4 bottom = 1.f - top;
       float_4 back   = simd::clamp(params[Z_PARAM].getValue() + inputs[Z_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Z_AMT_PARAM].getValue());
       float_4 front  = 1.f - back;
-      outputs[FADE_OUTPUT].setVoltageSimd((
-          inputs[BLF_INPUT].getNormalPolyVoltageSimd(zero, c) * bottom * left * front
-        + inputs[TLF_INPUT].getNormalPolyVoltageSimd(zero, c) * top * left * front
-        + inputs[BRF_INPUT].getNormalPolyVoltageSimd(zero, c) * bottom * right * front
-        + inputs[TRF_INPUT].getNormalPolyVoltageSimd(zero, c) * top * right * front
-        + inputs[BLB_INPUT].getNormalPolyVoltageSimd(zero, c) * bottom * left * back
-        + inputs[BRB_INPUT].getNormalPolyVoltageSimd(zero, c) * top * left * back
-        + inputs[TLB_INPUT].getNormalPolyVoltageSimd(zero, c) * bottom * right * back
-        + inputs[TRB_INPUT].getNormalPolyVoltageSimd(zero, c) * top * right * back
-      )*level, c);
+      if (onePolyInput)
+        outputs[FADE_OUTPUT].setVoltageSimd((
+            inputs[BLF_INPUT].getVoltage(0) * bottom * left * front
+          + inputs[BLF_INPUT].getVoltage(1) * bottom * right * front
+          + inputs[BLF_INPUT].getVoltage(2) * top * left * front
+          + inputs[BLF_INPUT].getVoltage(3) * top * right * front
+          + inputs[BLF_INPUT].getVoltage(4) * bottom * left * back
+          + inputs[BLF_INPUT].getVoltage(5) * bottom * right * back
+          + inputs[BLF_INPUT].getVoltage(6) * top * left * back
+          + inputs[BLF_INPUT].getVoltage(7) * top * right * back
+        )*level, c);
+      else
+        outputs[FADE_OUTPUT].setVoltageSimd((
+            inputs[BLF_INPUT].getNormalPolyVoltageSimd(zero, c) * bottom * left * front
+          + inputs[BRF_INPUT].getNormalPolyVoltageSimd(zero, c) * bottom * right * front
+          + inputs[TLF_INPUT].getNormalPolyVoltageSimd(zero, c) * top * left * front
+          + inputs[TRF_INPUT].getNormalPolyVoltageSimd(zero, c) * top * right * front
+          + inputs[BLB_INPUT].getNormalPolyVoltageSimd(zero, c) * bottom * left * back
+          + inputs[BRB_INPUT].getNormalPolyVoltageSimd(zero, c) * bottom * right * back
+          + inputs[TLB_INPUT].getNormalPolyVoltageSimd(zero, c) * top * left * back
+          + inputs[TRB_INPUT].getNormalPolyVoltageSimd(zero, c) * top * right * back
+        )*level, c);
     }
     if (mono) {
       float* out = outputs[FADE_OUTPUT].getVoltages();

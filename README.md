@@ -698,7 +698,18 @@ Eight inputs in three dimensional space are cross faded to a single output. The 
 Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
 
 ### INPUTS
-The faceplate has a perspective view of a cube with an input at each of the eight vertices. The inputs are not individually labeled on the faceplate, but when you hover over an input a name is displayed that identies whether the input is left or right, bottom or top, and front or back.
+The faceplate has a perspective view of a cube with a polyphonic input at each of the eight vertices. The inputs are not individually labeled on the faceplate, but when you hover over an input a name is displayed that identies whether the input is left or right, bottom or top, and front or back.
+
+#### Single polyphonic input alternative
+If only the Bottom Left Front input is patched, then Cross Fade 3D treats the input as an 8 channel polyphonic signal where each channel represents a monophonic input for one of the cube vertices. Missing channels are assigned constant 0V. The 8 channels are assigned as follows.
+- 1 = Bottom left front
+- 2 = Bottom right front
+- 3 = Top left front
+- 4 = Top right front
+- 5 = Bottom left back
+- 6 = Bottom right back
+- 7 = Top left back
+- 8 = Top right back
 
 ### X, Y, Z fader controls and CV inputs
 X controls the left to right ratio, and is measured as percent right.  
