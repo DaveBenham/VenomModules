@@ -2790,9 +2790,9 @@ Specifies the scale factor used for converting spherical radial distances into c
 - 1:1 = +/-5V radial distance range specifies a 10V diameter sphere centered about the origin that is inscribed within a 10V x 10V x 10V cube.
 - sqrt(3):1 = +/-5V radial distance range specifies a ~17.32V diameter sphere centered about the origin with a 10V x 10V x 10V cube inscribed within it.
 
-Assuming that inputs are bipolar +/-5V, then a 1:1 ratio guarantees that all converted X, Y, and Z outputs are within +/-5V. However, not all possible +/-5V X, Y, Z values are covered.
+Assuming that inputs are bipolar +/-5V, then a 1:1 ratio guarantees that all converted X, Y, and Z outputs are within +/-5V. However, not all possible +/-5V X, Y, Z coordinates are covered.
 
-The sqrt(3):1 ratio guarantees that a bipolar +/-5V radial distance can cover all possible +/-5V X, Y, Z values. However, some converted values may exceed the +/-5V range, depending on the input angles.
+The sqrt(3):1 ratio guarantees that a bipolar +/-5V radial distance can cover all possible +/-5V X, Y, Z coordinates. However, some converted values may exceed the +/-5V range, depending on the input angles.
 
 ### X output
 This represents the x cartesian coordinate, after conversion.
