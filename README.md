@@ -30,13 +30,13 @@ Venom modules version 2.12.0 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave 
 |----|----|----|----|----|----|----|----|
 |![Poly Clone module image](doc/PolyClone.png)|![Poly Fade module image](doc/PolyFade.png)|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)|
 
-|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
-|----|----|----|----|
-|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
+|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|[SHAPED<br />VCA](#shaped-vca)|
+|----|----|----|----|----|
+|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|
 
-|[SHAPED<br />VCA](#shaped-vca)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|
+|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|
 |----|----|----|----|----|----|
-|![SHAPED VCA module image](doc/ShapedVCA.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|
+|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|
 
 |[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
 |----|----|----|----|
@@ -719,6 +719,8 @@ Z controls the front to back ratio, and is measured as percent back.
 Each fader control ranges from 0% to 100%, with the default 50% at noon.
 
 Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
+
+If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, \u03B8, \u03C6 spherical coordinates into X, Y, Z cartesian coordinates. 
 
 ### MONO OUTPUT button
 By default, polyphonic channels are preserved at the output. If the Mono Output button is enabled, then polyphonic output channels are summed to a monophonic output signal.
@@ -1553,6 +1555,8 @@ Z controls the front to back ratio, and is measured as percent back.
 Each panner control ranges from 0% to 100%, with the default 50% at noon.
 
 Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
+
+If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, \u03B8, \u03C6 spherical coordinates into X, Y, Z cartesian coordinates. 
 
 ### MONO OUTPUT button
 By default, polyphonic channels are preserved at the outputs. If the Mono Output button is enabled, then polyphonic output channels are summed to a monophonic output signal.
@@ -2762,6 +2766,48 @@ The number of output polyphonic channels is set by the maximum number of channel
 
 ### Bypass
 The Left and Right inputs are passed unchanged to the Left and Right outputs when the module is bypassed. The Right input remains normaled to the Left input while bypassed. However, the left input is not normaled to 10V while bypassed.
+
+[Return to Table Of Contents](#venom)
+
+## SPHERE TO XYZ
+![Sphere To XYZ module image](doc/SphereToXYZ.png)  
+Converts spherical coordinates r, \u03B8, \u03C6 into cartesian coordinates X, Y, Z. This module uses the standard physics definition of spherical coordinates.
+
+### Polyphony
+All inputs and outputs are fully polyphonic. The number of output channels is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyponic inputs with fewer channels use constant 0V for any missing channels.
+
+### r input
+This represents the radial distance r. Negative r values are accepted.
+
+### \u03B8 input
+This represents the polar angle \u03B8. It is scaled at 36V/degree, meaning 5V = 180 degrees. Any angle is allowed.
+
+### \u03C6 input
+This represents the azimuthul angle \u03C6. It is scaled at 36V/degree, meaning 5V = 180 degrees. Any angle is allowed.
+
+### Scale switch
+Specifies the scale factor used for converting spherical radial distances into cartesian distances.
+- 1:1 = +/-5V radial distance range specifies a 10V diameter sphere centered about the origin that is inscribed within a 10V x 10V x 10V cube.
+- \u221A3:1 = +/-5V radial distance range specifies a ~17.32V diameter sphere centered about the origin with a 10V x 10V x 10V cube inscribed within it.
+
+Assuming that inputs are bipolar +/-5V, then a 1:1 ratio guarantees that all converted X, Y, and Z outputs are within +/-5V. However, not all possible +/-5V X, Y, Z values are covered.
+
+The \u221A3:1 ratio guarantees that a bipolar +/-5V radial distance can cover all possible +/-5V X, Y, Z values. However, some converted values may exceed the +/-5V range, depending on the input angles.
+
+### X output
+This represents the x cartesian coordinate, after conversion.
+
+### Y output
+This represents the y cartesian coordinate, after conversion.
+
+### Z output
+This represents the z cartesian coordinate, after conversion.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+All outputs are constant monophonic 0V when Sphere To XYZ is bypassed.
 
 [Return to Table Of Contents](#venom)
 

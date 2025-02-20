@@ -534,6 +534,16 @@
       ]
     },
     {
+      "slug": "SphereToXYZ",
+      "name": "Sphere To XYZ",
+      "description": "Convert spherical coordinates r,theta, phi to cartesian coordinates x, y, z",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#sphere-to-xyz",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "Thru",
       "name": "Thru",
       "description": "5 polyphonic input/output pairs suitable for stacked input unity mixes and/or introduction of sample delays",

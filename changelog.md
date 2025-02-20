@@ -4,6 +4,7 @@
 ### New Modules
 - Cross Fade 3D
 - Pan 3D
+- Sphere To XYZ
 
 ### Enhancements
 - VCO Lab and VCO Unit
