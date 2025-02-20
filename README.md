@@ -720,7 +720,7 @@ Each fader control ranges from 0% to 100%, with the default 50% at noon.
 
 Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
 
-If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, \u03B8, \u03C6 spherical coordinates into X, Y, Z cartesian coordinates. 
+If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, theta, phi spherical coordinates into X, Y, Z cartesian coordinates. 
 
 ### MONO OUTPUT button
 By default, polyphonic channels are preserved at the output. If the Mono Output button is enabled, then polyphonic output channels are summed to a monophonic output signal.
@@ -1556,7 +1556,7 @@ Each panner control ranges from 0% to 100%, with the default 50% at noon.
 
 Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
 
-If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, \u03B8, \u03C6 spherical coordinates into X, Y, Z cartesian coordinates. 
+If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, theta, phi spherical coordinates into X, Y, Z cartesian coordinates. 
 
 ### MONO OUTPUT button
 By default, polyphonic channels are preserved at the outputs. If the Mono Output button is enabled, then polyphonic output channels are summed to a monophonic output signal.
@@ -2771,7 +2771,7 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 
 ## SPHERE TO XYZ
 ![Sphere To XYZ module image](doc/SphereToXYZ.png)  
-Converts spherical coordinates r, \u03B8, \u03C6 into cartesian coordinates X, Y, Z. This module uses the standard physics definition of spherical coordinates.
+Converts spherical coordinates r, theta, phi into cartesian coordinates X, Y, Z. This module uses the standard physics definition of spherical coordinates.
 
 ### Polyphony
 All inputs and outputs are fully polyphonic. The number of output channels is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyponic inputs with fewer channels use constant 0V for any missing channels.
@@ -2779,20 +2779,20 @@ All inputs and outputs are fully polyphonic. The number of output channels is th
 ### r input
 This represents the radial distance r. Negative r values are accepted.
 
-### \u03B8 input
-This represents the polar angle \u03B8. It is scaled at 36V/degree, meaning 5V = 180 degrees. Any angle is allowed.
+### Theta input
+This represents the polar angle theta. It is scaled at 36V/degree, meaning 5V = 180 degrees. Any angle is allowed.
 
-### \u03C6 input
-This represents the azimuthul angle \u03C6. It is scaled at 36V/degree, meaning 5V = 180 degrees. Any angle is allowed.
+### Phi input
+This represents the azimuthul angle phi. It is scaled at 36V/degree, meaning 5V = 180 degrees. Any angle is allowed.
 
 ### Scale switch
 Specifies the scale factor used for converting spherical radial distances into cartesian distances.
 - 1:1 = +/-5V radial distance range specifies a 10V diameter sphere centered about the origin that is inscribed within a 10V x 10V x 10V cube.
-- \u221A3:1 = +/-5V radial distance range specifies a ~17.32V diameter sphere centered about the origin with a 10V x 10V x 10V cube inscribed within it.
+- sqrt(3):1 = +/-5V radial distance range specifies a ~17.32V diameter sphere centered about the origin with a 10V x 10V x 10V cube inscribed within it.
 
 Assuming that inputs are bipolar +/-5V, then a 1:1 ratio guarantees that all converted X, Y, and Z outputs are within +/-5V. However, not all possible +/-5V X, Y, Z values are covered.
 
-The \u221A3:1 ratio guarantees that a bipolar +/-5V radial distance can cover all possible +/-5V X, Y, Z values. However, some converted values may exceed the +/-5V range, depending on the input angles.
+The sqrt(3):1 ratio guarantees that a bipolar +/-5V radial distance can cover all possible +/-5V X, Y, Z values. However, some converted values may exceed the +/-5V range, depending on the input angles.
 
 ### X output
 This represents the x cartesian coordinate, after conversion.
