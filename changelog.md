@@ -21,6 +21,11 @@
 - Poly Unison
   - Detune CV now scales 10V to match the detune knob range
     - Old patches default to old behavior of V/Oct for Detune CV
+    
+### Bug Fix
+- WinComp
+  - Absolute value was applied to Tolerance input, but not the tolerance offset parameter
+  - Module now correctly sums the tolerance input with the offset before taking the absolute value
 
 ## 2.11.1 (2024-12-17)
 ### Enhancements

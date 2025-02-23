@@ -181,7 +181,7 @@ struct WinComp : VenomModule {
     for (int c = 0; c < channels; c += 4) {
       float_4 a = inputs[A_INPUT].getPolyVoltageSimd<float_4>(c) + aOffset;
       float_4 b = inputs[B_INPUT].getPolyVoltageSimd<float_4>(c) + bOffset;
-      float_4 tol = simd::fabs(inputs[TOL_INPUT].getPolyVoltageSimd<float_4>(c)) + tolOffset;
+      float_4 tol = simd::fabs(inputs[TOL_INPUT].getPolyVoltageSimd<float_4>(c) + tolOffset);
       float_4 minVal=float_4::zero(), maxVal=float_4::zero(), clampVal=float_4::zero(), overVal=float_4::zero(),
             eqVal=float_4::zero(), neqVal=float_4::zero(), leqVal=float_4::zero(), geqVal=float_4::zero(),
             lsVal=float_4::zero(), grVal=float_4::zero();
