@@ -698,7 +698,7 @@ Eight inputs in three dimensional space are cross faded to a single output. The 
 Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
 
 ### INPUTS
-The faceplate has a perspective view of a cube with a polyphonic input at each of the eight vertices. The inputs are not individually labeled on the faceplate, but when you hover over an input a name is displayed that identies whether the input is left or right, bottom or top, and front or back.
+The faceplate has a perspective view of a cube with a polyphonic input at each of the eight vertices. The inputs are not individually labeled on the faceplate, but when you hover over an input a name is displayed that identifies whether the input is left or right, bottom or top, and front or back.
 
 #### Single polyphonic input alternative
 If only the Bottom Left Front input is patched, then Cross Fade 3D treats the input as an 8 channel polyphonic signal where each channel represents a monophonic input for one of the cube vertices. Missing channels are assigned constant 0V. The 8 channels are assigned as follows.
@@ -1545,7 +1545,7 @@ A single input is panned across eight outputs in three dimensional space. The ou
 Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
 
 ### OUTPUTS
-The faceplate has a perspective view of a cube with an output at each of the eight vertices. The outputs are not individually labeled on the faceplate, but when you hover over an output a name is displayed that identies whether the output is left or right, bottom or top, and front or back.
+The faceplate has a perspective view of a cube with an output at each of the eight vertices. The outputs are not individually labeled on the faceplate, but when you hover over an output a name is displayed that identifies whether the output is left or right, bottom or top, and front or back.
 
 ### X, Y, Z panner controls and CV inputs
 X controls the left to right ratio, and is measured as percent right.  
