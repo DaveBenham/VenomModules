@@ -128,16 +128,12 @@ void init(Plugin* p) {
   p->addModel(modelMix4Stereo);
   p->addModel(modelOscillator);
   p->addModel(modelNORS_IQ);
-  p->addModel(modelPolyFade);
   p->addModel(modelPolySHASR);
   p->addModel(modelPush5);
   p->addModel(modelQuadVCPolarizer);
-  p->addModel(modelRecurse);
-  p->addModel(modelRecurseStereo);
   p->addModel(modelReformation);
   p->addModel(modelRhythmExplorer);
   p->addModel(modelShapedVCA);
-  p->addModel(modelThru);
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);
   p->addModel(modelVCOUnit);

@@ -48,16 +48,12 @@ target_sources(Venom
     ${SOURCE_DIR}/src/MultiSplit.cpp
     ${SOURCE_DIR}/src/NORS-IQ.cpp
     ${SOURCE_DIR}/src/Oscillator.cpp
-    ${SOURCE_DIR}/src/PolyFade.cpp
     ${SOURCE_DIR}/src/PolySHASR.cpp
     ${SOURCE_DIR}/src/Push5.cpp
     ${SOURCE_DIR}/src/QuadVCPolarizer.cpp
-    ${SOURCE_DIR}/src/Recurse.cpp
-    ${SOURCE_DIR}/src/RecurseStereo.cpp
     ${SOURCE_DIR}/src/Reformation.cpp
     ${SOURCE_DIR}/src/RhythmExplorer.cpp
     ${SOURCE_DIR}/src/ShapedVCA.cpp
-    ${SOURCE_DIR}/src/Thru.cpp
     ${SOURCE_DIR}/src/VCAMix4.cpp
     ${SOURCE_DIR}/src/VCAMix4Stereo.cpp
     ${SOURCE_DIR}/src/VCOUnit.cpp

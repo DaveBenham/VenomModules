@@ -110,19 +110,6 @@
       ]
     },
     {
-      "slug": "PolyFade",
-      "name": "Poly Fade",
-      "description": "Cross fade between channels of a polyphonic signal",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-fade",
-      "tags": [
-        "Envelope Generator",
-        "Low-frequency oscillator",
-        "Polyphonic",
-        "Sequencer",
-        "Switch"
-      ]
-    },
-    {
       "slug": "PolySHASR",
       "name": "Poly Sample & Hold Analog Shift Register",
       "description": "Ten channel polyphonic sample and hold combined with a shift register",
@@ -156,30 +143,6 @@
         "Ring modulator",
         "Utility",
         "Voltage-controlled amplifier"
-      ]
-    },
-    {
-      "slug": "Recurse",
-      "name": "Recurse",
-      "description": "Recursively process an input via Send/Return, with built in scaling and offset cababilities",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#recurse",
-      "tags": [
-        "Effect",
-        "Polyphonic",
-        "Ring modulator",
-        "Utility"
-      ]
-    },
-    {
-      "slug": "RecurseStereo",
-      "name": "Recurse Stereo",
-      "description": "Recursively process mono or stereo input via Send/Return, with built in scaling and offset cababilities",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#recurse-stereo",
-      "tags": [
-        "Effect",
-        "Polyphonic",
-        "Ring modulator",
-        "Utility"
       ]
     },
     {
@@ -219,18 +182,6 @@
         "Utility",
         "Voltage-controlled amplifier",
         "Waveshaper"
-      ]
-    },
-    {
-      "slug": "Thru",
-      "name": "Thru",
-      "description": "5 polyphonic input/output pairs suitable for stacked input unity mixes and/or introduction of sample delays",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#thru",
-      "tags": [
-        "Delay",
-        "Mixer",
-        "Polyphonic",
-        "Utility"
       ]
     },
     {
