@@ -553,23 +553,32 @@ struct VCOUnit : VenomModule {
             } // end sine shape switch
             break;
           case 1: // TRI
-            wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f + 250.f;
+            wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
             wavePhasor = simd::fmod(wavePhasor, 1000.f);
             wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
-            if (shapeMode<=2) shape = simd::ifelse(wavePhasor<500.f, shape, -shape);
-            wavePhasor = simd::ifelse(wavePhasor<500.f, wavePhasor*.002f, (1000.f-wavePhasor)*.002f);
             switch (shapeMode) {
               case 0:  // exp/log
+                wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
+                shape = simd::ifelse(wavePhasor<500.f, shape, -shape);
+                wavePhasor = simd::ifelse(wavePhasor<500.f, wavePhasor*.002f, (1000.f-wavePhasor)*.002f);
                 out[s] = crossfade(wavePhasor, ifelse(shape>0.f, 11.f*wavePhasor/(10.f*simd::abs(wavePhasor)+1.f), simd::sgn(wavePhasor)*simd::pow(wavePhasor,4)), ifelse(shape>0.f, shape, -shape))*10.f-5.f;
                 break;
               case 1:  // J curve
+                wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
+                shape = simd::ifelse(wavePhasor<500.f, shape, -shape);
+                wavePhasor = simd::ifelse(wavePhasor<500.f, wavePhasor*.002f, (1000.f-wavePhasor)*.002f);
                 out[s] = normSigmoid(wavePhasor, -shape*0.8) * 10.f - 5.f;
                 break;
               case 2: // S curve
+                wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
+                shape = simd::ifelse(wavePhasor<500.f, shape, -shape);
+                wavePhasor = simd::ifelse(wavePhasor<500.f, wavePhasor*.002f, (1000.f-wavePhasor)*.002f);
                 out[s] = normSigmoid(wavePhasor*2.f-1.f, -shape*0.8) * 5.f;
                 break;
               case 3: // Rectify
               case 4: // Normalized Rectify
+                wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
+                wavePhasor = simd::ifelse(wavePhasor<500.f, wavePhasor*.002f, (1000.f-wavePhasor)*.002f);
                 shape = -shape;
                 shapeSign = simd::sgn(shape);
                 out[s] = wavePhasor*2.f-1.f;
@@ -578,7 +587,9 @@ struct VCOUnit : VenomModule {
                   out[s] = -((1+simd::abs(shape))*-out[s]-shape);
                 out[s] *= 5.f;
                 break;
-              default: // 5 morph sine <--> triangle <--> square
+              case 5: // morph sine <--> triangle <--> square
+                wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
+                wavePhasor = simd::ifelse(wavePhasor<500.f, wavePhasor*.002f, (1000.f-wavePhasor)*.002f);
                 out[s] = (wavePhasor*10.f - 5.f) * (1.f - simd::abs(shape)); // triangle component
                 // sine and square components
                 wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
@@ -588,6 +599,15 @@ struct VCOUnit : VenomModule {
                                         sinSimd_1000(wavePhasor)*5.f * -shape, // sine component
                                         simd::ifelse(wavePhasor<500.f, 5.f, -5.f) * shape // square component
                                       );
+                break;
+              default: // PWM
+                flip = (shapeIn*params[SHAPE_AMT_PARAM].getValue()*shpScale + params[SHAPE_PARAM].getValue() + 1.f) * 500.f;
+                if (shapeMode==6)
+                  flip = clamp( flip, 30.f, 970.f );
+                wavePhasor = 1000.f*simd::ifelse(wavePhasor<flip, wavePhasor/flip/2.f, (wavePhasor-flip)/(1000.f-flip)/2.f+0.5f);
+                wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
+                wavePhasor = simd::ifelse(wavePhasor<500.f, wavePhasor*.002f, (1000.f-wavePhasor)*.002f);
+                out[s] = wavePhasor * 10.f - 5.f;
             } // end triangle shape switch
             break;
           case 2: // SQR
@@ -646,7 +666,7 @@ struct VCOUnit : VenomModule {
                   out[s] = -((1+simd::abs(shape))*-out[s]-shape);
                 out[s] *= 5.f;
                 break;
-              default: // 5 morph square <--> saw <--> even
+              case 5: // morph square <--> saw <--> even
                 out[s] = (wavePhasor*10.f - 5.f) * simd::ifelse(shape<0.f, 1.f + shape, 1.f); // saw component
                 // square component
                 wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
@@ -658,6 +678,14 @@ struct VCOUnit : VenomModule {
                 wavePhasor = simd::fmod(wavePhasor, 1000.f);
                 wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
                 out[s] += simd::ifelse(shape<0.f, 0.f, sinSimd_1000(wavePhasor) * 3.175 * shape);
+                break;
+              default: // PWM
+                flip = 1.f - (shapeIn*params[SHAPE_AMT_PARAM].getValue()*shpScale + params[SHAPE_PARAM].getValue() + 1.f) * .5f;
+                if (shapeMode==6)
+                  flip = clamp( flip, .03f, .97f );
+                wavePhasor = simd::ifelse(wavePhasor<flip, wavePhasor/flip/2.f, (wavePhasor-flip)/(1.f-flip)/2.f+0.5f);
+                out[s] = wavePhasor * 10.f - 5.f;
+                break;
             } // end saw shape switch
         } // end wave switch
 
