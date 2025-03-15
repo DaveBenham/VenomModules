@@ -101,7 +101,7 @@ struct VCOUnit : VenomModule {
       float val = ParamQuantity::getDisplayValue();
       switch (wav) {
         case 0: // sine
-          if (shp==7){
+          if (shp==6){
             val = (val + 100.f)/2.f;
             val = clamp(val, 3.f, 97.f);
           }
@@ -133,7 +133,7 @@ struct VCOUnit : VenomModule {
       int shp = static_cast<int>(module->params[SHAPE_MODE_PARAM].getValue());
       switch (wav){
         case 0: // sine
-          if (shp==7)
+          if (shp==6)
             v = v*2.f - 100.f;
           break;
         case 2: // square
@@ -253,7 +253,7 @@ struct VCOUnit : VenomModule {
     SwitchQuantity *sq = static_cast<SwitchQuantity*>(paramQuantities[SHAPE_MODE_PARAM]);
     switch (wave) {
       case 0: // SIN
-        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW", "Skew", "PWM 3%-97%"};
+        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW", "Limited PWM 3%-97%", "Skew"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
         break;
@@ -541,13 +541,13 @@ struct VCOUnit : VenomModule {
                                         (wavePhasor*0.01f - 5.f) * shape // saw component
                                       );
                 break;
-              default: // skew or "pulse" width
+              default: // skew or PWM
                 flip = (shapeIn*params[SHAPE_AMT_PARAM].getValue()*shpScale + params[SHAPE_PARAM].getValue() + 1.f) * 500.f;
                 flip = clamp( flip, 30.f, 970.f );
-                if (shapeMode==6) // Skew
+                if (shapeMode==7) // Skew
                   wavePhasor += simd::ifelse(wavePhasor>250.f, -250.f, 750.f);
                 wavePhasor = 1000.f*simd::ifelse(wavePhasor<flip, wavePhasor/flip/2.f, (wavePhasor-flip)/(1000.f-flip)/2.f+0.5f);
-                if (shapeMode==7) // Pulse width
+                if (shapeMode==6) // Pulse width
                   wavePhasor += simd::ifelse(wavePhasor>250.f, -250.f, 750.f);
                 out[s] = sinSimd_1000(wavePhasor) * 5.f;
             } // end sine shape switch
