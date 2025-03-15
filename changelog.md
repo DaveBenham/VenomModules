@@ -9,8 +9,9 @@
 ### Enhancements
 - VCO Lab and VCO Unit
   - Added a module context menu option to measure LFO frequency in BPM instead of Hz
+  - Added pseudo PWM shape modes to sine, triangle, and saw, as well as skew shape mode to sine.
 - VCO Unit
-  - Shape mode now always has 6 options, regardless which waveform is selected. The square waveform replicates the original 3 options to make 6.
+  - Shape mode now always has 8 options, regardless which waveform is selected. The square waveform rotates through the three modes to make 8. This change guarantees that cycling through all the waveform options will not change the shape mode for a particular waveform.
 - Poly Fade
   - Added context menu option to disable output channel minimization
 - Multi Merge

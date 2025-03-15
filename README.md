@@ -3167,6 +3167,8 @@ Normalized Rectify attempts to keep the output 10 VPP regardless the shape value
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
 - **Morph SQR <--> SIN <--> SAW** (pink)
+- **Limited PWM 3%-97%** (green)
+- **Skew** (red)
 
 ##### Tri Shape Mode button
 - **log/exp** (yellow - default)
@@ -3175,6 +3177,8 @@ Normalized Rectify attempts to keep the output 10 VPP regardless the shape value
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
 - **Morph SIN <--> TRI <--> SQR** (pink)
+- **Limited PWM 3%-97%** (green)
+- **Full PWM 0%-100%** (red)
 
 ##### Sqr Shape Mode button
 Controls the range of pulse width modulation, or the type of waveform morphing
@@ -3189,8 +3193,12 @@ Controls the range of pulse width modulation, or the type of waveform morphing
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
 - **Morph SQR <--> SAW <--> EVEN** (pink)
+- **Limited PWM 3%-97%** (green)
+- **Full PWM 0%-100%** (red)
 
-The even waveform is the same as what is produced by the Befaco Even module. It consists of the fundamental plus even harmonics.
+The even waveform with the Saw Morph option is the same as what is produced by the Befaco Even module. It consists of the fundamental plus even harmonics.
+
+The PWM percentages for sine, triangle, and saw waveforms represent the relative width of the positive portion of the bipolar waveform.
 
 ##### Sin, Tri, Saw Shape CV inputs
 The initial release of VCO Lab required 20 volts peak to peak CV to cover the entire shape range for Sin, Tri, and Saw. Starting with V 2.9.0 these ports now default to 10 volts peak to peak covering the entire range. These ports have a context menu option to revert to old behavior.
@@ -3277,7 +3285,7 @@ A smaller version of VCO Lab with only one waveform output at a time, without an
 
 A Wave switch is added to select between Sine, Triangle, Square, and Saw.
 
-The behavior of Shape modulation changes depending on the waveform selected. When Square waveform is selected, the three shape mode options are replicated for a total of 6 options, like all the other waveforms.
+The behavior of Shape modulation changes depending on the waveform selected. When Square waveform is selected, the three shape mode options are replicated cyclically for a total of 8 options, like all the other waveforms. This was done so that when cycling through the waveforms, the shape option does not change when you return to the original waveform.
 
 Pretty much all other VCO Lab functionality is the same, except there is no mix, level assignment, or mix shaping.
 
