@@ -967,7 +967,7 @@ struct Oscillator : VenomModule {
               sawOut[s] += simd::ifelse(shape<0.f, 0.f, sinSimd_1000(sawPhasor) * 3.175 * shape);
               break;
             default: // PWM
-              flip = (shape + 1.f) * .5f;
+              flip = (-shape + 1.f) * .5f;
               if (sawMode==6)
                 flip = clamp( flip, .03f, .97f );
               sawPhasor = simd::ifelse(sawPhasor<flip, sawPhasor/flip/2.f, (sawPhasor-flip)/(1.f-flip)/2.f+0.5f);
