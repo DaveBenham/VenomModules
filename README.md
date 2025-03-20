@@ -1092,6 +1092,8 @@ A collection of expander modules that extend the functionality of the four Mix m
 
 Mix expanders must be placed to the right of the main mix module. Multiple expanders can be used for one mix module as long as they form a contiguous chain to the right. Each expander has an LED in the upper left that glows yellow if successfully connected to a mix module.
 
+A main mix module may have up to 16 expanders. However, any combination of Mix Solo, Mix Mute, Mix Fade, and Mix Fade 2 counts as only one expander toward the 16 expander limit. Also any Mix Offset does not count toward the 16 expander limit.
+
 Bypassing an expander disables that expander without disrupting expanders to the right.
 
 All expanders except Offset are processed after the main Mix input channel Levels are applied, and before the main final Mix level is applied. When used with VCA Mix 4 or VCA Mix 4 Stereo, the expanders are processed after each channel has already been sent to the VCA channel output. Again, the Offset expander is an exception.

@@ -225,7 +225,7 @@ struct VCAMix4Stereo : MixBaseModule {
         if (exclude && outputs[RIGHT_OUTPUTS+i].isConnected())
           rightChannel[i] = 0.f;
       }
-      for (unsigned int x=0; x<expanders.size(); x++){
+      for (unsigned int x=0; x<expandersCnt; x++){
         MixModule* exp = expanders[x];
         MixModule* soloMod = NULL;
         MixModule* muteMod = NULL;

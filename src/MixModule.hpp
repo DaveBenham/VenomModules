@@ -181,7 +181,8 @@ struct MixBaseModule : MixModule {
   MixModule* offsetExpander = NULL;
   MixModule* muteSoloExpander = NULL;
   MixModule* fadeExpander = NULL;
-  std::vector<MixModule*> expanders;
+  MixModule* expanders[16]{};
+  unsigned int expandersCnt = 0;
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
@@ -197,16 +198,17 @@ struct MixBaseModule : MixModule {
     offsetExpander = NULL;
     muteSoloExpander = NULL;
     fadeExpander = NULL;
-    expanders.clear();
+    expandersCnt=0;
+    unsigned int maxExpandersCnt=16;
     // Load expanders
-    for (MixModule* mod = rightExpander; mod; mod = mod->rightExpander) {
+    for (MixModule* mod = rightExpander; mod && expandersCnt<maxExpandersCnt; mod = mod->rightExpander) {
       if (mod->mixType == MIXMUTE_TYPE && !mutePresent && (!soloPresent || mod->leftExpander->mixType == MIXSOLO_TYPE)) {
         mutePresent = true;
         if (soloPresent) {
           if (!mod->isBypassed()) muteSoloExpander = mod;
         }
         else
-          expanders.push_back(mod);
+          expanders[expandersCnt++] = mod;
       }
       else if ((mod->mixType == MIXFADE_TYPE || mod->mixType == MIXFADE2_TYPE) && !fadePresent && (mod->leftExpander->mixType == MIXMUTE_TYPE || mod->leftExpander->mixType == MIXSOLO_TYPE)) {
         fadePresent = true;
@@ -218,11 +220,13 @@ struct MixBaseModule : MixModule {
       }
       else if (mod->mixType == MIXPAN_TYPE && stereo && !panPresent) {
         panPresent = true;
-        if (!mod->isBypassed()) expanders.push_back(mod);
+        if (!mod->isBypassed()) expanders[expandersCnt++]=mod;
+        else maxExpandersCnt--;
       }
       else if (mod->mixType == MIXSEND_TYPE) {
         sendPresent = true;
-        if (!mod->isBypassed()) expanders.push_back(mod);
+        if (!mod->isBypassed()) expanders[expandersCnt++]=mod;
+        else maxExpandersCnt--;
       }
       else if (mod->mixType == MIXSOLO_TYPE && !soloPresent && (!mutePresent || mod->leftExpander->mixType == MIXMUTE_TYPE)) {
         soloPresent = true;
@@ -230,7 +234,7 @@ struct MixBaseModule : MixModule {
           if (!mod->isBypassed()) muteSoloExpander = mod;
         }
         else
-          expanders.push_back(mod);
+          expanders[expandersCnt++]=mod;
       }
       else
         break;
@@ -383,9 +387,10 @@ struct MixExpanderWidget : VenomWidget {
     MixModule* offset = NULL;
     MixModule* pan = NULL;
     MixModule* solo = NULL;
+    unsigned int expCnt = 0;
     while (mixMod) {
       if (mixMod->baseMod) {
-        connected = (!pan || mixMod->stereo);
+        connected = ((!pan || mixMod->stereo) && expCnt<=16);
         break;
       } else if (mixMod->mixType == MixModule::MIXFADE_TYPE || mixMod->mixType == MixModule::MIXFADE2_TYPE) {
         if (fade || mute || solo || !mixMod->leftExpander || !(mixMod->leftExpander->mixType==MixModule::MIXSOLO_TYPE || mixMod->leftExpander->mixType==MixModule::MIXMUTE_TYPE)) break;
@@ -393,18 +398,21 @@ struct MixExpanderWidget : VenomWidget {
       } else if (mixMod->mixType == MixModule::MIXMUTE_TYPE) {
         if (mute || (solo && solo->leftExpander != mixMod)) break;
         mute = mixMod;
+        if (!solo) expCnt++;
       } else if (mixMod->mixType == MixModule::MIXOFFSET_TYPE) {
         if (offset || !mixMod->leftExpander || !mixMod->leftExpander->baseMod) break;
         offset = mixMod;
       } else if (mixMod->mixType == MixModule::MIXPAN_TYPE) {
         if (pan) break;
         pan = mixMod;
+        expCnt++;
       } else if (mixMod->mixType == MixModule::MIXSOLO_TYPE) {
         if (solo || (mute && mute->leftExpander != mixMod)) break;
         solo = mixMod;
-      } else if (mixMod->mixType != MixModule::MIXSEND_TYPE) {
-        break;
-      }
+        if (!mute) expCnt++;
+      } else if (mixMod->mixType == MixModule::MIXSEND_TYPE) {
+        expCnt++;
+      } else break;
       mixMod = mixMod->leftExpander;
     }
     if(thisMixMod && thisMixMod->connected != connected) {

@@ -28,6 +28,10 @@
   - Absolute value was applied to Tolerance input, but not the tolerance offset parameter
   - Module now correctly sums the tolerance input with the offset before taking the absolute value
 
+### Additional Change
+- Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+  - In the interest of avoiding memory allocation during the audio process, the Mix modules are now limited to a maximum of 16 expanders. Prior to v2.12 there was no limit.
+
 ## 2.11.1 (2024-12-17)
 ### Enhancements
 - All modules with oversampling options

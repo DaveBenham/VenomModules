@@ -121,7 +121,7 @@ struct Mix4 : MixBaseModule {
           :
             (inputs[INPUTS+i].getNormalPolyVoltageSimd<simd::float_4>(normal, c) + preOff[i]) * (params[LEVEL_PARAMS+i].getValue()+offset)*scale + postOff[i];
       }
-      for (unsigned int x=0; x<expanders.size(); x++){
+      for (unsigned int x=0; x<expandersCnt; x++){
         MixModule* exp = expanders[x];
         MixModule* soloMod = NULL;
         MixModule* muteMod = NULL;
