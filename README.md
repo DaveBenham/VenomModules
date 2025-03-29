@@ -3156,12 +3156,6 @@ All grid inputs support oversampling that can be disabled via the port context m
 #### Waveform Shape Modulation
 All four waveforms get different shape modulation. Each has a color coded Shape Mode button to determine the type of modulation used.
 
-J-curve and S-curve are based on sigmoidal functions. The J-curve uses only half (positive or negative portion) of the sigmoidal function.
-
-Rectify yields only 5 volts peak to peak (5 VPP) when shape is 100% or -100%.
-
-Normalized Rectify attempts to keep the output 10 VPP regardless the shape value. It also shifts the output to keep it bipolar, prior to applying any offset.
-
 ##### Sin Shape Mode button
 - **log/exp** (yellow - default)
 - **J-curve** (orange)
@@ -3197,6 +3191,12 @@ Controls the range of pulse width modulation, or the type of waveform morphing
 - **Morph SQR <--> SAW <--> EVEN** (pink)
 - **Limited PWM 3%-97%** (green)
 - **Full PWM 0%-100%** (red)
+
+J-curve and S-curve are based on sigmoidal functions. The J-curve uses only half (positive or negative portion) of the sigmoidal function.
+
+Rectify yields only 5 volts peak to peak (5 VPP) when shape is 100% or -100%.
+
+Normalized Rectify attempts to keep the output 10 VPP regardless the shape value. It also shifts the output to keep it bipolar, prior to applying any offset.
 
 The even waveform with the Saw Morph option is the same as what is produced by the Befaco Even module. It consists of the fundamental plus even harmonics.
 
