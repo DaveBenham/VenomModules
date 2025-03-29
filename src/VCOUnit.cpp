@@ -258,7 +258,7 @@ struct VCOUnit : VenomModule {
         q->displayOffset = 0.f;
         break;
       case 1: // TRI
-        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR", "Limited PWM 3%-97%", "Full PWM 0%-100%"};
+        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR", "Limited PWM 3%-97%", "Skew"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
         break;
@@ -600,12 +600,14 @@ struct VCOUnit : VenomModule {
                                         simd::ifelse(wavePhasor<500.f, 5.f, -5.f) * shape // square component
                                       );
                 break;
-              default: // PWM
+              default: // PWM or skew
                 flip = (shapeIn*params[SHAPE_AMT_PARAM].getValue()*shpScale + params[SHAPE_PARAM].getValue() + 1.f) * 500.f;
-                if (shapeMode==6)
-                  flip = clamp( flip, 30.f, 970.f );
+                flip = clamp( flip, 30.f, 970.f );
+                if (shapeMode==7) // skew
+                  wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
                 wavePhasor = 1000.f*simd::ifelse(wavePhasor<flip, wavePhasor/flip/2.f, (wavePhasor-flip)/(1000.f-flip)/2.f+0.5f);
-                wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
+                if (shapeMode==6) // PWM
+                  wavePhasor += simd::ifelse(wavePhasor<750.f, 250.f, -750.f);
                 wavePhasor = simd::ifelse(wavePhasor<500.f, wavePhasor*.002f, (1000.f-wavePhasor)*.002f);
                 out[s] = wavePhasor * 10.f - 5.f;
             } // end triangle shape switch

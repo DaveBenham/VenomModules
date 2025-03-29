@@ -3180,7 +3180,7 @@ Normalized Rectify attempts to keep the output 10 VPP regardless the shape value
 - **Normalized Rectify** (dark blue)
 - **Morph SIN <--> TRI <--> SQR** (pink)
 - **Limited PWM 3%-97%** (green)
-- **Full PWM 0%-100%** (red)
+- **Skew** (red)
 
 ##### Sqr Shape Mode button
 Controls the range of pulse width modulation, or the type of waveform morphing

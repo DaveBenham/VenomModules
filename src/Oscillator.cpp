@@ -309,7 +309,7 @@ struct Oscillator : VenomModule {
     configButton(RESET_POLY_PARAM, "Reset polyphony count");
 
     configSwitch<FixedSwitchQuantity>(SINSHP_PARAM, 0.f, 7.f, 0.f, "Sine Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW", "Limited PWM 3%-97%", "Skew"});
-    configSwitch<FixedSwitchQuantity>(TRISHP_PARAM, 0.f, 7.f, 0.f, "Triangle Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR", "Limited PWM 3%-97%", "Full PWM 0%-100%"});
+    configSwitch<FixedSwitchQuantity>(TRISHP_PARAM, 0.f, 7.f, 0.f, "Triangle Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR", "Limited PWM 3%-97%", "Skew"});
     configSwitch<FixedSwitchQuantity>(PW_PARAM, 0.f, 2.f, 0.f, "Square Shape Mode", {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW"});
     configSwitch<FixedSwitchQuantity>(SAWSHP_PARAM, 0.f, 7.f, 0.f, "Saw Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SAW <--> EVEN", "Limited PWM 3%-97%", "Full PWM 0%-100%"});
     configSwitch<FixedSwitchQuantity>(MIXSHP_PARAM, 0.f, 5.f, 0.f, "Mix Shape Mode", {"Sum (No shaping)", "Saturate Sum", "Fold Sum", "Average (No shaping)", "Saturate Average", "Fold Average"});
@@ -799,12 +799,14 @@ struct Oscillator : VenomModule {
                                          simd::ifelse(triPhasor<500.f, 5.f, -5.f) * shape // square component
                                        );
               break;
-            default: // PWM
+            default: // PWM or skew
               flip = (shape + 1.f) * 500.f;
-              if (triMode==6)
-                flip = clamp( flip, 30.f, 970.f );
+              flip = clamp( flip, 30.f, 970.f );
+              if (triMode==7) // skew
+                triPhasor += simd::ifelse(triPhasor<750.f, 250.f, -750.f);
               triPhasor = 1000.f*simd::ifelse(triPhasor<flip, triPhasor/flip/2.f, (triPhasor-flip)/(1000.f-flip)/2.f+0.5f);
-              triPhasor += simd::ifelse(triPhasor<750.f, 250.f, -750.f);
+              if (triMode==6) // PWM
+                triPhasor += simd::ifelse(triPhasor<750.f, 250.f, -750.f);
               triPhasor = simd::ifelse(triPhasor<500.f, triPhasor*.002f, (1000.f-triPhasor)*.002f);
               triOut[s] = triPhasor * 10.f - 5.f;
           }  
