@@ -237,11 +237,13 @@ Map the output to the corresponding "Source n" in your operational patch.
 
 Leave all patch bay output ports with their factory default names so they inherit the name from the source.
 
-### Selection paste/import behavior
+### Selection dulicate/paste/import behavior
 
-Custom module and port names are always preserved when pasting or importing a selection set.
+Custom module and port names are always preserved when duplicating, pasting or importing a selection set.
 
-Paired Bay Inputs and Bay Outputs/Norms within the selection set preserve their link when pasting or importing. If a Bay Input, Bay Output, or Bay Norm is included within a selection set without the corresponding linked module, then the copied/imported module will not be linked.
+If duplicating, pasting, or importing a linked pair of modules, then the output modules are linked to the copied sources.
+
+If duplicating, pasting, or importing linked output modules without the sources, then an attempt is made to link the outputs to the original uncopied sources.
 
 ### Bypass Behavior
 

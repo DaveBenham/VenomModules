@@ -22,7 +22,10 @@
 - Poly Unison
   - Detune CV now scales 10V to match the detune knob range
     - Old patches default to old behavior of V/Oct for Detune CV
-    
+- Bay Modules better preserve links when performing duplication or copy/paste
+  - Duplication of input/output pairs establish the link between the new copies (old behavior)
+  - Duplication of linked outputs only attempt to establish the link to the original uncopied input (new behavior)
+
 ### Bug Fix
 - WinComp
   - Absolute value was applied to Tolerance input, but not the tolerance offset parameter
