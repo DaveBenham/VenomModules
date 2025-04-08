@@ -47,8 +47,8 @@ struct QuadVCPolarizer : VenomModule {
       configParam(LEVEL_PARAM+i, -1.f, 1.f, 0.f, string::f("Level %d", i + 1), "%", 0, 100, 0);
       configParam(LEVEL_AMT_PARAM+i, -1.f, 1.f, 0.f, string::f("Level %d CV amount", i + 1), "%", 0, 100, 0);
       configInput(LEVEL_INPUT+i, string::f("Level %d CV", i + 1));
-      configInput(POLY_INPUT+i, string::f("Poly %d", i + 1));
-      configOutput(POLY_OUTPUT+i, string::f("Poly %d", i + 1));
+      configInput(POLY_INPUT+i, string::f("%d", i + 1));
+      configOutput(POLY_OUTPUT+i, string::f("%d", i + 1));
     }
     oversampleStages = 5;
   }
