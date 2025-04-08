@@ -160,7 +160,7 @@ struct VCOUnit : VenomModule {
     configInput(REV_INPUT, "Soft sync");
     configLight(REV_LIGHT, "Soft sync oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configInput(VOCT_INPUT, "V/Oct");
-    configOutput(OUTPUT, "");
+    configOutput(OUTPUT, "VCO Output");
 
     configSwitch<FixedSwitchQuantity>(SHAPE_MODE_PARAM, 0.f, 5.f, 0.f, "Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW"});
     configParam<ShapeQuantity>(SHAPE_PARAM, -1.f, 1.f, 0.f, "Shape", "%", 0.f, 100.f, 0.f);
