@@ -72,8 +72,8 @@ struct WaveFolder : VenomModule {
     configInput(BIAS_INPUT, "Bias CV");
     configLight(BIAS_OVER_LIGHT, "Bias CV oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
 
-    configInput(POLY_INPUT, "Poly");
-    configOutput(POLY_OUTPUT, "Poly");
+    configInput(POLY_INPUT, "Audio In");
+    configOutput(POLY_OUTPUT, "Audio Out");
 
     configBypass(POLY_INPUT, POLY_OUTPUT);
     
