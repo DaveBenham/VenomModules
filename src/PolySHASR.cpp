@@ -46,7 +46,7 @@ struct PolySHASR : VenomModule {
     configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 5.f, 2.f, "Random range", {"0-1", "0-5", "0-10", "+/- 1", "+/- 5", "+/- 10"});
     configButton(CLEAR_PARAM, "Clear all");
     for (int i=0; i<CHANNEL_COUNT; i++){
-      std::string iStr = std::to_string(i+1);
+      std::string iStr = std::to_string(i);
       configInput(TRIG_INPUT+i, "Trigger "+iStr)->description = i ? "Normalled to previous row trigger input" : "";
       configInput(DATA_INPUT+i, "Data "+iStr)
         ->description = i ? "Normalled to random value if trigger patched, else to previous row hold output" : "Normalled to random value";
