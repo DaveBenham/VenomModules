@@ -195,7 +195,7 @@ struct VCOUnit : VenomModule {
     configInput(VOCT_INPUT, "V/Oct");
     configOutput(OUTPUT, "");
 
-    configSwitch<FixedSwitchQuantity>(SHAPE_MODE_PARAM, 0.f, 7.f, 0.f, "Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW", "Limited PWM 3%-97%", "Full PWM 0%-100%"});
+    configSwitch<FixedSwitchQuantity>(SHAPE_MODE_PARAM, 0.f, 7.f, 0.f, "Shape Mode", {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW", "Limited PWM 3%-97%", "Skew"});
     configParam<ShapeQuantity>(SHAPE_PARAM, -1.f, 1.f, 0.f, "Shape", "%", 0.f, 100.f, 0.f);
     configParam(SHAPE_AMT_PARAM, -1.f, 1.f, 0.f, "Shape CV amount", "%", 0.f, 100.f);
     configInput(SHAPE_INPUT, "Shape CV");
