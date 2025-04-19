@@ -620,10 +620,22 @@
       "slug": "WaveFolder",
       "name": "Wave Folder",
       "description": "A polyphonic configurable wave folder",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#widget-menu-extender",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#wave-folder",
       "tags": [
         "Polyphonic",
         "Ring modulator",
+        "Voltage-controlled amplifier",
+        "Waveshaper"
+      ]
+    },
+    {
+      "slug": "WaveMultiplier",
+      "name": "Wave Multiplier",
+      "description": "A polyphonic wave shaper inspired by the Doepfer Wave Multiplier 2 with built in LFO modulation",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#wave-multiplier",
+      "tags": [
+        "Low-frequency oscillator",
+        "Polyphonic",
         "Voltage-controlled amplifier",
         "Waveshaper"
       ]
