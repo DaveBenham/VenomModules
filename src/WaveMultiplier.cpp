@@ -24,6 +24,7 @@ struct WaveMultiplier : VenomModule {
     DC_PARAM,
     OVER_PARAM,
     ENUMS(MUTE_PARAM,4),
+    MUTE_IN_PARAM,
     LEVEL_CV_PARAM,
     LEVEL_PARAM,
     PARAMS_LEN
@@ -46,6 +47,7 @@ struct WaveMultiplier : VenomModule {
   enum LightId {
     DC_LIGHT,
     ENUMS(MUTE_LIGHT,4),
+    MUTE_IN_LIGHT,
     LIGHTS_LEN
   };
   
@@ -82,13 +84,14 @@ struct WaveMultiplier : VenomModule {
       configParam(SHIFT_PARAM+i, -5.f, 5.f, 0.f, "Shift threshold " + iStr, " V");
       configOutput(PULSE_OUTPUT+i, "Pulse " + iStr);
       configOutput(WAVE_OUTPUT+i, "Shifted wave " + iStr);
-      configSwitch<FixedSwitchQuantity>(MUTE_PARAM+i, 0.f, 1.f, 0.f, "Mute " + iStr, {"Off", "On"});
+      configSwitch<FixedSwitchQuantity>(MUTE_PARAM+i, 0.f, 1.f, 0.f, "Mute shifted wave " + iStr, {"Off", "On"});
     }
 
     configInput(WAVE_INPUT, "Wave");
+    configSwitch<FixedSwitchQuantity>(MUTE_IN_PARAM, 0.f, 1.f, 0.f, "Mute input wave", {"Off", "On"});
     configInput(LEVEL_INPUT, "Shift depth CV");
     configParam(LEVEL_CV_PARAM, -1.f, 1.f, 0.f, "Level CV amount", "%", 0, 100, 0);
-    configParam(LEVEL_PARAM, 0.f, 1.f, 0.33f, "Level", "%", 0, 100, 0);
+    configParam(LEVEL_PARAM, 0.f, 1.f, 0.25f, "Level", "%", 0, 100, 0);
     configOutput(MIX_OUTPUT, "Shifted wave mix");
 
     configBypass(WAVE_INPUT, MIX_OUTPUT);
@@ -138,6 +141,8 @@ struct WaveMultiplier : VenomModule {
           level = 0.f,
           levelAmt = params[LEVEL_CV_PARAM].getValue()/10.f,
           levelParam = params[LEVEL_PARAM].getValue(),
+          depth = 0.f,
+          wave = 0.f,
           mixOut = 0.f;
 
     float_4 freq{},
@@ -148,8 +153,6 @@ struct WaveMultiplier : VenomModule {
             threshAmt{},
             threshParam{},
             pulse{},
-            depth{},
-            wave{},
             shiftWave{},
             mute{},
             mix{};
@@ -195,6 +198,8 @@ struct WaveMultiplier : VenomModule {
         if (params[DC_PARAM].getValue())
           shiftWave = shiftWaveDCBlock[c].process(shiftWave);
         mix = shiftWave * mute * level;
+        if (!params[MUTE_IN_PARAM].getValue())
+          mix[0] += wave * level;
         if (oversample>1){
           if (hasPulseOut)
             pulse = pulseDownSample[c].process(pulse);
@@ -263,9 +268,10 @@ struct WaveMultiplierWidget : VenomWidget {
     }
 
     addInput(createInputCentered<PolyPort>(Vec(20.5f, 342.5f), module, WaveMultiplier::WAVE_INPUT));
-    addInput(createInputCentered<PolyPort>(Vec(67.f, 342.5f), module, WaveMultiplier::LEVEL_INPUT));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(97.f, 342.5f), module, WaveMultiplier::LEVEL_CV_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(128.f, 342.5f), module, WaveMultiplier::LEVEL_PARAM));
+    addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(50.5, 342.5f), module, WaveMultiplier::MUTE_IN_PARAM, WaveMultiplier::MUTE_IN_LIGHT));
+    addInput(createInputCentered<PolyPort>(Vec(80.5f, 342.5f), module, WaveMultiplier::LEVEL_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(110.5f, 342.5f), module, WaveMultiplier::LEVEL_CV_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(140.5f, 342.5f), module, WaveMultiplier::LEVEL_PARAM));
     addOutput(createOutputCentered<PolyPort>(Vec(172.f, 342.5f), module, WaveMultiplier::MIX_OUTPUT));
   }
 
@@ -276,6 +282,7 @@ struct WaveMultiplierWidget : VenomWidget {
       mod->lights[WaveMultiplier::DC_LIGHT].setBrightness(mod->params[WaveMultiplier::DC_PARAM].getValue());
       for (int i=0; i<4; i++)
         mod->lights[WaveMultiplier::MUTE_LIGHT+i].setBrightness(mod->params[WaveMultiplier::MUTE_PARAM+i].getValue());
+      mod->lights[WaveMultiplier::MUTE_IN_LIGHT].setBrightness(mod->params[WaveMultiplier::MUTE_IN_PARAM].getValue());
     }
   }
 };
