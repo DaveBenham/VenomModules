@@ -38,9 +38,9 @@ Venom modules version 2.12.0 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave 
 |----|----|----|----|----|----|
 |![Sphere To XYZ module image](doc/SphereToXYZ.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|
 
-|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
+|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WAVE<br />MULTIPLIER](#wave-multiplier)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
 |----|----|----|----|
-|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
+|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -3403,6 +3403,17 @@ The poly input is passed through to the output if Wave Folder is bypassed.
 
 [Return to Table Of Contents](#venom)
 
+## WAVE MULTIPLIER
+![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)  
+A polyphonic wave shaper inspired by the Doepfer Wave Multiplier 2 with built in LFO modulation.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+The wave input is passed through to the shifted wave mix output if Wave Multiplier is bypassed.
+
+[Return to Table Of Contents](#venom)
 
 ## WIDGET MENU EXTENDER
 ![WIDGET MENU EXTENDER module image](doc/WidgetMenuExtender.png)  

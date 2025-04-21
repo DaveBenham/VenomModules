@@ -84,6 +84,49 @@ class OversampleFilter_4 {
     rack::dsp::TBiquadFilter<rack::simd::float_4> f[5]{};
 };
 
+class HighBlockFilter {
+  public:
+    void setHighBlock(float cutoff, int sampleRate, int oversample) {
+      cutoff /= (sampleRate * oversample);
+      if (cutoff >= 0.5f)
+        cutoff = 0.49f;
+      f[0].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.5062f, 1);
+      f[1].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.5612f, 1);
+      f[2].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 0.7071f, 1);
+      f[3].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 1.1013f, 1);
+      f[4].setParameters(rack::dsp::TBiquadFilter<float>::LOWPASS, cutoff, 3.1970f, 1);
+    }
+    float process(float x) {
+      for (int i=0; i<5; i++)
+        x = f[i].process(x);
+      return x;
+    }
+  private:
+    rack::dsp::TBiquadFilter<float> f[5]{};
+};
+
+
+class HighBlockFilter_4 {
+  public:
+    void setHighBlock(float cutoff, int sampleRate, int oversample) {
+      cutoff /= (sampleRate * oversample);
+      if (cutoff >= 0.5f)
+        cutoff = 0.49f;
+      f[0].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.5062f, 1);
+      f[1].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.5612f, 1);
+      f[2].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 0.7071f, 1);
+      f[3].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 1.1013f, 1);
+      f[4].setParameters(rack::dsp::TBiquadFilter<rack::simd::float_4>::LOWPASS, cutoff, 3.1970f, 1);
+    }
+    rack::simd::float_4 process(rack::simd::float_4 x) {
+      for (int i=0; i<5; i++)
+        x = f[i].process(x);
+      return x;
+    }
+  private:
+    rack::dsp::TBiquadFilter<rack::simd::float_4> f[5]{};
+};
+
 /*
 class DCBlockFilter_4 {
 // This version is mysteriously not working on some machines
@@ -137,6 +180,22 @@ class DCBlockFilter_4 {
     rack::simd::float_4 rtn = rack::simd::float_4::zero();
 };
 */
+
+class DCBlockFilter {
+// Naive version that doesn't adjust for sample rate or oversampling, so cutoff is not consistent
+// Also attenuates bass tones too much as sample rate and/or oversampling rate rises
+  public:
+    float val = 0.f;
+    
+    float process(float x) {
+      val = x - prevX + 0.999f * val;
+      prevX = x;
+      return val;
+    }
+  
+  private:
+    float prevX = 0.f;
+};
 
 class DCBlockFilter_4 {
 // Naive version that doesn't adjust for sample rate or oversampling, so cutoff is not consistent
