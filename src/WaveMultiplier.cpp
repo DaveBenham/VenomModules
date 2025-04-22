@@ -56,9 +56,11 @@ struct WaveMultiplier : VenomModule {
   OversampleFilter_4 threshUpSample[16],
                      miscUpSample[16],
                      pulseDownSample[16],
-                     shiftWaveDownSample[16],
-                     mixDownSample[16];
-  DCBlockFilter_4    shiftWaveDCBlock[16];
+                     shiftWaveDownSample[16];
+  OversampleFilter   mixDownSample[16];
+  DCBlockFilter_4    pulseDCBlock[16],
+                     shiftWaveDCBlock[16];
+  DCBlockFilter      mixDCBlock[16];
   simd::float_4      phasor[16]{};
 
   WaveMultiplier() {
@@ -153,14 +155,11 @@ struct WaveMultiplier : VenomModule {
             threshAmt{},
             threshParam{},
             pulse{},
-            shiftWave{},
-            mute{},
-            mix{};
+            shiftWave{};
 
     for (int i=0; i<4; i++){
       threshAmt[i] = params[SHIFT_CV_PARAM+i].getValue();
       threshParam[i] = params[SHIFT_PARAM+i].getValue();
-      mute[i] = !params[MUTE_PARAM+i].getValue();
       if (outputs[PULSE_OUTPUT+i].isConnected())
         hasPulseOut = true;
       if (outputs[WAVE_OUTPUT+i].isConnected())
@@ -192,28 +191,37 @@ struct WaveMultiplier : VenomModule {
         thresh = thresh * threshAmt + threshParam;
         depth = misc[DEPTH] * depthAmt + depthParam;
         wave = misc[WAVE];
-        level = misc[LEVEL] * levelAmt + levelParam;
         pulse = simd::ifelse(thresh>=wave, 5.f, -5.f);
         shiftWave = pulse * depth + wave;
-        if (params[DC_PARAM].getValue())
-          shiftWave = shiftWaveDCBlock[c].process(shiftWave);
-        mix = shiftWave * mute * level;
-        if (!params[MUTE_IN_PARAM].getValue())
-          mix[0] += wave * level;
-        if (oversample>1){
-          if (hasPulseOut)
+        if (hasMixOut){
+          mixOut = params[MUTE_IN_PARAM].getValue() ? 0.f : wave;
+          for (int i=0; i<4; i++){
+            if (!params[MUTE_PARAM+i].getValue())
+              mixOut += shiftWave[i];
+          }
+          level = misc[LEVEL] * levelAmt + levelParam;
+          mixOut *= level;
+          if (params[DC_PARAM].getValue())
+            mixOut = mixDCBlock[c].process(mixOut);
+          if (oversample>1)
+            mixOut = mixDownSample[c].process(mixOut);
+        }
+        if (hasPulseOut){
+          if (params[DC_PARAM].getValue())
+            pulse = pulseDCBlock[c].process(pulse);
+          if (oversample>1)
             pulse = pulseDownSample[c].process(pulse);
-          if (hasShiftWaveOut)
+        }
+        if (hasShiftWaveOut){
+          if (params[DC_PARAM].getValue())
+            shiftWave = shiftWaveDCBlock[c].process(shiftWave);
+          if (oversample>1)
             shiftWave = shiftWaveDownSample[c].process(shiftWave);
-          if (hasMixOut)
-            mix = mixDownSample[c].process(mix);
         }
       }
-      mixOut = 0.f;
       for (int i=0; i<4; i++){
         outputs[PULSE_OUTPUT+i].setVoltage(pulse[i], c);
         outputs[WAVE_OUTPUT+i].setVoltage(shiftWave[i], c);
-        mixOut += mix[i];
       }
       outputs[MIX_OUTPUT].setVoltage(mixOut, c);
     }
