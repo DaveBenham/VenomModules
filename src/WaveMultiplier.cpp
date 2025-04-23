@@ -91,9 +91,9 @@ struct WaveMultiplier : VenomModule {
 
     configInput(WAVE_INPUT, "Wave");
     configSwitch<FixedSwitchQuantity>(MUTE_IN_PARAM, 0.f, 1.f, 0.f, "Mute input wave", {"Off", "On"});
-    configInput(LEVEL_INPUT, "Shift depth CV");
-    configParam(LEVEL_CV_PARAM, -1.f, 1.f, 0.f, "Level CV amount", "%", 0, 100, 0);
-    configParam(LEVEL_PARAM, 0.f, 1.f, 0.25f, "Level", "%", 0, 100, 0);
+    configInput(LEVEL_INPUT, "Mix output level CV");
+    configParam(LEVEL_CV_PARAM, -1.f, 1.f, 0.f, "Mix output level CV amount", "%", 0, 100, 0);
+    configParam(LEVEL_PARAM, 0.f, 1.f, 0.25f, "Mix output level", "%", 0, 100, 0);
     configOutput(MIX_OUTPUT, "Shifted wave mix");
 
     configBypass(WAVE_INPUT, MIX_OUTPUT);
