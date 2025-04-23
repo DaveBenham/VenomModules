@@ -361,8 +361,8 @@
     {
       "slug": "NORSIQChord2Scale",
       "name": "NORSIQ Chord To Scale",
-      "description": "Convert a polyphonic chord into CV to generate a scale for the Non-Octave_Repeating Scale Intervallic Quantizer",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#norsiq_chord_to_scale",
+      "description": "Convert a polyphonic chord into CV to generate a scale for the Non-Octave-Repeating Scale Intervallic Quantizer",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#norsiq-chord-to-scale",
       "tags": [
         "Quantizer",
         "Polyphonic"
