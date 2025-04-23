@@ -193,7 +193,7 @@ struct Oscillator : VenomModule {
   bool alternate = false;
   bool aliasSuppress = false;
   using float_4 = simd::float_4;
-  int oversample = -1;
+  int oversample = -1, sampleRate = 0;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4][5]{}, phaseUpSample[4][5]{}, offsetUpSample[4][5]{}, levelUpSample[4][5]{},
@@ -473,6 +473,14 @@ struct Oscillator : VenomModule {
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
       setOversample();
+      sampleRate = 0;
+    }
+    if (sampleRate != args.sampleRate) {
+      sampleRate = args.sampleRate;
+      for (int i=0; i<4; i++){
+        for (int j=0; j<6; j++)
+          dcBlockFilter[i][j].init(oversample, sampleRate);
+      }
     }
     // get channel count
     int channels = 1;
@@ -568,7 +576,7 @@ struct Oscillator : VenomModule {
           }
         } // else preserve prior linIn value
         if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
-          linIn = dcBlockFilter[s][LINFM].process(linIn/*, oversample*/);
+          linIn = dcBlockFilter[s][LINFM].process(linIn);
         if (s==0 || inputs[MIX_PHASE_INPUT].isPolyphonic()) {
           phaseIn[MIX] = (o && !disableOver[MIX_PHASE_INPUT]) ? float_4::zero() : inputs[MIX_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
           if (procOver[MIX_PHASE_INPUT]){
@@ -1066,15 +1074,15 @@ struct Oscillator : VenomModule {
         // Remove DC offset
         if (params[DC_PARAM].getValue()) {
           if (outputs[SIN_OUTPUT].isConnected())
-            sinOut[s] = dcBlockFilter[s][SIN].process(sinOut[s]/*, oversample*/);
+            sinOut[s] = dcBlockFilter[s][SIN].process(sinOut[s]);
           if (outputs[TRI_OUTPUT].isConnected())
-            triOut[s] = dcBlockFilter[s][TRI].process(triOut[s]/*, oversample*/);
+            triOut[s] = dcBlockFilter[s][TRI].process(triOut[s]);
           if (outputs[SQR_OUTPUT].isConnected())
-            sqrOut[s] = dcBlockFilter[s][SQR].process(sqrOut[s]/*, oversample*/);
+            sqrOut[s] = dcBlockFilter[s][SQR].process(sqrOut[s]);
           if (outputs[SAW_OUTPUT].isConnected())
-            sawOut[s] = dcBlockFilter[s][SAW].process(sawOut[s]/*, oversample*/);
+            sawOut[s] = dcBlockFilter[s][SAW].process(sawOut[s]);
           if (outputs[MIX_OUTPUT].isConnected())
-            mixOut[s] = dcBlockFilter[s][MIX].process(mixOut[s]/*, oversample*/);
+            mixOut[s] = dcBlockFilter[s][MIX].process(mixOut[s]);
         }
         // Downsample outputs
         if (oversample>1) {

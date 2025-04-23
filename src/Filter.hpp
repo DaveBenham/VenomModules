@@ -127,44 +127,44 @@ class HighBlockFilter_4 {
     rack::dsp::TBiquadFilter<rack::simd::float_4> f[5]{};
 };
 
-/*
-class DCBlockFilter_4 {
-// This version is mysteriously not working on some machines
-// Be sure to uncomment `, oversample` in process calls if reverting to this version
+class DCBlockFilter {
   public:
-    rack::simd::float_4 val() {
-      return prevY;
+  
+    void init(int sampleRate, int oversample = 1){
+      r = 1. - 100. / static_cast<double>(sampleRate) / static_cast<double>(oversample);
+    }
+  
+    float val() {
+      return rtn;
     }
     
-    rack::simd::float_4 process( rack::simd::float_4 x, int over = 1 ) {
-      float r = 1.f - 250.f / rack::settings::sampleRate / static_cast<float>(over);
-      rack::simd::float_4 y = x - prevX + static_cast<rack::simd::float_4>(r) * prevY;
-      prevX = x;
+    float process(float x) {
+      double y = static_cast<double>(x) - prevX + r * prevY;
+      prevX = static_cast<double>(x);
       prevY = y;
-      return y;
+      rtn = static_cast<float>(y);
+      return rtn;
     }
   
   private:
-    rack::simd::float_4 prevX = rack::simd::float_4::zero();
-    rack::simd::float_4 prevY = rack::simd::float_4::zero();
+    double prevX = 0.;
+    double prevY = 0.;
+    float rtn = 0.;
+    double r = 1. - 100. / static_cast<double>(APP->engine->getSampleRate ());
 };
-*/
 
-/*
 class DCBlockFilter_4 {
-// This version is mysteriously not working on some machines
-// But I really like the behavior when it does.
-//  - Minimal bass attenuation
-//  - Consistent at all sample rates and oversampling rates
-//  - Excellent DC offset filtering
-// Be sure to uncomment `, oversample` in process calls if reverting to this version
   public:
+  
+    void init(int sampleRate, int oversample = 1){
+      r = 1. - 100. / static_cast<double>(sampleRate) / static_cast<double>(oversample);
+    }
+  
     rack::simd::float_4 val() {
       return rtn;
     }
     
     rack::simd::float_4 process( rack::simd::float_4 x, int over = 1 ) {
-      double r = 1. - 100. / static_cast<double>(rack::settings::sampleRate) / static_cast<double>(over);
       for (int i=0; i<4; i++){
         double y = static_cast<double>(x[i]) - prevX[i] + r * prevY[i];
         prevX[i] = static_cast<double>(x[i]);
@@ -178,37 +178,5 @@ class DCBlockFilter_4 {
     double prevX[4]{};
     double prevY[4]{};
     rack::simd::float_4 rtn = rack::simd::float_4::zero();
-};
-*/
-
-class DCBlockFilter {
-// Naive version that doesn't adjust for sample rate or oversampling, so cutoff is not consistent
-// Also attenuates bass tones too much as sample rate and/or oversampling rate rises
-  public:
-    float val = 0.f;
-    
-    float process(float x) {
-      val = x - prevX + 0.999f * val;
-      prevX = x;
-      return val;
-    }
-  
-  private:
-    float prevX = 0.f;
-};
-
-class DCBlockFilter_4 {
-// Naive version that doesn't adjust for sample rate or oversampling, so cutoff is not consistent
-// Also attenuates bass tones too much as sample rate and/or oversampling rate rises
-  public:
-    rack::simd::float_4 val = rack::simd::float_4::zero();
-    
-    rack::simd::float_4 process( rack::simd::float_4 x ) {
-      val = x - prevX + static_cast<rack::simd::float_4>(0.999f) * val;
-      prevX = x;
-      return val;
-    }
-  
-  private:
-    rack::simd::float_4 prevX = rack::simd::float_4::zero();
+    double r = 1. - 100. / static_cast<double>(APP->engine->getSampleRate ());
 };

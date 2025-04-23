@@ -7,7 +7,6 @@ Venom modules version 2.12.0 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave 
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Venom Expander Modules](#venom-expander-modules)  
 [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
-[Limitations of DC offset removal](#limitations-of-dc-offset-removal)  
 [Acknowledgments](#acknowledgments)  
 
 |[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
@@ -118,13 +117,6 @@ All of the Venom modules with oversampling also have a context menu option to sp
 - 6th order with a cutoff at 50% of the Nyquist frequency.
 
 Again, feel free to experiment to find what works best for you.
-
-[Return to Table Of Contents](#venom)
-
-## Limitations of DC offset removal
-Currently Venom uses a naive implementation of a highpass filter for DC offset removal - it does not compensate for sample rate or oversampling rate. So expect different results if you change the sample rate and/or the oversample rate. Additionally, the DC offset removal attenuates bass tones more and more as you increase sample rate or oversampling.
-
-I have a better version that gives much more consistent results for all sample rates and oversample rates, as well as minimal bass attenuation. But for some mysterious reason it works beatifully on some machines, yet not at all on others. So we are stuck with the inferior DC offset removal for now.
 
 [Return to Table Of Contents](#venom)
 
@@ -945,8 +937,6 @@ Controls whether DC offsets are removed from the outputs
 - **Off (gray - default)**: Used for normal CV outputs
 - **On (white)**: Useful for audio outputs
 
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
-
 ### HIGH THRESH and LOW THRESH knobs and inputs
 Set the low and high thresholds for the Schmitt triggers that determine the state of each input. The effective threshold is the sum of the knob value and the corresponding input. The same thresholds are used for all inputs. An input goes high whenever the voltage rises above the high threshold. The input goes low whenever the voltage is at or below the low threshold. The state remains unchanged if the voltage lies between the thresholds.
 
@@ -1035,8 +1025,6 @@ The color coded DC block button determines when (or if) a high pass filter is ap
 - **After clipping** (light blue): DC offset is removed after any clipping.
 
 The last three DC offset options give identical results when no clipping is applied.
-
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped.
@@ -2903,8 +2891,6 @@ The color coded DC block button determines when (or if) a high pass filter is ap
 
 The last three DC offset options give identical results when no clipping is applied.
 
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
-
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped.
 - **Off** (dark gray - default)
@@ -3067,8 +3053,6 @@ This color coded button controls whether a high pass filter is applied to remove
 - **Off** (dark gray - default)
 - **On** (yellow)
 
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
-
 ### FREQ/BIAS (Frequency/Bias) knob
 Sets the base frequency of the oscillator. The knob range varies depending on the Frequency Mode and the current selected Octave. Normally the knob uses an exponential scale, but in 0 Hz carrier mode it is a linear Bias with a very small range.
 
@@ -3120,8 +3104,6 @@ This knob sets the depth of through 0 linear frequency modulation
 
 ### Lin FM (Linear frequency modulation) input
 This input is for linear FM CV. By default this input is AC coupled. There is a port context menu to enable DC coupled mode, which can save a small amount of CPU if you know that your input does not have any DC offset. A small LED to the lower right glows red when the input is DC coupled.
-
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 This port supports oversampling that can be disabled via the port context menu.
 

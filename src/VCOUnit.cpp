@@ -75,7 +75,7 @@ struct VCOUnit : VenomModule {
   bool disableDPW = false;
   bool aliasSuppress = false;
   using float_4 = simd::float_4;
-  int oversample = -1;
+  int oversample = -1, sampleRate = 0;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4]{}, phaseUpSample[4]{}, offsetUpSample[4]{}, levelUpSample[4]{},
@@ -341,6 +341,14 @@ struct VCOUnit : VenomModule {
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
       setOversample();
+      sampleRate = 0;
+    }
+    if (sampleRate != args.sampleRate){
+      sampleRate = args.sampleRate;
+      for (int i=0; i<4; i++){
+        linDcBlockFilter[i].init(oversample, sampleRate);
+        outDcBlockFilter[i].init(oversample, sampleRate);
+      }
     }
     // get channel count
     int channels = 1;
@@ -422,7 +430,7 @@ struct VCOUnit : VenomModule {
           }
         } // else preserve prior linIn value
         if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
-          linIn = linDcBlockFilter[s].process(linIn); //, oversample);
+          linIn = linDcBlockFilter[s].process(linIn);
         float_4 rev{};
         if (inputs[REV_INPUT].isConnected()) {
           if (s==0 || inputs[REV_INPUT].isPolyphonic()) {
@@ -719,7 +727,7 @@ struct VCOUnit : VenomModule {
         }
         // Remove DC offset
         if (params[DC_PARAM].getValue()) {
-          out[s] = outDcBlockFilter[s].process(out[s]); //, oversample);
+          out[s] = outDcBlockFilter[s].process(out[s]);
         }
         // Downsample outputs
         if (oversample>1) {

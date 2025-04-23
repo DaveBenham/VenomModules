@@ -51,7 +51,7 @@ struct WaveMultiplier : VenomModule {
     LIGHTS_LEN
   };
   
-  int oversample = 0;
+  int oversample = 0, sampleRate = 0;
   int oversampleValues[6]{1,2,4,8,16,32};
   OversampleFilter_4 threshUpSample[16],
                      miscUpSample[16],
@@ -121,6 +121,15 @@ struct WaveMultiplier : VenomModule {
     if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
       setOversample();
+      sampleRate = 0;
+    }
+    if (sampleRate != args.sampleRate){
+      sampleRate = args.sampleRate;
+      for (int i=0; i<16; i++){
+        pulseDCBlock[i].init(oversample, sampleRate);
+        shiftWaveDCBlock[i].init(oversample, sampleRate);
+        mixDCBlock[i].init(oversample, sampleRate);
+      }
     }
 
     // get channel count

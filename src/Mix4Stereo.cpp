@@ -34,7 +34,7 @@ struct Mix4Stereo : MixBaseModule {
   float normal = 0.f;
   float scale = 1.f;
   float offset = 0.f;
-  int oversample = 4;
+  int oversample = 4, sampleRate = 0;
   OversampleFilter_4 leftUpSample[4]{}, leftDownSample[4]{}, rightUpSample[4]{}, rightDownSample[4]{};
   DCBlockFilter_4 leftDcBlockBeforeFilter[4]{}, rightDcBlockBeforeFilter[4]{},
                   leftDcBlockAfterFilter[4]{},  rightDcBlockAfterFilter[4]{};
@@ -80,6 +80,15 @@ struct Mix4Stereo : MixBaseModule {
 
   void process(const ProcessArgs& args) override {
     MixBaseModule::process(args);
+    if (args.sampleRate != sampleRate){
+      sampleRate = args.sampleRate;
+      for (int i=0; i<4; i++){
+        leftDcBlockBeforeFilter[i].init(oversample, sampleRate);
+        leftDcBlockAfterFilter[i].init(oversample, sampleRate);
+        rightDcBlockBeforeFilter[i].init(oversample, sampleRate);
+        rightDcBlockAfterFilter[i].init(oversample, sampleRate);
+      }
+    }
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||
       connected[0] != (inputs[LEFT_INPUT + 0].isConnected() || inputs[RIGHT_INPUT + 0].isConnected()) ||
       connected[1] != (inputs[LEFT_INPUT + 1].isConnected() || inputs[RIGHT_INPUT + 1].isConnected()) ||
