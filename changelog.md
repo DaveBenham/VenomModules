@@ -15,6 +15,9 @@
   - Shape mode now always has 8 options, regardless which waveform is selected. The square waveform rotates through the three modes to make 8. This change guarantees that cycling through all the waveform options will not change the shape mode for a particular waveform.
 - Poly Fade
   - Added context menu option to disable output channel minimization
+- Poly Offset Quantize behavior
+  - Old behavior that quantizes the output no longer quantizes the offset knob displays
+  - New options to quantize the offset only do quantize the knob displays
 - Multi Merge
   - Add context menu options to explicitly set the number of channels on inputs, overriding the actual input channel count.
 - Rhythm Explorer
