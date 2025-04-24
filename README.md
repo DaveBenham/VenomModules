@@ -1804,10 +1804,12 @@ Determines the minimum and maximum voltage of the knobs.
 - **+/- 10 V** (default)
 
 #### Quantize
-Determines how output values are quantized.
-- **Off (continuous)** (default)
-- **Integers (octaves)**
-- **1/12 V (semitones)**
+Determines how values are quantized.
+- **Off (continuous)** (default) - Neither the output nor the knob offset values are quantized.
+- **Output to Integers (octaves)** - The sum of input voltage plus knob value is quantized to the nearest integral Volt. The knob offset display value is not quantized.
+- **Output to 1/12 V (semitones)** - The sum of input voltage plus knob value is quantized to the nearest 1/12 Volt. The knob offset display value is not quantized.
+- **Offset to Integers (octaves)** - The knob offset value (and display value) is quantized to the nearest integral Volt.
+- **Offset to 1/12 V (semitones)** - The knob offset value (and display value) is quantized to the nearest 1/12 Volt.
 
 #### Display unit
 Determines how knob values are displaed and entered in knob context menu and hover text. Output values are always in Volts.
