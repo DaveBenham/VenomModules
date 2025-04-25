@@ -3394,18 +3394,26 @@ A polyphonic wave shaper inspired by the [Doepfer A-137-2 Wave Multiplier II](ht
 The Wave Multiplier works by mixing 4 copies of the incoming wave form with the original input. Each copy is compared to a different threshold, and if the current value is less than or equal to the threshold, then the value is shifted up as much as 5V. If greater than the threshold then the value is shifted down as much as 5V. If the input is a saw wave and the threshold is constant, then the net effect is a phase shift. If the input is a sine or triangle it is more like a fold operation. Applying modulation to the threshold adds movement to the sound.
 
 The overall design is functionally very similar to the Doepfer module, with the following enhancements:
-- Four LFOs are added, with the outputs normalled to the threshold CV inputs to provide built in modulation.
+- Four bipolar triangle LFOs are added, with the outputs normalled to the shift threshold CV inputs to provide built in modulation.
 - Rather than adjusting the input level, Depth controls and CV input are provided for the shift amount.
-- The internal outputs and jumpers on the back of the Doepfer module are exposed as additional outputs and mutes on this module.
+- The 8 internal outputs and 5 jumpers on the back of the Doepfer module are exposed as additional outputs and mutes on this Venom module.
 - An option is added to remove DC offset from outputs.
 - Level control and a VCA are provided for the final mix output.
 - Oversampling options are provided to mitigate aliasing introduced by the digital implementation.
+
+### Polyphony
+
+Wave Multiplier is fully polyphonic. In general, the number of output channels is computed as the maximum channel count found across all inputs.
+
+Inputs that match the output polyphony behave as expected. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels get constant 0V for any missing channels.
+
+The LFOs are special. If the Master LFO V/Oct input is monophonic (or unpatched), then the LFO outputs are monophonic, regardless wether there are any polyphonic inputs elsewhere. But if the V/Oct is polyphonic, then the LFO output channel count matches the channel count for the rest of the module, and missing LFO V/Oct channels are treated as constant 0V.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
-The wave input is passed through to the shifted wave mix output if Wave Multiplier is bypassed.
+If Wave Multiplier is bypassed, then all channels of the wave input are passed through unchanged to the shifted wave mix output. All other outputs are monophonic constant 0 volts.
 
 [Return to Table Of Contents](#venom)
 
