@@ -3391,7 +3391,7 @@ The poly input is passed through to the output if Wave Folder is bypassed.
 ![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)  
 A polyphonic wave shaper inspired by the [Doepfer A-137-2 Wave Multiplier II](https://doepfer.de/a1372.htm). It's primary use is to fatten the sound of simple wave forms like sine, triangle, and saw. It does not work well with square or pulse waves.
 
-The Wave Multiplier works by mixing 5 copies of the incoming wave form with the original input. Each copy is compared to a threshold, and if the current value is less than or equal to the threshold, then the value is shifted up as much as 5V. If greater than the threshold then the value is shifted down as much as 5V. If the input is a saw wave and the threshold is constant, then the net effect is a phase shift. If the input is a sine or triangle it is more like a fold operation. Applying modulation to the threshold adds movement to the sound.
+The Wave Multiplier works by mixing 4 copies of the incoming wave form with the original input. Each copy is compared to a different threshold, and if the current value is less than or equal to the threshold, then the value is shifted up as much as 5V. If greater than the threshold then the value is shifted down as much as 5V. If the input is a saw wave and the threshold is constant, then the net effect is a phase shift. If the input is a sine or triangle it is more like a fold operation. Applying modulation to the threshold adds movement to the sound.
 
 The overall design is functionally very similar to the Doepfer module, with the following enhancements:
 - Four LFOs are added, with the outputs normalled to the threshold CV inputs to provide built in modulation.
