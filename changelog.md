@@ -17,7 +17,7 @@
   - Added context menu option to disable output channel minimization
 - Poly Offset Quantize behavior
   - Old behavior that quantizes the output no longer quantizes the offset knob displays
-  - New options to quantize the offset only do quantize the knob displays
+  - Added new options to quantize the offset only, which does quantize the knob displays
 - Multi Merge
   - Add context menu options to explicitly set the number of channels on inputs, overriding the actual input channel count.
 - Rhythm Explorer
@@ -28,7 +28,7 @@
     - Old patches default to old behavior of V/Oct for Detune CV
 - Bay Modules better preserve links when performing duplication or copy/paste
   - Duplication of input/output pairs establish the link between the new copies (old behavior)
-  - Duplication of linked outputs only attempt to establish the link to the original uncopied input (new behavior)
+  - Duplication of linked outputs where the input is missing from the selection attempt to establish the link to the original uncopied input (new behavior)
 - All modules with DC block options (potential patch sound breaking change)
   - Improved the DC block algorithm to compensate for changes to overampling and or VCV sample rate
 
