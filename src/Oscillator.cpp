@@ -176,6 +176,8 @@ struct Oscillator : VenomModule {
     SAW_VCA_LIGHT,
     MIX_VCA_LIGHT,
 
+    LIN_NO_THRU0_LIGHT,
+
     LIGHTS_LEN
   };
 
@@ -201,6 +203,7 @@ struct Oscillator : VenomModule {
   float_4 phasor[4]{}, phasorDir[4]{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}};
   DCBlockFilter_4 dcBlockFilter[4][6]{}; // Sin, Tri, Sqr, Saw, Mix, Lin FM Input
   bool linDCCouple = false;
+  bool linNoThru0 = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
   float modeFreq[2][3] = {{dsp::FREQ_C4, 2.f, 100.f},{dsp::FREQ_C4, 120.f, 100.f}}, biasFreq = 0.02f;
   int currentMode = -1;
@@ -325,6 +328,7 @@ struct Oscillator : VenomModule {
     configInput(LIN_INPUT, "Linear FM");
     configLight(LIN_LIGHT, "Linear FM oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configLight(LIN_DC_LIGHT, "Linear FM DC coupled indicator");
+    configLight(LIN_NO_THRU0_LIGHT, "Linear FM through-zero disabled indicator");
     configInput(EXP_DEPTH_INPUT, "Exponential FM depth");
     configInput(LIN_DEPTH_INPUT, "Linear FM depth");
     configInput(VOCT_INPUT, "V/Oct");
@@ -613,6 +617,8 @@ struct Oscillator : VenomModule {
         if (!alternate) {
           freq[s] = vOctIn[s] + vOctParm + expIn*expDepthIn[s]*params[EXP_PARAM].getValue();
           freq[s] = dsp::exp2_taylor5(freq[s]) + linIn*linDepthIn[s]*params[LIN_PARAM].getValue();
+          if (linNoThru0)
+            freq[s] = simd::ifelse(freq[s]<float_4::zero(), float_4::zero(), freq[s]);
         } else {
           freq[s] = (vOctParm + vOctIn[s])*biasFreq + linIn*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
         }
@@ -1137,6 +1143,7 @@ struct Oscillator : VenomModule {
     }
     json_object_set_new(rootJ, "oldShpCV", array);
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
+    json_object_set_new(rootJ, "linNoThru0", json_boolean(linNoThru0));
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
     json_object_set_new(rootJ, "syncAt0", json_boolean(syncLo<0.f));
@@ -1184,6 +1191,9 @@ struct Oscillator : VenomModule {
     }
     if ((val = json_object_get(rootJ, "linDCCouple"))) {
       linDCCouple = json_boolean_value(val);
+    }
+    if ((val = json_object_get(rootJ, "linNoThru0"))) {
+      linNoThru0 = json_boolean_value(val);
     }
     if ((val = json_object_get(rootJ, "syncAt0"))) {
       syncHi = json_boolean_value(val) ? 0.f : 2.f;
@@ -1294,6 +1304,7 @@ struct OscillatorWidget : VenomWidget {
       menu->addChild(new MenuSeparator);
       menu->addChild(createBoolPtrMenuItem("Disable oversampling", "", &module->disableOver[portId]));
       menu->addChild(createBoolPtrMenuItem("DC coupled", "", &module->linDCCouple));
+      menu->addChild(createBoolPtrMenuItem("Disable through-zero", "", &module->linNoThru0));
       PolyPort::appendContextMenu(menu);
     }
   };
@@ -1374,6 +1385,7 @@ struct OscillatorWidget : VenomWidget {
     addInput(createOverInputCentered<LinPort>(Vec(64.f, 241.5f), module, Oscillator::LIN_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(77.5f, 230.f), module, Oscillator::LIN_LIGHT));
     addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(77.5f, 253.f), module, Oscillator::LIN_DC_LIGHT));
+    addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(50.5f, 253.f), module, Oscillator::LIN_NO_THRU0_LIGHT));
     addInput(createInputCentered<PolyPort>(Vec(29.f, 290.5f), module, Oscillator::EXP_DEPTH_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(64.f, 290.5f), module, Oscillator::LIN_DEPTH_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(29.f, 335.5f), module, Oscillator::VOCT_INPUT));
@@ -1432,6 +1444,7 @@ struct OscillatorWidget : VenomWidget {
         }
       }
       mod->lights[Oscillator::LIN_DC_LIGHT].setBrightness(mod->linDCCouple);
+      mod->lights[Oscillator::LIN_NO_THRU0_LIGHT].setBrightness(mod->linNoThru0 && !(mod->alternate));
     }
   }
 

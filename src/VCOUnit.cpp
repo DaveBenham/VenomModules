@@ -59,6 +59,7 @@ struct VCOUnit : VenomModule {
     RM_LIGHT,
     VCA_LIGHT,
     LIN_DC_LIGHT,
+    LIN_NO_THRU0_LIGHT,
     LIGHTS_LEN
   };
 
@@ -83,6 +84,7 @@ struct VCOUnit : VenomModule {
   float_4 phasor[4]{}, phasorDir[4]{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}};
   DCBlockFilter_4 linDcBlockFilter[4]{}, outDcBlockFilter[4]{};
   bool linDCCouple = false;
+  bool linNoThru0 = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
   float modeFreq[2][3] = {{dsp::FREQ_C4, 2.f, 100.f},{dsp::FREQ_C4, 120.f, 100.f}}, biasFreq = 0.02f;
   int currentMode = -1;
@@ -186,6 +188,7 @@ struct VCOUnit : VenomModule {
     configInput(LIN_INPUT, "Linear FM");
     configLight(LIN_LIGHT, "Linear FM oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configLight(LIN_DC_LIGHT, "Linear FM DC coupled indicator");
+    configLight(LIN_NO_THRU0_LIGHT, "Linear FM through-zero disabled indicator");
     configInput(EXP_DEPTH_INPUT, "Exponential FM depth");
     configInput(LIN_DEPTH_INPUT, "Linear FM depth");
     configInput(SYNC_INPUT, "Hard Sync");
@@ -460,6 +463,8 @@ struct VCOUnit : VenomModule {
         if (!alternate) {
           freq[s] = vOctIn[s] + vOctParm + expIn*expDepthIn[s]*params[EXP_PARAM].getValue();
           freq[s] = dsp::exp2_taylor5(freq[s]) + linIn*linDepthIn[s]*params[LIN_PARAM].getValue();
+          if (linNoThru0)
+            freq[s] = simd::ifelse(freq[s]<float_4::zero(), float_4::zero(), freq[s]);
         } else {
           freq[s] = (vOctParm + vOctIn[s])*biasFreq + linIn*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
         }
@@ -752,6 +757,7 @@ struct VCOUnit : VenomModule {
     json_object_set_new(rootJ, "unity5", json_boolean(unity5));
     json_object_set_new(rootJ, "bipolar", json_boolean(bipolar));
     json_object_set_new(rootJ, "linDCCouple", json_boolean(linDCCouple));
+    json_object_set_new(rootJ, "linNoThru0", json_boolean(linNoThru0));
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
     json_object_set_new(rootJ, "disableDPW", json_boolean(disableDPW));
@@ -779,6 +785,9 @@ struct VCOUnit : VenomModule {
     }
     if ((val = json_object_get(rootJ, "linDCCouple"))) {
       linDCCouple = json_boolean_value(val);
+    }
+    if ((val = json_object_get(rootJ, "linNoThru0"))) {
+      linNoThru0 = json_boolean_value(val);
     }
     val = json_object_get(rootJ, "disableDPW");
     disableDPW = val ? json_boolean_value(val) : true;
@@ -876,6 +885,7 @@ struct VCOUnitWidget : VenomWidget {
       menu->addChild(new MenuSeparator);
       menu->addChild(createBoolPtrMenuItem("Disable oversampling", "", &module->disableOver[portId]));
       menu->addChild(createBoolPtrMenuItem("DC coupled", "", &module->linDCCouple));
+      menu->addChild(createBoolPtrMenuItem("Disable through-zero", "", &module->linNoThru0));
       PolyPort::appendContextMenu(menu);
     }
   };
@@ -933,6 +943,7 @@ struct VCOUnitWidget : VenomWidget {
     addInput(createOverInputCentered<LinPort>(Vec(67.5f, 197.5f), module, VCOUnit::LIN_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(81.f, 186.f), module, VCOUnit::LIN_LIGHT));
     addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(81.f, 209.f), module, VCOUnit::LIN_DC_LIGHT));
+    addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(54.f, 209.f), module, VCOUnit::LIN_NO_THRU0_LIGHT));
 
     addInput(createInputCentered<PolyPort>(Vec(24.f, 244.5f), module, VCOUnit::EXP_DEPTH_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(67.5f, 244.5f), module, VCOUnit::LIN_DEPTH_INPUT));
@@ -991,6 +1002,7 @@ struct VCOUnitWidget : VenomWidget {
       mod->lights[VCOUnit::LEVEL_LIGHT].setBrightness(over && !(mod->disableOver[VCOUnit::LEVEL_INPUT]) && mod->inputs[VCOUnit::LEVEL_INPUT].isConnected());
       mod->lights[VCOUnit::LEVEL_LIGHT+1].setBrightness(over && mod->disableOver[VCOUnit::LEVEL_INPUT] && mod->inputs[VCOUnit::LEVEL_INPUT].isConnected());
       mod->lights[VCOUnit::LIN_DC_LIGHT].setBrightness(mod->linDCCouple);
+      mod->lights[VCOUnit::LIN_NO_THRU0_LIGHT].setBrightness(mod->linNoThru0 && !(mod->alternate));
     }
   }
 
