@@ -2770,6 +2770,22 @@ Converts spherical coordinates r, theta, phi into cartesian coordinates X, Y, Z.
 ### Polyphony
 All inputs and outputs are fully polyphonic. The number of output channels is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyponic inputs with fewer channels use constant 0V for any missing channels.
 
+### OverSample button
+This color coded switch establishes the amount of oversampling used to mitigate audio aliasing that may be introduced by the conversion process.
+
+- dark gray (default) = Off - No oversampling
+- yellow = x2 oversampling
+- green = x4 oversampling
+
+Oversampling is typically not needed for most conversions. But it may be useful with high frequency audio outputs.
+
+Oversampling uses significant CPU resources, so it is best to use the minimum oversampling value that gives the desired output.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
+
 ### r input
 This represents the radial distance r. Negative r values are accepted.
 
