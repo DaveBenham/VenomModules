@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.12.0 (????-??-??)
+## 2.12.0 (2025-05-08)
 ### New Modules
 - Cross Fade 3D
 - Pan 3D
@@ -28,10 +28,10 @@
   - Detune CV now scales 10V to match the detune knob range
     - Old patches default to old behavior of V/Oct for Detune CV
 - Bay Modules better preserve links when performing duplication or copy/paste
-  - Duplication of input/output pairs establish the link between the new copies (old behavior)
-  - Duplication of linked outputs where the input is missing from the selection attempt to establish the link to the original uncopied input (new behavior)
-- All modules with DC block options (potential patch sound breaking change)
-  - Improved the DC block algorithm to compensate for changes to overampling and or VCV sample rate
+  - New behavior: Duplication of linked outputs where the input is missing from the selection attempt to establish the link to the original uncopied input
+  - Continued old behavior: Duplication of input/output pairs establish the link between the new copies
+- All modules with DC block options
+  - Improved the DC block algorithm to compensate for changes to overampling and or VCV sample rate (potential patch sound breaking change)
 
 ### Bug Fix
 - WinComp
