@@ -26,6 +26,13 @@ struct MultiMerge : VenomModule {
     LIGHTS_LEN
   };
   
+  int inChannels[16]{}; // Assumes 1st DROP_LIGHT is 0
+  std::string inLabels[17]{"Auto","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+  
+  void setInputDescription(int id){
+    inputInfos[id]->description = "Channels: "+inLabels[inChannels[id]];
+  }
+  
   MultiMerge() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     for (int i=0; i<16; i++) {
@@ -33,6 +40,7 @@ struct MultiMerge : VenomModule {
       configInput(POLY_INPUT+i, name);
       configLight(DROP_LIGHT+i, name+" dropped channel(s) indicator");
       configOutput(POLY_OUTPUT+i, name);
+      setInputDescription(i);
     }  
   }
 
@@ -50,16 +58,39 @@ struct MultiMerge : VenomModule {
         current = out[i];
         outNdx = -1;
       }
-      int inCnt=std::max(inputs[POLY_INPUT+i].getChannels(),1);
+      int inCnt=std::max(inChannels[i]?inChannels[i]:inputs[POLY_INPUT+i].getChannels(), 1);
       for (int c=0; c<inCnt; c++){
         if (++outNdx<16)
-          outputs[current].setVoltage(inputs[POLY_INPUT+i].getVoltage(c), outNdx);
+          outputs[current].setVoltage(inputs[POLY_INPUT+i].getPolyVoltage(c), outNdx);
         else
           break;
       }
-      lights[DROP_LIGHT+i].setBrightness(outNdx>=16);
+      lights[DROP_LIGHT+i].setBrightness(outNdx>=16 || (inChannels[i] && inChannels[i]<inputs[POLY_INPUT+i].getChannels()));
     }
     outputs[current].setChannels(std::min(outNdx+1,16));
+  }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_t* array = json_array();
+    for (int i=0; i<16; i++){
+      json_array_append_new(array, json_integer(inChannels[i]));
+    }
+    json_object_set_new(rootJ, "inChannels", array);
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* array = json_object_get(rootJ, "inChannels");
+    if (array){
+      size_t i;
+      json_t* val;
+      json_array_foreach(array, i, val) {
+        inChannels[i] = json_integer_value(val);
+        setInputDescription(i);
+      }
+    }
   }
 
 };
@@ -101,6 +132,33 @@ struct MultiMergeWidget : VenomWidget {
     }
   };
 
+  struct InPort : PolyPort {
+    int portId;
+    void appendContextMenu(Menu* menu) override {
+      MultiMerge* module = static_cast<MultiMerge*>(this->module);
+      menu->addChild(new MenuSeparator);
+      menu->addChild(createIndexSubmenuItem(
+        "Channels",
+        {"Auto","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
+        [=]() {
+          return module->inChannels[portId];
+        },
+        [=](int cnt) {
+          module->inChannels[portId] = cnt;
+          module->setInputDescription(portId);
+        }
+      ));    
+      PolyPort::appendContextMenu(menu);
+    }
+  };
+
+  template <class TWidget>
+  TWidget* createConfigChannelsInputCentered(math::Vec pos, engine::Module* module, int inputId) {
+    TWidget* o = createInputCentered<TWidget>(pos, module, inputId);
+    o->portId = inputId;
+    return o;
+  }
+
   MultiMergeWidget(MultiMerge* module) {
     setModule(module);
     setVenomPanel("MultiMerge");
@@ -111,10 +169,35 @@ struct MultiMergeWidget : VenomWidget {
     addChild(linework);
 
     for (int i=0; i<16; i++){
-      addInput(createInputCentered<PolyPort>(Vec(i%2 ? xInOdd : xInEven, yOrigin+yDelta*i), module, MultiMerge::POLY_INPUT+i));
+      addInput(createConfigChannelsInputCentered<InPort>(Vec(i%2 ? xInOdd : xInEven, yOrigin+yDelta*i), module, MultiMerge::POLY_INPUT+i));
       addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(i%2 ? xInOdd-18.5f : xInEven+18.5f, yOrigin+yDelta*i), module, MultiMerge::DROP_LIGHT+i));
       addOutput(createOutputCentered<PolyPort>(Vec(i%2 ? xOutOdd : xOutEven, yOrigin+yDelta*i), module, MultiMerge::POLY_OUTPUT+i));
     }
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    MultiMerge* module = static_cast<MultiMerge*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createMenuLabel("Configure all input ports:"));
+    menu->addChild(createIndexSubmenuItem(
+      "Channels",
+      {"Auto","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
+      [=]() {
+        int current = module->inChannels[0];
+        for (int i=1; i<16; i++){
+          if (module->inChannels[i] != current)
+            current = 17;
+        }
+        return current;
+      },
+      [=](int cnt) {
+        for (int i=0; i<16; i++){
+          module->inChannels[i] = cnt;
+          module->setInputDescription(i);
+        }
+      }
+    ));
+    VenomWidget::appendContextMenu(menu);
   }
 
 };

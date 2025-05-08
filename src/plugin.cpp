@@ -74,6 +74,7 @@ void init(Plugin* p) {
   p->addModel(modelBlocker);
   p->addModel(modelBypass);
   p->addModel(modelCloneMerge);
+  p->addModel(modelCrossFade3D);
   p->addModel(modelHQ);
   p->addModel(modelKnob5);
   p->addModel(modelLinearBeats);
@@ -94,6 +95,7 @@ void init(Plugin* p) {
   p->addModel(modelOscillator);
   p->addModel(modelNORS_IQ);
   p->addModel(modelNORSIQChord2Scale);
+  p->addModel(modelPan3D);
   p->addModel(modelPolyClone);
   p->addModel(modelPolyFade);
   p->addModel(modelPolyOffset);
@@ -106,6 +108,7 @@ void init(Plugin* p) {
   p->addModel(modelRecurseStereo);
   p->addModel(modelReformation);
   p->addModel(modelRhythmExplorer);
+  p->addModel(modelSphereToXYZ);
   p->addModel(modelShapedVCA);
   p->addModel(modelThru);
   p->addModel(modelVCAMix4);
@@ -113,6 +116,7 @@ void init(Plugin* p) {
   p->addModel(modelVCOUnit);
   p->addModel(modelVenomBlank);
   p->addModel(modelWaveFolder);
+  p->addModel(modelWaveMultiplier);
   p->addModel(modelWidgetMenuExtender);
   p->addModel(modelWinComp);
 

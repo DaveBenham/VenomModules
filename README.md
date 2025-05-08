@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.11.1 for VCV Rack 2 are copyright 2023, 2024 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.12.0 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
@@ -7,40 +7,39 @@ Venom modules version 2.11.1 for VCV Rack 2 are copyright 2023, 2024 Dave Benham
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Venom Expander Modules](#venom-expander-modules)  
 [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
-[Limitations of DC offset removal](#limitations-of-dc-offset-removal)  
 [Acknowledgments](#acknowledgments)  
 
 |[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
 |----|----|----|----|----|
 |![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)|![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)|
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|
-|----|----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|
-
-|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|[MOUSE<br />PAD](#mouse-pad)|
-|----|----|----|----|----|
-|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Mouse Pad module image](doc/MousePad.png)|
-
-|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[POLY<br />CLONE](#poly-clone)|[POLY FADE](#poly-fade)|
-|----|----|----|----|----|----|
-|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Poly Clone module image](doc/PolyClone.png)|![Poly Fade module image](doc/PolyFade.png)|
-
-|[POLY<br />OFFSET](#poly-offset)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[QUAD VC<br />POLARIZER](#quad-vc-polarizer)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[CROSS FADE 3D](#cross-fade-3d)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|
 |----|----|----|----|----|----|----|----|
-|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Cross Fade 3D module image](doc/CrossFade3D.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|
 
-|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|[SHAPED<br />VCA](#shaped-vca)|[THRU](#thru)|
-|----|----|----|----|
-|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|![THRU module image](doc/Thru.png)|
+|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
+|----|----|----|----|----|----|
+|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|
 
-|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|
-|----|----|----|----|
-|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|
+|[MOUSE<br />PAD](#mouse-pad)|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[PAN 3D](#pan-3d)|
+|----|----|----|----|----|----|
+|![Mouse Pad module image](doc/MousePad.png)|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Pan 3D module image](doc/Pan3D.png)|
 
-|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
-|----|----|----|----|
-|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
+|[POLY<br />CLONE](#poly-clone)|[POLY FADE](#poly-fade)|[POLY<br />OFFSET](#poly-offset)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[QUAD VC<br />POLARIZER](#quad-vc-polarizer)|
+|----|----|----|----|----|----|----|----|
+|![Poly Clone module image](doc/PolyClone.png)|![Poly Fade module image](doc/PolyFade.png)|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)|
+
+|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|[SHAPED<br />VCA](#shaped-vca)|
+|----|----|----|----|----|
+|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|
+
+|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|
+|----|----|----|----|----|----|
+|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|
+
+|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WAVE<br />MULTIPLIER](#wave-multiplier)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|
+|----|----|----|----|----|
+|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -118,13 +117,6 @@ All of the Venom modules with oversampling also have a context menu option to sp
 - 6th order with a cutoff at 50% of the Nyquist frequency.
 
 Again, feel free to experiment to find what works best for you.
-
-[Return to Table Of Contents](#venom)
-
-## Limitations of DC offset removal
-Currently Venom uses a naive implementation of a highpass filter for DC offset removal - it does not compensate for sample rate or oversampling rate. So expect different results if you change the sample rate and/or the oversample rate. Additionally, the DC offset removal attenuates bass tones more and more as you increase sample rate or oversampling.
-
-I have a better version that gives much more consistent results for all sample rates and oversample rates, as well as minimal bass attenuation. But for some mysterious reason it works beatifully on some machines, yet not at all on others. So we are stuck with the inferior DC offset removal for now.
 
 [Return to Table Of Contents](#venom)
 
@@ -237,11 +229,13 @@ Map the output to the corresponding "Source n" in your operational patch.
 
 Leave all patch bay output ports with their factory default names so they inherit the name from the source.
 
-### Selection paste/import behavior
+### Selection dulicate/paste/import behavior
 
-Custom module and port names are always preserved when pasting or importing a selection set.
+Custom module and port names are always preserved when duplicating, pasting or importing a selection set.
 
-Paired Bay Inputs and Bay Outputs/Norms within the selection set preserve their link when pasting or importing. If a Bay Input, Bay Output, or Bay Norm is included within a selection set without the corresponding linked module, then the copied/imported module will not be linked.
+If duplicating, pasting, or importing a linked pair of modules, then the output modules are linked to the copied sources.
+
+If duplicating, pasting, or importing linked output modules without the sources, then an attempt is made to link the outputs to the original uncopied sources.
 
 ### Bypass Behavior
 
@@ -689,8 +683,55 @@ If Clone Merge is bypassed then the output is constant monophonic 0V.
 
 [Return to Table Of Contents](#venom)
 
+## CROSS FADE 3D
+![Cross Fade 3D module image](doc/CrossFade3D.png)  
 
-## Harmonic Quantizer
+Eight inputs in three dimensional space are cross faded to a single output. The inputs are placed at the vertices of a virtual cube. X, Y, and Z controls independently cross fade between inputs on opposite faces of the cube. Each fader functions linearly in amplitude, ranging from 0% to 100%. The orthoganal faders are multiplicative, such that when all three controls are at an extreme, then 100% of the output comes from a single input. When all three controls are at 50% then each input contributes 12.5% to the output. A final Level control can further attenuate the final output.
+
+### Polyphony
+Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
+
+### INPUTS
+The faceplate has a perspective view of a cube with a polyphonic input at each of the eight vertices. The inputs are not individually labeled on the faceplate, but when you hover over an input a name is displayed that identifies whether the input is left or right, bottom or top, and front or back.
+
+#### Single polyphonic input alternative
+If only the Bottom Left Front input is patched, then Cross Fade 3D treats the input as an 8 channel polyphonic signal where each channel represents a monophonic input for one of the cube vertices. Missing channels are assigned constant 0V. The 8 channels are assigned as follows.
+- 1 = Bottom left front
+- 2 = Bottom right front
+- 3 = Top left front
+- 4 = Top right front
+- 5 = Bottom left back
+- 6 = Bottom right back
+- 7 = Top left back
+- 8 = Top right back
+
+### X, Y, Z fader controls and CV inputs
+X controls the left to right ratio, and is measured as percent right.  
+Y controls the bottom to top ratio, and is measured as percent top.  
+Z controls the front to back ratio, and is measured as percent back.  
+
+Each fader control ranges from 0% to 100%, with the default 50% at noon.
+
+Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
+
+If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, theta, phi spherical coordinates into X, Y, Z cartesian coordinates. 
+
+### MONO OUTPUT button
+By default, polyphonic channels are preserved at the output. If the Mono Output button is enabled, then polyphonic output channels are summed to a monophonic output signal.
+
+### LEVEL control
+The final output level can be attenuated with the Level control. This may be especially useful when working with polyphonic inputs that are summed to a mono output.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+The output is constant monophonic 0V if the module is bypassed.
+
+[Return to Table Of Contents](#venom)
+
+## HARMONIC QUANTIZER
 ![Harmonic Quantizer module image](doc/HQ.PNG)  
 Computes a selected harmonic or subharmonic partial relative to a fundamental root V/Oct, or quantizes an input V/Oct to the nearest partial relative to the root.
 
@@ -896,8 +937,6 @@ Controls whether DC offsets are removed from the outputs
 - **Off (gray - default)**: Used for normal CV outputs
 - **On (white)**: Useful for audio outputs
 
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
-
 ### HIGH THRESH and LOW THRESH knobs and inputs
 Set the low and high thresholds for the Schmitt triggers that determine the state of each input. The effective threshold is the sum of the knob value and the corresponding input. The same thresholds are used for all inputs. An input goes high whenever the voltage rises above the high threshold. The input goes low whenever the voltage is at or below the low threshold. The state remains unchanged if the voltage lies between the thresholds.
 
@@ -987,8 +1026,6 @@ The color coded DC block button determines when (or if) a high pass filter is ap
 
 The last three DC offset options give identical results when no clipping is applied.
 
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
-
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped.
 - **Off** (dark gray - default)
@@ -1044,6 +1081,8 @@ All other behaviors are the same as for Mix 4.
 A collection of expander modules that extend the functionality of the four Mix modules: [Mix 4](#mix-4), [Mix 4 Stereo](#mix-4-stereo), [VCA Mix 4](#vca-mix-4), and [VCA Mix 4 Stereo](#vca-mix-4-stereo).
 
 Mix expanders must be placed to the right of the main mix module. Multiple expanders can be used for one mix module as long as they form a contiguous chain to the right. Each expander has an LED in the upper left that glows yellow if successfully connected to a mix module.
+
+A main mix module may have up to 16 expanders. However, any combination of Mix Solo, Mix Mute, Mix Fade, and Mix Fade 2 counts as only one expander toward the 16 expander limit. Also any Mix Offset does not count toward the 16 expander limit.
 
 Bypassing an expander disables that expander without disrupting expanders to the right.
 
@@ -1190,7 +1229,7 @@ If the main Mix module is not stereo (Mix 4, or VCA Mix 4), then the Right Send 
 
 The position of the Send module in a chain of Mix expanders is important. Expanders to the left of the Send expander affect the Send output. Expanders to the right of the Send expander do not affect the Send output.
 
-Any number of Send modules can be used with a single mix module.
+At most 16 Send modules can be used with a single mix module. The maximum is fewer than 16 if other expander types are used in addition to the Send modules.
 
 The Return inputs have a Chain button that changes the behavior of the expander for use with chained mixers. If enabled, then the Return knob is disabled, and the Left Return and Right Return inputs receive the chained Send from a prior Aux Send expander. For example, suppose you have three VCA Mix 4 Stereo modules chained together named Mix1, Mix2, and Mix3, and each has an Aux Send module, named Send1, Send2, and Send3. Leave the chain option off on Send1, and enable chain on Send2 and Send3. Patch the Send1 Send outputs to Send2 Return (Chain) inputs, and Send2 Send outputs to Send3 Return (Chain) inputs. Finally patch the Send3 Send outputs to the effect module inputs, and the effect outputs to the Send1 Return inputs. The Send1 Return knob controls the return level, and the Send3 Mute button can be used to mute the entire send chain.
 ![Chained Send example](doc/ChainedSend.PNG)
@@ -1250,6 +1289,8 @@ This merge utility is extremely flexible, with many configurations possible. It 
 The thick red lines indicate which input ports are merged and sent to which output port. The groupings are defined by which output ports are patched. Unpatched output ports are ignored. The module is automatically reconfigured each time you patch or unpatch an output port. Each patched output merges the inputs from that row and above until it reaches another row with a patched output. If there are no output ports, then the module assumes the last output port will be patched.
 
 The number of polyphonic output channels cannot exceed 16. If the sum of polyphony counts across the inputs exceeds 16, then excess channels are dropped, and the LEDs next to input ports with dropped channels glow red.
+
+Each input port has a context menu to explicitly set the number of input channels, regardless how many are actually there. In addition there is a module context menu option to set the input channel count for all inputs. By default each input port channel count is set to Auto. The hover tooltip for each input port includes information on the current channel configuration. Mono inputs are replicated to match the specified input channel count. If the specified count is greater than the actual number of input channels, then extra channels are assigned constant 0V. If the specified count is less than the actual input channel count, then the dropped channels LED for that port glows red.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
@@ -1487,6 +1528,43 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 
 [Return to Table Of Contents](#venom)
 
+## PAN 3D
+![Pan 3D module image](doc/Pan3D.png)  
+
+A single input is panned across eight outputs in three dimensional space. The output ports are placed at the vertices of a virtual cube. X, Y, and Z panner controls indepently pan the input between outputs on opposite faces of the cube. The panners function linearly in amplitude, ranging from 0% to 100%. The three orthoganal panners are multiplicative. When all three controls are at an extreme, 100% of the input is panned to a single output. When all three controls are at 50%, then each output receives 12.5% of the input. A final Level control can further attenuate the final outputs.
+
+### Polyphony
+Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
+
+### OUTPUTS
+The faceplate has a perspective view of a cube with an output at each of the eight vertices. The outputs are not individually labeled on the faceplate, but when you hover over an output a name is displayed that identifies whether the output is left or right, bottom or top, and front or back.
+
+### X, Y, Z panner controls and CV inputs
+X controls the left to right ratio, and is measured as percent right.  
+Y controls the bottom to top ratio, and is measured as percent top.  
+Z controls the front to back ratio, and is measured as percent back.  
+
+Each panner control ranges from 0% to 100%, with the default 50% at noon.
+
+Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
+
+If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, theta, phi spherical coordinates into X, Y, Z cartesian coordinates. 
+
+### MONO OUTPUT button
+By default, polyphonic channels are preserved at the outputs. If the Mono Output button is enabled, then polyphonic output channels are summed to a monophonic output signal.
+
+### LEVEL control
+The final output levels can be attenuated with the Level control. Each output is attenuated the same amount. This control may be especially useful when working with polyphonic outputs that are summed to a mono output.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are constant monophonic 0V if Pan 3D is bypassed.
+
+[Return to Table Of Contents](#venom)
+
 ## POLY CLONE
 ![Poly Clone module image](doc/PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
@@ -1524,7 +1602,7 @@ Crossfade between channels of a polyphonic signal.
 
 A unipolar phasor from 0 to 10V drives the crossfade between the channels of a polyphonic input. The phasor can be the internal LFO, an external Phasor input, or the sum of both. The current phasor voltage determines which channel(s) are playing at that moment. An envelope controls how each channel fades in and out. For an input with N channels, the 10V phasor range is divided into N equal voltage ranges, one for each channel. That range represents 1 width unit. The width of the channel envelopes can vary, and is expressed in the channel width units. An envelope width of 1 means that the channel envelopes abut each other, but never overlap. Widths greater than 1 result in channel envelopes overlapping each other. Widths less than 1 result in gaps between channel envelopes. The shape of the channel envelopes is controlled by Hold, Skew, Rise shape, and Fall shape controls. There are outputs for the net phasor, the polyphonic channel gates, the polyphonic channel envelopes, the polyphonic final output, and the monophonic mix of final outputs. Level control and a VCA can be used to adjust the output volume and/or to apply amplitude modulation effects.
 
-Poly Fade can run with slow LFO rates, or high audio rates, but there is no anti-aliasing applied. So even mid range audio rates can generate harsh sounds with significant aliasing.
+Poly Fade can run with slow LFO rates, or high audio rates, but there is no anti-aliasing applied.
 
 ### Upper Section - Envelope and Level control
 
@@ -1668,15 +1746,32 @@ This is the effective phasor - the sum (unity mix) of the internal LFO phasor an
 
 #### Gates polyphonic output
 
-This port outputs a high 10V gate for each channel that currently has a non-zero envelope. The gate for the input Start channel is always assigned to channel 1 of the output.
+This port outputs a high 10V gate for each channel that currently has a non-zero envelope.
 
 #### Envs (envelopes) polyphonic output
 
-This port outputs the envelope for each of the channels. The envelope for the input Start channel is always assigned to channel 1 of the output.
+This port outputs the envelope for each of the channels.
 
 #### Out polyphonic output
 
-This port outputs the crossfaded outputs for each of the channels. The output for the input Start channel is always assigned to channel 1 of the output.
+This port outputs the crossfaded outputs for each of the channels.
+
+### Polyphony Rules
+
+#### Polyphonic Input
+The effective number of input channels is the greatest of the following values:
+- The number of poly channels at the input
+- The selected number of crossfaded channels
+- The selected start channel.
+
+If the actual input is monophonic, then the input is replicated to match the effective input channel count.
+
+If the actual input is polyphonic with fewer channels than the effective input channel count, then missing channels are assigned constant 0V.
+
+#### Polyphonic Outputs
+By default the number of output channels is minimized to match the selected number of crossfaded channels. In this case the start channel is always assigned to output channel 1, and there are no unused channels in the output.
+
+A module context menu option is available to disable the output channel minimization. In this case the effective input channels map directly to the output channels. Unused input channels become constant 0V in the output.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
@@ -1709,10 +1804,12 @@ Determines the minimum and maximum voltage of the knobs.
 - **+/- 10 V** (default)
 
 #### Quantize
-Determines how output values are quantized.
-- **Off (continuous)** (default)
-- **Integers (octaves)**
-- **1/12 V (semitones)**
+Determines how values are quantized.
+- **Off (continuous)** (default) - Neither the output nor the knob offset values are quantized.
+- **Output to Integers (octaves)** - The sum of input voltage plus knob value is quantized to the nearest integral Volt. The knob offset display value is not quantized.
+- **Output to 1/12 V (semitones)** - The sum of input voltage plus knob value is quantized to the nearest 1/12 Volt. The knob offset display value is not quantized.
+- **Offset to Integers (octaves)** - The knob offset value (and display value) is quantized to the nearest integral Volt.
+- **Offset to 1/12 V (semitones)** - The knob offset value (and display value) is quantized to the nearest 1/12 Volt.
 
 #### Display unit
 Determines how knob values are displaed and entered in knob context menu and hover text. Output values are always in Volts.
@@ -1875,7 +1972,7 @@ Monophonic bipolar CV modulates the unison count, with each 1/3 volt representin
 Sets the detune spread for each source channel, measured in semitones. This parameter has no effect if the unison count is 1. The unison voices will be distributed evenly across the spread. The increment between voices = Spread / (Count - 1).
 
 ### DETUNE input
-Monophonic V/Oct bipolar input modulates the detune spread. The CV input is summed with the detune knob value to determine the effective detune spread. The effective spread is not constrained by the knob range.
+Monophonic bipolar input modulates the detune spread. The CV input is scaled so that 10V matches the DETUNE knob range, and then summed with the detune knob value to determine the effective detune spread. A module context menu option is available to use a V/Oct scale for the CV instead.
 
 ### DIR (Detune Direction) button
 This color coded button specifies how the detune spread is applied to each replication set.
@@ -2213,7 +2310,7 @@ The Input is passed unchanged to the Output when REFORMATION is bypassed.
 Rhythm Explorer is a trigger sequencer that stochastically generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
 
 ### Basic Operation
-Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 ppqn clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
+Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 PPQN clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
 
 ### Basic Principles
 Random Rhythm uses a pseudo Random Number Generator (RNG) to establish a sequence of seemingly random numbers. However, the "random" sequence is dictated by a seed number - every time the RNG is reseeded with the same number, it generates the exact same sequence. With the initial setup, the reseed occurs after each set of 4 quarter notes, thus establishing a pattern. When the DICE button is pressed, a new seed number is generated, so the pattern will change.
@@ -2226,7 +2323,7 @@ All trigger and gate inputs have a transition to high threshold of 2 volts and t
 Trigger and gate high outputs are 10 volts, and low outputs 0 volts.
 
 ### CLOCK Input
-The Rhythm Explorer will not run properly until a 24 or 48 PPQN (pulses per quarter note) clock is patched into the CLOCK input. By default Rhythm Explorer expects 24 PPQN. The "Clock input PPQN" option within the module context menu gives options for either 24 or 48 PPQN. 
+The Rhythm Explorer will not run properly until a 24, 48, or 96 PPQN (pulses per quarter note) clock is patched into the CLOCK input. By default Rhythm Explorer expects 24 PPQN. The "Clock input PPQN" option within the module context menu gives options for 24, 48 or 96 PPQN. 
 
 ### RUN
 If the RUN input is not patched, then every press of the RUN button will toggle the run state on or off. The RUN button will be brightly lit while running, and off (actually very dimly lit) when not running.
@@ -2243,8 +2340,8 @@ The run state is preserved across sessions, and stored with each patch and prese
 
 ### RESET
 
-Pressing the RESET button or sending a CV trigger to the RESET input arms the sequencer to perform a reset and restart the phrase pattern from the beginning. The RESET button will glow brightly while in an armed state. By default the reset action will wait until the leading edge of the next 24 ppqn clock. For typical tempos, a 24 ppqn clock is fast enough that the reset is perceived as nearly instantaneous. The module context menu has a Reset Timing option where you can specify a different value for when the reset is applied:
-- Clock (24 ppqn)
+Pressing the RESET button or sending a CV trigger to the RESET input arms the sequencer to perform a reset and restart the phrase pattern from the beginning. The RESET button will glow brightly while in an armed state. By default the reset action will wait until the leading edge of the next clock pulse. For typical tempos, a 24 PPQN clock is fast enough that the reset is perceived as nearly instantaneous. The module context menu has a Reset Timing option where you can specify a different value for when the reset is applied:
+- Clock
 - Bar
 - 1/2
 - 1/4
@@ -2256,6 +2353,11 @@ Pressing the RESET button or sending a CV trigger to the RESET input arms the se
 - 1/8 Triplet
 - 1/16 Triplet
 - 1/32 Triplet
+- Dotted 1/2
+- Dotted 1/4
+- Dotted 1/8
+- Dotted 1/16
+- Dotted 1/32 (Not available for 24 PPQN clock)
 
 A 1 ms trigger is sent to the RESET output upon every reset action.
 
@@ -2293,7 +2395,7 @@ Both BAR and PHRASE can be modulated via bipolar CV at the inputs below the knob
 
 ### BAR START and PHRASE START
 
-The BAR START output issues a high gate lasting one 24 ppqn clock pulse at the start of every bar. Likewise the PHRASE START output issues a gate at the start of each phrase.
+The BAR START output issues a high gate lasting one clock pulse at the start of every bar. Likewise the PHRASE START output issues a gate at the start of each phrase.
 
 The phrase start pulse is also sent to channel 9, and the bar start pulse to channel 10 of the GLOBAL polyphonic clock output.
 
@@ -2303,7 +2405,7 @@ There is a matrix with 8 columns, each column representing a single division. Ea
 
 #### DIVISION Button
 
-The square division button at the top of each column indicates the currently selected division value for that column. Pressing the button cycles through the 10 available values, and right clicking presents a menu allowing you to directly select one of the values. The available values are
+The square division button at the top of each column indicates the currently selected division value for that column. Pressing the button cycles through the 15 available values, and right clicking presents a menu allowing you to directly select one of the values. The available values are
 - 1/2 Note
 - 1/4 Note
 - 1/8 Note
@@ -2314,8 +2416,31 @@ The square division button at the top of each column indicates the currently sel
 - 1/8 Note Triplet
 - 1/16 Note Triplet
 - 1/32 Note Triplet
+- Dotted 1/2 Note
+- Dotted 1/4 Note
+- Dotted 1/8 Note
+- Dotted 1/16 Note
+- Dotted 1/32 Note - Automatically disables (mutes) column if clock is 24 PPQN
 
-Note that sometimes you may want to reuse the same division for multiple columns. Also note that the order of the columns can make a difference in the result depending on the mode selection (described later)
+Note that you may reuse the same division for multiple columns. Also note that the order of the columns can make a difference in the result depending on the mode selection (described later)
+
+Some divisions will give irregular intervals if the division does not divide evenly into the total phrase length (phrase x bar)
+
+Some 50% or 100% clock or gate widths will be incorrect and/or inconsistent if the clock PPQN is not high enough. (Gate/Clock widths are described later)
+
+The table below lists the divisions with special requirements for regular intervals and/or consistent widths.
+
+|Division|Total Phrase Length|Clock PPQN|
+|---|---|---|
+|1/2|Multiple of 2|Any|
+|1/32|Any|48 or 96 PPQN|
+|1/2 Triplet|Multiple of 4|Any|
+|1/4 Triplet|Multiple of 2|Any|
+|Dotted 1/2|Multiple of 3|Any|
+|Dotted 1/4|Multiple of 3|Any|
+|Dotted 1/8|Multiple of 3|Any|
+|Dotted 1/16|Multiple of 3|48 or 96 PPQN|
+|Dotted 1/32|Multiple of 3|96 PPQN|
 
 #### DENSITY Slider
 Each slider specifies a threshold at which any given division beat is likely to issue a high gate. Typically the values are unipolar ranging from 0 to 100%. Each density can be modulated by the division density CV input, and/or the Global density CV input.
@@ -2376,7 +2501,7 @@ By default both the CLOCK and GATE output gate widths match the input clock gate
   - 50%
   - 100% (consecutive high gates are tied together)
 
-Note that if the input clock PPQN is set to 24 and the output width is 50%, then the 1/32 division will actually have a 33.3% width. Using a 48 PPQN clock guarantees 50% is accurate for all divisions.
+Some divisions have special requirements for total phrase lengths and/or minimum clock PPQN in order to achieve correct and consistent widths. See the Division Button section above.
 
 ### GLOBAL Column
 
@@ -2638,6 +2763,64 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 
 [Return to Table Of Contents](#venom)
 
+## SPHERE TO XYZ
+![Sphere To XYZ module image](doc/SphereToXYZ.png)  
+Converts spherical coordinates r, theta, phi into cartesian coordinates X, Y, Z. When applied to audio rate inputs, it has an effect similar to ring modulation. This module uses the standard physics definition of spherical coordinates.
+
+### Polyphony
+All inputs and outputs are fully polyphonic. The number of output channels is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyponic inputs with fewer channels use constant 0V for any missing channels.
+
+### OverSample button
+This color coded switch establishes the amount of oversampling used to mitigate audio aliasing that may be introduced by the conversion process.
+
+- dark gray (default) = Off - No oversampling
+- yellow = x2 oversampling
+- green = x4 oversampling
+
+Oversampling is typically not needed for most conversions. But it may be useful with high frequency audio outputs.
+
+Oversampling uses significant CPU resources, so it is best to use the minimum oversampling value that gives the desired output.
+
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
+
+### r input
+This represents the radial distance r. Negative r values are accepted.
+
+### Theta input
+This represents the polar angle theta. It is scaled at 36V/degree, meaning 5V = 180 degrees. Any angle is allowed.
+
+### Phi input
+This represents the azimuthul angle phi. It is scaled at 36V/degree, meaning 5V = 180 degrees. Any angle is allowed.
+
+### Scale switch
+Specifies the scale factor used for converting spherical radial distances into cartesian distances.
+- 1:1 = +/-5V radial distance range specifies a 10V diameter sphere centered about the origin that is inscribed within a 10V x 10V x 10V cube.
+- sqrt(3):1 = +/-5V radial distance range specifies a ~17.32V diameter sphere centered about the origin with a 10V x 10V x 10V cube inscribed within it.
+
+Assuming that inputs are bipolar +/-5V, then a 1:1 ratio guarantees that all converted X, Y, and Z outputs are within +/-5V. However, not all possible +/-5V X, Y, Z coordinates are covered.
+
+The sqrt(3):1 ratio guarantees that a bipolar +/-5V radial distance can cover all possible +/-5V X, Y, Z coordinates. However, some converted values may exceed the +/-5V range, depending on the input angles.
+
+### X output
+This represents the x cartesian coordinate, after conversion.
+
+### Y output
+This represents the y cartesian coordinate, after conversion.
+
+### Z output
+This represents the z cartesian coordinate, after conversion.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+All outputs are constant monophonic 0V when Sphere To XYZ is bypassed.
+
+[Return to Table Of Contents](#venom)
+
 
 ## THRU
 ![THRU module image](doc/Thru.png)  
@@ -2725,8 +2908,6 @@ The color coded DC block button determines when (or if) a high pass filter is ap
 - **After clipping** (light blue): DC offset is removed after any clipping.
 
 The last three DC offset options give identical results when no clipping is applied.
-
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
 
 ### C (Clip) button
 The color coded clip button determines how (or if) the final output is clipped.
@@ -2890,15 +3071,17 @@ This color coded button controls whether a high pass filter is applied to remove
 - **Off** (dark gray - default)
 - **On** (yellow)
 
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
-
 ### FREQ/BIAS (Frequency/Bias) knob
-Sets the base frequency of the oscillator. The knob range varies depending on the Frequency Mode and the current selected Octave. Normally the knob uses an exponential scale, but in 0 Hz carrier mode it is a linear Bias with a very small range. Below are the knob ranges by mode when the Octave is at 0. Note that the Octave does not modify the bias frequency when in 0 Hz carrier mode.
+Sets the base frequency of the oscillator. The knob range varies depending on the Frequency Mode and the current selected Octave. Normally the knob uses an exponential scale, but in 0 Hz carrier mode it is a linear Bias with a very small range.
+
+There is a module context menu option to measure the frequency in BPM (beats per minute) instead of Hz when using any of the LFO modes.
+
+Below are the knob ranges by mode when the Octave is at 0. Note that the Octave does not modify the bias frequency when in 0 Hz carrier mode.
 
 |Mode|Minimum|Default|Maximum|
 |---|---|---|---|
 |Audio frequency|16.352 Hz (C0)|261.63 Hz (C4)|4186 Hz (C8)|
-|Low frequency|0.125 Hz|2 Hz|32 Hz|
+|Low frequency|0.125 Hz<br />(7.5 BPM)|2 Hz<br />(120 BPM)|32 Hz<br />(1920 BPM)|
 |0 Hz carrier bias|-0.08 Hz|0 Hz|0.08 Hz|
 
 When in 0 Hz carrier mode, a 0 Hz bias produces a static linear FM sound. A non 0 bias provides a rhythmic motion to the sound - the higher the bias magnitude, the faster the rhythm.
@@ -2938,9 +3121,11 @@ This port does not support oversampling.
 This knob sets the depth of through 0 linear frequency modulation
 
 ### Lin FM (Linear frequency modulation) input
-This input is for linear FM CV. By default this input is AC coupled. There is a port context menu to enable DC coupled mode, which can save a small amount of CPU if you know that your input does not have any DC offset. A small LED to the lower right glows red when the input is DC coupled.
+This input is for linear FM CV.
 
-See this note on current [Limitations of DC offset removal](#limitations-of-dc-offset-removal)
+By default this input is AC coupled. There is a port context menu to enable DC coupled mode, which can save a small amount of CPU if you know that your input does not have any DC offset. A small LED to the lower right glows red when the input is DC coupled.
+
+By default the linear FM is through-zero. There is a port context menu to disable through-zero mode. A small LED to the lower left glows red when the through-zero is disabled. Note that 0 Hz carrier frequency mode ignores this setting - it is always through-zero.
 
 This port supports oversampling that can be disabled via the port context menu.
 
@@ -2977,12 +3162,6 @@ All grid inputs support oversampling that can be disabled via the port context m
 #### Waveform Shape Modulation
 All four waveforms get different shape modulation. Each has a color coded Shape Mode button to determine the type of modulation used.
 
-J-curve and S-curve are based on sigmoidal functions. The J-curve uses only half (positive or negative portion) of the sigmoidal function.
-
-Rectify yields only 5 volts peak to peak (5 VPP) when shape is 100% or -100%.
-
-Normalized Rectify attempts to keep the output 10 VPP regardless the shape value. It also shifts the output to keep it bipolar, prior to applying any offset.
-
 ##### Sin Shape Mode button
 - **log/exp** (yellow - default)
 - **J-curve** (orange)
@@ -2990,6 +3169,8 @@ Normalized Rectify attempts to keep the output 10 VPP regardless the shape value
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
 - **Morph SQR <--> SIN <--> SAW** (pink)
+- **Limited PWM 3%-97%** (green)
+- **Skew** (red)
 
 ##### Tri Shape Mode button
 - **log/exp** (yellow - default)
@@ -2998,6 +3179,8 @@ Normalized Rectify attempts to keep the output 10 VPP regardless the shape value
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
 - **Morph SIN <--> TRI <--> SQR** (pink)
+- **Limited PWM 3%-97%** (green)
+- **Skew** (red)
 
 ##### Sqr Shape Mode button
 Controls the range of pulse width modulation, or the type of waveform morphing
@@ -3012,8 +3195,18 @@ Controls the range of pulse width modulation, or the type of waveform morphing
 - **Rectify** (light blue)
 - **Normalized Rectify** (dark blue)
 - **Morph SQR <--> SAW <--> EVEN** (pink)
+- **Limited PWM 3%-97%** (green)
+- **Full PWM 0%-100%** (red)
 
-The even waveform is the same as what is produced by the Befaco Even module. It consists of the fundamental plus even harmonics.
+J-curve and S-curve are based on sigmoidal functions. The J-curve uses only half (positive or negative portion) of the sigmoidal function.
+
+Rectify yields only 5 volts peak to peak (5 VPP) when shape is 100% or -100%.
+
+Normalized Rectify attempts to keep the output 10 VPP regardless the shape value. It also shifts the output to keep it bipolar, prior to applying any offset.
+
+The even waveform with the Saw Morph option is the same as what is produced by the Befaco Even module. It consists of the fundamental plus even harmonics.
+
+The PWM percentages for sine, triangle, and saw waveforms represent the relative width of the positive portion of the bipolar waveform. The negative width always grows or shrinks in the opposite direction such that positive width plus negative width always adds to 100%, and the overall frequency remains constant.
 
 ##### Sin, Tri, Saw Shape CV inputs
 The initial release of VCO Lab required 20 volts peak to peak CV to cover the entire shape range for Sin, Tri, and Saw. Starting with V 2.9.0 these ports now default to 10 volts peak to peak covering the entire range. These ports have a context menu option to revert to old behavior.
@@ -3100,7 +3293,7 @@ A smaller version of VCO Lab with only one waveform output at a time, without an
 
 A Wave switch is added to select between Sine, Triangle, Square, and Saw.
 
-The behavior of Shape modulation changes depending on the waveform selected.
+The behavior of Shape modulation changes depending on the waveform selected. When Square waveform is selected, the three shape mode options are replicated cyclically for a total of 8 options, like all the other waveforms. This was done so that when cycling through the waveforms, the shape option does not change when you return to the original waveform.
 
 Pretty much all other VCO Lab functionality is the same, except there is no mix, level assignment, or mix shaping.
 
@@ -3214,6 +3407,143 @@ The poly input is passed through to the output if Wave Folder is bypassed.
 
 [Return to Table Of Contents](#venom)
 
+## WAVE MULTIPLIER
+![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)  
+A polyphonic wave shaper inspired by the [Doepfer A-137-2 Wave Multiplier II](https://doepfer.de/a1372.htm). Its primary use is to fatten the sound of simple wave forms like sine, triangle, and saw. It does not work well with square or pulse waves.
+
+The Wave Multiplier works by mixing 4 copies of the incoming wave form with the original input. Each copy is compared to a different threshold, and if the current value is less than or equal to the threshold, then the value is shifted up as much as 5V. If greater than the threshold then the value is shifted down as much as 5V. If the input is a saw wave and the threshold is constant, then the net effect is a phase shift. If the input is a sine or triangle it is more like a fold operation. Applying modulation to the threshold adds movement to the sound.
+
+The overall design is functionally very similar to the Doepfer module, with the following enhancements:
+- Four bipolar triangle LFOs are added, with the outputs normalled to the shift threshold CV inputs to provide built in modulation.
+- Rather than adjusting the input level, Depth controls and CV input are provided for the shift amount.
+- The 8 internal outputs and 5 jumpers on the back of the Doepfer module are exposed as additional outputs and mutes on this Venom module.
+- An option is added to remove DC offset from outputs.
+- Level control and a VCA are provided for the final mix output.
+- Oversampling options are provided to mitigate aliasing introduced by the digital implementation.
+
+The Wave Multiplier default configuration is designed to produce pleasing fat sounds with lots of movement using only one input and one output. Patching the V/Oct CV used on the source input into the Wave Multiplier LFO V/Oct may yield more consistent results. Obviously more range is available by experimenting with the various controls and patching additional CV inputs.
+
+The Wave Multiplier can be divided into three vertical sections
+
+### *Top LFO section*
+
+### Master frequency knob
+
+Sets the base frequency voltage of all four LFO oscillators using a volt per octave scale.
+
+### V/Oct knob
+
+CV input for the base frequency voltage of all four oscillators. The CV is summed with the Master voltage.
+
+### Frequency offset knobs 1-4
+
+Each knob sets an offset frequency voltage between -1 and 1 that is summed with the base frequency to establish the final LFO frequency. The knob defaults are uncorrelated, and range a bit over 1.5 octaves.
+
+### LFO outputs 1-4
+
+The +/-5V bipolar triangle LFO outputs
+
+### *Middle Shift section*
+
+### Depth (shift amount) controls and input
+
+Controls the magnitude of the voltage shift that is applied to the four wave copies.
+
+#### Depth CV input
+
+Supports audio rate modulation
+
+#### Depth CV amount knob
+
+Attenuates and/or inverts the Depth CV
+
+#### Depth knob
+
+Sets the base shift magnitude, ranging from 0 to 5 volts. The final attenuated CV is added to the knob value to establish the net shift magnitude.
+
+### Shift Threshold
+
+Establishes the voltage threshold where the wave copy is either shifted up or down. Voltages above the threshold are shifted down, and voltages equal to or below the threshold are shifted up.
+
+#### Shift threshold CV inputs 1-4
+
+Allows modulation of the shift threshold via CV. Each input is normalled to the LFO output above. Supports audio rate modulation.
+
+#### Shift Threshold CV amount knobs 1-4
+
+Attenuates and/or inverts the threshold CV.
+
+#### Shift Threshold knobs 1-4
+
+Sets the base threshold voltage for shift operations. The base value is added to the attenuated CV value to get the net threshold.
+
+### Pulse outputs 1-4
+
+The outputs for the four shift comparators. These are +/- 5V bipolar pulse waves. The shift depth controls are not applied to the pulse outputs.
+
+Modulation to the shift thresholds produce pulse width modulation.
+
+### Shifted Wave outputs 1-4
+
+The outputs of the shifted waves. The pulse wave is attenuated by the depth control before being summed with the input wave copy to create the output shifted wave.
+
+### *Bottom Mix and I/O section*
+
+### In (wave input)
+
+The main input, typically an audio signal.
+
+### Shifted Mutes 1-4
+
+Controls which of the shifted waves are included in the final output mix
+
+### In Mute
+
+Controls whether the raw input is included in the final output mix
+
+### Output Level VCA
+
+#### Output Level CV input
+
+10V corresponds to 100%. Audio rate modulation is supported. Negative values invert the output, so the VCA can function as a ring modulator.
+
+#### Output Level CV amount knob
+
+Attenuates and/or inverts the level CV
+
+#### Output Level knob
+
+Sets the base level amount (bias) between 0 and 100%. The base level is summed with the attenuated CV to establish the final output level.
+
+### OUT (shifted wave mix) output
+
+The final output consisting of the mix of unmuted shifted waves and the unumuted input wave, attenuated by the Output Level.
+
+### DC Block button
+
+If enabled, then DC offset will be removed from the Pulse, Shifted Wave, and Out outputs
+
+### Over (oversample) button
+
+Wave shifting and or audio rate level modulation can introduce undesireable inharmonic digital aliasing artifacts. Activating oversampling can mitigate those effects to yield a cleaner, more musical result.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
+### Polyphony
+
+Wave Multiplier is fully polyphonic. In general, the number of output channels is computed as the maximum channel count found across all inputs.
+
+Inputs that match the output polyphony behave as expected. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels get constant 0V for any missing channels.
+
+The LFOs are special. If the Master LFO V/Oct input is monophonic (or unpatched), then the LFO outputs are monophonic, regardless wether there are any polyphonic inputs elsewhere. But if the V/Oct is polyphonic, then the LFO output channel count matches the channel count for the rest of the module, and missing LFO V/Oct channels are treated as constant 0V.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+If Wave Multiplier is bypassed, then all channels of the wave input are passed through unchanged to the shifted wave mix output. All other outputs are monophonic constant 0 volts.
+
+[Return to Table Of Contents](#venom)
 
 ## WIDGET MENU EXTENDER
 ![WIDGET MENU EXTENDER module image](doc/WidgetMenuExtender.png)  

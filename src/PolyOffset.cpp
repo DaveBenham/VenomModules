@@ -61,10 +61,10 @@ struct PolyOffset : VenomModule {
       PolyOffset* mod = reinterpret_cast<PolyOffset*>(module);
       float val = ParamQuantity::getDisplayValue(); // Continuous
       switch (mod->quant) {
-        case 1: // Integer
+        case 3: // Integer
           val = round(val);
           break;
-        case 2: // Semitone
+        case 4: // Semitone
           val = round(val*12.f)/12.f;
       }
       if (mod->unit) val *= 1200.f;
@@ -96,12 +96,21 @@ struct PolyOffset : VenomModule {
     for (int i=0; i<cnt; i+=4){
       for (int j=0; j<4; j++)
         offset[j] = params[OFFSET_PARAM+i+j].getValue();
-      voltage = inputs[POLY_INPUT].getPolyVoltageSimd<float_4>(i) + (offset * ranges[rangeId].scale) + ranges[rangeId].offset;
+      voltage = (offset * ranges[rangeId].scale) + ranges[rangeId].offset;
       switch (quant) {
-        case 1: // Integer
+        case 3: // Quantize offset to Integer
           voltage = simd::round(voltage);
           break;
-        case 2: // Semitone
+        case 4: // Quantize offset to Semitone
+          voltage = simd::round(voltage*12.f)/12.f;
+          break;
+      }
+      voltage += inputs[POLY_INPUT].getPolyVoltageSimd<float_4>(i);
+      switch (quant) {
+        case 1: // Quantize output to Integer
+          voltage = simd::round(voltage);
+          break;
+        case 2: // Quantize output to Semitone
           voltage = simd::round(voltage*12.f)/12.f;
           break;
       }
@@ -186,7 +195,7 @@ struct PolyOffsetWidget : VenomWidget {
     ));
     menu->addChild(createIndexPtrSubmenuItem(
       "Quantize",
-      {"Off (Continuous)","Integers (Octaves)","1/12V (Semitones)"},
+      {"Off (Continuous)","Output to Integers (Octaves)","Output to 1/12V (Semitones)","Offset to Integers (Octaves)","Offset to 1/12V (Semitones)"},
       &module->quant
     ));
     menu->addChild(createIndexSubmenuItem(

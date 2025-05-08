@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 25.2.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.0"
+   id="svg7595"
+   sodipodi:docname="rate_10.svg"
+   x="0px"
+   y="0px"
+   width="24"
+   height="24"
+   viewBox="0 0 24.000001 24"
+   enable-background="new 0 0 17.9996 18"
+   xml:space="preserve"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs67960" />
+<sodipodi:namedview
+   bordercolor="#666666"
+   borderopacity="1.0"
+   fit-margin-bottom="0"
+   fit-margin-left="0"
+   fit-margin-right="0"
+   fit-margin-top="0"
+   id="base"
+   inkscape:current-layer="svg7595"
+   inkscape:cx="25.897786"
+   inkscape:cy="8.7946406"
+   inkscape:document-units="mm"
+   inkscape:pageopacity="0.0"
+   inkscape:pageshadow="2"
+   inkscape:window-height="1057"
+   inkscape:window-maximized="1"
+   inkscape:window-width="1920"
+   inkscape:window-x="1592"
+   inkscape:window-y="-8"
+   inkscape:zoom="11.313709"
+   pagecolor="#ffffff"
+   showgrid="true"
+   units="px"
+   inkscape:pagecheckerboard="0"
+   showguides="true"
+   objecttolerance="1"
+   gridtolerance="10"
+   guidetolerance="1">
+	<inkscape:grid
+   type="xygrid"
+   id="grid68042" /><sodipodi:guide
+   position="0,24"
+   orientation="0,24"
+   id="guide129147" /><sodipodi:guide
+   position="24,24"
+   orientation="24,0"
+   id="guide129149" /><sodipodi:guide
+   position="24,0"
+   orientation="0,-24"
+   id="guide129151" /><sodipodi:guide
+   position="0,0"
+   orientation="-24,0"
+   id="guide129153" /></sodipodi:namedview>
+<rect
+   style="fill:#999999;stroke:#000000;stroke-width:0.377953;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   id="rect109948"
+   width="24"
+   height="24"
+   x="0"
+   y="0"
+   ry="3" /><g
+   id="layer1"
+   transform="translate(-46.755712,-67.833036)"
+   inkscape:groupmode="layer"
+   inkscape:label="Layer 1">
+	<g
+   id="g67940">
+		<defs
+   id="defs67935">
+			<rect
+   id="SVGID_1_"
+   x="46.755322"
+   y="67.833023"
+   width="18"
+   height="18" />
+		</defs>
+		<clipPath
+   id="SVGID_2_">
+			<use
+   xlink:href="#SVGID_1_"
+   overflow="visible"
+   id="use67937"
+   x="0"
+   y="0"
+   width="100%"
+   height="100%" />
+		</clipPath>
+	</g>
+</g>
+
+
+
+<g
+   id="g38173"
+   transform="translate(0,-2.562486)"><g
+     aria-label="1/2"
+     id="text133337"
+     style="font-size:10.6667px;line-height:1.25;font-family:'Yu Gothic';-inkscape-font-specification:'Yu Gothic, Normal';font-variant-ligatures:none;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1"><path
+       d="m 6.888029,8.0416414 v 7.1875226 h 1.4375045 v 0.56771 H 4.6901053 v -0.56771 H 6.2265685 V 8.765602 Q 5.5494831,9.2291452 4.6588553,9.5676879 L 4.5390632,8.9478943 Q 5.4244827,8.6510184 6.3411522,8.0416414 Z"
+       id="path140283"
+       style="fill:#000000;fill-opacity:1" /><path
+       d="M 14.299511,7.1249719 10.148456,16.895836 H 9.6172044 L 13.768259,7.1249719 Z"
+       id="path140285"
+       style="fill:#000000;fill-opacity:1" /><path
+       d="m 15.309931,10.036439 q 0.213542,-1.0520863 0.880211,-1.5729212 0.562502,-0.4427098 1.385421,-0.4427098 0.97917,0 1.552088,0.5885436 0.515627,0.5260433 0.515627,1.3750043 0,0.6822941 -0.369793,1.2552121 -0.348959,0.531252 -1.239587,1.333338 -1.505213,1.317712 -2.11459,2.635425 h 3.734387 v 0.588543 h -4.406264 v -0.526043 q 0.66146,-1.583338 2.307299,-3.088551 0.875002,-0.817711 1.151045,-1.29688 0.234376,-0.406251 0.234376,-0.9010441 0,-0.6822938 -0.432293,-1.057295 -0.369793,-0.3177093 -0.942712,-0.3177093 -1.312504,0 -1.583338,1.5989634 z"
+       id="path140287"
+       style="fill:#000000;fill-opacity:1" /></g><circle
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.999999;stroke-miterlimit:4;stroke-dasharray:1.99999, 3.99999;stroke-dashoffset:0;stroke-opacity:1"
+     id="path37294"
+     cx="12.096379"
+     cy="20.5"
+     r="1.5" /></g></svg>

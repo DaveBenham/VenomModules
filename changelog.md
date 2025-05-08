@@ -1,5 +1,47 @@
 # Venom Modules Changelog
 
+## 2.12.0 (2025-05-08)
+### New Modules
+- Cross Fade 3D
+- Pan 3D
+- Sphere To XYZ
+- Wave Multiplier
+
+### Enhancements
+- VCO Lab and VCO Unit
+  - Added a module context menu option to measure LFO frequency in BPM instead of Hz
+  - Added pseudo PWM shape modes to sine, triangle, and saw, as well as skew shape modes to sine and triangle.
+  - Added linear FM option to disable through-zero
+- VCO Unit
+  - Shape mode now always has 8 options, regardless which waveform is selected. The square waveform rotates through the three modes to make 8. This change guarantees that cycling through all the waveform options will not change the shape mode for a particular waveform.
+- Poly Fade
+  - Added context menu option to disable output channel minimization
+- Poly Offset Quantize behavior
+  - Old behavior that quantizes the output no longer quantizes the offset knob displays
+  - Added new options to quantize the offset only, which does quantize the knob displays
+- Multi Merge
+  - Add context menu options to explicitly set the number of channels on inputs, overriding the actual input channel count.
+- Rhythm Explorer
+  - Added 96 ppqn clock option
+  - Added dotted rate options
+- Poly Unison
+  - Detune CV now scales 10V to match the detune knob range
+    - Old patches default to old behavior of V/Oct for Detune CV
+- Bay Modules better preserve links when performing duplication or copy/paste
+  - New behavior: Duplication of linked outputs where the input is missing from the selection attempt to establish the link to the original uncopied input
+  - Continued old behavior: Duplication of input/output pairs establish the link between the new copies
+- All modules with DC block options
+  - Improved the DC block algorithm to compensate for changes to overampling and or VCV sample rate (potential patch sound breaking change)
+
+### Bug Fix
+- WinComp
+  - Absolute value was applied to Tolerance input, but not the tolerance offset parameter
+  - Module now correctly sums the tolerance input with the offset before taking the absolute value
+
+### Additional Change
+- Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+  - In the interest of avoiding memory allocation during the audio process, the Mix modules are now limited to a maximum of 16 expanders. Prior to v2.12 there was no limit.
+
 ## 2.11.1 (2024-12-17)
 ### Enhancements
 - All modules with oversampling options

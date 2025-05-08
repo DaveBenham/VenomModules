@@ -30,6 +30,7 @@ struct PolyUnison : CloneModuleBase {
 
   int clones = 1;
   float range[3] = {1.f/12.f, 1.f, 5.f};
+  bool vOctDetuneCV = false;
 
   dsp::ClockDivider lightDivider;
 
@@ -87,7 +88,7 @@ struct PolyUnison : CloneModuleBase {
     float spread = 0.f;
     float delta = 0.f;
     if (clones>1) {
-      spread = detuneParamGetValue() + inputs[DETUNE_INPUT].getVoltage();
+      spread = detuneParamGetValue() + inputs[DETUNE_INPUT].getVoltage() * (vOctDetuneCV ? 1.f : range[static_cast<int>(params[RANGE_PARAM].getValue())] / 10.f);
       delta = spread / (clones-1);
     }
     float start = 0.f;
@@ -119,6 +120,21 @@ struct PolyUnison : CloneModuleBase {
       }
       setExpanderLights(goodCh);
     }
+  }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "vOctDetuneCV", json_boolean(vOctDetuneCV));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "vOctDetuneCV")))
+      vOctDetuneCV = json_boolean_value(val);
+    else
+      vOctDetuneCV = true;
   }
 
 };
@@ -184,6 +200,12 @@ struct PolyUnisonWidget : CloneModuleWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(22.5,340.434), module, PolyUnison::POLY_OUTPUT));
   }
 
+  void appendContextMenu(Menu* menu) override {
+    PolyUnison* module = static_cast<PolyUnison*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolPtrMenuItem("V/Oct Detune CV", "", &module->vOctDetuneCV));
+    CloneModuleWidget::appendContextMenu(menu);
+  }
 };
 
 Model* modelPolyUnison = createModel<PolyUnison, PolyUnisonWidget>("PolyUnison");

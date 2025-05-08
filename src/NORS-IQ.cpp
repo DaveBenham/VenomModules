@@ -2,7 +2,6 @@
 // Licensed under GNU GPLv3
 
 #include "plugin.hpp"
-#include "fmt/core.h"
 #include <float.h>
 #include <string.h>
 
@@ -79,15 +78,21 @@ struct NORS_IQ : VenomModule {
   float step[INTVL_CNT]{};
   
   std::string intvlStr(float val, bool display) {
+    constexpr size_t sz = 32;
+    char buf[sz];
     switch (static_cast<int>(params[INTVL_UNIT_PARAM].getValue())) {
       case RATIO_UNIT:
-        return fmt::format(display ? "{:g}:1" : "{:g}", pow(2.f, val));
+        snprintf(buf, sz, display ? "%g:1" : "%g", pow(2.f, val));
+        break;
       case CENT_UNIT:
-        return fmt::format(display ? "{:g} \u00A2" : "{:g}", val*1200.f);
+        snprintf(buf, sz, display ? "%g \u00A2" : "%g", val*1200.f);
+        break;
       case VOLT_UNIT:
       default:
-        return fmt::format(display ? "{:g} V" : "{:g}", val);
+        snprintf(buf, sz, display ? "%g V" : "%g", val);
+        break;
     }
+    return std::string(buf, sz);
   }  
 
   struct POIQuantity : ParamQuantity {
@@ -121,15 +126,20 @@ struct NORS_IQ : VenomModule {
   };
   
   std::string rootStr(float val, bool display) {
+    constexpr size_t sz = 32;
+    char buf[sz];
     switch (static_cast<int>(params[ROOT_UNIT_PARAM].getValue())) {
       case HZ_UNIT:
-        return fmt::format(display ? "{:g} Hz" : "{:g}", pow(2.f, val + log2(dsp::FREQ_C4)));
+        snprintf(buf, sz, display ? "%g Hz" : "%g", pow(2.f, val + log2(dsp::FREQ_C4)));
+        break;
       case CENT_UNIT:
-        return fmt::format(display ? "{:g} \u00A2" : "{:g}", val*1200.f);
+        snprintf(buf, sz, display ? "%g \u00A2" : "%g", val*1200.f);
+        break;
       case VOLT_UNIT:
       default:
-        return fmt::format(display ? "{:g} V" : "{:g}", val);
+        snprintf(buf, sz, display ? "%g V" : "%g", val);
     }
+    return std::string(buf, sz);
   };
 
   struct RootQuantity : ParamQuantity {

@@ -94,19 +94,21 @@ struct BayOutputModule : BayModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    if (!srcMod && srcId >= 0) {
-      if (sources.count(srcId) && sources[srcId]->oldId==srcId) {
+    if (!srcMod && srcId >= 0) { // (Re)establish link when loading
+      if (sources.count(srcId) && sources[srcId]->oldId==srcId) { // Normal load
         srcMod = sources[srcId];
       }
       else {
-        for (auto const& it : sources) {
+        for (auto const& it : sources) { // Paste/Import paired load
           if (it.second->oldId == srcId) {
             srcMod = it.second;
             srcId = srcMod->id;
             break;
           }
         }
-        if (!srcMod)
+        if (!srcMod && sources.count(srcId)) // Paste solitary load
+          srcMod = sources[srcId];
+        if (!srcMod) // No link found
           srcId = -1;
       }  
     }
