@@ -3030,6 +3030,8 @@ If using any of the one shot modes, then the oscillator will not produce any out
 
 Regardless what mode is chosen, the full oscillator frequency range is accessible via CV modulation.
 
+Whenever the frequency mode changes, the oversample rate is initialized to a default value. LFO modes always default to oversampling off. Audio and 0 Hz carrier modes initially default to x4 oversampling. A module context menu option is available to change the default audio and 0 Hz carrier oversample rate.
+
 ### Frequency limits
 
 Like any digital oscillator, there is a hard upper frequency limit at 50% of the sample rate called the Nyquist frequency. However, VCO Lab does not limit any V/Oct voltage, so the oscillator may attempt to produce higher frequencies. If oversampling is not enabled, then the high frequencies are reflected back below the Nyquist frequency. If oversampling is enabled, then the amplitude of high frequencies is attenuated dramatically as the Nyquist frequency is approached.
@@ -3040,7 +3042,7 @@ Similarly, the module does not limit the low frequencies either. But here again 
 This color coded button controls how much oversampling is applied to control aliasing of audio output.
 - **Off** (dark gray - low frequency mode default)
 - **x2** (yellow)
-- **x4** (green - audio mode and 0 Hz carrier mode default)
+- **x4** (green - initial audio mode and 0 Hz carrier mode default)
 - **x8** (light blue)
 - **x16** (dark blue)
 - **x32** (purple)
