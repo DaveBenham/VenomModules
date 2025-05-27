@@ -2765,7 +2765,13 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 
 ## SPHERE TO XYZ
 ![Sphere To XYZ module image](doc/SphereToXYZ.png)  
-Converts spherical coordinates r, theta, phi into cartesian coordinates X, Y, Z. When applied to audio rate inputs, it has an effect similar to ring modulation. This module uses the standard physics definition of spherical coordinates.
+Converts spherical coordinates r, theta, phi into cartesian coordinates X, Y, Z using standard physics definitions:
+
+> x = r x sin(theta) x cos(phi)  
+> y = r x sin(theta) x sin(phi)  
+> z = r x cos(theta)  
+
+When applied to audio rate inputs, it has an effect similar to ring modulation.
 
 ### Polyphony
 All inputs and outputs are fully polyphonic. The number of output channels is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyponic inputs with fewer channels use constant 0V for any missing channels.
