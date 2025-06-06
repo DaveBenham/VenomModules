@@ -1,14 +1,11 @@
 # Venom Modules Changelog
 
 ## 2.12.3 (2025-06-05)
-### Enhancement
-- Knob 5
-  - Smooth response to knob change
-
-## 2.12.2 (2025-06-03)
-### Ehancement
+### Enhancements
 - Cross Fade 3D and Pan 3D
   - Added CV Scale context menu option for -200% to 200%. Allows +/- 5V bipolar sine or triangle CV to transistion to an extreme, hold, and then transition again, without requiring external amplification.
+- Knob 5
+  - Smooth response to knob change
 
 ## 2.12.1 (2025-05-09)
 ### New Modules
