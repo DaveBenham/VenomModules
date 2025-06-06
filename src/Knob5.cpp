@@ -157,7 +157,8 @@ struct Knob5 : VenomModule {
     if (clockDivider.process()) {
       for (int i=0; i<5; i++){
         ParamQuantity *q = paramQuantities[i];
-        float out = q->getValue() * q->displayMultiplier + q->displayOffset;
+//        float out = q->getValue() * q->displayMultiplier + q->displayOffset;
+        float out = params[i].getValue() * q->displayMultiplier + q->displayOffset;
         switch (quant[i]){
           case 1:  // integer
             out = round(out);

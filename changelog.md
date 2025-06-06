@@ -1,5 +1,10 @@
 # Venom Modules Changelog
 
+## 2.12.3 (2025-06-05)
+### Enhancement
+- Knob 5
+  - Smooth response to knob change
+
 ## 2.12.2 (2025-06-03)
 ### Ehancement
 - Cross Fade 3D and Pan 3D
