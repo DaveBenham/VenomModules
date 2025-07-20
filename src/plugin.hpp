@@ -22,6 +22,7 @@ extern Model* modelBernoulliSwitchExpander;
 extern Model* modelBlocker;
 extern Model* modelBypass;
 extern Model* modelCloneMerge;
+extern Model* modelCompare2;
 extern Model* modelCrossFade3D;
 extern Model* modelHQ;
 extern Model* modelKnob5;

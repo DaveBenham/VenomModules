@@ -74,6 +74,7 @@ void init(Plugin* p) {
   p->addModel(modelBlocker);
   p->addModel(modelBypass);
   p->addModel(modelCloneMerge);
+  p->addModel(modelCompare2);
   p->addModel(modelCrossFade3D);
   p->addModel(modelHQ);
   p->addModel(modelKnob5);

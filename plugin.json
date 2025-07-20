@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.12.0",
+  "version": "2.13.0dev1",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -135,6 +135,17 @@
       "description": "Clone up to 8 monophonic inputs and merge all channels into 1 polyphonic output",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#clone-merge",
       "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "Compare2",
+      "name": "Compare 2",
+      "description": "Windowed comparator with logic outputs inspired by Joranalogue Compare 2",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#compare-2",
+      "tags": [
+        "Logic",
         "Polyphonic",
         "Utility"
       ]
