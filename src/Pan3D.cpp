@@ -43,6 +43,8 @@ struct Pan3D : VenomModule {
     LIGHTS_LEN
   };
 
+  float cvScale = 1.0;
+
   Pan3D() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(X_PARAM, 0.f, 1.f, 0.5f, "X (left to right) panner", "% right", 0, 100, 0);
@@ -78,11 +80,11 @@ struct Pan3D : VenomModule {
     bool mono = params[MONO_PARAM].getValue();
     float level = params[LEVEL_PARAM].getValue();
     for (int c=0; c<channels; c+=4){
-      float_4 right  = simd::clamp(params[X_PARAM].getValue() + inputs[X_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[X_AMT_PARAM].getValue());
+      float_4 right  = simd::clamp(params[X_PARAM].getValue() + inputs[X_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[X_AMT_PARAM].getValue() * cvScale);
       float_4 left   = 1.f - right;
-      float_4 top    = simd::clamp(params[Y_PARAM].getValue() + inputs[Y_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Y_AMT_PARAM].getValue());
+      float_4 top    = simd::clamp(params[Y_PARAM].getValue() + inputs[Y_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Y_AMT_PARAM].getValue() * cvScale);
       float_4 bottom = 1.f - top;
-      float_4 back   = simd::clamp(params[Z_PARAM].getValue() + inputs[Z_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Z_AMT_PARAM].getValue());
+      float_4 back   = simd::clamp(params[Z_PARAM].getValue() + inputs[Z_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Z_AMT_PARAM].getValue() * cvScale);
       float_4 front  = 1.f - back;
       float_4 in = inputs[PAN_INPUT].getNormalPolyVoltageSimd(zero, c) * level;
       outputs[BLF_OUTPUT].setVoltageSimd(in * bottom * left * front, c);
@@ -103,6 +105,24 @@ struct Pan3D : VenomModule {
       }
       else
         outputs[i].setChannels(channels);
+    }
+  }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "cvScale", json_real(cvScale));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "cvScale"))){
+      cvScale = json_real_value(val);
+      float scale = cvScale * 100.f;
+      paramQuantities[X_AMT_PARAM]->displayMultiplier = scale;
+      paramQuantities[Y_AMT_PARAM]->displayMultiplier = scale;
+      paramQuantities[Z_AMT_PARAM]->displayMultiplier = scale;
     }
   }
 
@@ -133,6 +153,24 @@ struct Pan3DWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(115.5f,307.5f), module, Pan3D::BRB_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(51.5f,243.5f), module, Pan3D::TLB_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(115.5f,243.5f), module, Pan3D::TRB_OUTPUT));
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    Pan3D* module = static_cast<Pan3D*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createIndexSubmenuItem(
+      "CV amount scale",
+      {"-100% to 100%","-200% to 200%"},
+      [=]() {return static_cast<int>(module->cvScale) - 1;},
+      [=](int i) {
+        module->cvScale = static_cast<float>(i+1);
+        float scale = module->cvScale * 100.f;
+        module->paramQuantities[Pan3D::X_AMT_PARAM]->displayMultiplier = scale;
+        module->paramQuantities[Pan3D::Y_AMT_PARAM]->displayMultiplier = scale;
+        module->paramQuantities[Pan3D::Z_AMT_PARAM]->displayMultiplier = scale;
+      }
+    ));
+    VenomWidget::appendContextMenu(menu);
   }
 
   void step() override {

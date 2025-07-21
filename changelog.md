@@ -1,6 +1,13 @@
 # Venom Modules Changelog
 
-## 2.12.0 (2025-05-08)
+## 2.12.3 (2025-06-05)
+### Enhancements
+- Cross Fade 3D and Pan 3D
+  - Added CV Scale context menu option for -200% to 200%. Allows +/- 5V bipolar sine or triangle CV to transistion to an extreme, hold, and then transition again, without requiring external amplification.
+- Knob 5
+  - Smooth response to knob change
+
+## 2.12.1 (2025-05-09)
 ### New Modules
 - Cross Fade 3D
 - Pan 3D
@@ -8,10 +15,14 @@
 - Wave Multiplier
 
 ### Enhancements
+- All modules with DC block options
+  - Improved the DC block algorithm to compensate for changes to overampling and or VCV sample rate (potential patch sound breaking change)
 - VCO Lab and VCO Unit
   - Added a module context menu option to measure LFO frequency in BPM instead of Hz
   - Added pseudo PWM shape modes to sine, triangle, and saw, as well as skew shape modes to sine and triangle.
   - Added linear FM option to disable through-zero
+  - Added context menu option to set default audio rate oversampling
+  - Linear FM now sounds consistent as sample rate and/or oversample rate change (due to DC block improvement).
 - VCO Unit
   - Shape mode now always has 8 options, regardless which waveform is selected. The square waveform rotates through the three modes to make 8. This change guarantees that cycling through all the waveform options will not change the shape mode for a particular waveform.
 - Poly Fade
@@ -30,8 +41,6 @@
 - Bay Modules better preserve links when performing duplication or copy/paste
   - New behavior: Duplication of linked outputs where the input is missing from the selection attempt to establish the link to the original uncopied input
   - Continued old behavior: Duplication of input/output pairs establish the link between the new copies
-- All modules with DC block options
-  - Improved the DC block algorithm to compensate for changes to overampling and or VCV sample rate (potential patch sound breaking change)
 
 ### Bug Fix
 - WinComp

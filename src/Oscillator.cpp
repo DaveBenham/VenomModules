@@ -392,6 +392,15 @@ struct Oscillator : VenomModule {
     return -(((-0.540347 * t2 + 2.53566) * t2 - 5.16651) * t2 + 3.14159) * t;
   }
   
+  void setAudioDefaultOversample(int ndx) {
+    modeDefaultOver[0] = ndx;
+    modeDefaultOver[2] = ndx;
+  }
+  
+  int getAudioDefaultOversample(){
+    return modeDefaultOver[0];
+  }
+  
   void setMode(bool shortCircuit = false) {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
@@ -1127,6 +1136,7 @@ struct Oscillator : VenomModule {
     for (int i=0; i<INPUTS_LEN; i++)
       json_array_append_new(array, json_boolean(disableOver[i]));
     json_object_set_new(rootJ, "disableOver", array);
+    json_object_set_new(rootJ, "audioDefaultOver", json_integer(getAudioDefaultOversample()));
     array = json_array();
     for (int i=0; i<5; i++){
       json_array_append_new(array, json_boolean(unity5[i]));
@@ -1161,6 +1171,9 @@ struct Oscillator : VenomModule {
       json_array_foreach(array, index, val){
         disableOver[index] = json_boolean_value(val);
       }
+    }
+    if ((val = json_object_get(rootJ, "audioDefaultOver"))) {
+      setAudioDefaultOversample(json_integer_value(val));
     }
     if (!(array = json_object_get(rootJ, "unity5"))) {
       array = json_object_get(rootJ, "ringMod");
@@ -1478,6 +1491,12 @@ struct OscillatorWidget : VenomWidget {
         module->syncHi = val ? 0.f : 2.f;
         module->syncLo = val ? -2.f : 0.2f;
       }
+    ));
+    menu->addChild(createIndexSubmenuItem(
+      "Audio mode default oversample",
+      {"Off","x2","x4","x8","x16","x32"},
+      [=]() {return module->getAudioDefaultOversample();},
+      [=](int val) {module->setAudioDefaultOversample(val);}
     ));
     VenomWidget::appendContextMenu(menu);
   }

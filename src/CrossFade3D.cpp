@@ -42,6 +42,8 @@ struct CrossFade3D : VenomModule {
     MONO_LIGHT,
     LIGHTS_LEN
   };
+  
+  float cvScale = 1.0;
 
   CrossFade3D() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -87,11 +89,11 @@ struct CrossFade3D : VenomModule {
       channels = std::max(channels, inputs[i].getChannels());
     float level = params[LEVEL_PARAM].getValue();
     for (int c=0; c<channels; c+=4){
-      float_4 right  = simd::clamp(params[X_PARAM].getValue() + inputs[X_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[X_AMT_PARAM].getValue());
+      float_4 right  = simd::clamp(params[X_PARAM].getValue() + inputs[X_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[X_AMT_PARAM].getValue() * cvScale);
       float_4 left   = 1.f - right;
-      float_4 top    = simd::clamp(params[Y_PARAM].getValue() + inputs[Y_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Y_AMT_PARAM].getValue());
+      float_4 top    = simd::clamp(params[Y_PARAM].getValue() + inputs[Y_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Y_AMT_PARAM].getValue() * cvScale);
       float_4 bottom = 1.f - top;
-      float_4 back   = simd::clamp(params[Z_PARAM].getValue() + inputs[Z_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Z_AMT_PARAM].getValue());
+      float_4 back   = simd::clamp(params[Z_PARAM].getValue() + inputs[Z_INPUT].getNormalPolyVoltageSimd(zero, c)/10.f * params[Z_AMT_PARAM].getValue() * cvScale);
       float_4 front  = 1.f - back;
       if (onePolyInput)
         outputs[FADE_OUTPUT].setVoltageSimd((
@@ -126,6 +128,24 @@ struct CrossFade3D : VenomModule {
       outputs[FADE_OUTPUT].setChannels(channels);
   }
 
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "cvScale", json_real(cvScale));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "cvScale"))){
+      cvScale = json_real_value(val);
+      float scale = cvScale * 100.f;
+      paramQuantities[X_AMT_PARAM]->displayMultiplier = scale;
+      paramQuantities[Y_AMT_PARAM]->displayMultiplier = scale;
+      paramQuantities[Z_AMT_PARAM]->displayMultiplier = scale;
+    }
+  }
+
 };
 
 struct CrossFade3DWidget : VenomWidget {
@@ -153,6 +173,24 @@ struct CrossFade3DWidget : VenomWidget {
     addInput(createInputCentered<PolyPort>(Vec(115.5f,307.5f), module, CrossFade3D::BRB_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(51.5f,243.5f), module, CrossFade3D::TLB_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(115.5f,243.5f), module, CrossFade3D::TRB_INPUT));
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    CrossFade3D* module = static_cast<CrossFade3D*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createIndexSubmenuItem(
+      "CV amount scale",
+      {"-100% to 100%","-200% to 200%"},
+      [=]() {return static_cast<int>(module->cvScale) - 1;},
+      [=](int i) {
+        module->cvScale = static_cast<float>(i+1);
+        float scale = module->cvScale * 100.f;
+        module->paramQuantities[CrossFade3D::X_AMT_PARAM]->displayMultiplier = scale;
+        module->paramQuantities[CrossFade3D::Y_AMT_PARAM]->displayMultiplier = scale;
+        module->paramQuantities[CrossFade3D::Z_AMT_PARAM]->displayMultiplier = scale;
+      }
+    ));
+    VenomWidget::appendContextMenu(menu);
   }
 
   void step() override {

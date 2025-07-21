@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.12.0 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.12.3 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
@@ -686,7 +686,7 @@ If Clone Merge is bypassed then the output is constant monophonic 0V.
 ## CROSS FADE 3D
 ![Cross Fade 3D module image](doc/CrossFade3D.png)  
 
-Eight inputs in three dimensional space are cross faded to a single output. The inputs are placed at the vertices of a virtual cube. X, Y, and Z controls independently cross fade between inputs on opposite faces of the cube. Each fader functions linearly in amplitude, ranging from 0% to 100%. The orthoganal faders are multiplicative, such that when all three controls are at an extreme, then 100% of the output comes from a single input. When all three controls are at 50% then each input contributes 12.5% to the output. A final Level control can further attenuate the final output.
+Eight inputs in three dimensional space are cross faded to a single output. The inputs are placed at the vertices of a virtual cube. X, Y, and Z controls independently cross fade between inputs on opposite faces of the cube. Each fader functions linearly in amplitude, ranging from 0% to 100%. The orthogonal faders are multiplicative, such that when all three controls are at an extreme, then 100% of the output comes from a single input. When all three controls are at 50% then each input contributes 12.5% to the output. A final Level control can further attenuate the final output.
 
 ### Polyphony
 Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
@@ -712,7 +712,9 @@ Z controls the front to back ratio, and is measured as percent back.
 
 Each fader control ranges from 0% to 100%, with the default 50% at noon.
 
-Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
+Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt by default. The CV is summed with the control value and clamped to a value between 0% and 100%. With a dimension at 50% and the CV attenuator at 100%, a +/- 5V bipolar can modulate a dimension from one extreme to the other.
+
+A module context menu option is available to scale the CV at +/- 200% instead of +/- 100%. This enables a simple bipolar +/- 5V sine or triangle modulator to transition to one extreme and hold, before transitioning in the other direction.
 
 If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, theta, phi spherical coordinates into X, Y, Z cartesian coordinates. 
 
@@ -1531,7 +1533,7 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 ## PAN 3D
 ![Pan 3D module image](doc/Pan3D.png)  
 
-A single input is panned across eight outputs in three dimensional space. The output ports are placed at the vertices of a virtual cube. X, Y, and Z panner controls indepently pan the input between outputs on opposite faces of the cube. The panners function linearly in amplitude, ranging from 0% to 100%. The three orthoganal panners are multiplicative. When all three controls are at an extreme, 100% of the input is panned to a single output. When all three controls are at 50%, then each output receives 12.5% of the input. A final Level control can further attenuate the final outputs.
+A single input is panned across eight outputs in three dimensional space. The output ports are placed at the vertices of a virtual cube. X, Y, and Z panner controls indepently pan the input between outputs on opposite faces of the cube. The panners function linearly in amplitude, ranging from 0% to 100%. The three orthogonal panners are multiplicative. When all three controls are at an extreme, 100% of the input is panned to a single output. When all three controls are at 50%, then each output receives 12.5% of the input. A final Level control can further attenuate the final outputs.
 
 ### Polyphony
 Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
@@ -1546,7 +1548,9 @@ Z controls the front to back ratio, and is measured as percent back.
 
 Each panner control ranges from 0% to 100%, with the default 50% at noon.
 
-Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt. The CV is summed with the control value and clamped to a value between 0% and 100%.
+Each dimension has a bipolar CV input and dedicated attenuator. The CV is scaled at 10% per volt by default. The CV is summed with the control value and clamped to a value between 0% and 100%. With a dimension at 50% and the CV attenuator at 100%, a +/- 5V bipolar can modulate a dimension from one extreme to the other.
+
+A module context menu option is available to scale the CV at +/- 200% instead of +/- 100%. This enables a simple bipolar +/- 5V sine or triangle modulator to transition to one extreme and hold, before transitioning in the other direction.
 
 If you prefer to work with spherical coordinates, then the [Sphere To XYZ module](#sphere-to-xyz) is available to convert r, theta, phi spherical coordinates into X, Y, Z cartesian coordinates. 
 
@@ -2765,7 +2769,13 @@ The Left and Right inputs are passed unchanged to the Left and Right outputs whe
 
 ## SPHERE TO XYZ
 ![Sphere To XYZ module image](doc/SphereToXYZ.png)  
-Converts spherical coordinates r, theta, phi into cartesian coordinates X, Y, Z. When applied to audio rate inputs, it has an effect similar to ring modulation. This module uses the standard physics definition of spherical coordinates.
+Converts spherical coordinates r, theta, phi into cartesian coordinates X, Y, Z using standard physics definitions:
+
+> x = r x sin(theta) x cos(phi)  
+> y = r x sin(theta) x sin(phi)  
+> z = r x cos(theta)  
+
+When applied to audio rate inputs, it has an effect similar to ring modulation.
 
 ### Polyphony
 All inputs and outputs are fully polyphonic. The number of output channels is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyponic inputs with fewer channels use constant 0V for any missing channels.
@@ -3030,6 +3040,8 @@ If using any of the one shot modes, then the oscillator will not produce any out
 
 Regardless what mode is chosen, the full oscillator frequency range is accessible via CV modulation.
 
+Whenever the frequency mode changes, the oversample rate is initialized to a default value. LFO modes always default to oversampling off. Audio and 0 Hz carrier modes initially default to x4 oversampling. A module context menu option is available to change the default audio and 0 Hz carrier oversample rate.
+
 ### Frequency limits
 
 Like any digital oscillator, there is a hard upper frequency limit at 50% of the sample rate called the Nyquist frequency. However, VCO Lab does not limit any V/Oct voltage, so the oscillator may attempt to produce higher frequencies. If oversampling is not enabled, then the high frequencies are reflected back below the Nyquist frequency. If oversampling is enabled, then the amplitude of high frequencies is attenuated dramatically as the Nyquist frequency is approached.
@@ -3040,7 +3052,7 @@ Similarly, the module does not limit the low frequencies either. But here again 
 This color coded button controls how much oversampling is applied to control aliasing of audio output.
 - **Off** (dark gray - low frequency mode default)
 - **x2** (yellow)
-- **x4** (green - audio mode and 0 Hz carrier mode default)
+- **x4** (green - initial audio mode and 0 Hz carrier mode default)
 - **x8** (light blue)
 - **x16** (dark blue)
 - **x32** (purple)
