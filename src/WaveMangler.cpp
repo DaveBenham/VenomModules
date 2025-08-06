@@ -4,13 +4,14 @@
 #include "plugin.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
-//#include <float.h>
 
 struct WaveMangler : VenomModule {
 
   enum ParamId {
+    DC_IN_PARAM,
     OVER_PARAM,
     CLIP_PARAM,
+    DC_OUT_PARAM,
     IN_OFFSET_AMT_PARAM,
     IN_OFFSET_PARAM,
     OUT_OFFSET_AMT_PARAM,
@@ -47,20 +48,18 @@ struct WaveMangler : VenomModule {
   };
   
   int oversample = 0;
+  float sampleRate = 0;
   int oversampleValues[6]{1,2,4,8,16,32};
-/*
-  OversampleFilter_4 preUpSample[4]{}, stageUpSample[4]{}, biasUpSample[4]{}, upSample[4]{}, downSample[4]{};
-  float stageRaw = -1.f;
-  simd::float_4 stageParm{};
-  bool disableOver[3]{}, bipolar[2]{};
-*/
-
+  OversampleFilter_4 upSample[8][4]{}, downSample[4]{};
+  DCBlockFilter_4 dcBlockInFilter[4]{}, dcBlockOutFilter[4]{};
 
   WaveMangler() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 2.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
-    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 2.f, 0.f, "Clipping", {"Off", "Hard +/- 5V", "Soft +/- 6V"});
+    configSwitch<FixedSwitchQuantity>(DC_IN_PARAM, 0.f, 1.f, 0.f, "Input DC block", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 0.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
+    configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 1.f, "Output clipping", {"Off", "Hard +/- 5V", "Soft +/- 5V", "Soft +/- 6V"});
+    configSwitch<FixedSwitchQuantity>(DC_IN_PARAM, 0.f, 1.f, 0.f, "Output DC block", {"Off", "On"});
 
     configInput(IN_OFFSET_INPUT, "Input offset CV");
     configParam(IN_OFFSET_AMT_PARAM, -1.f, 1.f, 0.f, "Input offset CV amount", "%", 0, 100, 0);
@@ -90,120 +89,141 @@ struct WaveMangler : VenomModule {
     configParam(LO_AMP_AMT_PARAM, -1.f, 1.f, 0.f, "Low amplitude CV amount", "%", 0, 100, 0);
     configParam(LO_AMP_PARAM, -10.f, 10.f, 0.f, "Low amplitude");
 
-    configInput(WAVE_INPUT, "Poly");
-    configOutput(WAVE_OUTPUT, "Poly");
+    configInput(WAVE_INPUT, "Wave");
+    configOutput(WAVE_OUTPUT, "Wave");
 
     configBypass(WAVE_INPUT, WAVE_OUTPUT);
     
-//    oversampleStages = 5;
+    oversampleStages = 5;
   }
   
-/*
   void setOversample() override {
     if (oversample > 1) {
-      for (int i=0; i<4; i++){
-        preUpSample[i].setOversample(oversample, oversampleStages);
-        stageUpSample[i].setOversample(oversample, oversampleStages);
-        biasUpSample[i].setOversample(oversample, oversampleStages);
-        upSample[i].setOversample(oversample, oversampleStages);
-        downSample[i].setOversample(oversample, oversampleStages);
+      for (int s=0; s<4; s++){
+        for (int i=0; i<INPUTS_LEN; i++){
+          upSample[i][s].setOversample(oversample, oversampleStages);
+        }
+        downSample[s].setOversample(oversample, oversampleStages);
       }
     }
   }
-*/        
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
- /*   
     using float_4 = simd::float_4;
-    float limit = 10.f / 6.f;
+    // update oversample configuration
     if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
       setOversample();
+      sampleRate = 0.f;
     }
-    
-    if (stageRaw != params[STAGE_PARAM].getValue()) {
-      stageRaw = params[STAGE_PARAM].getValue();
-      stageParm = pow(10.f, stageRaw);
+    // update DC Block configuration
+    if (sampleRate != args.sampleRate){
+      sampleRate = args.sampleRate;
+      for (int i=0; i<4; i++){
+        dcBlockInFilter[i].init(oversample, sampleRate);
+        dcBlockOutFilter[i].init(oversample, sampleRate);
+      }
     }
-    float preParm = params[PRE_PARAM].getValue(),
-          preAmt = params[PRE_AMT_PARAM].getValue(),
-          stageAmt = params[STAGE_AMT_PARAM].getValue(),
-          biasParm = params[BIAS_PARAM].getValue(),
-          biasAmt = params[BIAS_AMT_PARAM].getValue();
-    bool preOver = inputs[PRE_INPUT].isConnected() && !disableOver[PRE_INPUT] && oversample>1,
-         stageOver = inputs[STAGE_INPUT].isConnected() && !disableOver[STAGE_INPUT] && oversample>1,
-         biasOver = inputs[BIAS_INPUT].isConnected() && !disableOver[BIAS_INPUT] && oversample>1;
-    
-    int stages = static_cast<int>(params[STAGES_PARAM].getValue())+2;
+    // get channel count
     int channels = 1;
     for (int i=0; i<INPUTS_LEN; i++)
       channels = std::max({channels, inputs[i].getChannels()});
     
-    float_4 in[4]{}, out[4]{}, pre[4]{}, stage[4]{}, bias[4]{};
-    for (int o=0; o<oversample; o++) {
-      for (int i=0, c=0; c<channels; i++, c+=4){
+    float_4 in[INPUTS_LEN]{}, out{}, a, b, hiThresh, loThresh, hiAmp, midAmp, loAmp, inOff, outOff;
+
+    // channel loop
+    for (int s=0, c=0; c<channels; s++, c+=4){
+      // oversample loop
+      for (int o=0; o<oversample; o++) {
+        // read inputs
         if (!o) {
-          pre[i] = inputs[PRE_INPUT].getPolyVoltageSimd<float_4>(c);
-          stage[i] = inputs[STAGE_INPUT].getPolyVoltageSimd<float_4>(c);
-          bias[i] = inputs[BIAS_INPUT].getPolyVoltageSimd<float_4>(c);
-          in[i] = inputs[POLY_INPUT].getPolyVoltageSimd<float_4>(c) * oversample;
+          for (int i=0; i<INPUTS_LEN; i++)
+            in[i] = inputs[i].getPolyVoltageSimd<float_4>(c);
         }
-        if (oversample > 1) {
-          in[i] = upSample[i].process(o ? float_4::zero() : in[i]);
-        if (preOver)
-            pre[i] = preUpSample[i].process(o ? float_4::zero() : pre[i]*oversample);
-        if (stageOver)
-          stage[i] = stageUpSample[i].process(o ? float_4::zero() : stage[i]*oversample);
-        if (biasOver)
-          bias[i] = biasUpSample[i].process(o ? float_4::zero() : bias[i]*oversample);
+        // upsample inputs
+        if (oversample > 1){
+          for (int i=0; i<INPUTS_LEN; i++) {
+            if (inputs[i].isConnected())
+              in[i] = upSample[i][s].process(o ? float_4::zero() : in[i]*oversample);
+          }
         }
-        if (!o || preOver) {
-          pre[i] = pre[i] * preAmt + preParm;
-          if (!bipolar[PRE_INPUT])
-            pre[i] = ifelse(pre[i]<0.f, 0.f, pre[i]);
+        // DC block input
+        if (params[DC_IN_PARAM].getValue())
+          in[WAVE_INPUT] = dcBlockInFilter[s].process(in[WAVE_INPUT]);
+        // compute offsets
+        inOff = params[IN_OFFSET_PARAM].getValue() + in[IN_OFFSET_INPUT] * params[IN_OFFSET_AMT_PARAM].getValue();
+        outOff = params[OUT_OFFSET_PARAM].getValue() + in[OUT_OFFSET_INPUT] * params[OUT_OFFSET_AMT_PARAM].getValue();
+        // compute window
+        a = params[HI_THRESH_PARAM].getValue() + in[HI_THRESH_INPUT] * params[HI_THRESH_AMT_PARAM].getValue();
+        b = params[LO_THRESH_PARAM].getValue() + in[LO_THRESH_INPUT] * params[LO_THRESH_AMT_PARAM].getValue();
+        hiThresh = ifelse(a>b, a, b);
+        loThresh = ifelse(a>b, b, a);
+        // compute amps
+        hiAmp = params[HI_AMP_PARAM].getValue() + in[HI_AMP_INPUT] * params[HI_AMP_AMT_PARAM].getValue();
+        midAmp = params[MID_AMP_PARAM].getValue() + in[MID_AMP_INPUT] * params[MID_AMP_AMT_PARAM].getValue();
+        loAmp = params[LO_AMP_PARAM].getValue() + in[LO_AMP_INPUT] * params[LO_AMP_AMT_PARAM].getValue();
+        // offset input
+        in[WAVE_INPUT] += inOff;
+        // compute output
+        out = simd::clamp(in[WAVE_INPUT] * midAmp, loThresh, hiThresh);
+        out += ifelse(in[WAVE_INPUT]>hiThresh, (in[WAVE_INPUT]-hiThresh) * hiAmp, ifelse(in[WAVE_INPUT]<loThresh, (in[WAVE_INPUT]-loThresh) * loAmp, float_4::zero()));
+        // clamp output
+        switch (static_cast<int>(params[CLIP_PARAM].getValue())) {
+          case 1: // hard clip 5V
+            out = clamp(out, -5.f, 5.f);
+            break;
+          case 2: // soft clip 5V
+            out = softClip(out*2.f) / 2.f;
+            break;
+          case 3: // soft clip 6V
+            out = softClip(out*1.6667f) / 1.6667f;
+            break;
         }
-        if (!o || stageOver) {
-          stage[i] = stage[i] * stageAmt + stageParm;
-          if (!bipolar[STAGE_INPUT])
-            stage[i] = ifelse(stage[i]<0.f, 0.f, stage[i]);
-        }
-        if (!o || biasOver)
-          bias[i] = bias[i] * biasAmt + biasParm;
-        out[i] = (in[i] + bias[i]) * pre[i];
-        for (int s=0; s<stages; s++)
-          out[i] = simd::clamp( out[i] * stage[i], -5.f, 5.f) * 2.f - out[i];
-        out[i] = softClip(out[i]*limit) / limit;
+        // offset output
+        out += outOff;
+        // DC block output
+        if (params[DC_OUT_PARAM].getValue())
+          out = dcBlockOutFilter[s].process(out);
+        // downsample output
         if (oversample > 1)
-          out[i] = downSample[i].process(out[i]);
-      }
-    }
-    for (int i=0, c=0; c<channels; i++, c+=4)
-      outputs[POLY_OUTPUT].setVoltageSimd(out[i], c);
-    outputs[POLY_OUTPUT].setChannels(channels);
-*/
+          out = downSample[s].process(out);
+      } // end oversample loop
+      // write output
+      outputs[WAVE_OUTPUT].setVoltageSimd(out, c);
+    } // end channel loop
+    // set output channel count
+    outputs[WAVE_OUTPUT].setChannels(channels);
   }
 
 };
 
 struct WaveManglerWidget : VenomWidget {
 
+  struct DCSwitch : GlowingSvgSwitchLockable {
+    DCSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+    }
+  };
+
   struct ClipSwitch : GlowingSvgSwitchLockable {
     ClipSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_off.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/clip_hard_pm5.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/clip_soft_pm6.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
     }
   };
 
   struct OverSwitch : GlowingSvgSwitchLockable {
     OverSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_off.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_2.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_4.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_8.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_16.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_32.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
     }
   };
 
@@ -211,39 +231,41 @@ struct WaveManglerWidget : VenomWidget {
     setModule(module);
     setVenomPanel("WaveMangler");
 
-    addParam(createLockableParam<OverSwitch>(Vec(18.5f, 28.743f), module, WaveMangler::OVER_PARAM));
-    addParam(createLockableParam<ClipSwitch>(Vec(62.5f, 28.743f), module, WaveMangler::CLIP_PARAM));
+    addParam(createLockableParam<DCSwitch>(Vec(11.25f, 39.636f), module, WaveMangler::DC_IN_PARAM));
+    addParam(createLockableParam<OverSwitch>(Vec(36.23f, 39.636f), module, WaveMangler::OVER_PARAM));
+    addParam(createLockableParam<ClipSwitch>(Vec(62.211f, 39.636f), module, WaveMangler::CLIP_PARAM));
+    addParam(createLockableParam<DCSwitch>(Vec(86.191f, 39.636f), module, WaveMangler::DC_OUT_PARAM));
 
-    addInput(createInputCentered<PolyPort>(Vec(20.5f, 77.5f), module, WaveMangler::IN_OFFSET_INPUT));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 77.5f), module, WaveMangler::IN_OFFSET_AMT_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 77.5f), module, WaveMangler::IN_OFFSET_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(20.5f, 72.5f), module, WaveMangler::IN_OFFSET_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 72.5f), module, WaveMangler::IN_OFFSET_AMT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 72.5f), module, WaveMangler::IN_OFFSET_PARAM));
 
-    addInput(createInputCentered<PolyPort>(Vec(20.5f, 114.5f), module, WaveMangler::OUT_OFFSET_INPUT));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 114.5f), module, WaveMangler::OUT_OFFSET_AMT_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 114.5f), module, WaveMangler::OUT_OFFSET_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(20.5f, 109.5f), module, WaveMangler::OUT_OFFSET_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 109.5f), module, WaveMangler::OUT_OFFSET_AMT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 109.5f), module, WaveMangler::OUT_OFFSET_PARAM));
 
-    addInput(createInputCentered<PolyPort>(Vec(20.5f, 154.391f), module, WaveMangler::HI_AMP_INPUT));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 154.391f), module, WaveMangler::HI_AMP_AMT_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 154.391f), module, WaveMangler::HI_AMP_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(20.5f, 148.5f), module, WaveMangler::HI_AMP_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 148.5f), module, WaveMangler::HI_AMP_AMT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 148.5f), module, WaveMangler::HI_AMP_PARAM));
 
-    addInput(createInputCentered<PolyPort>(Vec(20.5f, 191.391f), module, WaveMangler::HI_THRESH_INPUT));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 191.391f), module, WaveMangler::HI_THRESH_AMT_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 191.391f), module, WaveMangler::HI_THRESH_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(20.5f, 185.5f), module, WaveMangler::HI_THRESH_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 185.5f), module, WaveMangler::HI_THRESH_AMT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 185.5f), module, WaveMangler::HI_THRESH_PARAM));
 
-    addInput(createInputCentered<PolyPort>(Vec(20.5f, 228.391f), module, WaveMangler::MID_AMP_INPUT));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 228.391f), module, WaveMangler::MID_AMP_AMT_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 228.391f), module, WaveMangler::MID_AMP_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(20.5f, 222.5f), module, WaveMangler::MID_AMP_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 222.5f), module, WaveMangler::MID_AMP_AMT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 222.5f), module, WaveMangler::MID_AMP_PARAM));
 
-    addInput(createInputCentered<PolyPort>(Vec(20.5f, 265.391f), module, WaveMangler::LO_THRESH_INPUT));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 265.391f), module, WaveMangler::LO_THRESH_AMT_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 265.391f), module, WaveMangler::LO_THRESH_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(20.5f, 259.5f), module, WaveMangler::LO_THRESH_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 259.5f), module, WaveMangler::LO_THRESH_AMT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 259.5f), module, WaveMangler::LO_THRESH_PARAM));
 
-    addInput(createInputCentered<PolyPort>(Vec(20.5f, 302.391f), module, WaveMangler::LO_AMP_INPUT));
-    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 302.391f), module, WaveMangler::LO_AMP_AMT_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 302.391f), module, WaveMangler::LO_AMP_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(20.5f, 296.5f), module, WaveMangler::LO_AMP_INPUT));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 296.5f), module, WaveMangler::LO_AMP_AMT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 296.5f), module, WaveMangler::LO_AMP_PARAM));
     
-    addInput(createInputCentered<PolyPort>(Vec(32.5f, 345.28f), module, WaveMangler::WAVE_INPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(72.5f, 345.28f), module, WaveMangler::WAVE_OUTPUT));
+    addInput(createInputCentered<PolyPort>(Vec(32.5f, 341.5f), module, WaveMangler::WAVE_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(72.5f, 341.5f), module, WaveMangler::WAVE_OUTPUT));
   }
 
 };
