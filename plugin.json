@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.13.dev2",
+  "version": "2.13.dev3",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -636,6 +636,17 @@
         "Polyphonic",
         "Ring modulator",
         "Voltage-controlled amplifier",
+        "Waveshaper"
+      ]
+    },
+    {
+      "slug": "WaveMangler",
+      "name": "Wave Mangler",
+      "description": "A polyphonic distortion / wave shaper inspired by the Doepfer A-137 module",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#wave-mangler",
+      "tags": [
+        "Distortion",
+        "Polyphonic",
         "Waveshaper"
       ]
     },
