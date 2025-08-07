@@ -772,9 +772,9 @@ Each logic operation has three outputs
 - < - High when < OUT1 and < OUT2 have different states, low when they are the same
 
 #### FF (flip flop) outputs
-- \> - Changes state upon the leading edge of each > XOR gate
-- = - Changes state upon the leading edge of each = XOR gate
-- < - Changes state upon the leading edge of each < XOR gate
+- \> - Changes state upon the leading edge of each high > XOR gate
+- = - Changes state upon the leading edge of each high = XOR gate
+- < - Changes state upon the leading edge of each high < XOR gate
 
 ### Polyphony
 
