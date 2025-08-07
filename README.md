@@ -683,9 +683,28 @@ If Clone Merge is bypassed then the output is constant monophonic 0V.
 
 [Return to Table Of Contents](#venom)
 
+## COMPARE 2
+![Compare 2 module image](doc/Compare2.png)  
+A dual windowed comparator combined with logic operations inspired by the Joranalogue Compare 2 Eurorack module. The Venom module implements all the features of the Joranalogue hardware, and then adds:
+- polyphony, all inputs and outputs are fully polyphonic
+- options for gate output voltage levels
+- tripled the number of outputs
+  - Joranalogue derives all outputs from whether an input is within the window
+  - Venom adds outputs for when the input is greater than the window, and less than the window.
+- oversampling options to mitigate aliasing introduced by the digital implementation (obviously not needed for the analog Joranalogue module)
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Compare 2 is bypassed then all outputs are constant monophonic 0V.
+
+[Return to Table Of Contents](#venom)
+
+
 ## CROSS FADE 3D
 ![Cross Fade 3D module image](doc/CrossFade3D.png)  
-
 Eight inputs in three dimensional space are cross faded to a single output. The inputs are placed at the vertices of a virtual cube. X, Y, and Z controls independently cross fade between inputs on opposite faces of the cube. Each fader functions linearly in amplitude, ranging from 0% to 100%. The orthogonal faders are multiplicative, such that when all three controls are at an extreme, then 100% of the output comes from a single input. When all three controls are at 50% then each input contributes 12.5% to the output. A final Level control can further attenuate the final output.
 
 ### Polyphony
@@ -3418,6 +3437,23 @@ This is the final result of the wave folding.
 The poly input is passed through to the output if Wave Folder is bypassed.
 
 [Return to Table Of Contents](#venom)
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+The poly input is passed through to the output if Wave Folder is bypassed.
+
+
+## WAVE MANGLER
+![WAVE MANGLER module image](doc/WaveMangler.png)  
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+If Wave Mangler is bypassed then all channels of Wave input are passed through to Wave output unchanged.
+
 
 ## WAVE MULTIPLIER
 ![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)  
