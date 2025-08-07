@@ -740,7 +740,7 @@ Specifies the amount of oversampling used to mitigate aliasing that can be intro
 
 #### OUT 1 and 2 outputs
 Each comparator has three OUT outputs
-- > - High when the input is above the window (> window max)
+- \> - High when the input is above the window (> window max)
 - = - High when the input is within the window (>= window min and <= window max)
 - < - High when the input is below the window
 
@@ -748,7 +748,7 @@ Note that if the effective window size is <= 0, then the OUT will always be in a
 
 #### NOT 1 and 2 outputs
 Each comparator has three NOT outputs
-- > - High when the input is not above the window (<= window max)
+- \> - High when the input is not above the window (<= window max)
 - = - High when the input is not within the window (> window max or < window min)
 - < - High when the input is not below the window (>= window min)
 
@@ -757,22 +757,22 @@ Each comparator has three NOT outputs
 Each logic operation has three outputs
 
 #### AND outputs
-- > - High when both > OUT1 and > OUT2 are high, low when either is low
+- \> - High when both > OUT1 and > OUT2 are high, low when either is low
 - = - High when both = OUT1 and = OUT2 are high, low when either is low
 - < - High when both < OUT1 and < OUT1 are high, low when either is low
 
 #### OR outputs
-- > - High when either > OUT1 or > OUT2 is high, low when both are low
+- \> - High when either > OUT1 or > OUT2 is high, low when both are low
 - = - High when either = OUT1 or = OUT2 is high, low when both are low
 - < - High when either < OUT1 or < OUT2 is high, low when both are low
 
 #### XOR outputs
-- > - High when > OUT1 and > OUT2 have different states, low when they are the same
+- \> - High when > OUT1 and > OUT2 have different states, low when they are the same
 - = - High when = OUT1 and = OUT2 have different states, low when they are the same
 - < - High when < OUT1 and < OUT2 have different states, low when they are the same
 
 #### FF (flip flop) outputs
-- > - Changes state upon the leading edge of each > XOR gate
+- \> - Changes state upon the leading edge of each > XOR gate
 - = - Changes state upon the leading edge of each = XOR gate
 - < - Changes state upon the leading edge of each < XOR gate
 
