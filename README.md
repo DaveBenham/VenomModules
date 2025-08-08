@@ -728,7 +728,7 @@ Specifies the low and high values for all gate outputs. The following unipolar a
 
 #### OVER (Oversample) square button
 
-Specifies the amount of oversampling used to mitigate aliasing that can be introduced by the digital processing. This is generally only useful if working with high frequency audio inputs.
+Specifies the amount of oversampling used to mitigate aliasing that can be introduced by the digital processing. This is generally only useful if working with relatively high frequency audio inputs.
 - Off (default)
 - x2
 - x4
@@ -736,13 +736,17 @@ Specifies the amount of oversampling used to mitigate aliasing that can be intro
 - x16
 - x32
 
+There is also a module context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 ### Comparator Outputs
 
 #### OUT 1 and 2 outputs
 Each comparator has three OUT outputs
 - \> - High when the input is above the window (> window max)
 - = - High when the input is within the window (>= window min and <= window max)
-- < - High when the input is below the window
+- < - High when the input is below the window (< window min)
 
 Note that if the effective window size is < 0, then the window max becomes lower than the window min, and = OUT can never be in a high state.
 
@@ -1550,7 +1554,7 @@ The indicator is yellow when the selected note is >= the effective Scale Root, a
  - 0-9 = 0-9
  - A-Z = 10 - 35
  - a-z = 36 - 61
- - \<space\> = 62 or higher
+ - \<space\62 or higher
 
 ### IN input
 The polyphonic IN input provides the V/Oct frequency control voltage to be quantized.
