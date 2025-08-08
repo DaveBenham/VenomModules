@@ -685,7 +685,7 @@ If Clone Merge is bypassed then the output is constant monophonic 0V.
 
 ## COMPARE 2
 ![Compare 2 module image](doc/Compare2.png)  
-A dual windowed comparator combined with logic operations inspired by the Joranalogue Compare 2 Eurorack module. The Venom module implements all the features of the Joranalogue hardware, and then adds:
+A dual windowed comparator combined with logic operations inspired by the [Joranalogue Compare 2 Eurorack module](https://joranalogue.com/collections/eurorack/products/compare-2). The Venom module implements all the features of the Joranalogue hardware, and then adds:
 - polyphony, all inputs and outputs are fully polyphonic
 - options for gate output voltage levels
 - tripled the number of outputs
@@ -695,6 +695,9 @@ A dual windowed comparator combined with logic operations inspired by the Jorana
 
 ### General Operation
 There are two identical comparators, each with an input plus controls and CV inputs to define a voltage window based on window center (shift) and window size. Each comparator produces gates for when the input voltage is either within the window (=), above the window (>), or below the window (<), as well as their negated values. Logic is then applied to the paired =, >, and < gate outputs using AND, OR, and XOR operations. The XOR outputs are then used to drive three Flip Flop outputs.
+
+### Use Cases
+There is a [Joranalogue Compare 2 Practical User Guide](https://cdn.shopify.com/s/files/1/1594/2421/files/Compare_2_Practical_User_Guide_v1.5_300_dpi.pdf?v=1663597287) that shows a number of use cases for the Joranalogue hardware that also apply to Venom Compare 2. Of course Venom Compare 2 can do things that the Joranalogue module can't, but the practical guide is a good starting point.
 
 ### Inputs and Controls
 
@@ -2201,7 +2204,7 @@ Compact polyphonic bipolar VCA (ring modulator) and mixer inspired by Mutable In
 
 ### General operation - Blinds emulation
 
-By default this module behaves the same as the Audible Instruments Quad VC Polarizer, which in turn emulates the Mutable Instruments Blinds hardware. All the functionality has been shrunk down to 5hp, very similar to the Southpole Bandana module that was never officially ported to VCV 2.
+By default this module behaves the same as the Audible Instruments Quad VC Polarizer, which in turn emulates the [Mutable Instruments Blinds hardware](https://modulargrid.net/e/mutable-instruments-blinds). All the functionality has been shrunk down to 5hp, very similar to the Southpole Bandana module that was never officially ported to VCV 2.
 
 There are 4 independent module channels, each with an Input, Output, Level attenuverter, and Level CV with Level Amount attenuverter.
 
@@ -2436,7 +2439,7 @@ The Input is passed unchanged to the Output when REFORMATION is bypassed.
 
 ## Rhythm Explorer
 ![Rhythm Explorer module image](doc/RhythmExplorer.PNG)  
-Rhythm Explorer is a trigger sequencer that stochastically generates repeating patterns on demand. It is heavily inspired by the Vermona randomRHYTHM Eurorack module, though no attempt was made to exactly replicate that module's features.
+Rhythm Explorer is a trigger sequencer that stochastically generates repeating patterns on demand. It is heavily inspired by the [Vermona randomRHYTHM Eurorack module](https://www.vermona.com/en/products/modules/product/randomrhythm/), though no attempt was made to exactly replicate that module's features.
 
 ### Basic Operation
 Rhythm Explorer looks complicated, but it is very simple to quickly begin creating interesting rhythms. Starting from the default initial settings, patch a 24 PPQN clock into the CLOCK input, and patch any combination of the GATEs, OR, XOR ODD, or XOR 1 outputs to your favorite drum modules. Adjust some of the sliders to something greater than 0, but less than 100, and press the RUN button. A repeating rhythm should emerge, which can be modulated by adjusting the sliders. Each time you press the DICE button you will get a brand new pattern that can be modulated via the sliders.
