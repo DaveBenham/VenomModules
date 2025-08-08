@@ -744,7 +744,7 @@ Each comparator has three OUT outputs
 - = - High when the input is within the window (>= window min and <= window max)
 - < - High when the input is below the window
 
-Note that if the effective window size is <= 0, then the OUT will always be in a low state.
+Note that if the effective window size is < 0, then the window max becomes lower than the window min, and = OUT can never be in a high state.
 
 #### NOT 1 and 2 outputs
 Each comparator has three NOT outputs
@@ -3540,12 +3540,6 @@ The poly input is passed through to the output if Wave Folder is bypassed.
 
 [Return to Table Of Contents](#venom)
 
-### Standard Venom Context Menus
-[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
-
-### Bypass
-The poly input is passed through to the output if Wave Folder is bypassed.
-
 
 ## WAVE MANGLER
 ![WAVE MANGLER module image](doc/WaveMangler.png)  
@@ -3555,6 +3549,8 @@ The poly input is passed through to the output if Wave Folder is bypassed.
 
 ### Bypass
 If Wave Mangler is bypassed then all channels of Wave input are passed through to Wave output unchanged.
+
+[Return to Table Of Contents](#venom)
 
 
 ## WAVE MULTIPLIER
