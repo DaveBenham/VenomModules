@@ -20,6 +20,7 @@ struct WaveMangler : VenomModule {
     HI_AMP_PARAM,
     HI_THRESH_AMT_PARAM,
     HI_THRESH_PARAM,
+    MID_CLIP_PARAM,
     MID_AMP_AMT_PARAM,
     MID_AMP_PARAM,
     LO_THRESH_AMT_PARAM,
@@ -77,6 +78,7 @@ struct WaveMangler : VenomModule {
     configParam(HI_THRESH_AMT_PARAM, -1.f, 1.f, 0.f, "High threshold CV amount", "%", 0, 100, 0);
     configParam(HI_THRESH_PARAM, -5.f, 5.f, 0.f, "High threshold", " V");
 
+    configSwitch<FixedSwitchQuantity>(MID_CLIP_PARAM, 0.f, 3.f, 1.f, "Middle clipping", {"Off", "Pre amp", "Post amp", "Pre and post amp"});
     configInput(MID_AMP_INPUT, "Middle amplitude CV");
     configParam(MID_AMP_AMT_PARAM, -1.f, 1.f, 0.f, "Middle amplitude CV amount", "%", 0, 100, 0);
     configParam(MID_AMP_PARAM, -10.f, 10.f, 0.f, "Middle amplitude");
@@ -165,8 +167,21 @@ struct WaveMangler : VenomModule {
         loAmp = params[LO_AMP_PARAM].getValue() + in[LO_AMP_INPUT] * params[LO_AMP_AMT_PARAM].getValue();
         // offset input
         in[WAVE_INPUT] += inOff;
-        // compute output
-        out = simd::clamp(in[WAVE_INPUT] * midAmp, loThresh, hiThresh);
+        // compute output middle
+        switch (static_cast<int>(params[MID_CLIP_PARAM].getValue())) {
+          case 0: // clamp off
+            out = in[WAVE_INPUT] * midAmp;
+            break;
+          case 1: // clamp pre amp
+            out = clamp(in[WAVE_INPUT], loThresh, hiThresh) * midAmp;
+            break;
+          case 2: // clamp post amp
+            out = clamp(in[WAVE_INPUT] * midAmp, loThresh, hiThresh);
+            break;
+          default: // 3 clamp pre & post amp
+            out = simd::clamp(simd::clamp(in[WAVE_INPUT], loThresh, hiThresh) * midAmp, loThresh, hiThresh);
+        }
+        // add high and low output
         out += ifelse(in[WAVE_INPUT]>hiThresh, (in[WAVE_INPUT]-hiThresh) * hiAmp, ifelse(in[WAVE_INPUT]<loThresh, (in[WAVE_INPUT]-loThresh) * loAmp, float_4::zero()));
         // clamp output
         switch (static_cast<int>(params[CLIP_PARAM].getValue())) {
@@ -215,6 +230,15 @@ struct WaveManglerWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
     }
   };
+  
+  struct MidClipSwitch : GlowingSvgSwitchLockable {
+    MidClipSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+    }
+  };
 
   struct OverSwitch : GlowingSvgSwitchLockable {
     OverSwitch() {
@@ -251,6 +275,8 @@ struct WaveManglerWidget : VenomWidget {
     addInput(createInputCentered<PolyPort>(Vec(20.5f, 185.5f), module, WaveMangler::HI_THRESH_INPUT));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 185.5f), module, WaveMangler::HI_THRESH_AMT_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(84.5f, 185.5f), module, WaveMangler::HI_THRESH_PARAM));
+
+    addParam(createLockableParamCentered<MidClipSwitch>(Vec(95.f, 204.f), module, WaveMangler::MID_CLIP_PARAM));
 
     addInput(createInputCentered<PolyPort>(Vec(20.5f, 222.5f), module, WaveMangler::MID_AMP_INPUT));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(52.5f, 222.5f), module, WaveMangler::MID_AMP_AMT_PARAM));

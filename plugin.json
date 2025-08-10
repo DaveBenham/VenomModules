@@ -140,17 +140,6 @@
       ]
     },
     {
-      "slug": "Compare2",
-      "name": "Compare 2",
-      "description": "Windowed comparator with logic outputs inspired by Joranalogue Compare 2",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#compare-2",
-      "tags": [
-        "Logic",
-        "Polyphonic",
-        "Utility"
-      ]
-    },
-    {
       "slug": "CrossFade3D",
       "name": "Cross Fade 3D",
       "description": "Cross fade 8 inputs to 1 output using X, Y, and Z axes",
@@ -684,6 +673,17 @@
         "Polyphonic",
         "Utility",
         "Waveshaper"
+      ]
+    },
+    {
+      "slug": "Compare2",
+      "name": "WinComp2 + Logic",
+      "description": "Dual windowed comparator with logic outputs inspired by Joranalogue Compare 2",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#compare-2",
+      "tags": [
+        "Logic",
+        "Polyphonic",
+        "Utility"
       ]
     }
   ]

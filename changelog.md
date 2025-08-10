@@ -1,5 +1,10 @@
 # Venom Modules Changelog
 
+## 2.13.0 (2025-??-??)
+### New Modules
+- Wave Mangler
+- WinComp 2 + Logic
+
 ## 2.12.3 (2025-06-05)
 ### Enhancements
 - Cross Fade 3D and Pan 3D
