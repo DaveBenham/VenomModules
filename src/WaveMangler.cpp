@@ -60,7 +60,7 @@ struct WaveMangler : VenomModule {
     configSwitch<FixedSwitchQuantity>(DC_IN_PARAM, 0.f, 1.f, 0.f, "Input DC block", {"Off", "On"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 0.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
     configSwitch<FixedSwitchQuantity>(CLIP_PARAM, 0.f, 3.f, 1.f, "Output clipping", {"Off", "Hard +/- 5V", "Soft +/- 5V", "Soft +/- 6V"});
-    configSwitch<FixedSwitchQuantity>(DC_IN_PARAM, 0.f, 1.f, 0.f, "Output DC block", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(DC_OUT_PARAM, 0.f, 1.f, 0.f, "Output DC block", {"Off", "On"});
 
     configInput(IN_OFFSET_INPUT, "Input offset CV");
     configParam(IN_OFFSET_AMT_PARAM, -1.f, 1.f, 0.f, "Input offset CV amount", "%", 0, 100, 0);
