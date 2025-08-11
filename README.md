@@ -3453,8 +3453,8 @@ See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more i
 ### OUT CLIP (output clipping) button
 
 The final output may optionally be hard clipped, or soft tanh clipped. There are 4 options.
-- Off (gray - default)
-- Hard +/- 5V (yellow)
+- Off (gray)
+- Hard +/- 5V (yellow - default)
 - Soft +/- 5V (light blue)
 - Soft +/- 6V (dark blue)
 
