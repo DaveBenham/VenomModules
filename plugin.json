@@ -631,7 +631,7 @@
     {
       "slug": "WaveMangler",
       "name": "Wave Mangler",
-      "description": "A polyphonic distortion / wave shaper inspired by the Doepfer A-137 module",
+      "description": "A polyphonic distortion / wave shaper inspired by the Doepfer A-136 module",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#wave-mangler",
       "tags": [
         "Distortion",
