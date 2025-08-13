@@ -70,26 +70,26 @@ struct WaveMangler : VenomModule {
     configParam(OUT_OFFSET_AMT_PARAM, -1.f, 1.f, 0.f, "Output offset CV amount", "%", 0, 100, 0);
     configParam(OUT_OFFSET_PARAM, -5.f, 5.f, 0.f, "Output offset", " V");
 
-    configInput(HI_AMP_INPUT, "High amplitude CV");
-    configParam(HI_AMP_AMT_PARAM, -1.f, 1.f, 0.f, "High amplitude CV amount", "%", 0, 100, 0);
-    configParam(HI_AMP_PARAM, -10.f, 10.f, 0.f, "High amplitude");
+    configInput(HI_AMP_INPUT, "High amplifier CV");
+    configParam(HI_AMP_AMT_PARAM, -1.f, 1.f, 0.f, "High amplifier CV amount", "%", 0, 100, 0);
+    configParam(HI_AMP_PARAM, -10.f, 10.f, 0.f, "High amplifier", "x");
 
     configInput(HI_THRESH_INPUT, "High threshold CV");
     configParam(HI_THRESH_AMT_PARAM, -1.f, 1.f, 0.f, "High threshold CV amount", "%", 0, 100, 0);
     configParam(HI_THRESH_PARAM, -5.f, 5.f, 0.f, "High threshold", " V");
 
     configSwitch<FixedSwitchQuantity>(MID_CLIP_PARAM, 0.f, 3.f, 1.f, "Middle clipping", {"Off", "Pre amp", "Post amp", "Pre and post amp"});
-    configInput(MID_AMP_INPUT, "Middle amplitude CV");
-    configParam(MID_AMP_AMT_PARAM, -1.f, 1.f, 0.f, "Middle amplitude CV amount", "%", 0, 100, 0);
-    configParam(MID_AMP_PARAM, -10.f, 10.f, 0.f, "Middle amplitude");
+    configInput(MID_AMP_INPUT, "Middle amplifier CV");
+    configParam(MID_AMP_AMT_PARAM, -1.f, 1.f, 0.f, "Middle amplifier CV amount", "%", 0, 100, 0);
+    configParam(MID_AMP_PARAM, -10.f, 10.f, 0.f, "Middle amplifier", "x");
 
     configInput(LO_THRESH_INPUT, "Low threshold CV");
     configParam(LO_THRESH_AMT_PARAM, -1.f, 1.f, 0.f, "Low threshold CV amount", "%", 0, 100, 0);
     configParam(LO_THRESH_PARAM, -5.f, 5.f, 0.f, "Low threshold", " V");
 
-    configInput(LO_AMP_INPUT, "Low amplitude CV");
-    configParam(LO_AMP_AMT_PARAM, -1.f, 1.f, 0.f, "Low amplitude CV amount", "%", 0, 100, 0);
-    configParam(LO_AMP_PARAM, -10.f, 10.f, 0.f, "Low amplitude");
+    configInput(LO_AMP_INPUT, "Low amplifier CV");
+    configParam(LO_AMP_AMT_PARAM, -1.f, 1.f, 0.f, "Low amplifier CV amount", "%", 0, 100, 0);
+    configParam(LO_AMP_PARAM, -10.f, 10.f, 0.f, "Low amplifier", "x");
 
     configInput(WAVE_INPUT, "Wave");
     configOutput(WAVE_OUTPUT, "Wave");
