@@ -3485,7 +3485,7 @@ Each value related to wave shaping has a value knob plus a CV input with attenua
 
 Threshold knobs are bipolar with values ranging from -5 to +5 volts.
 
-Amplitude knob values are bipolar with values ranging from -10 to +10 amplification.
+Amplifier knob values are bipolar with values ranging from -10x to +10x amplification.
 
 Attenuated CV is summed with the corresponding knob value to get the effective value. The summed value is free to exceed the range of the knob.
 
