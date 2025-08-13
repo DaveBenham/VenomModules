@@ -3497,8 +3497,8 @@ Voltages below the Low Threshold are considered the low region.
 
 If the computed Low Threshold is above the computed High Threshold, then the values are internally swapped to ensure that the effective Low Threshold is never above the High Threshold.
 
-### MID AMPLITUDE
-Determines the amplification used for the middle output component. The main input is multiplied by the effective Mid Amplitude level to establish the middle output component.
+### MID AMPLIFIER
+Determines the amplification used for the middle output component. The main input is multiplied by the effective Mid Amplifier level to establish the middle output component.
 
 The unlabeled small button determines whether the middle component is clipped at the high and low thresholds. It has 4 possible values:
 - **Off** ***(dark gray)*** - No clipping is applied
@@ -3506,21 +3506,21 @@ The unlabeled small button determines whether the middle component is clipped at
 - **Post amp** ***(blue)*** - The result of the mid amplifiction is hard clipped at the high and low thresholds.
 - **Pre and post amp** ***(green)*** - The input is hard clipped at the high and low thresholds before applying the mid amplifcation, and then the result is hard clipped at the high and low thresholds.
 
-If the Mid Amplitude is <= 1, then "Post amp" and "Pre and post amp" yield the same result.
+If the Mid Amplifier is <= 1, then "Post amp" and "Pre and post amp" yield the same result.
 
-If the Mid Amplitude is >= 1, then "Pre amp" and "Pre and post amp" yield the same result.
+If the Mid Amplifier is >= 1, then "Pre amp" and "Pre and post amp" yield the same result.
 
-### HIGH AMPLITUDE
+### HIGH AMPLIFIER
 Determines the amplification used for the high output component.
 
-If the input voltage is above the High Threshold, then the High Threshold is subtracted from the input before applying the high amplification to get the high output component.
+If the input voltage is above the High Threshold, then the High Threshold is subtracted from the input before applying the high amplifier level to get the high output component.
 
 If the input is not above the High Threshold, then the high output component is zero.
 
-### LOW AMPLITUDE
+### LOW AMPLIFIER
 Determines the amplification used for the low output component.
 
-If the input voltage is below the Low Threshold, then the Low Threshold is subtracted from the input before applying the low amplification to get the low output component.
+If the input voltage is below the Low Threshold, then the Low Threshold is subtracted from the input before applying the low amplifier level to get the low output component.
 
 If the input is not below the Low Threshold, then the low output component is zero.
 
@@ -3551,9 +3551,9 @@ The summarized order of operations below is for those intrepid few that want to 
 1) All inputs are upsampled with interpolation if oversamping is enabled
 2) If In DC Block is enabled then the main Wave input is run through a high pass filter to remove DC bias
 3) Input Offset is applied to the main Wave input
-4) The mid output component is computed by multiplying the Wave input times the mid amplification. The mid component can optionally be clipped to the high and low thresholds before and/or after amplification.
-5) If the Wave input is > the High Threshold, then the (Wave input minus the High Threshold) is multiplied by the High amplification level, else the high output component is zero.
-6) If the Wave input is < the Low Threshold, then the (Wave input minus the Low Threshold) is multiplied by the Low amplification level, else the low ouptut component is zero.
+4) The mid output component is computed by multiplying the Wave input times the mid amplifier level. The mid component can optionally be clipped to the high and low thresholds before and/or after amplification.
+5) If the Wave input is > the High Threshold, then the (Wave input minus the High Threshold) is multiplied by the High amplifier level, else the high output component is zero.
+6) If the Wave input is < the Low Threshold, then the (Wave input minus the Low Threshold) is multiplied by the Low amplifier level, else the low ouptut component is zero.
 7) The mid, high, and low output components are summed to get the final wave shaped output.
 8) Any selected output clipping is applied to the wave shaped output
 9) Output Offset is applied to the wave shaped output
