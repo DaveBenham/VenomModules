@@ -41,7 +41,13 @@ inline float sin_01(float t) {
 }
 
 // Normalized Tunable Sigmoid Function: see https://dhemery.github.io/DHE-Modules/technical/sigmoid/#function
+// phasor x and curve y always between -1 and 1 inclusive, shape k between -1 and 1 exclusive. Linear curve (y=x) if k=0
 template <typename T1, typename T2>
-T1 normSigmoid(T1 x, T2 k) {
+T1 normSigmoid(T1 x, T2 k) {  // linear phasor x to curve
   return (x - k*x)/(k - 2.f*k*fabs(x) + 1.f);
+}
+
+template <typename T1, typename T2>
+T1 invNormSigmoid(T1 y, T2 k) { // curve y to linear phasor
+  return (y + k*y)/(2.f*k*fabs(y) - k + 1.f);
 }

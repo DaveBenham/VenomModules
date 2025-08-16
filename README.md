@@ -9,9 +9,9 @@ Venom modules version 2.12.3 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave 
 [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
 [Acknowledgments](#acknowledgments)  
 
-|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
-|----|----|----|----|----|
-|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)|![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)|
+|[AD/ASR<br />ENVELOPE<br />GENERATOR](#ad-asr-envelope-generator)|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
+|----|----|----|----|----|----|
+|![AD/ASR Envelope Generator module image](doc/AD_ASR.png)|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)|![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)|
 
 |[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[CROSS FADE 3D](#cross-fade-3d)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|
 |----|----|----|----|----|----|----|----|
@@ -134,6 +134,20 @@ Thanks to Paul Dempsey for his MenuTextField struct from the pachde1 plugin that
 Finally thanks to Ewan Hemingway. Through discussions and studying the Befaco Even VCO source code I was able to improve the sound quality of VCO Lab and VCO Unit by adding DPW alias suppression to supplement oversampling.
 
 [Return to Table Of Contents](#venom)
+
+## AD/ASR ENVELOPE GENERATOR
+![AD/ASR Envelope Generator module image](doc/AD_ASR.png)  
+Hybrid polyphonic Attack, Decay and Attack, Sustain, Release envelope generator with looping capabilities and precise V/Oct CV control over stage lengths.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are constant monophonic 0V when the AD/ASR Envelope Generator is bypassed.
+
+[Return to Table Of Contents](#venom)
+
 
 ## AUXILLIARY CLONE EXPANDER
 ![Auxilliary Clone Expander module image](doc/AuxClone.png)  

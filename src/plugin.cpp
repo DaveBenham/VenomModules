@@ -62,6 +62,7 @@ void init(Plugin* p) {
   pluginInstance = p;
 
   // Add modules here
+  p->addModel(modelAD_ASR);
   p->addModel(modelAuxClone);
   p->addModel(modelBayInput);
   p->addModel(modelBayNorm);

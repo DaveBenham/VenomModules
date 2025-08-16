@@ -14,6 +14,18 @@
   "changelogUrl": "https://github.com/DaveBenham/VenomModules/blob/main/changelog.md",
   "modules": [
     {
+      "slug": "AD_ASR",
+      "name": "AD/ASR Envelope Generator",
+      "description": "Hybrid polyphonic Attack,Decay and Attack,Sustain,Release envelope generator with looping capabilities",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#ad-asr-envelope-generator",
+      "tags": [
+        "Envelope generator",
+        "Low-frequency oscillator",
+        "Oscillator",
+        "Polyphonic"
+      ]
+    },
+    {
       "slug": "AuxClone",
       "name": "Auxilliary Clone Expander",
       "description": "Adds additional cloned poly input/output pairs to Clone Merge, Poly Merge, or Poly Unison",

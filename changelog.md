@@ -2,6 +2,7 @@
 
 ## 2.13.0 (2025-??-??)
 ### New Modules
+- AD/ASR Envelope Generator
 - Wave Mangler
 - WinComp 2 + Logic
 
