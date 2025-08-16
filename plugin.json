@@ -17,7 +17,7 @@
       "slug": "AD_ASR",
       "name": "AD/ASR Envelope Generator",
       "description": "Hybrid polyphonic Attack,Decay and Attack,Sustain,Release envelope generator with looping capabilities",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#ad-asr-envelope-generator",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#adasr-envelope-generator",
       "tags": [
         "Envelope generator",
         "Low-frequency oscillator",

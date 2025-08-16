@@ -9,7 +9,7 @@ Venom modules version 2.12.3 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave 
 [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
 [Acknowledgments](#acknowledgments)  
 
-|[AD/ASR<br />ENVELOPE<br />GENERATOR](#ad-asr-envelope-generator)|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
+|[AD/ASR<br />ENVELOPE<br />GENERATOR](#adasr-envelope-generator)|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
 |----|----|----|----|----|----|
 |![AD/ASR Envelope Generator module image](doc/AD_ASR.png)|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)|![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)|
 
