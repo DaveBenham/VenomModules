@@ -141,7 +141,7 @@ Hybrid polyphonic Attack, Decay and Attack, Sustain, Release envelope generator 
 
 ### Loop is Off
 
-|Self Patch|AD&nbsp;Trig<br />Rise to full|AD&nbsp;Trig<br />Sustain full|AD&nbsp;Trig<br />Fall to zero|ASR&nbsp;Gate<br />Rise to full|ASR&nbsp;Gate<br />Sustain full|ASR&nbsp;Gate<br />Fall to zero|
+|Feedback|AD&nbsp;Trig<br />Rise to full|AD&nbsp;Trig<br />Sustain full|AD&nbsp;Trig<br />Fall to zero|ASR&nbsp;Gate<br />Rise to full|ASR&nbsp;Gate<br />Sustain full|ASR&nbsp;Gate<br />Fall to zero|
 |---|---|---|---|---|---|---|
 |None|Yes|No*|Retriggerable**|While gate high|While gate high|Retriggerable**|
 |Atk&nbsp;->&nbsp;ASR&nbsp;Gate|Yes|No*|Retriggerable**|Yes|While gate high|Retriggerable**|
