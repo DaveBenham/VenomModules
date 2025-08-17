@@ -163,11 +163,13 @@ If the small **TOG** (Toggle) button is on (yellow), then the ASR Gate button be
 
 CV triggers/gates are based on Schmitt triggers that go high above 2V and go low below 0.2V. Voltages between 0.2V and 2V maintain the current state.
 
-All triggers are ignored during Attack and Sustain stages.
+The type of envelope generated (AD or ASR) depends on which trigger is received first.
+
+AD triggers take precedence over ASR Gate triggers.
 
 All triggers are ignored if any of the other triggers or gates are already in a high state.
 
-AD triggers take precedence over ASR Gate triggers.
+All triggers are ignored during Attack and Sustain stages. This means a trigger can only be received while idle, or during a decay/release stage. A trigger received during decay/release is considered a retrigger event.
 
 ### AD envelope (Attack|Decay) behavior
 * Attack stage always rises to full 10V, then immediately progresses to Decay stage
@@ -193,7 +195,9 @@ This gate is high whenever the envelope is in a sustain (maintaining 10V) stage
 #### DEC (Decay/Release) output
 This gate is high whenever the envelope is in a decay (falling toward 0V) stage
 
-### Loop is Off
+### Alternate behaviors via feedback
+
+Decay/Release and ASR Attack behavior can be modified by patching one or more of the stage gate outputs into the AD Trig and/or ASR Gate inputs.
 
 |Feedback|AD&nbsp;Trig<br />Rise to full|AD&nbsp;Trig<br />Sustain full|AD&nbsp;Trig<br />Fall to zero|ASR&nbsp;Gate<br />Rise to full|ASR&nbsp;Gate<br />Sustain full|ASR&nbsp;Gate<br />Fall to zero|
 |---|---|---|---|---|---|---|
