@@ -184,7 +184,7 @@ All triggers are ignored during Attack and Sustain stages. This means a trigger 
   * Progresses to Release stage when gate goes low
 * Release stage falls back to 0V, but retrigger immediately restarts Attack at current envelope voltage
 
-### Stage gate outputs
+### Outputs
 
 #### ATK (Attack) output
 This gate is high whenever the envelope is in an attack (rising toward 10V) stage
@@ -194,6 +194,9 @@ This gate is high whenever the envelope is in a sustain (maintaining 10V) stage
 
 #### DEC (Decay/Release) output
 This gate is high whenever the envelope is in a decay (falling toward 0V) stage
+
+#### ENV (Envelope) output
+The envelopes are output here.
 
 ### Alternate behaviors via feedback
 
