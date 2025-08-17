@@ -139,6 +139,20 @@ Finally thanks to Ewan Hemingway. Through discussions and studying the Befaco Ev
 ![AD/ASR Envelope Generator module image](doc/AD_ASR.png)  
 Hybrid polyphonic Attack, Decay and Attack, Sustain, Release envelope generator with looping capabilities and precise V/Oct CV control over stage lengths.
 
+### Loop is Off
+
+|Self Patch|AD Trig Rise|AD Trig Hold|AD Trig Fall|ASR Gate Rise|ASR Gate Hold|ASR Gate Fall|
+|--|--|--|--|--|--|--|
+|None|Full|No|Regriggerable|Partial possible|Hold until ASR gate low|Retriggerable|
+|Atk -> ASR Gate|Full|No|Retriggerable|Full|Hold until ASR gate low|Rtriggerable|
+|Dec -> AD Trig|Full|If AD trig high at full then no else hold until new AD trig received|No retrigger|Full|If ASR gate low and AD trig high at full then no hold, else hold until ASR gate low and AD trig received|No retrigger|
+|Dec -> AD Trig<br />and<br />Atk -> AD Trig|Full|No|No retrigger|Partial possible|Hold until ASR Gate low|No retrigger|
+|Dec -> (AD Trig or ASR Gate)<br />and<br />Atk -> ASR Gate<br />and<br />Sus -> AD Trig|Full|No|No Retrigger|Full|Hold until ASR Gate low|No Retrigger|
+
+### Loop is On
+
+
+
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
