@@ -171,7 +171,7 @@ The knob speed can be modulated by the associated CV input with attenuator. Each
 
 The CV can modulate the effective length beyond the limits of the current time knob configuration. However, the effective length is always clamped to between ~0.24 msec and ~3 min.
 
-Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically undersampled to guarantee that the envelope never stalls. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz.
+Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically undersampled to guarantee that the envelope never stalls. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz. The envelope will never stall if stage length CV is not used.
 
 ### Envelope Triggering Events
 
