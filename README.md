@@ -235,7 +235,7 @@ Decay/Release and ASR Attack behavior can be modified by patching one or more of
 \** If envelope is retriggered during Fall to zero stage then it will immediately restart the Rise stage at the current envelope level
 
 ### Loop mode
-If the small top center **LOOP** button is enabled (yellow), then the envelope generator automatically triggers a new cycle when the Decay/Release stage reaches 0V. This effectively turns the envelope generator into a low-frequency oscillator that can reach audio rates up to ~2 kHz and LFO rates as low as 0.0028 Hz.
+If the small top center **LOOP** button is enabled (yellow), then the envelope generator automatically triggers a new cycle when the Decay/Release stage reaches 0V. This effectively turns the envelope generator into a low-frequency oscillator that can reach audio rates up to ~2 kHz and LFO rates as low as 0.0028 Hz (6 minutes per cycle).
 
 The envelope generator will act as a standard V/Oct oscillator if the V/Oct CV is patched to both the Attack and Decay CV inputs, and both attenuators are set at -100%.
 
