@@ -151,6 +151,28 @@ Hybrid polyphonic Attack|Decay and Attack|Sustain|Release envelope generator wit
 * Loop option turns the envelope into a V/Oct LFO with CV control to start and stop the oscillation
 * Fully polyphonic: All inputs and outputs are polyphonic with support for audio rates.
 
+### Attack and Decay/Release shapes
+The Attack and Decay/Release stages each have a dedicated small knob to adjust the shape or curve of the stage. Changing the shape does not change the overall time for a rise from 0 to 10, or fall from 10 to 0.
+- Counterclockwise creates a concave up J curve
+- Noon creates a linear rise or fall
+- Clockwise creates a convex up J curve
+
+### ATK (Attack) and DEC (Decay/Release) stage times
+Each stage has a large knob to set the base time of the stage, as well as a CV input and attenuator to dynamically adjust the time.
+
+The total effective time for a complete attack or decay/release can be as short as 0.24 msec or as long as 3 minutes.
+
+The small top left **SPD** (Speed) button sets the range of the time knobs:
+- **Slow** ***(red)***: 0.044 to 181 seconds
+- **Medium** ***(yellow, default)***: 0.0028 to 11.3 seconds
+- **Fast** ***(green)***: 0.00024 to 1.0 seconds
+
+The knob speed can be modulated by the associated CV input with attenuator. Each positive volt of CV doubles the length of the stage. Each negative volt cuts the length in half.
+
+The CV can modulate the effective length beyond the limits of the current time knob configuration. However, the effective length is always clamped to between ~0.24 msec and ~3 min.
+
+Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically undersampled to guarantee that the envelope never stalls. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz.
+
 ### Envelope Triggering Events
 
 Envelopes are always triggered on the leading edge of a trigger or gate.
@@ -159,7 +181,7 @@ The **AD TRIG** (Trigger) and **ASR GATE** each have a manual push button as wel
 
 By default, both buttons maintain a high state for as long as the button is pressed.
 
-If the small **TOG** (Toggle) button is on (yellow), then the ASR Gate button becomes a toggle switch. The first press switches the gate high, and the next press switches the gate low.
+If the small top right **TOG** (Toggle) button is enabled (yellow), then the ASR Gate button becomes a toggle switch. The first press of the ASR Gate button switches the gate high, and the next press switches the gate low.
 
 CV triggers/gates are based on Schmitt triggers that go high above 2V and go low below 0.2V. Voltages between 0.2V and 2V maintain the current state.
 
@@ -171,29 +193,29 @@ All triggers are ignored if any of the other triggers or gates are already in a 
 
 All triggers are ignored during Attack and Sustain stages. This means a trigger can only be received while idle, or during a decay/release stage. A trigger received during decay/release is considered a retrigger event.
 
-### AD envelope (Attack|Decay) behavior
+#### AD envelope (Attack|Decay) behavior
 * Attack stage always rises to full 10V, then immediately progresses to Decay stage
   * If ASR high gate is received during attack and remains high, then the envelope will sustain once 10V is reached until the ASR Gate goes low
-* Decay stage falls back to 0V, but retrigger immediately restarts Attack at current envelope voltage
+* Decay stage falls back to 0V, but retrigger immediately restarts new Attack at current envelope voltage
 
-### ASR envelope (Attack|Sustain|Release) behavior
-* Attack stage rises as long as gate remains high.
+#### ASR envelope (Attack|Sustain|Release) behavior
+* Attack stage rises toward 10V as long as gate remains high
   * If gate goes low, then immediately jumps to Release stage at current voltage
-  * If reaches full 10V then progresses to Sustain stage
+  * If 10V is reached then progresses to Sustain stage
 * Sustain stage maintains 10V as long as gate remains high
   * Progresses to Release stage when gate goes low
-* Release stage falls back to 0V, but retrigger immediately restarts Attack at current envelope voltage
+* Release stage falls back to 0V, but retrigger immediately restarts new Attack at current envelope voltage
 
 ### Outputs
 
 #### ATK (Attack) output
-This gate is high whenever the envelope is in an attack (rising toward 10V) stage
+This gate is high (10V) whenever the envelope is in an attack stage (rising toward 10V), else low (0V) otherwise
 
 #### SUS (Sustain) output
-This gate is high whenever the envelope is in a sustain (maintaining 10V) stage
+This gate is high (10V) whenever the envelope is in a sustain stage (maintaining 10V), else low (0V) otherwise
 
 #### DEC (Decay/Release) output
-This gate is high whenever the envelope is in a decay (falling toward 0V) stage
+This gate is high (10V) whenever the envelope is in a decay stage (falling toward 0V), else low (0V) otherwise
 
 #### ENV (Envelope) output
 The envelopes are output here.
@@ -212,9 +234,34 @@ Decay/Release and ASR Attack behavior can be modified by patching one or more of
 \* AD Trig will sustain at full value while ADSR Gate is high if high ADSR Gate is received on or after the AD Trig  
 \** If envelope is retriggered during Fall to zero stage then it will immediately restart the Rise stage at the current envelope level
 
-### Loop is On
+### Loop mode
+If the small top center **LOOP** button is enabled (yellow), then the envelope generator automatically triggers a new cycle when the Decay/Release stage reaches 0V. This effectively turns the envelope generator into a low-frequency oscillator that can reach audio rates up to ~2 kHz and LFO rates as low as 0.0028 Hz.
 
+The envelope generator will act as a standard V/Oct oscillator if the V/Oct CV is patched to both the Attack and Decay CV inputs, and both attenuators are set at -100%.
 
+The trigger behavior changes while in Loop mode.
+- Oscillation will not begin until either the AD Trig or ASR Gate are triggered (button or CV)
+- Retriggering during Decay is always disabled
+- Oscillation is created by an internal trigger at the end of the Decay stage when it reaches 0V
+- A high AD Trig state (button or CV) blocks the loop trigger, causing oscillation to stop when the decay reaches 0V
+- A high gate at the ASR Gate causes the loop to sustain when it reaches 10V, and then resume oscillation when the gate goes low
+
+Starting and stopping the oscillator can be done via the manual buttons or the CV trigger inputs as follows:
+|Action|Method|
+|---|---|
+|Start oscillation|A short AD Trig or ASR Gate trigger will start oscillation. If an AD trigger is longer than the combined Attack/Decay cycle, then it will only fire a single shot and then stop. If an ASR trigger is longer than the combined Attack/Decay cycle, then it will rise to and hold at 10V, and then start oscillating when the gate goes low.|
+|Temporarily stop oscillation|A high ASR gate will stop and hold at 10V the next time the Attack goes to 10, and resume oscillation when the gate goes low|
+|Permanently stop oscillation|A high AD gate will stop the oscillator the next time the Decay stage reaches 0V. Oscillation can only be restarted with a new AD or ASR trigger|
+
+### Polyphony
+
+All inputs and outputs are fully polyphonic with support for both low frequency and audio rates.
+
+The total number of output channels is determined by the maximum number of channels received across all CV inputs.
+
+Any monophonic CV input is replicated to match the output channel count.
+
+Polyphonic CV input with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
