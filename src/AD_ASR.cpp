@@ -78,6 +78,9 @@ struct AD_ASR : VenomModule {
       gateBtnState=0,
       oldChannels=1;
   
+  float const minTime = pow(2.f,-12.f);
+  float const maxTime = pow(2.f,7.5f);
+  
   float_4 trigCVState[4]{},
           gateCVState[4]{},
           phasor[4]{},
@@ -117,6 +120,18 @@ struct AD_ASR : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+    int undersample=1;
+    // undersample if speed is slow and samplerate is high
+    if (params[SPEED_PARAM].getValue()==0.f && args.sampleRate>97000.f){
+      if (args.sampleRate>385000.f)
+        undersample=8;
+      else if (args.sampleRate>143000.f)
+        undersample=4;
+      else
+        undersample=2;
+      if (args.frame % undersample)
+        return;
+    }
     // get channel count
     int channels=1;
     for (int i=0; i<INPUTS_LEN; i++){
@@ -166,6 +181,8 @@ struct AD_ASR : VenomModule {
     float fallParm = params[FALL_TIME_PARAM].getValue() + offset;
     float riseShape = -params[RISE_SHAPE_PARAM].getValue()*0.9f;
     float fallShape = -params[FALL_SHAPE_PARAM].getValue()*0.9f;
+    float riseCVAmt = params[RISE_CV_PARAM].getValue();
+    float fallCVAmt = params[FALL_CV_PARAM].getValue();
     float loop = params[LOOP_PARAM].getValue();
     // iterate the channels
     for (int s=0, c=0; c<channels; s++, c+=4){
@@ -180,8 +197,8 @@ struct AD_ASR : VenomModule {
       gateCVNewState = ifelse(gateCVVal<0.2f, 0.f, gateCVNewState);
       float_4 gateCVTrig = ifelse(gateCVNewState > gateCVState[s], 1.f, 0.f);
       // compute current stage deltas
-      float_4 riseDelta = args.sampleTime / pow(2.f, inputs[RISE_CV_INPUT].getPolyVoltageSimd<float_4>(c) + riseParm);
-      float_4 fallDelta = -args.sampleTime / pow(2.f, inputs[FALL_CV_INPUT].getPolyVoltageSimd<float_4>(c) + fallParm);
+      float_4 riseDelta = args.sampleTime * undersample / clamp(pow(2.f, inputs[RISE_CV_INPUT].getPolyVoltageSimd<float_4>(c)*riseCVAmt + riseParm), minTime, maxTime);
+      float_4 fallDelta = -args.sampleTime * undersample / clamp(pow(2.f, inputs[FALL_CV_INPUT].getPolyVoltageSimd<float_4>(c)*fallCVAmt + fallParm), minTime, maxTime);
       float_4 delta{};
       delta = ifelse(stage[s]==1.f, riseDelta, delta);
       delta = ifelse(stage[s]==3.f, fallDelta, delta);
