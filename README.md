@@ -141,13 +141,15 @@ Hybrid polyphonic Attack, Decay and Attack, Sustain, Release envelope generator 
 
 ### Loop is Off
 
-|Self Patch|AD Trig Rise|AD Trig Hold|AD Trig Fall|ASR Gate Rise|ASR Gate Hold|ASR Gate Fall|
-|--|--|--|--|--|--|--|
-|None|Full|No|Regriggerable|Partial possible|Hold until ASR gate low|Retriggerable|
-|Atk -> ASR Gate|Full|No|Retriggerable|Full|Hold until ASR gate low|Rtriggerable|
-|Dec -> AD Trig|Full|If AD trig high at full then no else hold until new AD trig received|No retrigger|Full|If ASR gate low and AD trig high at full then no hold, else hold until ASR gate low and AD trig received|No retrigger|
-|Dec -> AD Trig<br />and<br />Atk -> AD Trig|Full|No|No retrigger|Partial possible|Hold until ASR Gate low|No retrigger|
-|Dec -> (AD Trig or ASR Gate)<br />and<br />Atk -> ASR Gate<br />and<br />Sus -> AD Trig|Full|No|No Retrigger|Full|Hold until ASR Gate low|No Retrigger|
+|Self Patch|AD&nbsp;Trig<br />Rise to full|AD&nbsp;Trig<br />Sustain full|AD&nbsp;Trig<br />Fall to zero|ASR&nbsp;Gate<br />Rise to full|ASR&nbsp;Gate<br />Sustain full|ASR&nbsp;Gate<br />Fall to zero|
+|---|---|---|---|---|---|---|
+|None|Yes|No*|Retriggerable**|While gate high|While gate high|Retriggerable**|
+|Atk&nbsp;->&nbsp;ASR&nbsp;Gate|Yes|No*|Retriggerable**|Yes|While gate high|Retriggerable**|
+|Dec&nbsp;->&nbsp;AD&nbsp;Trig<br />Atk&nbsp;->&nbsp;AD&nbsp;Trig|Yes|No*|No retrigger|While gate high|While gate high|No retrigger|
+|Dec&nbsp;->(AD&nbsp;Trig&nbsp;or&nbsp;ASR&nbsp;Gate)<br />Atk&nbsp;->&nbsp;ASR&nbsp;Gate<br />Sus&nbsp;->&nbsp;AD&nbsp;Trig|Yes|No*|No retrigger|Yes|While gate high|No retrigger|
+
+\* AD Trig will sustain at full value while ADSR Gate is high if high ADSR Gate is received on or after the AD Trig  
+\** If envelope is retriggered during Fall to zero stage then it will immediately restart the Rise stage at the current envelope level
 
 ### Loop is On
 
