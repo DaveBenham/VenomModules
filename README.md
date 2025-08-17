@@ -222,7 +222,7 @@ The envelopes are output here.
 
 ### Alternate behaviors via feedback
 
-Decay/Release and ASR Attack behavior can be modified by patching one or more of the stage gate outputs into the AD Trig and/or ASR Gate inputs.
+Decay/Release and ASR Attack behavior can be modified by patching one or more of the stage gate outputs into the AD Trig and/or ASR Gate inputs. These configurations take advantage of VCV's stackable input ports.
 
 |Feedback|AD&nbsp;Trig<br />Rise to full|AD&nbsp;Trig<br />Sustain full|AD&nbsp;Trig<br />Fall to zero|ASR&nbsp;Gate<br />Rise to full|ASR&nbsp;Gate<br />Sustain full|ASR&nbsp;Gate<br />Fall to zero|
 |---|---|---|---|---|---|---|
