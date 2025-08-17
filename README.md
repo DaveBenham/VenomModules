@@ -137,7 +137,61 @@ Finally thanks to Ewan Hemingway. Through discussions and studying the Befaco Ev
 
 ## AD/ASR ENVELOPE GENERATOR
 ![AD/ASR Envelope Generator module image](doc/AD_ASR.png)  
-Hybrid polyphonic Attack, Decay and Attack, Sustain, Release envelope generator with looping capabilities and precise V/Oct CV control over stage lengths.
+Hybrid polyphonic Attack|Decay and Attack|Sustain|Release envelope generator with looping capabilities and precise V/Oct CV control over stage lengths.
+
+### Summary of Features
+* Separate AD trigger and ASR gate inputs allow one envelope generator to support both behaviors simultaneously
+* Wide stage length range: 0.24 msec to 3 min
+* Stage lengths are precise with accuracy dictated by VCV sample rate
+* V/Oct CV control over stage lengths with attenuverters
+* Independent stage shape controls for Attack and Decay/Release: concave up J curve to linear to concave down J curve
+* Envelope can be retriggered from current voltage level during Decay/Release stage
+* Attack, Decay, and Sustain gate outputs indicate which stage is currently active
+* Feedback from stage gates can block retrigger behavior and/or force ASR attack to rise to full value
+* Loop option turns the envelope into a V/Oct LFO with CV control to start and stop the oscillation
+* Fully polyphonic: All inputs and outputs are polyphonic with support for audio rates.
+
+### Envelope Triggering Events
+
+Envelopes are always triggered on the leading edge of a trigger or gate.
+
+The **AD TRIG** (Trigger) and **ASR GATE** each have a manual push button as well as a CV input. The state of manual push buttons and CV inputs are maintained independently.
+
+By default, both buttons maintain a high state for as long as the button is pressed.
+
+If the small **TOG** (Toggle) button is on (yellow), then the ASR Gate button becomes a toggle switch. The first press switches the gate high, and the next press switches the gate low.
+
+CV triggers/gates are based on Schmitt triggers that go high above 2V and go low below 0.2V. Voltages between 0.2V and 2V maintain the current state.
+
+All triggers are ignored during Attack and Sustain stages.
+
+All triggers are ignored if any of the other triggers or gates are already in a high state.
+
+AD triggers take precedence over ASR Gate triggers.
+
+### AD envelope (Attack|Decay) behavior
+* Attack stage always rises to full 10V, then immediately progresses to Decay stage
+  * If ASR high gate is received during attack and remains high, then the envelope will sustain once 10V is reached until the ASR Gate goes low
+* Decay stage falls back to 0V, but retrigger immediately restarts Attack at current envelope voltage
+
+### ASR envelope (Attack|Sustain|Release) behavior
+* Attack stage rises as long as gate remains high.
+  * If gate goes low, then immediately jumps to Release stage at current voltage
+  * If reaches full 10V then progresses to Sustain stage
+* Sustain stage maintains 10V as long as gate remains high
+  * Progresses to Release stage when gate goes low
+* Release stage falls back to 0V, but retrigger immediately restarts Attack at current envelope voltage
+
+### Stage gate outputs
+
+#### ATK (Attack) output
+This gate is high whenever the envelope is in an attack (rising toward 10V) stage
+
+#### SUS (Sustain) output
+This gate is high whenever the envelope is in a sustain (maintaining 10V) stage
+
+#### DEC (Decay/Release) output
+This gate is high whenever the envelope is in a decay (falling toward 0V) stage
 
 ### Loop is Off
 
