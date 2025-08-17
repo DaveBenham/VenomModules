@@ -144,7 +144,7 @@ Hybrid polyphonic Attack|Decay and Attack|Sustain|Release envelope generator wit
 * Wide stage length range: 0.24 msec to 3 min
 * Stage lengths are precise with accuracy dictated by VCV sample rate
 * V/Oct CV control over stage lengths with attenuverters
-* Independent stage shape controls for Attack and Decay/Release: concave up J curve to linear to concave down J curve
+* Independent stage shape controls for Attack and Decay/Release: concave up to linear to concave down
 * Envelope can be retriggered from current voltage level during Decay/Release stage
 * Attack, Decay, and Sustain gate outputs indicate which stage is currently active
 * Feedback from stage gates can block retrigger behavior and/or force ASR attack to rise to full value
