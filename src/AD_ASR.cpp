@@ -84,12 +84,7 @@ struct AD_ASR : VenomModule {
 
   float const minTime = pow(2.f,-12.f);
   float const maxTime = pow(2.f,7.5f);
-  
-  float_4 f4_0 = 0.f,
-          f4_1 = 1.f,
-          f4_2 = 2.f,
-          f4_3 = 3.f;
-  
+
   float_4 trigCVState[4]{},
           gateCVState[4]{},
           phasor[4]{},
@@ -183,7 +178,7 @@ struct AD_ASR : VenomModule {
     // partially manage loop mode
     if (mode != params[MODE_PARAM].getValue()) {
       mode = params[MODE_PARAM].getValue();
-      loop = mode == 2.f ? f4_1 : f4_0;
+      loop = mode == 2.f ? 1.f : 0.f;
       blockRetrigStage = mode == 0.f || mode == 2.f ? 1.f : -1.f /*none*/;
     }
     // compute some process constants that work for all channels
@@ -206,57 +201,57 @@ struct AD_ASR : VenomModule {
     for (int s=0, c=0; c<channels; s++, c+=4){
       // compute trig CV state and trig
       float_4 trigCVVal = inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c);
-      float_4 trigCVNewState = ifelse(trigCVVal>f4_2, f4_1, trigCVState[s]);
-      trigCVNewState = ifelse(trigCVVal<0.2f, f4_0, trigCVNewState);
-      float_4 trigCVTrig = ifelse(trigCVNewState > trigCVState[s], f4_1, f4_0);
+      float_4 trigCVNewState = ifelse(trigCVVal>2.f, 1.f, trigCVState[s]);
+      trigCVNewState = ifelse(trigCVVal<0.2f, 0.f, trigCVNewState);
+      float_4 trigCVTrig = ifelse(trigCVNewState > trigCVState[s], 1.f, 0.f);
       // compute gate CV state and trig
       float_4 gateCVVal = inputs[GATE_INPUT].getPolyVoltageSimd<float_4>(c);
-      float_4 gateCVNewState = ifelse(gateCVVal>f4_2, f4_1, gateCVState[s]);
-      gateCVNewState = ifelse(gateCVVal<0.2f, f4_0, gateCVNewState);
-      float_4 gateCVTrig = ifelse(gateCVNewState > gateCVState[s], f4_1, f4_0);
+      float_4 gateCVNewState = ifelse(gateCVVal>2.f, 1.f, gateCVState[s]);
+      gateCVNewState = ifelse(gateCVVal<0.2f, 0.f, gateCVNewState);
+      float_4 gateCVTrig = ifelse(gateCVNewState > gateCVState[s], 1.f, 0.f);
       // compute current stage deltas
       float_4 riseDelta = args.sampleTime * undersample / clamp(pow(2.f, inputs[RISE_CV_INPUT].getPolyVoltageSimd<float_4>(c)*riseCVAmt + riseParm), minTime, maxTime);
       float_4 fallDelta = -args.sampleTime * undersample / clamp(pow(2.f, inputs[FALL_CV_INPUT].getPolyVoltageSimd<float_4>(c)*fallCVAmt + fallParm), minTime, maxTime);
       float_4 delta{};
-      delta = ifelse(stage[s]==f4_1, riseDelta, delta);
-      delta = ifelse(stage[s]==f4_3, fallDelta, delta);
+      delta = ifelse(stage[s]==1.f, riseDelta, delta);
+      delta = ifelse(stage[s]==3.f, fallDelta, delta);
       // update phasor
       phasor[s] = clamp(phasor[s]+delta);
       // compute and apply stage shapes
       float_4 shape{};
-      shape = ifelse(stage[s]==f4_1, riseShape, shape);
-      shape = ifelse(stage[s]==f4_3, fallShape, shape);
+      shape = ifelse(stage[s]==1.f, riseShape, shape);
+      shape = ifelse(stage[s]==3.f, fallShape, shape);
       float_4 curve = normSigmoid(phasor[s], shape);
       // set ENV output
       outputs[ENV_OUTPUT].setVoltageSimd(curve*10.f, c);
       // progress through stages
       loop = mode==3.f ? gateCVNewState + gateBtnNewState : loop;
       float_4 newStage = stage[s];
-      float_4 hold = mode != 3.f ? gateCVNewState + gateBtnNewState : f4_0;
-      newStage = ifelse((stage[s]==f4_1) & ((hold+fullRise[s]+loop)==f4_0), f4_3, newStage);
-      newStage = ifelse(phasor[s]!=f4_1, newStage, ifelse(hold>f4_0, f4_2, f4_3));
-      newStage = ifelse(phasor[s]==f4_0, f4_0, newStage);
-      float_4 blockTrig = mode != 3.f ? trigCVState[s] + trigBtnState : f4_0;
-      float_4 loopTrig = ifelse((blockTrig==f4_0) & (stage[s]==f4_3) & (phasor[s]==f4_0), loop, f4_0);
+      float_4 hold = mode != 3.f ? gateCVNewState + gateBtnNewState : 0.f;
+      newStage = ifelse((stage[s]==1.f) & ((hold+fullRise[s]+loop)==0.f), 3.f, newStage);
+      newStage = ifelse(phasor[s]!=1.f, newStage, ifelse(hold>0.f, 2.f, 3.f));
+      newStage = ifelse(phasor[s]==0.f, 0.f, newStage);
+      float_4 blockTrig = mode != 3.f ? trigCVState[s] + trigBtnState : 0.f;
+      float_4 loopTrig = ifelse((blockTrig==0.f) & (stage[s]==3.f) & (phasor[s]==0.f), loop, 0.f);
       if (mode != 3.f) {
         blockTrig += gateCVState[s] + gateBtnState;
-        blockTrig += ifelse(stage[s]!=f4_0, loop, f4_0);
+        blockTrig += ifelse(stage[s]!=0.f, loop, 0.f);
       }  
-      float_4 fullTrig = ifelse((blockTrig==f4_0) & (stage[s]!=blockRetrigStage), trigCVTrig + trigBtnTrig, f4_0);
-      float_4 anyTrig = ifelse((blockTrig==f4_0) & (stage[s]!=blockRetrigStage), fullTrig + gateCVTrig + gateBtnTrig, f4_0);
+      float_4 fullTrig = ifelse((blockTrig==0.f) & (stage[s]!=blockRetrigStage), trigCVTrig + trigBtnTrig, 0.f);
+      float_4 anyTrig = ifelse((blockTrig==0.f) & (stage[s]!=blockRetrigStage), fullTrig + gateCVTrig + gateBtnTrig, 0.f);
       anyTrig += loopTrig;
-      newStage = ifelse(anyTrig>f4_0, f4_1, newStage);
+      newStage = ifelse(anyTrig>0.f, 1.f, newStage);
       // adjust phasor to incoming curve value or 0.f if entering stage 1
-      phasor[s] = ifelse((newStage==f4_1) & (anyTrig>f4_0), mode==1.f || mode==3.f ? f4_0 : invNormSigmoid(curve, riseShape), phasor[s]);
+      phasor[s] = ifelse((newStage==1.f) & (anyTrig>0.f), mode==1.f || mode==3.f ? 0.f : invNormSigmoid(curve, riseShape), phasor[s]);
       // adjust phasor to incoming curve value if entering stage 3
-      phasor[s] = ifelse((newStage==f4_3) & (stage[s]!=f4_3), invNormSigmoid(curve, fallShape), phasor[s]);
+      phasor[s] = ifelse((newStage==3.f) & (stage[s]!=3.f), invNormSigmoid(curve, fallShape), phasor[s]);
       //set final stage outcome
       stage[s] = newStage;
-      fullRise[s] = ifelse(anyTrig>f4_0, ifelse(fullTrig>f4_0, f4_1, f4_0), fullRise[s]);
+      fullRise[s] = ifelse(anyTrig>0.f, ifelse(fullTrig>0.f, 1.f, 0.f), fullRise[s]);
       // set output gates
-      outputs[RISE_OUTPUT].setVoltageSimd(ifelse(stage[s]==f4_1, 10.f, f4_0), c);
-      outputs[SUS_OUTPUT].setVoltageSimd(ifelse(stage[s]==f4_2, 10.f, f4_0), c);
-      outputs[FALL_OUTPUT].setVoltageSimd(ifelse(stage[s]==f4_3, 10.f, f4_0), c);
+      outputs[RISE_OUTPUT].setVoltageSimd(ifelse(stage[s]==1.f, 10.f, 0.f), c);
+      outputs[SUS_OUTPUT].setVoltageSimd(ifelse(stage[s]==2.f, 10.f, 0.f), c);
+      outputs[FALL_OUTPUT].setVoltageSimd(ifelse(stage[s]==3.f, 10.f, 0.f), c);
       // update global states
       trigCVState[s] = trigCVNewState;
       gateCVState[s] = gateCVNewState;
