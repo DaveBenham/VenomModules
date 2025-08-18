@@ -7,7 +7,7 @@
 struct AD_ASR : VenomModule {
   enum ParamId {
     SPEED_PARAM,
-    LOOP_PARAM,
+    MODE_PARAM,
     TOGGLE_PARAM,
     TRIG_PARAM,
     GATE_PARAM,
@@ -77,9 +77,18 @@ struct AD_ASR : VenomModule {
       trigBtnState=0,
       gateBtnState=0,
       oldChannels=1;
-  
+
+  float mode = 0.f,
+        blockRetrigStage = 1.f;
+  float_4 loop{};
+
   float const minTime = pow(2.f,-12.f);
   float const maxTime = pow(2.f,7.5f);
+  
+  float_4 f4_0 = 0.f,
+          f4_1 = 1.f,
+          f4_2 = 2.f,
+          f4_3 = 3.f;
   
   float_4 trigCVState[4]{},
           gateCVState[4]{},
@@ -91,43 +100,48 @@ struct AD_ASR : VenomModule {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
     configSwitch<FixedSwitchQuantity>(SPEED_PARAM, 0.f, 2.f, 1.f, "Stage speed", {"Slow (0.044 - 181 sec)", "Medium (0.0027 - 11.3 sec)", "Fast (0.00024 - 1.0 sec)"});
-    configSwitch<FixedSwitchQuantity>(LOOP_PARAM, 0.f, 1.f, 0.f, "AD Loop", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 3.f, 0.f, "Mode", {
+      "1) TRIG=AD, GATE=ASR | Retrig current level",
+      "2) TRIG=AD, GATE=ASR | Retrig 0V",
+      "3) Loop: TRIG=Start, held TRIG=Stop, GATE=Hold 10V",
+      "4) GATE low: TRIG=AD, Retrig 0V | GATE high: Loop, TRIG=Hard sync"
+    });
     configSwitch<FixedSwitchQuantity>(TOGGLE_PARAM, 0.f, 1.f, 0.f, "Gate button toggle mode", {"Off", "On"});
 
-    configParam(TRIG_PARAM, 0.f, 1.f, 0.f, "Manual AD trigger");
-    configParam(GATE_PARAM, 0.f, 1.f, 0.f, "Manual ASR gate");
+    configParam(TRIG_PARAM, 0.f, 1.f, 0.f, "Manual trigger");
+    configParam(GATE_PARAM, 0.f, 1.f, 0.f, "Manual gate");
 
-    configParam(RISE_SHAPE_PARAM, -1.f, 1.f, 0.f, "Attack shape");
-    configParam(FALL_SHAPE_PARAM, -1.f, 1.f, 0.f, "Decay/Release shape");
+    configParam(RISE_SHAPE_PARAM, -1.f, 1.f, 0.f, "Rise shape");
+    configParam(FALL_SHAPE_PARAM, -1.f, 1.f, 0.f, "Fall shape");
 
-    configParam<TimeQuantity>(RISE_TIME_PARAM, -8.5f, 3.5f, -3.f, "Attack time", " s", 2, 1, 0);
-    configParam<TimeQuantity>(FALL_TIME_PARAM, -8.5f, 3.5f, 0.f, "Decay/Release time", " s", 2, 1, 0);
+    configParam<TimeQuantity>(RISE_TIME_PARAM, -8.5f, 3.5f, -3.f, "Rise time", " s", 2, 1, 0);
+    configParam<TimeQuantity>(FALL_TIME_PARAM, -8.5f, 3.5f, 0.f, "Fall time", " s", 2, 1, 0);
 
-    configParam(RISE_CV_PARAM, -1.f, 1.f, 0.f, "Attack time CV amount", "%", 0, 100, 0);
-    configParam(FALL_CV_PARAM, -1.f, 1.f, 0.f, "Decay/Release time CV amount", "%", 0, 100, 0);
+    configParam(RISE_CV_PARAM, -1.f, 1.f, 0.f, "Rise time CV amount", "%", 0, 100, 0);
+    configParam(FALL_CV_PARAM, -1.f, 1.f, 0.f, "Fall time CV amount", "%", 0, 100, 0);
     
-    configInput(RISE_CV_INPUT, "Attack time CV");
-    configInput(FALL_CV_INPUT, "Decay/Release time CV");
+    configInput(RISE_CV_INPUT, "Rise time CV");
+    configInput(FALL_CV_INPUT, "Fall time CV");
     
-    configInput(TRIG_INPUT, "AD trigger");
-    configInput(GATE_INPUT, "ASR gate");
+    configInput(TRIG_INPUT, "Trigger");
+    configInput(GATE_INPUT, "Gate");
     
-    configOutput(RISE_OUTPUT, "Attack gate");
-    configOutput(FALL_OUTPUT, "Decay/Release gate");
-    configOutput(SUS_OUTPUT, "Sustain gate");
+    configOutput(RISE_OUTPUT, "Rising gate");
+    configOutput(FALL_OUTPUT, "Falling gate");
+    configOutput(SUS_OUTPUT, "Sustaining gate");
     configOutput(ENV_OUTPUT, "Envelope");
   }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     int undersample=1;
-    // undersample if speed is slow and samplerate is high
+    // under-sample (skip frames) if speed is slow and sample rate is high
     if (params[SPEED_PARAM].getValue()==0.f && args.sampleRate>97000.f){
       if (args.sampleRate>385000.f)
         undersample=8;
       else if (args.sampleRate>143000.f)
         undersample=4;
-      else
+      else // sampleRate>97000.f
         undersample=2;
       if (args.frame % undersample)
         return;
@@ -166,8 +180,13 @@ struct AD_ASR : VenomModule {
       }
     }
     int gateBtnTrig = gateBtnNewState > gateBtnState;
-    
-    // compute some constants that work for all channels
+    // partially manage loop mode
+    if (mode != params[MODE_PARAM].getValue()) {
+      mode = params[MODE_PARAM].getValue();
+      loop = mode == 2.f ? f4_1 : f4_0;
+      blockRetrigStage = mode == 0.f || mode == 2.f ? 1.f : -1.f /*none*/;
+    }
+    // compute some process constants that work for all channels
     float offset = 0.f;
     switch (static_cast<int>(params[SPEED_PARAM].getValue())) {
       case 0:
@@ -179,62 +198,65 @@ struct AD_ASR : VenomModule {
     }
     float riseParm = params[RISE_TIME_PARAM].getValue() + offset;
     float fallParm = params[FALL_TIME_PARAM].getValue() + offset;
-    float riseShape = -params[RISE_SHAPE_PARAM].getValue()*0.9f;
-    float fallShape = -params[FALL_SHAPE_PARAM].getValue()*0.9f;
+    float riseShape = -params[RISE_SHAPE_PARAM].getValue()*0.95f;
+    float fallShape = -params[FALL_SHAPE_PARAM].getValue()*0.95f;
     float riseCVAmt = params[RISE_CV_PARAM].getValue();
     float fallCVAmt = params[FALL_CV_PARAM].getValue();
-    float loop = params[LOOP_PARAM].getValue();
     // iterate the channels
     for (int s=0, c=0; c<channels; s++, c+=4){
       // compute trig CV state and trig
       float_4 trigCVVal = inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c);
-      float_4 trigCVNewState = ifelse(trigCVVal>2.f, 1.f, trigCVState[s]);
-      trigCVNewState = ifelse(trigCVVal<0.2f, 0.f, trigCVNewState);
-      float_4 trigCVTrig = ifelse(trigCVNewState > trigCVState[s], 1.f, 0.f);
+      float_4 trigCVNewState = ifelse(trigCVVal>f4_2, f4_1, trigCVState[s]);
+      trigCVNewState = ifelse(trigCVVal<0.2f, f4_0, trigCVNewState);
+      float_4 trigCVTrig = ifelse(trigCVNewState > trigCVState[s], f4_1, f4_0);
       // compute gate CV state and trig
       float_4 gateCVVal = inputs[GATE_INPUT].getPolyVoltageSimd<float_4>(c);
-      float_4 gateCVNewState = ifelse(gateCVVal>2.f, 1.f, gateCVState[s]);
-      gateCVNewState = ifelse(gateCVVal<0.2f, 0.f, gateCVNewState);
-      float_4 gateCVTrig = ifelse(gateCVNewState > gateCVState[s], 1.f, 0.f);
+      float_4 gateCVNewState = ifelse(gateCVVal>f4_2, f4_1, gateCVState[s]);
+      gateCVNewState = ifelse(gateCVVal<0.2f, f4_0, gateCVNewState);
+      float_4 gateCVTrig = ifelse(gateCVNewState > gateCVState[s], f4_1, f4_0);
       // compute current stage deltas
       float_4 riseDelta = args.sampleTime * undersample / clamp(pow(2.f, inputs[RISE_CV_INPUT].getPolyVoltageSimd<float_4>(c)*riseCVAmt + riseParm), minTime, maxTime);
       float_4 fallDelta = -args.sampleTime * undersample / clamp(pow(2.f, inputs[FALL_CV_INPUT].getPolyVoltageSimd<float_4>(c)*fallCVAmt + fallParm), minTime, maxTime);
       float_4 delta{};
-      delta = ifelse(stage[s]==1.f, riseDelta, delta);
-      delta = ifelse(stage[s]==3.f, fallDelta, delta);
+      delta = ifelse(stage[s]==f4_1, riseDelta, delta);
+      delta = ifelse(stage[s]==f4_3, fallDelta, delta);
       // update phasor
       phasor[s] = clamp(phasor[s]+delta);
       // compute and apply stage shapes
       float_4 shape{};
-      shape = ifelse(stage[s]==1.f, riseShape, shape);
-      shape = ifelse(stage[s]==3.f, fallShape, shape);
+      shape = ifelse(stage[s]==f4_1, riseShape, shape);
+      shape = ifelse(stage[s]==f4_3, fallShape, shape);
       float_4 curve = normSigmoid(phasor[s], shape);
       // set ENV output
       outputs[ENV_OUTPUT].setVoltageSimd(curve*10.f, c);
       // progress through stages
+      loop = mode==3.f ? gateCVNewState + gateBtnNewState : loop;
       float_4 newStage = stage[s];
-      float_4 hold = gateCVNewState + gateBtnNewState;
-      newStage = ifelse((stage[s]==1.f) & ((hold+fullRise[s]+loop)==0.f), 3.f, newStage);
-      newStage = ifelse(phasor[s]!=1.f, newStage, ifelse(hold>0.f, 2.f, 3.f));
-      newStage = ifelse(phasor[s]==0.f, 0.f, newStage);
-      float_4 blockTrig = trigCVState[s] + trigBtnState;
-      float_4 loopTrig = ifelse((blockTrig==0.f) & (stage[s]==3.f) & (phasor[s]==0.f), loop, 0.f);
-      blockTrig += gateCVState[s] + gateBtnState;
-      blockTrig += ifelse(stage[s]!=0.f, loop, 0.f);
-      float_4 fullTrig = ifelse((blockTrig==0.f) & (stage[s]!=1.f), trigCVTrig + trigBtnTrig, 0.f);
-      float_4 anyTrig = ifelse((blockTrig==0.f) & (stage[s]!=1.f), fullTrig + gateCVTrig + gateBtnTrig, 0.f);
+      float_4 hold = mode != 3.f ? gateCVNewState + gateBtnNewState : f4_0;
+      newStage = ifelse((stage[s]==f4_1) & ((hold+fullRise[s]+loop)==f4_0), f4_3, newStage);
+      newStage = ifelse(phasor[s]!=f4_1, newStage, ifelse(hold>f4_0, f4_2, f4_3));
+      newStage = ifelse(phasor[s]==f4_0, f4_0, newStage);
+      float_4 blockTrig = mode != 3.f ? trigCVState[s] + trigBtnState : f4_0;
+      float_4 loopTrig = ifelse((blockTrig==f4_0) & (stage[s]==f4_3) & (phasor[s]==f4_0), loop, f4_0);
+      if (mode != 3.f) {
+        blockTrig += gateCVState[s] + gateBtnState;
+        blockTrig += ifelse(stage[s]!=f4_0, loop, f4_0);
+      }  
+      float_4 fullTrig = ifelse((blockTrig==f4_0) & (stage[s]!=blockRetrigStage), trigCVTrig + trigBtnTrig, f4_0);
+      float_4 anyTrig = ifelse((blockTrig==f4_0) & (stage[s]!=blockRetrigStage), fullTrig + gateCVTrig + gateBtnTrig, f4_0);
       anyTrig += loopTrig;
-      newStage = ifelse(anyTrig>0.f, 1.f, newStage);
-      // adjust phasor to incoming curve value if entering stage 1 or 3
-      phasor[s] = ifelse((newStage==1.f) & (stage[s]!=1.f), invNormSigmoid(curve, riseShape), phasor[s]);
-      phasor[s] = ifelse((newStage==3.f) & (stage[s]!=3.f), invNormSigmoid(curve, fallShape), phasor[s]);
+      newStage = ifelse(anyTrig>f4_0, f4_1, newStage);
+      // adjust phasor to incoming curve value or 0.f if entering stage 1
+      phasor[s] = ifelse((newStage==f4_1) & (anyTrig>f4_0), mode==1.f || mode==3.f ? f4_0 : invNormSigmoid(curve, riseShape), phasor[s]);
+      // adjust phasor to incoming curve value if entering stage 3
+      phasor[s] = ifelse((newStage==f4_3) & (stage[s]!=f4_3), invNormSigmoid(curve, fallShape), phasor[s]);
       //set final stage outcome
       stage[s] = newStage;
-      fullRise[s] = ifelse(anyTrig>0.f, ifelse(fullTrig>0.f, 1.f, 0.f), fullRise[s]);
+      fullRise[s] = ifelse(anyTrig>f4_0, ifelse(fullTrig>f4_0, f4_1, f4_0), fullRise[s]);
       // set output gates
-      outputs[RISE_OUTPUT].setVoltageSimd(ifelse(stage[s]==1.f, 10.f, 0.f), c);
-      outputs[SUS_OUTPUT].setVoltageSimd(ifelse(stage[s]==2.f, 10.f, 0.f), c);
-      outputs[FALL_OUTPUT].setVoltageSimd(ifelse(stage[s]==3.f, 10.f, 0.f), c);
+      outputs[RISE_OUTPUT].setVoltageSimd(ifelse(stage[s]==f4_1, 10.f, f4_0), c);
+      outputs[SUS_OUTPUT].setVoltageSimd(ifelse(stage[s]==f4_2, 10.f, f4_0), c);
+      outputs[FALL_OUTPUT].setVoltageSimd(ifelse(stage[s]==f4_3, 10.f, f4_0), c);
       // update global states
       trigCVState[s] = trigCVNewState;
       gateCVState[s] = gateCVNewState;
@@ -258,6 +280,15 @@ struct AD_ASRWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
     }
   };
+  
+  struct ModeSwitch : GlowingSvgSwitchLockable {
+    ModeSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+    }
+  };
 
   struct OnOffSwitch : GlowingSvgSwitchLockable {
     OnOffSwitch() {
@@ -271,26 +302,26 @@ struct AD_ASRWidget : VenomWidget {
     setVenomPanel("AD_ASR");
 
     addParam(createLockableParam<SpeedSwitch>(Vec(13.22f, 44.297f), module, AD_ASR::SPEED_PARAM));
-    addParam(createLockableParam<OnOffSwitch>(Vec(33.72f, 44.297f), module, AD_ASR::LOOP_PARAM));
+    addParam(createLockableParam<ModeSwitch>(Vec(33.72f, 44.297f), module, AD_ASR::MODE_PARAM));
     addParam(createLockableParam<OnOffSwitch>(Vec(54.22f, 44.297f), module, AD_ASR::TOGGLE_PARAM));
 
-    addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(21.f, 82.5), module, AD_ASR::TRIG_PARAM, AD_ASR::TRIG_LIGHT));
-    addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(54.f, 82.5), module, AD_ASR::GATE_PARAM, AD_ASR::GATE_LIGHT));
+    addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(21.f, 78.5), module, AD_ASR::TRIG_PARAM, AD_ASR::TRIG_LIGHT));
+    addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(54.f, 78.5), module, AD_ASR::GATE_PARAM, AD_ASR::GATE_LIGHT));
 
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(21.f, 112.5f), module, AD_ASR::RISE_SHAPE_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(54.f, 112.5f), module, AD_ASR::FALL_SHAPE_PARAM));
 
-    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(21.f, 151.f), module, AD_ASR::RISE_TIME_PARAM));
-    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(54.f, 151.f), module, AD_ASR::FALL_TIME_PARAM));
+    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(21.f, 153.f), module, AD_ASR::RISE_TIME_PARAM));
+    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(54.f, 153.f), module, AD_ASR::FALL_TIME_PARAM));
 
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(21.f, 187.f), module, AD_ASR::RISE_CV_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(54.f, 187.f), module, AD_ASR::FALL_CV_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(21.f, 189.f), module, AD_ASR::RISE_CV_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(54.f, 189.f), module, AD_ASR::FALL_CV_PARAM));
 
-    addInput(createInputCentered<PolyPort>(Vec(21.f, 220.5), module, AD_ASR::RISE_CV_INPUT));
-    addInput(createInputCentered<PolyPort>(Vec(54.f, 220.5), module, AD_ASR::FALL_CV_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(21.f, 222.5), module, AD_ASR::RISE_CV_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(54.f, 222.5), module, AD_ASR::FALL_CV_INPUT));
 
-    addInput(createInputCentered<PolyPort>(Vec(21.f, 266.5), module, AD_ASR::TRIG_INPUT));
-    addInput(createInputCentered<PolyPort>(Vec(54.f, 266.5), module, AD_ASR::GATE_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(21.f, 264.5), module, AD_ASR::TRIG_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(54.f, 264.5), module, AD_ASR::GATE_INPUT));
 
     addOutput(createOutputCentered<PolyPort>(Vec(21.f, 304.5), module, AD_ASR::RISE_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(54.f, 304.5), module, AD_ASR::FALL_OUTPUT));
