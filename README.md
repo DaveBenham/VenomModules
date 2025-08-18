@@ -137,30 +137,31 @@ Finally thanks to Ewan Hemingway. Through discussions and studying the Befaco Ev
 
 ## AD/ASR ENVELOPE GENERATOR
 ![AD/ASR Envelope Generator module image](doc/AD_ASR.png)  
-Hybrid polyphonic Attack|Decay and Attack|Sustain|Release envelope generator with looping capabilities and precise V/Oct CV control over stage lengths.
+Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope generator with looping capabilities and precise V/Oct CV control over stage lengths.
 
 ### Summary of Features
-* Separate AD trigger and ASR gate inputs allow one envelope generator to support both behaviors simultaneously
+* Separate trigger and gate inputs allow one envelope generator to support both AD and ASR behaviors simultaneously
 * Wide stage length range: 0.24 msec to 3 min
 * Stage lengths are precise with accuracy dictated by VCV sample rate
 * V/Oct CV control over stage lengths with attenuverters
-* Independent stage shape controls for Attack and Decay/Release: concave up to linear to concave down
-* Envelope can be retriggered from current voltage level during Decay/Release stage
-* Attack, Decay, and Sustain gate outputs indicate which stage is currently active
+* Independent stage shape controls for Rise and Fall: concave up to linear to concave down
+* Changing a stage shape does not alter the overall time
+* Multiple modes with different retrigger options: retrigger from 0 or current level
+* Rise, Fall, and Sustain gate outputs indicate which stage is currently active
 * Feedback from stage gates can block retrigger behavior and/or force ASR attack to rise to full value
-* Loop option turns the envelope into a V/Oct LFO with CV control to start and stop the oscillation
-* Fully polyphonic: All inputs and outputs are polyphonic with support for audio rates.
+* Loop options turn the envelope into a V/Oct LFO with CV control to start and stop the oscillation
+* All inputs and outputs are polyphonic with support for audio rates.
 
-### Attack and Decay/Release shapes
-The Attack and Decay/Release stages each have a dedicated small knob to adjust the shape or curve of the stage. Changing the shape does not change the overall time for a rise from 0 to 10, or fall from 10 to 0.
+### FALL and RISE shapes
+The Fall and Rise stages each have a dedicated small knob to adjust the shape or curve of the stage. Changing the shape does not change the overall time for a rise from 0 to 10, or fall from 10 to 0.
 - Counterclockwise creates a concave up J curve
 - Noon creates a linear rise or fall
 - Clockwise creates a convex up J curve
 
-### ATK (Attack) and DEC (Decay/Release) stage times
-Each stage has a large knob to set the base time of the stage, as well as a CV input and attenuator to dynamically adjust the time.
+### RISE and FALL stage times
+Each stage has a large knob to set the base time of the stage, as well as a CV input and attenuator to dynamically modulate the time.
 
-The total effective time for a complete attack or decay/release can be as short as 0.24 msec or as long as 3 minutes.
+The total effective time for a Rise from 0 to 10 or Fall from 10 to 0 can be as short as 0.24 msec or as long as 3 minutes.
 
 The small top left **SPD** (Speed) button sets the range of the time knobs:
 - **Slow** ***(red)***: 0.044 to 181 seconds
@@ -171,27 +172,41 @@ The knob speed can be modulated by the associated CV input with attenuator. Each
 
 The CV can modulate the effective length beyond the limits of the current time knob configuration. However, the effective length is always clamped to between ~0.24 msec and ~3 min.
 
-Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically undersampled to guarantee that the envelope never stalls. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz. The envelope will never stall if stage length CV is not used.
+Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically under-sampled to guarantee that the envelope never stalls. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz. The envelope will never stall if stage length CV is not used.
 
 ### Envelope Triggering Events
 
-Envelopes are always triggered on the leading edge of a trigger or gate.
+Envelopes are always triggered on the leading edge of a trigger or gate. TRIG creates AD envelopes, and GATE creates ASR envelopes.
 
-The **AD TRIG** (Trigger) and **ASR GATE** each have a manual push button as well as a CV input. The state of manual push buttons and CV inputs are maintained independently.
+TRIG and GATE each have a manual push button as well as a CV input. The state of manual push buttons and CV inputs are maintained independently.
 
-By default, both buttons maintain a high state for as long as the button is pressed.
+By default, the manual TRIG and manual GATE buttons maintain a high state for as long as the button is pressed.
 
-If the small top right **TOG** (Toggle) button is enabled (yellow), then the ASR Gate button becomes a toggle switch. The first press of the ASR Gate button switches the gate high, and the next press switches the gate low.
+If the small top right **TOG** (Toggle) button is enabled (yellow), then the GATE button becomes a toggle switch. The first press of the GATE button switches the gate high, and the next press switches the gate low.
 
-CV triggers/gates are based on Schmitt triggers that go high above 2V and go low below 0.2V. Voltages between 0.2V and 2V maintain the current state.
+Triggers for TRIG and GATE CV are based on Schmitt triggers that go high above 2V and go low below 0.2V. Voltages between 0.2V and 2V maintain the current state.
 
-The type of envelope generated (AD or ASR) depends on which trigger is received first.
+The type of envelope generated (AD or ASR) depends on which trigger is received first, TRIG or GATE.
 
-AD triggers take precedence over ASR Gate triggers.
+TRIG (AD) triggers take precedence over GATE (ASR) triggers.
 
-All triggers are ignored if any of the other triggers or gates are already in a high state.
+All triggers are typically ignored if any of the other triggers or gates are already in a high state.
 
-All triggers are ignored during Attack and Sustain stages. This means a trigger can only be received while idle, or during a decay/release stage. A trigger received during decay/release is considered a retrigger event.
+Depending on the current MODE setting, some triggers may be ignored during certain stages.
+
+### Modes of operation
+
+The small top middle MODE button can alter the behavior of TRIG and GATE, and controls when and how envelopes are retriggered. It can also cause envelopes to loop, effectively turning the module into an LFO.
+
+There are four modes to choose from:
+
+**Mode 1** ***(light blue, default)*** TRIG initiated AD and GATE initiated ADSR envelopes that can retrigger from the current value while falling
+**Mode 2** ***(blue)*** TRIG initiated AD and GATE initiated ASR envelopes that can retrigger from 0 while rising or falling
+**Mode 3** ***(yellow)*** Looping envelopes that are started and stopped via TRIG, and GATE gauses the oscillator to sustain 10V
+**Mode 4** ***(green)*** TRIG initiated AD envelope if GATE is low, or looping AD envelope that is reset by TRIG if GATE is high
+
+#### 1) *(light blue, default)* AD and ADSR envelopes that retrigger from the current value
+* Rise stage always
 
 #### AD envelope (Attack|Decay) behavior
 * Attack stage always rises to full 10V, then immediately progresses to Decay stage
@@ -208,28 +223,34 @@ All triggers are ignored during Attack and Sustain stages. This means a trigger 
 
 ### Outputs
 
-#### ATK (Attack) output
-This gate is high (10V) whenever the envelope is in an attack stage (rising toward 10V), else low (0V) otherwise
+#### RISE output
+This gate is high (10V) whenever the envelope is rising toward 10V, else low (0V) otherwise.
 
 #### SUS (Sustain) output
-This gate is high (10V) whenever the envelope is in a sustain stage (maintaining 10V), else low (0V) otherwise
+This gate is high (10V) whenever the envelope is sustaining 10V, else low (0V) otherwise.
 
 #### DEC (Decay/Release) output
-This gate is high (10V) whenever the envelope is in a decay stage (falling toward 0V), else low (0V) otherwise
+This gate is high (10V) whenever the envelope is falling toward 0V, else low (0V) otherwise.
 
 #### ENV (Envelope) output
 The envelopes are output here.
 
 ### Alternate behaviors via feedback
 
-Decay/Release and ASR Attack behavior can be modified by patching one or more of the stage gate outputs into the AD Trig and/or ASR Gate inputs. These configurations take advantage of VCV's stackable input ports.
+Rise and Fall behavior can be modified by patching one or more of the stage gate outputs into the TRIG and/or GATE inputs. These configurations take advantage of VCV's stackable input ports.
 
-|Feedback|AD&nbsp;Trig<br />Rise to full|AD&nbsp;Trig<br />Sustain full|AD&nbsp;Trig<br />Fall to zero|ASR&nbsp;Gate<br />Rise to full|ASR&nbsp;Gate<br />Sustain full|ASR&nbsp;Gate<br />Fall to zero|
-|---|---|---|---|---|---|---|
-|None|Yes|No*|Retriggerable**|While gate high|While gate high|Retriggerable**|
-|Atk&nbsp;->&nbsp;ASR&nbsp;Gate|Yes|No*|Retriggerable**|Yes|While gate high|Retriggerable**|
-|Dec&nbsp;->&nbsp;AD&nbsp;Trig<br />Atk&nbsp;->&nbsp;AD&nbsp;Trig|Yes|No*|No retrigger|While gate high|While gate high|No retrigger|
-|Dec&nbsp;->(AD&nbsp;Trig&nbsp;or&nbsp;ASR&nbsp;Gate)<br />Atk&nbsp;->&nbsp;ASR&nbsp;Gate<br />Sus&nbsp;->&nbsp;AD&nbsp;Trig|Yes|No*|No retrigger|Yes|While gate high|No retrigger|
+#### Non-looping modes 1 and 2
+|Mode|Feedback|AD&nbsp;Trig<br />Rise<br />to full|AD&nbsp;Trig<br />Rise<br />Retrigger|AD&nbsp;Trig<br />Sustain<br />full|AD&nbsp;Trig<br />Fall<br />Retrigger|ASR&nbsp;Gate<br />Rise<br />to full|ASRnbsp;Trig<br />Rise<br />Retrigger|ASR&nbsp;Gate<br />Sustain<br />full|ASR&nbsp;Gate<br />Fall<br />Retrigger|
+|---|---|---|---|---|---|---|---|---|---|
+|1|None|Yes|No|No*|from current|While gate high|No|While gate high|from current**|
+|1|RISE->GATE|Yes|No|No*|From current|Yes|No|While gate high|from current|
+|1|RISE->TRIG<br />FALL->TRIG|Yes|No|No*|No|While gate high|No|While gate high|No|
+|1|RISE->GATE<br />SUS->TRIG<br />FALL->(TRIG or GATE)|Yes|No|No*|No|Yes|No|While gate high|No|
+
+|2|None|Yes|No*|Retriggerable**|While gate high|While gate high|Retriggerable**|
+|2|Atk&nbsp;->&nbsp;ASR&nbsp;Gate|Yes|No*|Retriggerable**|Yes|While gate high|Retriggerable**|
+|2|Dec&nbsp;->&nbsp;AD&nbsp;Trig<br />Atk&nbsp;->&nbsp;AD&nbsp;Trig|Yes|No*|No retrigger|While gate high|While gate high|No retrigger|
+|2|Dec&nbsp;->(AD&nbsp;Trig&nbsp;or&nbsp;ASR&nbsp;Gate)<br />Atk&nbsp;->&nbsp;ASR&nbsp;Gate<br />Sus&nbsp;->&nbsp;AD&nbsp;Trig|Yes|No*|No retrigger|Yes|While gate high|No retrigger|
 
 \* AD Trig will sustain at full value while ADSR Gate is high if high ADSR Gate is received on or after the AD Trig  
 \** If envelope is retriggered during Fall to zero stage then it will immediately restart the Rise stage at the current envelope level
