@@ -4,7 +4,7 @@
 #include "plugin.hpp"
 #include "math.hpp"
 
-struct AD_ASR : VenomModule {
+struct AD_ASR : VenomModule { 
   enum ParamId {
     SPEED_PARAM,
     MODE_PARAM,
