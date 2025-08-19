@@ -152,14 +152,26 @@ Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope ge
 * Loop options turn the envelope into a V/Oct LFO with CV control to start and stop the oscillation
 * All inputs and outputs are polyphonic with support for audio rates.
 
-### FALL and RISE shapes
-The Fall and Rise stages each have a dedicated small knob to adjust the shape or curve of the stage. Changing the shape does not change the overall time for a rise from 0 to 10, or fall from 10 to 0.
-- Counterclockwise creates a concave up J curve
-- Noon creates a linear rise or fall
-- Clockwise creates a convex up J curve
+### Envelope general behavior
+
+#### AD (Attack|Decay) envelope
+* The Attack (Rise) stage always rises to a full 10V, then immediately progresses to the Decay stage
+* The Decay (Fall) stage falls back to 0V
+
+There are also options as to whether a new AD envelope can be retriggered during the Rise and/or Fall stages.
+
+#### ASR (Attack|Sustain|Release) envelope
+* The Attack (Rise) stage rises toward 10V as long as the triggering gate remains high
+  * If gate goes low, then immediately jumps to the Release stage at current voltage
+  * If 10V is reached then progresses to Sustain stage
+* The Sustain stage maintains 10V as long as the triggering gate remains high
+  * Progresses to the Release stage when gate goes low
+* The Release (Fall) stage falls back to 0V
+
+There are also options as to whether a new ASR envelope can be retriggered during the Rise and/or Fall stages.
 
 ### RISE and FALL stage times
-Each stage has a large knob to set the base time of the stage, as well as a CV input and attenuator to dynamically modulate the time.
+Rise and Fall stages each have a large knob to set the base time of the stage, as well as a CV input and attenuator to dynamically modulate the time.
 
 The total effective time for a Rise from 0 to 10 or Fall from 10 to 0 can be as short as 0.24 msec or as long as 3 minutes.
 
@@ -174,9 +186,15 @@ The CV can modulate the effective length beyond the limits of the current time k
 
 Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically under-sampled to guarantee that the envelope never stalls. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz. The envelope will never stall if stage length CV is not used.
 
+### RISE and FALL shapes
+The Rise and Fall stages each have a dedicated small knob to adjust the shape or curve of the stage. Changing the shape does not change the overall time for a rise from 0 to 10V, or fall from 10 to 0V.
+- Counterclockwise creates a concave up J curve
+- Noon creates a linear rise or fall
+- Clockwise creates a convex up J curve
+
 ### Envelope Triggering Events
 
-Envelopes are always triggered on the leading edge of a trigger or gate. TRIG creates AD envelopes, and GATE creates ASR envelopes.
+Envelopes are always triggered on the leading edge of a trigger or gate. TRIG triggers create AD envelopes, and GATE triggers create ASR envelopes.
 
 TRIG and GATE each have a manual push button as well as a CV input. The state of manual push buttons and CV inputs are maintained independently.
 
@@ -192,34 +210,74 @@ TRIG (AD) triggers take precedence over GATE (ASR) triggers.
 
 All triggers are typically ignored if any of the other triggers or gates are already in a high state.
 
-Depending on the current MODE setting, some triggers may be ignored during certain stages.
-
 ### Modes of operation
 
 The small top middle MODE button can alter the behavior of TRIG and GATE, and controls when and how envelopes are retriggered. It can also cause envelopes to loop, effectively turning the module into an LFO.
 
 There are four modes to choose from:
 
-**Mode 1** ***(light blue, default)*** TRIG initiated AD and GATE initiated ADSR envelopes that can retrigger from the current value while falling
-**Mode 2** ***(blue)*** TRIG initiated AD and GATE initiated ASR envelopes that can retrigger from 0 while rising or falling
-**Mode 3** ***(yellow)*** Looping envelopes that are started and stopped via TRIG, and GATE gauses the oscillator to sustain 10V
-**Mode 4** ***(green)*** TRIG initiated AD envelope if GATE is low, or looping AD envelope that is reset by TRIG if GATE is high
+- **Mode 1** ***(light blue, default)*** AD and ASR envelopes that can retrigger from the current value while falling
+- **Mode 2** ***(blue)*** AD and ASR envelopes that can retrigger from 0 while rising or falling
+- **Mode 3** ***(yellow)*** Looping envelopes that are started and stopped via TRIG, and a high GATE causes the oscillator to sustain 10V
+- **Mode 4** ***(green)*** TRIG initiated AD envelope if GATE is low, or looping AD envelope that is reset by TRIG if GATE is high
 
-#### 1) *(light blue, default)* AD and ADSR envelopes that retrigger from the current value
-* Rise stage always
+Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is patched to both the Rise and Fall CV inputs, and both attenuverters are set fully counter-clockwise to -100%.
 
-#### AD envelope (Attack|Decay) behavior
-* Attack stage always rises to full 10V, then immediately progresses to Decay stage
-  * If ASR high gate is received during attack and remains high, then the envelope will sustain once 10V is reached until the ASR Gate goes low
-* Decay stage falls back to 0V, but retrigger immediately restarts new Attack at current envelope voltage
+#### Mode 1 details
 
-#### ASR envelope (Attack|Sustain|Release) behavior
-* Attack stage rises toward 10V as long as gate remains high
-  * If gate goes low, then immediately jumps to Release stage at current voltage
-  * If 10V is reached then progresses to Sustain stage
-* Sustain stage maintains 10V as long as gate remains high
-  * Progresses to Release stage when gate goes low
-* Release stage falls back to 0V, but retrigger immediately restarts new Attack at current envelope voltage
+- AD Envelope
+  - Leading edge of a TRIG initiates an AD envelope.
+  - The envelope first rises to 10V, then falls back to 0V
+  - The AD envelope can actually sustain 10V if a high GATE is received after the AD has been triggered.
+  - A new envelope may be retriggered from the current voltage during the Fall stage
+- ASR Envelope
+  - Leading edge of a GATE initiates an ASR envelope
+  - The envelope rises toward 10V for as long as the gate remains high
+    - If 10V is reached, then progresses to the Sustain stage
+    - If the gate goes low before 10V, then immediately jumps to the Fall stage
+  - The Sustain stage remains at 10V for as long as the gate remains high
+    - Progresses to the Fall stage when the gate goes low
+  - The Fall stage falls back to 0V
+    - A new envelope may be retriggered from the current voltage during the Fall stage
+
+#### Mode 2 details
+
+- AD Envelope
+  - Leading edge of a TRIG initiates an AD envelope.
+  - The envelope first rises to 10V
+    - A new envelope can be retriggered from 0 during the Rise stage
+    - The AD envelope can actually sustain 10V if a high GATE is received after the AD has been triggered.
+  - The Fall stage falls back to 0V
+    - A new envelope may be retriggered from 0V during the Fall stage
+- ASR Envelope
+  - Leading edge of a GATE initiates an ASR envelope
+  - The envelope rises toward 10V for as long as the gate remains high
+    - If 10V is reached, then progresses to the Sustain stage
+    - If the gate goes low before 10V, then immediately jumps to the Fall stage
+  - The Sustain stage remains at 10V for as long as the gate remains high
+    - Progresses to the Fall stage when the gate goes low
+  - The Fall stage falls back to 0V
+    - A new envelope may be retriggered from 0V during the Fall stage
+
+#### Mode 3 details
+
+A short trigger at either TRIG or GATE starts the looping envelope to oscillate. Both manual buttons and CV inputs work equally well.
+
+If the TRIG trigger lasts longer than the combined Rise and Fall time, then only a single envelope is produced and the oscillator stops.
+
+If the GATE trigger lasts longer than the Rise time, then the oscillator rises and stalls at 10V until the gate goes low, at which point oscillation begins.
+
+A running oscillator can be temporarily stopped at 10V by a high GATE. Oscillation will resume when the GATE goes low.
+
+A running oscillator can be fully stopped by a high TRIG gate that remains high when the oscillator falls to 0V. Once stopped, oscillations will not resume until a new trigger is received.
+
+#### Mode 4 details
+
+Triggers are never blocked by a high gate at TRIG or GATE
+
+If the GATE is low, then TRIG initiates a single shot AD envelope. The AD envelope can be retriggered from 0 during both the Rise and Fall stages.
+
+If the GATE goes high, then the Rise stage immediately starts from 0, and the envelope oscillates for as long as the GATE remains high. The oscillator may be reset (hard synced) by a TRIG trigger at any time. Oscillations stops when the GATE goes low.
 
 ### Outputs
 
@@ -235,44 +293,28 @@ This gate is high (10V) whenever the envelope is falling toward 0V, else low (0V
 #### ENV (Envelope) output
 The envelopes are output here.
 
-### Alternate behaviors via feedback
+### Alternate AD and ASR behavior via feedback
 
-Rise and Fall behavior can be modified by patching one or more of the stage gate outputs into the TRIG and/or GATE inputs. These configurations take advantage of VCV's stackable input ports.
+Retrigger and ASR Rise behavior can be modified by patching one or more of the stage gate outputs into the TRIG and/or GATE inputs. These configurations take advantage of VCV's stackable input ports.
 
-#### Non-looping modes 1 and 2
-|Mode|Feedback|AD&nbsp;Trig<br />Rise<br />to full|AD&nbsp;Trig<br />Rise<br />Retrigger|AD&nbsp;Trig<br />Sustain<br />full|AD&nbsp;Trig<br />Fall<br />Retrigger|ASR&nbsp;Gate<br />Rise<br />to full|ASRnbsp;Trig<br />Rise<br />Retrigger|ASR&nbsp;Gate<br />Sustain<br />full|ASR&nbsp;Gate<br />Fall<br />Retrigger|
-|---|---|---|---|---|---|---|---|---|---|
-|1|None|Yes|No|No*|from current|While gate high|No|While gate high|from current**|
-|1|RISE->GATE|Yes|No|No*|From current|Yes|No|While gate high|from current|
-|1|RISE->TRIG<br />FALL->TRIG|Yes|No|No*|No|While gate high|No|While gate high|No|
-|1|RISE->GATE<br />SUS->TRIG<br />FALL->(TRIG or GATE)|Yes|No|No*|No|Yes|No|While gate high|No|
+#### Non-looping Mode 1
+|Mode|Feedback|AD Trig<br />Rise<br />To Full|AD Trig<br />Rise<br />Retrigger|AD Trig<br />Sustain<br />At Full|AD Trig<br />Fall<br />Retrigger|ASR Gate<br />Rise<br />To Full|ASR Gate<br />Sustain<br />At Full|ASR Gate<br />Fall<br />Retrigger|
+|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|1|None|Yes|No|No*|From<br />current|While<br />gate<br />high|While<br />gate<br />high|From<br />current|
+|1|RISE->GATE|Yes|No|No*|From<br />current|Yes|While<br />gate<br />high|From<br />current|
+|1|RISE->TRIG<br />FALL->TRIG|Yes|No|No*|No|While<br />gate<br />high|While<br />gate<br />high|No|
+|1|RISE->GATE<br />SUS->TRIG<br />FALL->TRIG|Yes|No|No*|No|Yes|While<br />gate<br />high|No|
 
-|2|None|Yes|No*|Retriggerable**|While gate high|While gate high|Retriggerable**|
-|2|Atk&nbsp;->&nbsp;ASR&nbsp;Gate|Yes|No*|Retriggerable**|Yes|While gate high|Retriggerable**|
-|2|Dec&nbsp;->&nbsp;AD&nbsp;Trig<br />Atk&nbsp;->&nbsp;AD&nbsp;Trig|Yes|No*|No retrigger|While gate high|While gate high|No retrigger|
-|2|Dec&nbsp;->(AD&nbsp;Trig&nbsp;or&nbsp;ASR&nbsp;Gate)<br />Atk&nbsp;->&nbsp;ASR&nbsp;Gate<br />Sus&nbsp;->&nbsp;AD&nbsp;Trig|Yes|No*|No retrigger|Yes|While gate high|No retrigger|
+\* An AD envelope will sustain 10V if a high GATE is received after the AD is triggered by TRIG  
 
-\* AD Trig will sustain at full value while ADSR Gate is high if high ADSR Gate is received on or after the AD Trig  
-\** If envelope is retriggered during Fall to zero stage then it will immediately restart the Rise stage at the current envelope level
-
-### Loop mode
-If the small top center **LOOP** button is enabled (yellow), then the envelope generator automatically triggers a new cycle when the Decay/Release stage reaches 0V. This effectively turns the envelope generator into a low-frequency oscillator that can reach audio rates up to ~2 kHz and LFO rates as low as 0.0028 Hz (6 minutes per cycle).
-
-The envelope generator will act as a standard V/Oct oscillator if the V/Oct CV is patched to both the Attack and Decay CV inputs, and both attenuators are set at -100%.
-
-The trigger behavior changes while in Loop mode.
-- Oscillation will not begin until either the AD Trig or ASR Gate are triggered (button or CV)
-- Retriggering during Decay is always disabled
-- Oscillation is created by an internal trigger at the end of the Decay stage when it reaches 0V
-- A high AD Trig state (button or CV) blocks the loop trigger, causing oscillation to stop when the decay reaches 0V
-- A high gate at the ASR Gate causes the loop to sustain when it reaches 10V, and then resume oscillation when the gate goes low
-
-Starting and stopping the oscillator can be done via the manual buttons or the CV trigger inputs as follows:
-|Action|Method|
-|---|---|
-|Start oscillation|A short AD Trig or ASR Gate trigger will start oscillation. If an AD trigger is longer than the combined Attack/Decay cycle, then it will only fire a single shot and then stop. If an ASR trigger is longer than the combined Attack/Decay cycle, then it will rise to and hold at 10V, and then start oscillating when the gate goes low.|
-|Temporarily stop oscillation|A high ASR gate will stop and hold at 10V the next time the Attack goes to 10, and resume oscillation when the gate goes low|
-|Permanently stop oscillation|A high AD gate will stop the oscillator the next time the Decay stage reaches 0V. Oscillation can only be restarted with a new AD or ASR trigger|
+#### Non-looping Mode 2
+|Mode|Feedback|AD Trig<br />Rise<br />To Full|AD Trig<br />Rise<br />Retrigger|AD Trig<br />Sustain<br />At Full|AD Trig<br />Fall<br />Retrigger|ASR Gate<br />Rise<br />To Full|ASR Gate<br />Sustain<br />At Full|ASR Gate<br />Fall<br />Retrigger|
+|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|2|None|Yes|From 0|No|From 0|While<br />gate<br />high|While<br />gate<br />high|From 0|
+|2|RISE->TRIG|Yes|No|No|From 0|While<br />gate<br />high|While<br />gate<br />high|From 0|
+|2|RISE->GATE|Yes|No|No|From 0|Yes|While<br />gate<br />high|From 0|
+|2|RISE->TRIG<br />SUS->TRIG<br />FALL->TRIG|Yes|No|No|No|While<br />gate<br />high|While<br />gate<br />high|No|
+|2|RISE->GATE<br />SUS->TRIG<br />FALL->TRIG|Yes|No|No|No|Yes|While<br />gate<br />high|No|
 
 ### Polyphony
 
