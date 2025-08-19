@@ -187,10 +187,12 @@ The CV can modulate the effective length beyond the limits of the current time k
 Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically under-sampled to guarantee that the envelope never stalls. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz. The envelope will never stall if stage length CV is not used.
 
 ### RISE and FALL shapes
-The Rise and Fall stages each have a dedicated small knob to adjust the shape or curve of the stage. Changing the shape does not change the overall time for a rise from 0 to 10V, or fall from 10 to 0V.
+The Rise and Fall stages each have a dedicated small knob to adjust the shape or curve of the stage.
 - Counterclockwise creates a concave up J curve
 - Noon creates a linear rise or fall
 - Clockwise creates a convex up J curve
+
+Changing the shape does not change the overall time for a rise from 0 to 10V, or fall from 10 to 0V.
 
 ### Envelope Triggering Events
 
@@ -217,13 +219,15 @@ The small top middle MODE button can alter the behavior of TRIG and GATE, and co
 There are four modes to choose from:
 
 - **Mode 1** ***(light blue, default)*** AD and ASR envelopes that can retrigger from the current value while falling
-- **Mode 2** ***(blue)*** AD and ASR envelopes that can retrigger from 0 while rising or falling
+- **Mode 2** ***(dark blue)*** AD and ASR envelopes that can retrigger from 0 while rising or falling
 - **Mode 3** ***(yellow)*** Looping envelopes that are started and stopped via TRIG, and a high GATE causes the oscillator to sustain 10V
 - **Mode 4** ***(green)*** TRIG initiated AD envelope if GATE is low, or looping AD envelope that is reset by TRIG if GATE is high
 
-Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is patched to both the Rise and Fall CV inputs, and both attenuverters are set fully counter-clockwise to -100%.
+AD/ASR Rise stages that start above 0V due to a retrigger are shortened proportionally to where they start. Likewise, ASR Fall stages that start below 10V are also shortened proportionally.
 
-#### Mode 1 details
+Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is patched to both the Rise and Fall CV inputs, and both attenuverters are set fully counter-clockwise to -100%. The looping frequency can go into audio rates as high as ~2 kHz, or slow LFO rates as low as ~0.0028 Hz (~6 minutes per cycle).
+
+#### Light Blue Mode 1 details (AD or ASR | Retrigger from current value)
 
 - AD Envelope
   - Leading edge of a TRIG initiates an AD envelope.
@@ -240,7 +244,7 @@ Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is pa
   - The Fall stage falls back to 0V
     - A new envelope may be retriggered from the current voltage during the Fall stage
 
-#### Mode 2 details
+#### Dark Blue Mode 2 details (AD or ASR | Retrigger from 0)
 
 - AD Envelope
   - Leading edge of a TRIG initiates an AD envelope.
@@ -259,7 +263,7 @@ Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is pa
   - The Fall stage falls back to 0V
     - A new envelope may be retriggered from 0V during the Fall stage
 
-#### Mode 3 details
+#### Yellow Mode 3 details (LFO)
 
 A short trigger at either TRIG or GATE starts the looping envelope to oscillate. Both manual buttons and CV inputs work equally well.
 
@@ -271,13 +275,13 @@ A running oscillator can be temporarily stopped at 10V by a high GATE. Oscillati
 
 A running oscillator can be fully stopped by a high TRIG gate that remains high when the oscillator falls to 0V. Once stopped, oscillations will not resume until a new trigger is received.
 
-#### Mode 4 details
+#### Green Mode 4 details (AD with retrigger from 0 or LFO with hard sync)
 
 Triggers are never blocked by a high gate at TRIG or GATE
 
 If the GATE is low, then TRIG initiates a single shot AD envelope. The AD envelope can be retriggered from 0 during both the Rise and Fall stages.
 
-If the GATE goes high, then the Rise stage immediately starts from 0, and the envelope oscillates for as long as the GATE remains high. The oscillator may be reset (hard synced) by a TRIG trigger at any time. Oscillations stops when the GATE goes low.
+If the GATE goes high, then the Rise stage immediately starts from 0, and the envelope oscillates for as long as the GATE remains high. The oscillator may be reset (hard synced) by a TRIG trigger at any time. Oscillations stop when the GATE goes low.
 
 ### Outputs
 
