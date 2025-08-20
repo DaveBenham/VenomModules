@@ -227,7 +227,7 @@ AD/ASR Rise stages that start above 0V due to a retrigger are shortened proporti
 
 Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is patched to both the Rise and Fall CV inputs, and both attenuverters are set fully counter-clockwise to -100%. The looping frequency can go into audio rates as high as ~2 kHz, or slow LFO rates as low as ~0.0028 Hz (~6 minutes per cycle).
 
-#### Light Blue Mode 1 details (AD or ASR | Retrigger from current value)
+#### Light Blue Mode 1 (AD or ASR | Retrigger from current value)
 
 - AD Envelope
   - Leading edge of a TRIG initiates an AD envelope.
@@ -244,7 +244,7 @@ Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is pa
   - The Fall stage falls back to 0V
     - A new envelope may be retriggered from the current voltage during the Fall stage
 
-#### Dark Blue Mode 2 details (AD or ASR | Retrigger from 0)
+#### Dark Blue Mode 2 (AD or ASR | Retrigger from 0)
 
 - AD Envelope
   - Leading edge of a TRIG initiates an AD envelope.
@@ -263,7 +263,7 @@ Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is pa
   - The Fall stage falls back to 0V
     - A new envelope may be retriggered from 0V during the Fall stage
 
-#### Yellow Mode 3 details (LFO)
+#### Yellow Mode 3 (LFO)
 
 A short trigger at either TRIG or GATE starts the looping envelope to oscillate. Both manual buttons and CV inputs work equally well.
 
@@ -275,7 +275,7 @@ A running oscillator can be temporarily stopped at 10V by a high GATE. Oscillati
 
 A running oscillator can be fully stopped by a high TRIG gate that remains high when the oscillator falls to 0V. Once stopped, oscillations will not resume until a new trigger is received.
 
-#### Green Mode 4 details (AD with retrigger from 0 or LFO with hard sync)
+#### Green Mode 4 (AD with retrigger from 0 or LFO with hard sync)
 
 Triggers are never blocked by a high gate at TRIG or GATE
 
