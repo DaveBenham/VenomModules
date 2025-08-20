@@ -17,6 +17,9 @@ struct AD_ASR : VenomModule {
     FALL_TIME_PARAM,
     RISE_CV_PARAM,
     FALL_CV_PARAM,
+    RISE_OUT_PARAM,
+    FALL_OUT_PARAM,
+    SUS_OUT_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -76,7 +79,10 @@ struct AD_ASR : VenomModule {
       gateBtnVal=0,
       trigBtnState=0,
       gateBtnState=0,
-      oldChannels=1;
+      oldChannels=1,
+      riseOutMode=0,
+      susOutMode=0,
+      fallOutMode=0;
 
   float mode = 0.f,
         blockRetrigStage = 1.f;
@@ -89,7 +95,10 @@ struct AD_ASR : VenomModule {
           gateCVState[4]{},
           phasor[4]{},
           stage[4]{},
-          fullRise[4]{};
+          fullRise[4]{},
+          riseTrig[4]{},
+          fallTrig[4]{},
+          susTrig[4]{};
 
   AD_ASR() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -120,10 +129,14 @@ struct AD_ASR : VenomModule {
     
     configInput(TRIG_INPUT, "Trigger");
     configInput(GATE_INPUT, "Gate");
+
+    configSwitch<FixedSwitchQuantity>(RISE_OUT_PARAM, 0.f, 2.f, 0.f, "Rise output mode", {"Gate", "Start trigger", "End trigger"});
+    configSwitch<FixedSwitchQuantity>(FALL_OUT_PARAM, 0.f, 3.f, 0.f, "Fall output mode", {"Gate", "Start trigger", "End trigger", "EOC trigger"});
+    configSwitch<FixedSwitchQuantity>(SUS_OUT_PARAM, 0.f, 2.f, 0.f, "Sus output mode", {"Gate", "Start trigger", "End trigger"});
     
-    configOutput(RISE_OUTPUT, "Rising gate");
-    configOutput(FALL_OUTPUT, "Falling gate");
-    configOutput(SUS_OUTPUT, "Sustaining gate");
+    configOutput(RISE_OUTPUT, "Rise gate");
+    configOutput(FALL_OUTPUT, "Fall gate");
+    configOutput(SUS_OUTPUT, "Sustain gate");
     configOutput(ENV_OUTPUT, "Envelope");
   }
 
@@ -155,6 +168,67 @@ struct AD_ASR : VenomModule {
       gateCVState[s][i] = 0.f;
     }
     oldChannels = channels;
+    // update stage output modes
+    if (riseOutMode != params[RISE_OUT_PARAM].getValue()){
+      riseOutMode = params[RISE_OUT_PARAM].getValue();
+      PortInfo* portInfo = outputInfos[RISE_OUTPUT];
+      PortExtension* portExt = &outputExtensions[RISE_OUTPUT];
+      bool chng = portInfo->name == portExt->factoryName;
+      switch(riseOutMode){
+        case 0:
+          portExt->factoryName="Rise gate";
+          break;
+        case 1:
+          portExt->factoryName="Rise start trigger";
+          break;
+        case 2:
+          portExt->factoryName="Rise end trigger";
+          break;
+      }
+      if (chng)
+        portInfo->name = portExt->factoryName;
+    }
+    if (susOutMode != params[SUS_OUT_PARAM].getValue()){
+      susOutMode = params[SUS_OUT_PARAM].getValue();
+      PortInfo* portInfo = outputInfos[RISE_OUTPUT];
+      PortExtension* portExt = &outputExtensions[RISE_OUTPUT];
+      bool chng = portInfo->name == portExt->factoryName;
+      switch(susOutMode){
+        case 0:
+          portExt->factoryName="Sustain gate";
+          break;
+        case 1:
+          portExt->factoryName="Sustain start trigger";
+          break;
+        case 2:
+          portExt->factoryName="Sustain end trigger";
+          break;
+      }
+      if (chng)
+        portExt->factoryName = portInfo->name;
+    }
+    if (fallOutMode != params[FALL_OUT_PARAM].getValue()){
+      fallOutMode = params[FALL_OUT_PARAM].getValue();
+      PortInfo* portInfo = outputInfos[RISE_OUTPUT];
+      PortExtension* portExt = &outputExtensions[RISE_OUTPUT];
+      bool chng = portInfo->name == portExt->factoryName;
+      switch(fallOutMode){
+        case 0:
+          portExt->factoryName="Fall gate";
+          break;
+        case 1:
+          portExt->factoryName="Fall start trigger";
+          break;
+        case 2:
+          portExt->factoryName="Fall end trigger";
+          break;
+        case 3:
+          portExt->factoryName="EOC trigger";
+          break;
+      }
+      if (chng)
+        portExt->factoryName = portInfo->name;
+    }
     // reset gate button if toggle switch change and button not locked
     if (params[TOGGLE_PARAM].getValue() != toggleState) {
       if (!paramExtensions[GATE_PARAM].locked) // only change gateBtnState if gate button not locked
@@ -217,6 +291,7 @@ struct AD_ASR : VenomModule {
       delta = ifelse(stage[s]==3.f, fallDelta, delta);
       // update phasor
       phasor[s] = clamp(phasor[s]+delta);
+      float_4 eocMask = (stage[s]==3.f) & (phasor[s]==0.f);
       // compute and apply stage shapes
       float_4 shape{};
       shape = ifelse(stage[s]==1.f, riseShape, shape);
@@ -245,14 +320,67 @@ struct AD_ASR : VenomModule {
       phasor[s] = ifelse((newStage==1.f) & (anyTrig>0.f), mode==1.f || mode==3.f ? 0.f : invNormSigmoid(curve, riseShape), phasor[s]);
       // adjust phasor to incoming curve value if entering stage 3
       phasor[s] = ifelse((newStage==3.f) & (stage[s]!=3.f), invNormSigmoid(curve, fallShape), phasor[s]);
-      //set final stage outcome
+      // set output gates/triggers
+      switch (static_cast<int>(params[RISE_OUT_PARAM].getValue())){
+        case 1: // Rise start trigger
+          riseTrig[s] = ifelse((newStage==1.f) & (stage[s]!=1.f), 0.001f, riseTrig[s]);
+          riseTrig[s] = ifelse(newStage!=1.f, 0.f, riseTrig[s]);
+          outputs[RISE_OUTPUT].setVoltageSimd(ifelse(riseTrig[s]>0.f, 10.f, 0.f), c);
+          riseTrig[s] -= args.sampleTime;
+          break;
+        case 2: // Rise end trigger
+          riseTrig[s] = ifelse((stage[s]==1.f) & (newStage!=1.f), 0.001f, riseTrig[s]);
+          riseTrig[s] = ifelse(newStage==1.f, 0.f, riseTrig[s]);
+          outputs[RISE_OUTPUT].setVoltageSimd(ifelse(riseTrig[s]>0.f, 10.f, 0.f), c);
+          riseTrig[s] -= args.sampleTime;
+          break;
+        default: // Rise gate
+          outputs[RISE_OUTPUT].setVoltageSimd(ifelse(newStage==1.f, 10.f, 0.f), c);
+          riseTrig[s] = 0.f;
+      }
+      switch (static_cast<int>(params[SUS_OUT_PARAM].getValue())){
+        case 1: // Sus start trigger
+          susTrig[s] = ifelse((newStage==2.f) & (stage[s]!=2.f), 0.001f, susTrig[s]);
+          susTrig[s] = ifelse(newStage!=2.f, 0.f, susTrig[s]);
+          outputs[SUS_OUTPUT].setVoltageSimd(ifelse(susTrig[s]>0.f, 10.f, 0.f), c);
+          susTrig[s] -= args.sampleTime;
+          break;
+        case 2: // Sus end trigger
+          susTrig[s] = ifelse((stage[s]==2.f) & (newStage!=2.f), 0.001f, susTrig[s]);
+          susTrig[s] = ifelse(newStage==2.f, 0.f, susTrig[s]);
+          outputs[SUS_OUTPUT].setVoltageSimd(ifelse(susTrig[s]>0.f, 10.f, 0.f), c);
+          susTrig[s] -= args.sampleTime;
+          break;
+        default: // Sus gate
+          outputs[SUS_OUTPUT].setVoltageSimd(ifelse(newStage==2.f, 10.f, 0.f), c);
+          susTrig[s] = 0.f;
+      }
+      switch (static_cast<int>(params[FALL_OUT_PARAM].getValue())){
+        case 1: // Fall start trigger
+          fallTrig[s] = ifelse((newStage==3.f) & (stage[s]!=3.f), 0.001f, fallTrig[s]);
+          fallTrig[s] = ifelse(newStage!=3.f, 0.f, fallTrig[s]);
+          outputs[FALL_OUTPUT].setVoltageSimd(ifelse(fallTrig[s]>0.f, 10.f, 0.f), c);
+          fallTrig[s] -= args.sampleTime;
+          break;
+        case 2: // Fall end trigger
+          fallTrig[s] = ifelse((stage[s]==3.f) & (newStage!=3.f), 0.001f, fallTrig[s]);
+          fallTrig[s] = ifelse(newStage==3.f, 0.f, fallTrig[s]);
+          outputs[FALL_OUTPUT].setVoltageSimd(ifelse(fallTrig[s]>0.f, 10.f, 0.f), c);
+          fallTrig[s] -= args.sampleTime;
+          break;
+        case 3: // EOC trigger
+          fallTrig[s] = ifelse(eocMask, 0.001f, fallTrig[s]);
+          fallTrig[s] = ifelse(newStage==3.f, 0.f, fallTrig[s]);
+          outputs[FALL_OUTPUT].setVoltageSimd(ifelse(fallTrig[s]>0.f, 10.f, 0.f), c);
+          fallTrig[s] -= args.sampleTime;
+          break;
+        default: // Fall gate
+          outputs[FALL_OUTPUT].setVoltageSimd(ifelse(newStage==3.f, 10.f, 0.f), c);
+          fallTrig[s] = 0.f;
+      }
+      // update global states
       stage[s] = newStage;
       fullRise[s] = ifelse(anyTrig>0.f, ifelse(fullTrig>0.f, 1.f, 0.f), fullRise[s]);
-      // set output gates
-      outputs[RISE_OUTPUT].setVoltageSimd(ifelse(stage[s]==1.f, 10.f, 0.f), c);
-      outputs[SUS_OUTPUT].setVoltageSimd(ifelse(stage[s]==2.f, 10.f, 0.f), c);
-      outputs[FALL_OUTPUT].setVoltageSimd(ifelse(stage[s]==3.f, 10.f, 0.f), c);
-      // update global states
       trigCVState[s] = trigCVNewState;
       gateCVState[s] = gateCVNewState;
     } // end channel loop
@@ -292,13 +420,22 @@ struct AD_ASRWidget : VenomWidget {
     }
   };
 
+  struct OutSwitch : GlowingSvgSwitchLockable {
+    OutSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+    }
+  };
+
   AD_ASRWidget(AD_ASR* module) {
     setModule(module);
     setVenomPanel("AD_ASR");
 
-    addParam(createLockableParam<SpeedSwitch>(Vec(13.22f, 44.297f), module, AD_ASR::SPEED_PARAM));
-    addParam(createLockableParam<ModeSwitch>(Vec(33.72f, 44.297f), module, AD_ASR::MODE_PARAM));
-    addParam(createLockableParam<OnOffSwitch>(Vec(54.22f, 44.297f), module, AD_ASR::TOGGLE_PARAM));
+    addParam(createLockableParam<SpeedSwitch>(Vec(12.6f, 44.297f), module, AD_ASR::SPEED_PARAM));
+    addParam(createLockableParam<ModeSwitch>(Vec(33.1f, 44.297f), module, AD_ASR::MODE_PARAM));
+    addParam(createLockableParam<OnOffSwitch>(Vec(53.6f, 44.297f), module, AD_ASR::TOGGLE_PARAM));
 
     addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(21.f, 78.5), module, AD_ASR::TRIG_PARAM, AD_ASR::TRIG_LIGHT));
     addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(54.f, 78.5), module, AD_ASR::GATE_PARAM, AD_ASR::GATE_LIGHT));
@@ -318,9 +455,12 @@ struct AD_ASRWidget : VenomWidget {
     addInput(createInputCentered<PolyPort>(Vec(21.f, 264.5), module, AD_ASR::TRIG_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(54.f, 264.5), module, AD_ASR::GATE_INPUT));
 
+    addParam(createLockableParam<OutSwitch>(Vec(4.f, 283.249f), module, AD_ASR::RISE_OUT_PARAM));
+    addParam(createLockableParam<OutSwitch>(Vec(62.2f, 283.249f), module, AD_ASR::FALL_OUT_PARAM));
     addOutput(createOutputCentered<PolyPort>(Vec(21.f, 304.5), module, AD_ASR::RISE_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(54.f, 304.5), module, AD_ASR::FALL_OUTPUT));
 
+    addParam(createLockableParam<OutSwitch>(Vec(4.f, 320.206f), module, AD_ASR::SUS_OUT_PARAM));
     addOutput(createOutputCentered<PolyPort>(Vec(21.f, 341.5), module, AD_ASR::SUS_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(54.f, 341.5), module, AD_ASR::ENV_OUTPUT));
   }

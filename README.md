@@ -147,10 +147,10 @@ Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope ge
 * Independent stage shape controls for Rise and Fall: concave up to linear to concave down
 * Changing a stage shape does not alter the overall time
 * Multiple modes with different retrigger options: retrigger from 0 or current level
-* Rise, Fall, and Sustain gate outputs indicate which stage is currently active
+* Configurable Rise, Fall, and Sustain stage outputs indicate different events within the envelope
 * Feedback from stage gates can block retrigger behavior and/or force ASR attack to rise to full value
 * Loop options turn the envelope into a V/Oct LFO with CV control to start and stop the oscillation
-* All inputs and outputs are polyphonic with support for audio rates.
+* All inputs and outputs are polyphonic with support for audio rates
 
 ### Envelope general behavior
 
@@ -188,7 +188,7 @@ Note that floating point computations have limited precision that could cause an
 
 ### RISE and FALL shapes
 The Rise and Fall stages each have a dedicated small knob to adjust the shape or curve of the stage.
-- Counterclockwise creates a concave up J curve
+- Counter-clockwise creates a concave up J curve
 - Noon creates a linear rise or fall
 - Clockwise creates a convex up J curve
 
@@ -283,23 +283,34 @@ If the GATE is low, then TRIG initiates a single shot AD envelope. The AD envelo
 
 If the GATE goes high, then the Rise stage immediately starts from 0, and the envelope oscillates for as long as the GATE remains high. The oscillator may be reset (hard synced) by a TRIG trigger at any time. Oscillations stop when the GATE goes low.
 
-### Outputs
+### Stage Outputs
+
+Each of the stage output ports has a small button next to the label to configure what exactly is produced at that output.
 
 #### RISE output
-This gate is high (10V) whenever the envelope is rising toward 10V, else low (0V) otherwise.
+- ##Gate## ###(dark blue, default)### Produces a high gate (10V) whenever the envelope is rising toward 10V, else low (0V) otherwise.
+- ##Start trigger## ###(green)### Produces a 1ms trigger upon entry to the Rise stage. The trigger may be shortened upon exit of the Rise stage.
+- ##End trigger## ###(red)### Produces a 1ms trigger upon exiting the Rise stage. The trigger may be shortened upon rentry to the Rise stage.
+
+Note that Rise triggers are not fired if the envelope is retriggered during the Rise stage.
 
 #### SUS (Sustain) output
-This gate is high (10V) whenever the envelope is sustaining 10V, else low (0V) otherwise.
+- ##Gate## ###(dark blue, default)### Produces a high gate (10V) whenever the envelope is sustaining 10V, else low (0V) otherwise.
+- ##Start trigger## ###(green)### Produces a 1ms trigger upon entry to the Sustain stage. The trigger may be shortened upon exit of the Sustain stage.
+- ##End trigger## ###(red)### Produces a 1ms trigger upon exiting the Sustain stage. The trigger may be shortened upon rentry to the Rise stage.
 
 #### DEC (Decay/Release) output
-This gate is high (10V) whenever the envelope is falling toward 0V, else low (0V) otherwise.
+- ##Gate## ###(dark blue, default)### Produces a high gate (10V) whenever the envelope is falling toward 0V, else low (0V) otherwise.
+- ##Start trigger## ###(green)### Produces a 1ms trigger upon entry to the Fall stage. The trigger may be shortened upon exit of the Fall stage.
+- ##End trigger## ###(red)### Produces a 1ms trigger upon exiting the Fall stage. The trigger may be shortened upon rentry to the Fall stage.
+- ##EOC (end of cycle) trigger## ###(orange)### Produces a 1ms trigger when the Fall stage reaches 0V. The trigger is not fired if the envelope is retriggered before reaching 0V.
 
-#### ENV (Envelope) output
+### ENV (Envelope) output
 The envelopes are output here.
 
 ### Alternate AD and ASR behavior via feedback
 
-Retrigger and ASR Rise behavior can be modified by patching one or more of the stage gate outputs into the TRIG and/or GATE inputs. These configurations take advantage of VCV's stackable input ports.
+Retrigger and ASR Rise behavior can be modified by patching one or more of the stage gate outputs into the TRIG and/or GATE inputs. These configurations take advantage of VCV's stackable input ports. Note that the patched stage output(s) must be configured to produce a gate for these configurations to work.
 
 #### Non-looping Mode 1
 |Mode|Feedback|AD Trig<br />Rise<br />To Full|AD Trig<br />Rise<br />Retrigger|AD Trig<br />Sustain<br />At Full|AD Trig<br />Fall<br />Retrigger|ASR Gate<br />Rise<br />To Full|ASR Gate<br />Sustain<br />At Full|ASR Gate<br />Fall<br />Retrigger|
