@@ -288,22 +288,22 @@ If the GATE goes high, then the Rise stage immediately starts from 0, and the en
 Each of the stage output ports has a small button next to the label to configure what exactly is produced at that output.
 
 #### RISE output
-- ##Gate## ###(dark blue, default)### Produces a high gate (10V) whenever the envelope is rising toward 10V, else low (0V) otherwise.
-- ##Start trigger## ###(green)### Produces a 1ms trigger upon entry to the Rise stage. The trigger may be shortened upon exit of the Rise stage.
-- ##End trigger## ###(red)### Produces a 1ms trigger upon exiting the Rise stage. The trigger may be shortened upon rentry to the Rise stage.
+- **Gate** ***(dark blue, default)*** Produces a high gate (10V) whenever the envelope is rising toward 10V, else low (0V) otherwise.
+- **Start trigger** ***(green)*** Produces a 1ms trigger upon entry to the Rise stage. The trigger may be shortened upon exit from the Rise stage.
+- **End trigger** ***(red)*** Produces a 1ms trigger upon exit from the Rise stage. The trigger may be shortened upon rentry to the Rise stage.
 
 Note that Rise triggers are not fired if the envelope is retriggered during the Rise stage.
 
 #### SUS (Sustain) output
-- ##Gate## ###(dark blue, default)### Produces a high gate (10V) whenever the envelope is sustaining 10V, else low (0V) otherwise.
-- ##Start trigger## ###(green)### Produces a 1ms trigger upon entry to the Sustain stage. The trigger may be shortened upon exit of the Sustain stage.
-- ##End trigger## ###(red)### Produces a 1ms trigger upon exiting the Sustain stage. The trigger may be shortened upon rentry to the Rise stage.
+- **Gate** ***(dark blue, default)*** Produces a high gate (10V) whenever the envelope is sustaining 10V, else low (0V) otherwise.
+- **Start trigger** ***(green)*** Produces a 1ms trigger upon entry to the Sustain stage. The trigger may be shortened upon exit from the Sustain stage.
+- **End trigger** ***(red)*** Produces a 1ms trigger upon exit from the Sustain stage. The trigger may be shortened upon rentry to the Sustain stage.
 
-#### DEC (Decay/Release) output
-- ##Gate## ###(dark blue, default)### Produces a high gate (10V) whenever the envelope is falling toward 0V, else low (0V) otherwise.
-- ##Start trigger## ###(green)### Produces a 1ms trigger upon entry to the Fall stage. The trigger may be shortened upon exit of the Fall stage.
-- ##End trigger## ###(red)### Produces a 1ms trigger upon exiting the Fall stage. The trigger may be shortened upon rentry to the Fall stage.
-- ##EOC (end of cycle) trigger## ###(orange)### Produces a 1ms trigger when the Fall stage reaches 0V. The trigger is not fired if the envelope is retriggered before reaching 0V.
+#### FALL output
+- **Gate** ***(dark blue, default)*** Produces a high gate (10V) whenever the envelope is falling toward 0V, else low (0V) otherwise.
+- **Start trigger** ***(green)*** Produces a 1ms trigger upon entry to the Fall stage. The trigger may be shortened upon exit from the Fall stage.
+- **End trigger** ***(red)*** Produces a 1ms trigger upon exit from the Fall stage. The trigger may be shortened upon rentry to the Fall stage.
+- **EOC (end of cycle) trigger** ***(orange)*** Produces a 1ms trigger when the Fall stage reaches 0V. The trigger is not fired if the envelope is retriggered before reaching 0V.
 
 ### ENV (Envelope) output
 The envelopes are output here.
