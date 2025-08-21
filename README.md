@@ -306,7 +306,12 @@ Note that Rise triggers are not fired if the envelope is retriggered during the 
 - **EOC (end of cycle) trigger** ***(orange)*** Produces a 1ms trigger when the Fall stage reaches 0V. The trigger is not fired if the envelope is retriggered before reaching 0V.
 
 ### ENV (Envelope) output
-The envelopes are output here.
+
+The envelopes are output here. The small button beside the label configures the voltage range of the envelope.
+
+- **Unipolar** ***(green, default)*** Normal envelope from 0V to 10V
+- **Inverted unipolar** ***(orange)*** Inverts the envelope from 10V to 0V
+- **Bipolar** ***(red)*** Offsets the envelope to -5V to 5V
 
 ### Alternate AD and ASR behavior via feedback
 

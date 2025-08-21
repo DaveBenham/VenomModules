@@ -20,6 +20,7 @@ struct AD_ASR : VenomModule {
     RISE_OUT_PARAM,
     FALL_OUT_PARAM,
     SUS_OUT_PARAM,
+    ENV_OUT_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -133,6 +134,7 @@ struct AD_ASR : VenomModule {
     configSwitch<FixedSwitchQuantity>(RISE_OUT_PARAM, 0.f, 2.f, 0.f, "Rise output mode", {"Gate", "Start trigger", "End trigger"});
     configSwitch<FixedSwitchQuantity>(FALL_OUT_PARAM, 0.f, 3.f, 0.f, "Fall output mode", {"Gate", "Start trigger", "End trigger", "EOC trigger"});
     configSwitch<FixedSwitchQuantity>(SUS_OUT_PARAM, 0.f, 2.f, 0.f, "Sus output mode", {"Gate", "Start trigger", "End trigger"});
+    configSwitch<FixedSwitchQuantity>(ENV_OUT_PARAM, 0.f, 2.f, 0.f, "Env output mode", {"Unipolar 0 to 10", "Inverted unipolar 10 to 0", "Bipolar -5 to 5"});
     
     configOutput(RISE_OUTPUT, "Rise gate");
     configOutput(FALL_OUTPUT, "Fall gate");
@@ -271,6 +273,7 @@ struct AD_ASR : VenomModule {
     float fallShape = -params[FALL_SHAPE_PARAM].getValue()*0.95f;
     float riseCVAmt = params[RISE_CV_PARAM].getValue();
     float fallCVAmt = params[FALL_CV_PARAM].getValue();
+    int envMode = static_cast<int>(params[ENV_OUT_PARAM].getValue());
     // iterate the channels
     for (int s=0, c=0; c<channels; s++, c+=4){
       // compute trig CV state and trig
@@ -298,7 +301,16 @@ struct AD_ASR : VenomModule {
       shape = ifelse(stage[s]==3.f, fallShape, shape);
       float_4 curve = normSigmoid(phasor[s], shape);
       // set ENV output
-      outputs[ENV_OUTPUT].setVoltageSimd(curve*10.f, c);
+      switch (envMode) {
+        case 0:  // unipolar
+          outputs[ENV_OUTPUT].setVoltageSimd(curve*10.f, c);
+          break;
+        case 1:  // inverted unipolar
+          outputs[ENV_OUTPUT].setVoltageSimd(curve*-10.f + 10.f, c);
+          break;
+        default: // 2 bipolar
+          outputs[ENV_OUTPUT].setVoltageSimd(curve*10.f - 5.f, c);
+      }
       // progress through stages
       loop = mode==3.f ? gateCVNewState + gateBtnNewState : loop;
       float_4 newStage = stage[s];
@@ -429,6 +441,14 @@ struct AD_ASRWidget : VenomWidget {
     }
   };
 
+  struct EnvSwitch : GlowingSvgSwitchLockable {
+    EnvSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
+    }
+  };
+
   AD_ASRWidget(AD_ASR* module) {
     setModule(module);
     setVenomPanel("AD_ASR");
@@ -461,6 +481,7 @@ struct AD_ASRWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(54.f, 304.5), module, AD_ASR::FALL_OUTPUT));
 
     addParam(createLockableParam<OutSwitch>(Vec(4.f, 320.206f), module, AD_ASR::SUS_OUT_PARAM));
+    addParam(createLockableParam<EnvSwitch>(Vec(62.2f, 320.206f), module, AD_ASR::ENV_OUT_PARAM));
     addOutput(createOutputCentered<PolyPort>(Vec(21.f, 341.5), module, AD_ASR::SUS_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(54.f, 341.5), module, AD_ASR::ENV_OUTPUT));
   }
