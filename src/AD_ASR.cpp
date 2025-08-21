@@ -490,8 +490,8 @@ struct AD_ASRWidget : VenomWidget {
     VenomWidget::step();
     AD_ASR* mod = dynamic_cast<AD_ASR*>(this->module);
     if(mod) {
-      mod->lights[AD_ASR::TRIG_LIGHT].setBrightness(mod->trigBtnState);
-      mod->lights[AD_ASR::GATE_LIGHT].setBrightness(mod->gateBtnState);
+      mod->lights[AD_ASR::TRIG_LIGHT].setBrightness(mod->trigBtnState>0 ? 1.f : 0.02f);
+      mod->lights[AD_ASR::GATE_LIGHT].setBrightness(mod->gateBtnState>0 ? 1.f : 0.02f);
     }
   }
 
