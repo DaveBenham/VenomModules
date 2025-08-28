@@ -364,6 +364,10 @@ The expander must be placed immediately to the right of a Clone Merge, Poly Merg
 
 Each set of polyphonic input channels is cloned to match the clone count of the parent module, and sent to the output. The number of polyphonic channels at the input should either match the number of input channels at the parent, or else 1. If the input is unpatched it is treated as a mono input with a single chanel at constant 0 volts.
 
+The GRP button above and to the right of each input port controls how the cloned channels will be grouped at the corresponding output
+- **Input channel** ***(yellow, default)*** - All the cloned channels for a given input channel will be grouped together at the output.
+- **Input set** ***(blue)*** - The input channels will be grouped together in order as a set, and then the set will be cloned at the output.
+
 The number of polyphonic channels at each output will always match the number of poly output channels at the parent. The LED to the right of each output indicates whether the output was able to properly clone all input channels.
 
 If the input poly count matches the parent, then each of the input channels is cloned as per the parent, and the LED is yellow.
@@ -891,6 +895,11 @@ Selects the number of times to clone or replicate each input. Possible values ra
 The 8 monophonic inputs should be populated from top to bottom. Each input is replicated based on the Clone count as long as the total channel count across all replicated inputs does not exceed 16. Inputs that cannot be replicated the full amount are ignored.
 
 An LED glows yellow for each input that is successfully replicated. The LED glows red if the input cannot be replicated. Unpatched inputs below the last patched input are ignored and the corresponding LED is off (black).
+
+### GRP (Output grouping) button
+The GRP controls how the cloned inputs will be grouped at the corresponding output
+- **Input channel** ***(yellow, default)*** - All the clones for a given input will be grouped together at the output.
+- **Input set** ***(blue)*** - The inputs will be grouped together in order as a set, and then the set will be cloned at the output.
 
 ### POLY output
 All of the replicated inputs are merged into the single polyphonic output. The poly output starts with all clones from input 1, followed by clones from input 2, etc.
@@ -1806,6 +1815,11 @@ No input is treated as monophonic constant 0V.
 
 For each channel appearing at the input, the corresponding LED above glows yellow if the channel could be successfully replicated, and red if it could not be replicated. LEDs beyond the input channel count remain off (black).
 
+### GRP (Output grouping) button
+The GRP button controls how the cloned channels will be grouped at the output
+- **Input channel** ***(yellow, default)*** - All the cloned channels for a given input channel will be grouped together at the output.
+- **Input set** ***(blue)*** - The input channels will be grouped together in order as a set, and then the set will be cloned at the output.
+
 ### POLY output
 All of the replicated channels are merged into the single polyphonic output. The poly output starts with all clones from input channel 1, followed by clones from input channel 2, etc.
 
@@ -2217,6 +2231,11 @@ Each channel from the polyphonic input is replicated based on the unison count a
 The absense of input is treated as monophonic constant 0V.
 
 For each channel appearing at the input, the corresponding LED above glows yellow if the channel could be successfully replicated, and red if it could not be replicated. LEDs beyond the input channel count remain off (black).
+
+### GRP (Output grouping) button
+The GRP button controls how the replicated channels will be grouped at the output
+- **Input channel** ***(yellow, default)*** - All the replicated channels for a given input channel will be grouped together at the output.
+- **Input set** ***(blue)*** - The input channels will be grouped together in order as a set, and then the set will be replicated at the output.
 
 ### POLY output
 All of the replicated channels are merged into the single polyphonic output. The poly output starts with all replications from input channel 1, followed by replications from input channel 2, etc. Detune spread for each input channel goes from low to high (unless the detune CV creates a negative spread)

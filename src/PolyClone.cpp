@@ -8,6 +8,7 @@ struct PolyClone : CloneModuleBase {
 
   enum ParamId {
     CLONE_PARAM,
+    GROUP_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -31,6 +32,7 @@ struct PolyClone : CloneModuleBase {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(CLONE_PARAM, 1.f, 16.f, 1.f, "Clone count");
     configInput(POLY_INPUT, "Poly");
+    configSwitch<FixedSwitchQuantity>(GROUP_PARAM, 0.f, 1.f, 0.f, "Output grouping", {"Input channel", "Input set"});
     configOutput(POLY_OUTPUT, "Poly");
     configBypass(POLY_INPUT, POLY_OUTPUT);
     for (int i=0; i<16; i++){
@@ -51,14 +53,21 @@ struct PolyClone : CloneModuleBase {
     int ch = std::max({1,inputs[POLY_INPUT].getChannels()});
     int goodCh = ch > maxCh ? maxCh : ch;
 
-    int c=0;
-    for (int i=0; i<goodCh; i++) {
-      float val = inputs[POLY_INPUT].getVoltage(i);
-      for (int j=0; j<clones; j++)
-        outputs[POLY_OUTPUT].setVoltage(val, c++);
+    if (params[GROUP_PARAM].getValue()){ //group by input set
+      for (int i=0; i<goodCh; i++) {
+        float val = inputs[POLY_INPUT].getVoltage(i);
+        for (int c=0, o=i; c<clones; c++, o+=goodCh)
+          outputs[POLY_OUTPUT].setVoltage(val, o);
+      }
     }
-    int outCnt = goodCh * clones;
-    outputs[POLY_OUTPUT].setChannels(outCnt);
+    else{ //group by individual input channel
+      for (int i=0, o=0; i<goodCh; i++) {
+        float val = inputs[POLY_INPUT].getVoltage(i);
+        for (int c=0; c<clones; c++)
+          outputs[POLY_OUTPUT].setVoltage(val, o++);
+      }
+    }  
+    outputs[POLY_OUTPUT].setChannels(goodCh * clones);
     processExpander(clones, goodCh);
 
     if (lightDivider.process()) {
@@ -112,6 +121,8 @@ struct PolyCloneWidget : CloneModuleWidget {
 
     y+=dy;
     addInput(createInputCentered<PolyPort>(Vec(x,y), module, PolyClone::POLY_INPUT));
+
+    addParam(createLockableParamCentered<GroupSwitch>(Vec(22.5f,307.5f), module, PolyClone::GROUP_PARAM));
 
     y+=dy*1.75f;
     addOutput(createOutputCentered<PolyPort>(Vec(x,y), module, PolyClone::POLY_OUTPUT));

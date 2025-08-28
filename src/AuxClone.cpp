@@ -13,6 +13,8 @@ struct AuxClone : CloneModule {
     venomConfig(EXP_PARAMS_LEN, EXP_INPUTS_LEN, EXP_OUTPUTS_LEN, EXP_LIGHTS_LEN);
     for (int i=0; i<EXPANDER_PORTS; i++) {
       std::string label = string::f("Poly %d", i + 1);
+      std::string label2 = string::f("Output grouping %d", i+1);
+      configSwitch<FixedSwitchQuantity>(EXP_GROUP_PARAM+i, 0.f, 1.f, 0.f, label2, {"Input channel", "Input set"});
       configInput(EXP_POLY_INPUT+i, label);
       configOutput(EXP_POLY_OUTPUT+i, label);
       configLight(EXP_POLY_LIGHT+i*2, label+" cloned indicator")->description = "yellow: OK, orange: Missing channels, red: Excess channels dropped";
@@ -43,13 +45,20 @@ struct AuxClone : CloneModule {
 };
 
 struct AuxCloneWidget : VenomWidget {
-  int venomDelCnt = 0;
+
+  struct GroupSwitch : GlowingSvgSwitchLockable {
+    GroupSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+    }
+  };
 
   AuxCloneWidget(AuxClone* module) {
     setModule(module);
     setVenomPanel("AuxClone");
     float delta=0.f;
     for(int i=0; i<EXPANDER_PORTS; i++){
+      addParam(createLockableParamCentered<GroupSwitch>(Vec(36.5f,48.5f+delta), module, AuxClone::EXP_GROUP_PARAM+i));
       addInput(createInputCentered<PolyPort>(Vec(22.5f,61.5f+delta), module, AuxClone::EXP_POLY_INPUT+i));
       addOutput(createOutputCentered<PolyPort>(Vec(22.5f,226.5f+delta), module, AuxClone::EXP_POLY_OUTPUT+i));
       addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(36.f, 214.f+delta), module, AuxClone::EXP_POLY_LIGHT+i*2));

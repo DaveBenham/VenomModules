@@ -11,6 +11,7 @@ struct PolyUnison : CloneModuleBase {
     DETUNE_PARAM,
     DIRECTION_PARAM,
     RANGE_PARAM,
+    GROUP_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -63,6 +64,7 @@ struct PolyUnison : CloneModuleBase {
     configInput(DETUNE_INPUT, "Detune spread");
 
     configInput(POLY_INPUT, "Poly");
+    configSwitch<FixedSwitchQuantity>(GROUP_PARAM, 0.f, 1.f, 0.f, "Output grouping", {"Input channel", "Input set"});
     configOutput(POLY_OUTPUT, "Poly");
     configBypass(POLY_INPUT, POLY_OUTPUT);
     for (int i=0; i<16; i++){
@@ -103,12 +105,20 @@ struct PolyUnison : CloneModuleBase {
         start = -spread;
         break;
     }
-    
-    int c=0;
-    for (int i=0; i<goodCh; i++) {
-      float val = inputs[POLY_INPUT].getVoltage(i) + start;
-      for (int j=0; j<clones; j++, val+=delta)
-        outputs[POLY_OUTPUT].setVoltage(val, c++);
+
+    if (params[GROUP_PARAM].getValue()){ //group by input channel set
+      for (int i=0; i<goodCh; i++) {
+        float val = inputs[POLY_INPUT].getVoltage(i) + start;
+        for (int c=0, o=i; c<clones; c++, o+=goodCh, val+=delta)
+          outputs[POLY_OUTPUT].setVoltage(val, o);
+      }
+    }
+    else{ //group by individual input channel
+      for (int i=0, o=0; i<goodCh; i++) {
+        float val = inputs[POLY_INPUT].getVoltage(i) + start;
+        for (int j=0; j<clones; j++, val+=delta)
+          outputs[POLY_OUTPUT].setVoltage(val, o++);
+      }
     }
     outputs[POLY_OUTPUT].setChannels(goodCh * clones);
     processExpander(clones, goodCh);
@@ -181,22 +191,23 @@ struct PolyUnisonWidget : CloneModuleWidget {
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(22.5,91.941), module, PolyUnison::CLONE_PARAM));
     addInput(createInputCentered<MonoPort>(Vec(22.5,124.974), module, PolyUnison::CLONE_INPUT));
 
-    addParam(createLockableParamCentered<DirectionSwitch>(Vec(13.012f,161.106f), module, PolyUnison::DIRECTION_PARAM));
-    addParam(createLockableParamCentered<RangeSwitch>(Vec(31.989f,161.106), module, PolyUnison::RANGE_PARAM));
-    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(22.5,192.026), module, PolyUnison::DETUNE_PARAM));
-    addInput(createInputCentered<MonoPort>(Vec(22.5,225.079), module, PolyUnison::DETUNE_INPUT));
+    addParam(createLockableParamCentered<DirectionSwitch>(Vec(13.012f,153.106f), module, PolyUnison::DIRECTION_PARAM));
+    addParam(createLockableParamCentered<RangeSwitch>(Vec(31.989f,153.106), module, PolyUnison::RANGE_PARAM));
+    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(22.5,184.026), module, PolyUnison::DETUNE_PARAM));
+    addInput(createInputCentered<MonoPort>(Vec(22.5,217.079), module, PolyUnison::DETUNE_INPUT));
 
     {
       int li, end;
       float x, y, delta=7.557f;
       for (li=0, end=8, x=11.160f; li<32; end+=8, x+=delta){
-        for(y=275.593f; li < end; li+=2, y-=delta){
+        for(y=261.593f; li < end; li+=2, y-=delta){
           addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(x,y), module, PolyUnison::CHANNEL_LIGHTS+li));
         }
       }
     }
 
-    addInput(createInputCentered<PolyPort>(Vec(22.5,301.712), module, PolyUnison::POLY_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(22.5,287.712), module, PolyUnison::POLY_INPUT));
+    addParam(createLockableParamCentered<GroupSwitch>(Vec(22.5f,308.f), module, PolyUnison::GROUP_PARAM));
     addOutput(createOutputCentered<PolyPort>(Vec(22.5,340.434), module, PolyUnison::POLY_OUTPUT));
   }
 

@@ -6,6 +6,10 @@
 - Wave Mangler
 - WinComp 2 + Logic
 
+### Enhancements
+- Clone Merge, Poly Clone, Poly Unison, Aux Clone
+  - Add option to group output channels by individual input channel (original behavior), or input set
+
 ## 2.12.3 (2025-06-05)
 ### Enhancements
 - Cross Fade 3D and Pan 3D
