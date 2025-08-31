@@ -902,7 +902,7 @@ The GRP controls how the cloned inputs will be grouped at the corresponding outp
 - **Input set** ***(blue)*** - The inputs will be grouped together in order as a set, and then the set will be cloned at the output.
 
 ### POLY output
-All of the replicated inputs are merged into the single polyphonic output. The poly output starts with all clones from input 1, followed by clones from input 2, etc.
+All of the replicated inputs are merged into the single polyphonic output. The order of the channels is dependent on the GRP button.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
@@ -1821,7 +1821,7 @@ The GRP button controls how the cloned channels will be grouped at the output
 - **Input set** ***(blue)*** - The input channels will be grouped together in order as a set, and then the set will be cloned at the output.
 
 ### POLY output
-All of the replicated channels are merged into the single polyphonic output. The poly output starts with all clones from input channel 1, followed by clones from input channel 2, etc.
+All of the replicated channels are merged into the single polyphonic output. The order of the channels is dependent on the GRP button.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
@@ -2238,7 +2238,7 @@ The GRP button controls how the replicated channels will be grouped at the outpu
 - **Input set** ***(blue)*** - The input channels will be grouped together in order as a set, and then the set will be replicated at the output.
 
 ### POLY output
-All of the replicated channels are merged into the single polyphonic output. The poly output starts with all replications from input channel 1, followed by replications from input channel 2, etc. Detune spread for each input channel goes from low to high (unless the detune CV creates a negative spread)
+All of the replicated channels are merged into the single polyphonic output. The order of the channels is dependent on the GRP button. Detune spread for each input channel goes from low to high (unless the detune CV creates a negative spread)
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
