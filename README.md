@@ -31,7 +31,7 @@ Venom modules version 2.13.0 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave 
 
 |[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|[SHAPED<br />VCA](#shaped-vca)|[SLEW](#slew)|
 |----|----|----|----|----|
-|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|![SLEW module image](doc/Slew.png)|
+|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|![SLEW module image](doc/Slew.png)|
 
 |[SPHERE<br />TO XYZ](#sphere-to-xyz)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|
 |----|----|----|----|----|----|
