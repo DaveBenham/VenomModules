@@ -546,6 +546,17 @@
       ]
     },
     {
+      "slug": "Slew",
+      "name": "Slew",
+      "description": "Slew limiter and slope detector for both CV and audio processing",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#slew",
+      "tags": [
+        "Polyphonic",
+        "Slew limiter",
+        "Utility"
+      ]
+    },
+    {
       "slug": "SphereToXYZ",
       "name": "Sphere To XYZ",
       "description": "Convert spherical coordinates r,theta, phi to cartesian coordinates x, y, z",

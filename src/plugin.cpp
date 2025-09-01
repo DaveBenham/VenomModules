@@ -110,8 +110,9 @@ void init(Plugin* p) {
   p->addModel(modelRecurseStereo);
   p->addModel(modelReformation);
   p->addModel(modelRhythmExplorer);
-  p->addModel(modelSphereToXYZ);
   p->addModel(modelShapedVCA);
+  p->addModel(modelSlew);
+  p->addModel(modelSphereToXYZ);
   p->addModel(modelThru);
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);
