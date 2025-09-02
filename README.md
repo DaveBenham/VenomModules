@@ -2879,7 +2879,7 @@ Note that Rise and Fall times are precise when using a linear shape (0% curve). 
 ### FALL and RISE shapes
 The slewed Rise and Fall can be independently set to be linear or curved. If curved, then large input changes move faster than small input changes.
 
-Rise and Fall each have a shape knob with fully clockwise being linear, fully clockwise curved, and noon a blend of the two. The knobs are scaled to represent the percentage of curvature, with 0% being linear.
+Rise and Fall each have a shape knob with fully counter-clockwise being linear, fully clockwise curved, and noon a blend of the two. The knobs are scaled to represent the percentage of curvature, with 0% being linear.
 
 The shapes can be modulated via shape CV input ports with attenuverter knobs. The attenuated CV is summed with the knob value. The modulation is scaled at 10% curve per Volt.
 
