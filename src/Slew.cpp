@@ -148,7 +148,8 @@ struct Slew : VenomModule {
         // downsample output
         if (oversample > 1) {
           for (int i=0; i<OUTPUTS_LEN; i++) {
-            out[i] = downSample[i][s].process(out[i]);
+            if (outputs[i].isConnected())
+              out[i] = downSample[i][s].process(out[i]);
           }
         }
       } // end oversample loop
