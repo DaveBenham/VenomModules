@@ -3,7 +3,7 @@
 
 #include "plugin.hpp"
 #include "Filter.hpp"
-#include "math.hpp"
+//#include "math.hpp"
 
 struct Slew : VenomModule { 
   enum ParamId {
