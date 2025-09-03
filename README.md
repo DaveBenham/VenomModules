@@ -2904,7 +2904,7 @@ This is the final result of the slew processing.
 All inputs and outputs are fully polyphonic. The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](#themes) are available via standard Venom context menus. But Rhythm Explorer has its own design for limited parameter locking, so the standard parameter locking menus are not available. Neither are custom default options available for parameters.
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 The IN (raw) input is replicated at the OUT (slew) output when Slew is bypassed. All other outputs are constant monophonic 0V.
