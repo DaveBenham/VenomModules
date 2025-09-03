@@ -2916,7 +2916,7 @@ The IN (raw) input is replicated at the OUT (slew) output when Slew is bypassed.
 ![SHAPED VCA module image](doc/ShapedVCA.png)  
 Shaped VCA is a stereo polyphonic voltage controlled amplifier with a variable response curve, and optional hard/soft clipping, ring modulation, amplitude modulation, and oversampling.
 
-The Shaped VCA can function as a typical voltage controlled amplifier or attenuator, or ring modulator, or amplitude modulator, or constant voltage source, or wave shaper, depending on which inputs are patched and how parameters are configured.
+The Shaped VCA can function as a typical voltage controlled amplifier or attenuator, or ring modulator, or amplitude modulator, or constant voltage source, or waveshaper, depending on which inputs are patched and how parameters are configured.
 
 ### R (Level Range) button
 This color coded switch establishes the range of the Level knob amplification.
@@ -3007,7 +3007,7 @@ Note that the Intermediate and Original options have no effect if using 0-5V uni
 
 ### Left and Right inputs
 
-The Right input is normaled to the Left input. The Left input is normaled to 10V so that Shaped VCA without any patched inputs can function as a constant CV source with the Level knob setting the value. The 10V normaled input is also convenient for using Shaped VCA as a wave shaper for the Level input.
+The Right input is normaled to the Left input. The Left input is normaled to 10V so that Shaped VCA without any patched inputs can function as a constant CV source with the Level knob setting the value. The 10V normaled input is also convenient for using Shaped VCA as a waveshaper for the Level input.
 
 ### Left and Right outputs
 
@@ -3752,7 +3752,7 @@ The poly input is passed through to the output if Wave Folder is bypassed.
 
 ## WAVE MANGLER
 ![WAVE MANGLER module image](doc/WaveMangler.png)  
-A polyphonic distortion / wave shaper inspired by the [Doepfer A-136 Eurorack module](https://modulargrid.net/e/doepfer-a-136).
+A polyphonic distortion / waveshaper inspired by the [Doepfer A-136 Eurorack module](https://modulargrid.net/e/doepfer-a-136).
 
 The Venom module implements most of the features of the Doepfer hardware, though not necessarily in exactly the same way, and then adds polyphony and additional modulation options.
 
@@ -3901,7 +3901,7 @@ If Wave Mangler is bypassed then all channels of the Wave input are passed throu
 
 ## WAVE MULTIPLIER
 ![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)  
-A polyphonic wave shaper inspired by the [Doepfer A-137-2 Wave Multiplier II](https://doepfer.de/a1372.htm). Its primary use is to fatten the sound of simple wave forms like sine, triangle, and saw. It does not work well with square or pulse waves.
+A polyphonic waveshaper inspired by the [Doepfer A-137-2 Wave Multiplier II](https://doepfer.de/a1372.htm) with integrated LFO modulation. Its primary use is to fatten the sound of simple wave forms like sine, triangle, and saw. It does not work well with square or pulse waves.
 
 The Wave Multiplier works by mixing 4 copies of the incoming wave form with the original input. Each copy is compared to a different threshold, and if the current value is less than or equal to the threshold, then the value is shifted up as much as 5V. If greater than the threshold then the value is shifted down as much as 5V. If the input is a saw wave and the threshold is constant, then the net effect is a phase shift. If the input is a sine or triangle it is more like a fold operation. Applying modulation to the threshold adds movement to the sound.
 
