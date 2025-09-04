@@ -178,10 +178,14 @@ struct Compare2 : VenomModule {
           }
         }
         // compute windows
-        float_4 hi1 = in[SHIFT1_INPUT] + params[SHIFT1_PARAM].getValue() + (in[SIZE1_INPUT] + params[SIZE1_PARAM].getValue())/2.f;
-        float_4 lo1 = hi1 - in[SIZE1_INPUT] - params[SIZE1_PARAM].getValue();
-        float_4 hi2 = in[SHIFT2_INPUT] + params[SHIFT2_PARAM].getValue() + (in[SIZE2_INPUT] + params[SIZE2_PARAM].getValue())/2.f;
-        float_4 lo2 = hi2 - in[SIZE2_INPUT] - params[SIZE2_PARAM].getValue();
+        float_4 size = in[SIZE1_INPUT] + params[SIZE1_PARAM].getValue();
+        size = ifelse(size >= f4_0, fmax(size, 2e-6f), fmin(size, -2e-6f));
+        float_4 hi1 = in[SHIFT1_INPUT] + params[SHIFT1_PARAM].getValue() + size/2.f;
+        float_4 lo1 = hi1 - size;
+        size = fmax(in[SIZE2_INPUT] + params[SIZE2_PARAM].getValue(), 1e-6f);
+        size = ifelse(size >= f4_0, fmax(size, 2e-6f), fmin(size, -2e-6f));
+        float_4 hi2 = in[SHIFT2_INPUT] + params[SHIFT2_PARAM].getValue() + size/2.f;
+        float_4 lo2 = hi2 - size;
         // compute compare outs
         out[s][GTR1_OUTPUT] = ifelse(in[IN1_INPUT] > hi1, f4_1, f4_0);
         out[s][LSS1_OUTPUT] = ifelse(in[IN1_INPUT] < lo1, f4_1, f4_0);
