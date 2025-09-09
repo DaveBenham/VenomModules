@@ -6,6 +6,7 @@
 - Slew
 - Wave Mangler
 - WinComp 2 + Logic
+- XM-OP
 
 ### Enhancements
 - Clone Merge, Poly Clone, Poly Unison, Aux Clone

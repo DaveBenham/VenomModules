@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.13.dev8",
+  "version": "2.13.dev9",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -708,6 +708,18 @@
         "Logic",
         "Polyphonic",
         "Utility"
+      ]
+    },
+    {
+      "slug": "XM_OP",
+      "name": "XM-OP",
+      "description": "Polyphonic oscillating operator with selectable modulation type",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#xm-op",
+      "tags": [
+        "Envelope generator",
+        "Oscillator",
+        "Polyphonic",
+        "Synth voice"
       ]
     }
   ]

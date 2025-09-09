@@ -71,6 +71,7 @@ extern Model* modelWaveMangler;
 extern Model* modelWaveMultiplier;
 extern Model* modelWidgetMenuExtender;
 extern Model* modelWinComp;
+extern Model* modelXM_OP;
 
 ////////////////////////////////
 
