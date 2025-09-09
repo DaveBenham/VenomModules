@@ -38,7 +38,7 @@
      inkscape:window-x="1592"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer5"
+     inkscape:current-layer="layer1"
      units="px">
     <inkscape:grid
        type="xygrid"
@@ -598,7 +598,8 @@
     <g
        aria-label="ENV"
        id="text5660-3-3-1-2-9"
-       style="font-weight:bold;font-size:21.1667px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#ede7dc;stroke-width:2.64583">
+       style="font-weight:bold;font-size:21.1667px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#ede7dc;stroke-width:2.64583"
+       transform="translate(-5.292908)">
       <path
          d="m 223.75937,861.28424 v -15.15155 h 11.23448 v 2.56315 h -8.17523 v 3.35898 h 7.60678 v 2.55282 h -7.60678 v 4.12378 h 8.46462 v 2.55282 z"
          id="path1526" />
@@ -865,5 +866,11 @@
        cx="337.34421"
        cy="705.11469"
        r="21.794392" />
+    <circle
+       style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.695;stroke-opacity:1"
+       id="path1065-7-2-3-2-0"
+       cx="277.81125"
+       cy="854.60419"
+       r="10.794167" />
   </g>
 </svg>

@@ -40,6 +40,7 @@ struct XM_OP : VenomModule {
     DEPTH_CV_PARAM,
     FDBK_CV_PARAM,
     SYNC_PARAM,
+    ENV_OUT_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -136,6 +137,7 @@ struct XM_OP : VenomModule {
 
     configInput(VOCT_INPUT, "VCO V/Oct");
     configInput(XMOD_INPUT, "VCO X-Mod");
+    configSwitch<FixedSwitchQuantity>(ENV_OUT_PARAM, 0.f, 1.f, 0.f, "Envelope output mode", {"Normal", "Inverted"});
     configOutput(ENV_OUTPUT, "Envelope");
     configOutput(OSC_OUTPUT, "VCA");
    
@@ -231,6 +233,7 @@ struct XM_OP : VenomModule {
           levelEnv = params[LEVEL_ENV_PARAM].getValue(),
           depthEnv = params[DEPTH_ENV_PARAM].getValue(),
           fdbkEnv = params[FDBK_ENV_PARAM].getValue(),
+          invEnv = params[ENV_OUT_PARAM].getValue(),
           k =  1000.f * args.sampleTime / oversample;          
 
     for (int s=0, c=0; c<channels; s++, c+=4) {
@@ -346,7 +349,7 @@ struct XM_OP : VenomModule {
       vcoOut *= level;
       gate[s] = newGate;
       stage[s] = newStage;
-      outputs[ENV_OUTPUT].setVoltageSimd(envOut*10.f, c);
+      outputs[ENV_OUTPUT].setVoltageSimd((invEnv ? 1.f-envOut : envOut)*10.f, c);
       outputs[OSC_OUTPUT].setVoltageSimd(vcoOut, c);
     }
     outputs[ENV_OUTPUT].setChannels(channels);
@@ -393,6 +396,13 @@ struct XM_OPWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_8.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_16.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/over_32.svg")));
+    }
+  };
+
+  struct EnvOutSwitch : GlowingSvgSwitchLockable {
+    EnvOutSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
     }
   };
 
@@ -446,6 +456,7 @@ struct XM_OPWidget : VenomWidget {
 
     addInput(createInputCentered<PolyPort>(Vec(22.5f, 339.5f), module, XM_OP::VOCT_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(57.5f, 339.5f), module, XM_OP::XMOD_INPUT));
+    addParam(createLockableParamCentered<EnvOutSwitch>(Vec(105.f,323.f), module, XM_OP::ENV_OUT_PARAM));
     addOutput(createOutputCentered<PolyPort>(Vec(92.5f,339.5f), module, XM_OP::ENV_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(127.5f,339.5f), module, XM_OP::OSC_OUTPUT));
   }
