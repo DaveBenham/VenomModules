@@ -2831,8 +2831,9 @@ When you slew an input signal, you limit the maximum rate at which the signal ca
 There are many possible uses for this behavior
 - Adding portamento (glide) to V/Oct pitch sequences
 - As a crude low pass filter
+- If using gate inputs, as an Attack, Sustain, Release envelope generator
 - If the input is fully rectified to positive voltages, then a fast rise time with slow fall time can function as an envelope follower
-- As a waveshaper, with modulated time and/or shape providing a dynamic shifting sound.
+- As a waveshaper, with modulated time and/or shape providing a dynamic shifting sound
 
 In addition to slewing an input signal, the Slew module also provides gate outputs indicating whether the slewed output is rising, falling, or flat.
 
