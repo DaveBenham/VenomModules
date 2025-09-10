@@ -713,7 +713,7 @@
     {
       "slug": "XM_OP",
       "name": "XM-OP",
-      "description": "Polyphonic oscillating operator with selectable modulation type",
+      "description": "Polyphonic synth voice with selectable waveform, modulation and feedback types (FM, PM, RM, AM), and integer ratios.",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#xm-op",
       "tags": [
         "Envelope generator",
