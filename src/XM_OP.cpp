@@ -312,9 +312,9 @@ struct XM_OP : VenomModule {
                 sawPhasor{},
                 offsetSawPhasor{};
         if (xmodType == 1) // PM
-          wavePhasor += xmod * depth * 250.f;
+          wavePhasor += xmod * depth * 125.f;
         if (fdbkType == 1) // PM
-          wavePhasor += prevVcoOut[s] * fdbk * 250.f;
+          wavePhasor += prevVcoOut[s] * fdbk * 125.f;
         wavePhasor = simd::fmod(wavePhasor, 1000.f);
         wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
         switch (wave) {
