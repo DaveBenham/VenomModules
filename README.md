@@ -4298,7 +4298,30 @@ If WinComp 2 + Logic is bypassed then all outputs are constant monophonic 0V.
 
 ## XM-OP
 ![XM-OP module image](doc/XM_OP.png)  
-Polyphonic modulation operator with selectable modulation type and oscillator frequency based on integer ratios. XM-OP is a complete synth voice with an oscillator, envelope generator, and VCA.
+Polyphonic synth voice with selectable waveform, modulation and feedback types (linear through-zero frequency, phase, ring, amplitude), and integer ratio frequencies.
+
+XM-OP includes an ADSR envelope generator, audio rate VCO, and VCA.
+
+XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same features, but with the following differences/enhancements:
+- VCO waveform can be sine, triangle, square, or saw rather than being fixed at sine
+- Envelope generator stage shape cross-fades between linear and curved rather having linear vs. exponential VCA response
+  - Rising curves are concave down and falling curves are convcave up instead of exponential rise and fall both being concave up
+- Frequency ratio is specified by separate integer multiplier (numerator) and divisor (denominator) controls rather than a single continuous ratio control
+  - This is very conveninent for establishing a wide range of musical ratios
+- Each ADSR and frequency ratio control has an attenuverter for a shared modulation input rather than only having CV control over sustain
+  - Attenuated CV values are summed with the base knob values
+- VCO external modulation and VCO feedback have selectable modulation types rather than being fixed at phase modulation
+  - Through zero linear frequency modulation
+  - Phase modulation (called through zero linear FM by Bogaudio)
+  - Ring modulation
+  - Amplitude modulation with options
+    - raw modulation input
+    - rectified modulation input
+    - modulation input offset by 5V
+- Envelope may be normal or inverted when applied to level, modulation depth, and feedback depth
+- Level, mod depth, and feedback depth knob values (optionally attenuated by envelope) are summed with independent CV inputs with attenuverters
+- The envelope (normal or inverted) is available as a separate output
+- Option to hard sync the VCO with the envelope gate.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
