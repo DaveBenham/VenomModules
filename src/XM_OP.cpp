@@ -7,6 +7,7 @@
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
+#define MAX_HARMONIC 63
 
 struct XM_OP : VenomModule {
  
@@ -86,7 +87,7 @@ struct XM_OP : VenomModule {
       xmType = 0,
       fdbkType = 0;
 
-  float harmonic[64] = {
+  float harmonic[MAX_HARMONIC+1] = {
     #include "XM_OP.data"
   };
   
@@ -108,8 +109,8 @@ struct XM_OP : VenomModule {
     configParam(SUS_CV_PARAM, -1.f, 1.f, 0.f, "Envelope sustain level mod amount", "%", 0.f, 100.f);
     configParam(REL_CV_PARAM, -1.f, 1.f, 0.f, "Envelope release time mod amount", "%", 0.f, 100.f);
 
-    configParam(MULT_PARAM, 0.f, 63.f, 0.f, "VCO frequency multiplier", "", 0.f, 1.f, 1.f);
-    configParam(DIV_PARAM, 0.f, 63.f, 0.f, "VCO frequency divisor", "", 0.f, 1.f, 1.f);
+    configParam(MULT_PARAM, 0.f, MAX_HARMONIC, 0.f, "VCO frequency multiplier", "", 0.f, 1.f, 1.f);
+    configParam(DIV_PARAM, 0.f, MAX_HARMONIC, 0.f, "VCO frequency divisor", "", 0.f, 1.f, 1.f);
     configParam(DTUNE_PARAM, -1.f/12.f, 1.f/12.f, 0.f, "VCO detune", " cents", 0.f, 1200.f);
 
     configParam(MULT_CV_PARAM, -1.f, 1.f, 0.f, "VCO frequency multiplier mod amount", "%", 0.f, 100.f);
@@ -282,8 +283,8 @@ struct XM_OP : VenomModule {
                       + fdbkCVAmt * inputs[FDBK_INPUT].getPolyVoltageSimd<float_4>(c)/10.f,
               vcoOut{};
       for (int i=0; i<4; i++){
-        baseFreq[i] += harmonic[static_cast<int>(multParam + mod[i]*multCVAmt)];
-        baseFreq[i] -= harmonic[static_cast<int>(divParam + mod[i]*divCVAmt)];
+        baseFreq[i] += harmonic[clamp(static_cast<int>(multParam + mod[i]*10.f*multCVAmt),0,MAX_HARMONIC)];
+        baseFreq[i] -= harmonic[clamp(static_cast<int>(divParam  + mod[i]*10.f*divCVAmt ),0,MAX_HARMONIC)];
       }
       baseFreq = dsp::exp2_taylor5(baseFreq);
       for (int o=0; o<oversample; o++) {
