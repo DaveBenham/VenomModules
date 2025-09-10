@@ -79,6 +79,8 @@ struct XM_OP : VenomModule {
           gate[4]{},
           vcoPhasor[4]{},
           prevVcoOut[4]{};
+  DCBlockFilter_4 xmodDcBlockFilter[4]{},
+                  fdbkDcBlockFilter[4]{};
   
   int wave = 0,
       xmType = 0,
@@ -94,7 +96,7 @@ struct XM_OP : VenomModule {
     configSwitch<FixedSwitchQuantity>(WAVE_PARAM, 0.f, 3.f, 0.f, "Waveform", {"Sine", "Triangle", "Square", "Saw"});
     configSwitch<FixedSwitchQuantity>(XM_TYPE_PARAM, 0.f, 5.f, 0.f, "X-Mod type", {"Frequency modulation", "Phase modulation", "Ring modulation", "Amplitude modulation", "Rectified amplitude modulation", "Offset amplitude modulation"});
     configSwitch<FixedSwitchQuantity>(FDBK_TYPE_PARAM, 0.f, 5.f, 0.f, "Feedback type", {"Frequency modulation", "Phase modulation", "Ring modulation", "Amplitude modulation", "Rectified amplitude modulation", "Offset amplitude modulation"});
-    configParam(CURVE_PARAM, 0.f, 1.f, 0.f, "Envelope curve", "%", 0.f, 100.f);
+    configParam(CURVE_PARAM, 0.f, 1.f, 0.65f, "Envelope curve", "%", 0.f, 100.f);
 
     configParam(ATK_PARAM, -10.f, 3.5f, -6.5f, "Envelope attack time", " msec", 2.f, 1000.f, 0.f);
     configParam(DEC_PARAM, -10.f, 3.5f, -1.f, "Envelope decay time", " msec", 2.f, 1000.f, 0.f);
@@ -190,6 +192,16 @@ struct XM_OP : VenomModule {
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
       setOversample();
+      sampleRate = 0;
+    }
+    
+    // update sampleRate
+    if (sampleRate != args.sampleRate){
+      sampleRate = args.sampleRate;
+      for (int i=0; i<4; i++){
+        xmodDcBlockFilter[i].init(oversample, sampleRate);
+        fdbkDcBlockFilter[i].init(oversample, sampleRate);
+      }
     }
 
     // get channel count
@@ -279,9 +291,9 @@ struct XM_OP : VenomModule {
           xmod = upSample[s].process(o ? 0.f : xmod*oversample);
         float_4 freq = baseFreq;
         if (xmodType == 0)
-          freq += xmod * depth;
+          freq += xmodDcBlockFilter[s].process(xmod) * depth;
         if (fdbkType == 0)
-          freq += prevVcoOut[s] * fdbk;
+          freq += fdbkDcBlockFilter[s].process(prevVcoOut[s]) * fdbk;
         freq *= dsp::FREQ_C4;
         float_4 basePhaseDelta = freq * k;
         vcoPhasor[s] += basePhaseDelta;
