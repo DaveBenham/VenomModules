@@ -126,7 +126,7 @@ struct XM_OP : VenomModule {
 
     configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "VCA Level");
     configParam(DEPTH_PARAM, -1.f, 1.f, 0.f, "VCO X-Mod depth", "%", 0.f, 100.f);
-    configParam(FDBK_PARAM, -1.f, 1.f, 0.f, "VCO Feedback depth", "%", 0.f, 10.f);
+    configParam(FDBK_PARAM, -1.f, 1.f, 0.f, "VCO Feedback depth", "%", 0.f, 100.f);
 
     configParam(LEVEL_CV_PARAM, -1.f, 1.f, 0.f, "VCA Level CV amount", "%", 0.f, 10.f);
     configParam(DEPTH_CV_PARAM, -1.f, 1.f, 0.f, "VCO X-Mod depth CV amount", "%", 0.f, 100.f);
@@ -312,7 +312,7 @@ struct XM_OP : VenomModule {
                 sawPhasor{},
                 offsetSawPhasor{};
         if (xmodType == 1) // PM
-          wavePhasor += xmod * depth * 125.f;
+          wavePhasor += xmod * depth * 250.f;
         if (fdbkType == 1) // PM
           wavePhasor += prevVcoOut[s] * fdbk * 125.f;
         wavePhasor = simd::fmod(wavePhasor, 1000.f);
