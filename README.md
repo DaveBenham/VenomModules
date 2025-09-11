@@ -210,9 +210,7 @@ If the small top right **TOG** (Toggle) button is enabled (yellow), then the GAT
 
 Triggers for TRIG and GATE CV are based on Schmitt triggers that go high above 2V and go low below 0.2V. Voltages between 0.2V and 2V maintain the current state.
 
-The type of envelope generated (AD or ASR) depends on which trigger is received first, TRIG or GATE.
-
-TRIG (AD) triggers take precedence over GATE (ASR) triggers.
+The type of envelope generated (AD or ASR) depends on which trigger is received first, TRIG or GATE. TRIG (AD) triggers take precedence over GATE (ASR) triggers in the event of a tie.
 
 All triggers are typically ignored if any of the other triggers or gates are already in a high state.
 
