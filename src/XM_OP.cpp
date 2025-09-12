@@ -45,7 +45,8 @@ struct XM_OP : VenomModule {
     PARAMS_LEN
   };
   enum InputId {
-    MOD_INPUT,
+    SMOD_INPUT,
+    RMOD_INPUT,
     LEVEL_INPUT,
     DEPTH_INPUT,
     FDBK_INPUT,
@@ -112,11 +113,12 @@ struct XM_OP : VenomModule {
     configParam(MULT_PARAM, 0.f, MAX_HARMONIC, 0.f, "VCO frequency multiplier", "", 0.f, 1.f, 1.f);
     configParam(DIV_PARAM, 0.f, MAX_HARMONIC, 0.f, "VCO frequency divisor", "", 0.f, 1.f, 1.f);
     configParam(DTUNE_PARAM, -1.f/12.f, 1.f/12.f, 0.f, "VCO detune", " cents", 0.f, 1200.f);
+    configInput(SMOD_INPUT, "envelope Stage modulation");
 
     configParam(MULT_CV_PARAM, -1.f, 1.f, 0.f, "VCO frequency multiplier mod amount", "%", 0.f, 100.f);
     configParam(DIV_CV_PARAM, -1.f, 1.f, 0.f, "VCO frequency divisor mod amount", "%", 0.f, 100.f);
     configParam(DTUNE_CV_PARAM, -1.f, 1.f, 0.f, "VCO detune mod amount", "%", 0.f, 100.f);
-    configInput(MOD_INPUT, "Modulation");
+    configInput(RMOD_INPUT, "frequency Ratio modulation");
 
     configSwitch<FixedSwitchQuantity>(LEVEL_ENV_PARAM, 0.f, 2.f, 0.f, "Level envelope", {"Off", "On", "Inverted"});
     configSwitch<FixedSwitchQuantity>(DEPTH_ENV_PARAM, 0.f, 2.f, 0.f, "X-Mod depth envelope", {"Off", "On", "Inverted"});
@@ -251,11 +253,12 @@ struct XM_OP : VenomModule {
           k =  1000.f * args.sampleTime / oversample;          
 
     for (int s=0, c=0; c<channels; s++, c+=4) {
-      float_4 mod = inputs[MOD_INPUT].getPolyVoltageSimd<float_4>(c),
-              susLevel = clamp(susParam + mod*susCVAmt),
-              delta = ifelse(stage[s]==1.f, args.sampleTime / clamp(pow(2.f, mod*atkCVAmt + atkParam), minTime, maxTime),
-                        ifelse(stage[s]==2.f, args.sampleTime / clamp(pow(2.f, mod*decCVAmt + decParam), minTime, maxTime),
-                          ifelse(stage[s]==4.f, args.sampleTime / clamp(pow(2.f, mod*relCVAmt + relParam), minTime, maxTime), 0.f)));
+      float_4 rmod = inputs[RMOD_INPUT].getPolyVoltageSimd<float_4>(c),
+              smod = inputs[SMOD_INPUT].getPolyVoltageSimd<float_4>(c),
+              susLevel = clamp(susParam + smod*susCVAmt),
+              delta = ifelse(stage[s]==1.f, args.sampleTime / clamp(pow(2.f, smod*atkCVAmt + atkParam), minTime, maxTime),
+                        ifelse(stage[s]==2.f, args.sampleTime / clamp(pow(2.f, smod*decCVAmt + decParam), minTime, maxTime),
+                          ifelse(stage[s]==4.f, args.sampleTime / clamp(pow(2.f, smod*relCVAmt + relParam), minTime, maxTime), 0.f)));
       envPhasor[s] = clamp(envPhasor[s]+delta);
       float_4 curve = normSigmoid(envPhasor[s], shape),
               envOut = ifelse(stage[s]<=1.f, curve,
@@ -274,7 +277,7 @@ struct XM_OP : VenomModule {
       relStart[s] = ifelse((newStage!=stage[s]) & (newStage==4.f), envOut, relStart[s]);
 
       float_4 baseFreq = inputs[VOCT_INPUT].getPolyVoltageSimd<float_4>(c)
-                         + dtuneParam + mod*dtuneCVAmt,
+                         + dtuneParam + rmod*dtuneCVAmt,
               xmod = inputs[XMOD_INPUT].getPolyVoltageSimd<float_4>(c),
               level = clamp(levelParam * (levelEnv==1.f ? envOut : levelEnv ? 1.f-envOut : 1.f)
                             + levelCVAmt * inputs[LEVEL_INPUT].getPolyVoltageSimd<float_4>(c)/10.f),
@@ -284,8 +287,8 @@ struct XM_OP : VenomModule {
                       + fdbkCVAmt * inputs[FDBK_INPUT].getPolyVoltageSimd<float_4>(c)/10.f,
               vcoOut{};
       for (int i=0; i<4; i++){
-        baseFreq[i] += harmonic[clamp(static_cast<int>(multParam + mod[i]*10.f*multCVAmt),0,MAX_HARMONIC)];
-        baseFreq[i] -= harmonic[clamp(static_cast<int>(divParam  + mod[i]*10.f*divCVAmt ),0,MAX_HARMONIC)];
+        baseFreq[i] += harmonic[clamp(static_cast<int>(multParam + rmod[i]*10.f*multCVAmt),0,MAX_HARMONIC)];
+        baseFreq[i] -= harmonic[clamp(static_cast<int>(divParam  + rmod[i]*10.f*divCVAmt ),0,MAX_HARMONIC)];
       }
       baseFreq = dsp::exp2_taylor5(baseFreq);
       for (int o=0; o<oversample; o++) {
@@ -442,11 +445,12 @@ struct XM_OPWidget : VenomWidget {
     addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(22.5f,157.f), module, XM_OP::MULT_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(57.5f,157.f), module, XM_OP::DIV_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(92.5f,157.f), module, XM_OP::DTUNE_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(127.5f, 153.f), module, XM_OP::SMOD_INPUT));
 
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(22.5f,188.5f), module, XM_OP::MULT_CV_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(57.5f,188.5f), module, XM_OP::DIV_CV_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(92.5f,188.5f), module, XM_OP::DTUNE_CV_PARAM));
-    addInput(createInputCentered<PolyPort>(Vec(127.5f, 188.5f), module, XM_OP::MOD_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(127.5f, 188.5f), module, XM_OP::RMOD_INPUT));
 
     addParam(createLockableParamCentered<EnvSwitch>(Vec(22.5f,207.5f), module, XM_OP::LEVEL_ENV_PARAM));
     addParam(createLockableParamCentered<EnvSwitch>(Vec(57.5f,207.5f), module, XM_OP::DEPTH_ENV_PARAM));
