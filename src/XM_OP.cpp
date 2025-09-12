@@ -128,9 +128,9 @@ struct XM_OP : VenomModule {
     configParam(DEPTH_PARAM, -1.f, 1.f, 0.f, "VCO X-Mod depth", "%", 0.f, 100.f);
     configParam(FDBK_PARAM, -1.f, 1.f, 0.f, "VCO Feedback depth", "%", 0.f, 100.f);
 
-    configParam(LEVEL_CV_PARAM, -1.f, 1.f, 0.f, "VCA Level CV amount", "%", 0.f, 10.f);
+    configParam(LEVEL_CV_PARAM, -1.f, 1.f, 0.f, "VCA Level CV amount", "%", 0.f, 100.f);
     configParam(DEPTH_CV_PARAM, -1.f, 1.f, 0.f, "VCO X-Mod depth CV amount", "%", 0.f, 100.f);
-    configParam(FDBK_CV_PARAM, -1.f, 1.f, 0.f, "VCO feedback depth CV amount", "%", 0.f, 10.f);
+    configParam(FDBK_CV_PARAM, -1.f, 1.f, 0.f, "VCO feedback depth CV amount", "%", 0.f, 100.f);
     configSwitch<FixedSwitchQuantity>(SYNC_PARAM, 0.f, 1.f, 0.f, "Sync VCO", {"Off", "On"});
 
     configInput(LEVEL_INPUT, "VCA Level CV");
@@ -340,21 +340,21 @@ struct XM_OP : VenomModule {
         }
         float_4 saveVcoOut = vcoOut;
         if (xmodType == 2) // RM
-          vcoOut = crossfade( vcoOut, vcoOut * xmod/5.f, clamp(fabs(depth)));
+          vcoOut = crossfade( vcoOut, vcoOut * xmod/ifelse(depth<0.f, -5.f, 5.f), clamp(fabs(depth)));
         if (fdbkType == 2) // RM
-          vcoOut = crossfade( vcoOut, vcoOut * prevVcoOut[s]/5.f, clamp(fabs(fdbk)));
+          vcoOut = crossfade( vcoOut, vcoOut * prevVcoOut[s]/ifelse(fdbk<0.f, -5.f, 5.f), clamp(fabs(fdbk)));
         if (xmodType == 3) // AM
-          vcoOut = crossfade( vcoOut, vcoOut * ifelse(xmod<0.f, 0.f, xmod/5.f), clamp(fabs(depth)));
+          vcoOut = crossfade( vcoOut, vcoOut * ifelse((depth<0.f)&(xmod<0.f), -xmod/5.f, ifelse((depth>0.f)&(xmod>0.f), xmod/5.f, 0.f)), clamp(fabs(depth)));
         if (fdbkType == 3) // AM
-          vcoOut = crossfade( vcoOut, vcoOut * ifelse(prevVcoOut[s]<0.f, 0.f, prevVcoOut[s]/5.f), clamp(fabs(fdbk)));
+          vcoOut = crossfade( vcoOut, vcoOut * ifelse((fdbk<0.f)&(prevVcoOut[s]<0.f), -prevVcoOut[s]/5.f, ifelse((fdbk>0.f)&(prevVcoOut[s]>0.f), prevVcoOut[s]/5.f, 0.f)), clamp(fabs(fdbk)));
         if (xmodType == 4) // rect AM
-          vcoOut = crossfade( vcoOut, vcoOut * fabs(xmod)/5.f, clamp(fabs(depth)));
+          vcoOut = crossfade( vcoOut, vcoOut * ifelse(depth<0.f, -1.f, 1.f)*fabs(xmod)/5.f, clamp(fabs(depth)));
         if (fdbkType == 4) // rect AM
-          vcoOut = crossfade( vcoOut, vcoOut * fabs(prevVcoOut[s])/5.f, clamp(fabs(fdbk)));
+          vcoOut = crossfade( vcoOut, vcoOut * ifelse(fdbk<0.f, -1.f, 1.f)*fabs(prevVcoOut[s])/5.f, clamp(fabs(fdbk)));
         if (xmodType == 5) // offset AM
-          vcoOut = crossfade( vcoOut, vcoOut * fabs(xmod+5.f)/10.f, clamp(fabs(depth)));
+          vcoOut = crossfade( vcoOut, vcoOut * clamp(ifelse(depth<0.f, -xmod, xmod)+5.f, 0.f, 100.f)/10.f, clamp(fabs(depth)));
         if (fdbkType == 5) // offset AM
-          vcoOut = crossfade( vcoOut, vcoOut * fabs(prevVcoOut[s]+5.f)/10.f, clamp(fabs(fdbk)));
+          vcoOut = crossfade( vcoOut, vcoOut * clamp(ifelse(fdbk<0.f, -prevVcoOut[s], prevVcoOut[s])+5.f, 0.f, 100.f)/10.f, clamp(fabs(fdbk)));
         if (oversample>1)
           vcoOut = downSample[s].process(vcoOut);
         prevVcoOut[s] = saveVcoOut;
