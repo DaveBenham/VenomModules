@@ -294,7 +294,7 @@ Each of the stage output ports has a small button next to the label to configure
 - **Start trigger** ***(green)*** Produces a 1ms trigger upon entry to the Rise stage. The trigger may be shortened upon exit from the Rise stage.
 - **End trigger** ***(red)*** Produces a 1ms trigger upon exit from the Rise stage. The trigger may be shortened upon rentry to the Rise stage.
 
-Note that Rise triggers are not fired if the envelope is retriggered during the Rise stage.
+Note that a Rise trigger is not fired if the envelope is retriggered during the Rise stage.
 
 #### SUS (Sustain) output
 - **Gate** ***(dark blue, default)*** Produces a high gate (10V) whenever the envelope is sustaining 10V, else low (0V) otherwise.
@@ -313,7 +313,7 @@ The envelopes are output here. The small button beside the label configures the 
 
 - **Unipolar** ***(green, default)*** Normal envelope from 0V to 10V
 - **Inverted unipolar** ***(orange)*** Inverts the envelope from 10V to 0V
-- **Bipolar** ***(red)*** Offsets the envelope to -5V to 5V
+- **Bipolar** ***(red)*** Offsets the envelope by -5V for a +/-5V range
 
 ### Alternate AD and ASR behavior via feedback
 
