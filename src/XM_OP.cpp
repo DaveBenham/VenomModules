@@ -247,6 +247,7 @@ struct XM_OP : VenomModule {
           depthEnv = params[DEPTH_ENV_PARAM].getValue(),
           fdbkEnv = params[FDBK_ENV_PARAM].getValue(),
           invEnv = params[ENV_OUT_PARAM].getValue(),
+          syncParam = params[SYNC_PARAM].getValue(),
           k =  1000.f * args.sampleTime / oversample;          
 
     for (int s=0, c=0; c<channels; s++, c+=4) {
@@ -305,7 +306,7 @@ struct XM_OP : VenomModule {
         denInv = denInv * denInv * 0.25;
         //
         vcoPhasor[s] = fmod(vcoPhasor[s], 1000.f);
-        if (o==0)
+        if (o==0 && syncParam)
           vcoPhasor[s] = ifelse(newGate>gate[s], 0.f, vcoPhasor[s]);
         float_4 phases[3]{},
                 wavePhasor = vcoPhasor[s],
