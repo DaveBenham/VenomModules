@@ -4304,12 +4304,13 @@ XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same fea
 - VCO waveform can be sine, triangle, square, or saw rather than being fixed at sine
 - Envelope generator stage shape cross-fades between linear and curved rather having linear vs. exponential VCA response
   - Rising curves are concave down and falling curves are convcave up instead of exponential rise and fall both being concave up
+- Each ADSR stage has an attenuverter for a shared modulation input rather than only having CV control over sustain
+  - Attenuated CV values are summed with the base knob values
 - Frequency ratio is specified by separate integer multiplier (numerator) and divisor (denominator) controls rather than a single continuous ratio control
   - This is very conveninent for establishing a wide range of musical ratios
-- Each ADSR and frequency ratio control has an attenuverter for a shared modulation input rather than only having CV control over sustain
-  - Attenuated CV values are summed with the base knob values
+- The ratio multiplier, divisor, and detune can be CV controlled via three attenuverters with a shared CV input
 - VCO external modulation and VCO feedback have selectable modulation types rather than being fixed at phase modulation
-  - Through zero linear frequency modulation
+  - Through zero linear frequency modulation (AC coupled)
   - Phase modulation (called through zero linear FM by Bogaudio)
   - Ring modulation
   - Amplitude modulation with options
@@ -4319,7 +4320,7 @@ XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same fea
 - Envelope may be normal or inverted when applied to level, modulation depth, and feedback depth
 - Level, mod depth, and feedback depth knob values (optionally attenuated by envelope) are summed with independent CV inputs with attenuverters
 - The envelope (normal or inverted) is available as a separate output
-- Option to hard sync the VCO with the envelope gate.
+- A configurable trigger input that can either sync the VCO, retrigger the envelope during decay or sustain, or both
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
