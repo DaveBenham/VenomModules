@@ -4298,7 +4298,7 @@ If WinComp 2 + Logic is bypassed then all outputs are constant monophonic 0V.
 ![XM-OP module image](doc/XM_OP.png)  
 Polyphonic synth voice with selectable waveform, modulation and feedback types (linear through-zero frequency, phase, ring, amplitude), and integer ratio frequencies.
 
-XM-OP includes an ADSR (Attack, Decay, Sustain, Release) envelope generator, audio rate VCO, and VCA.
+XM-OP includes an ADSR (Attack, Decay, Sustain, Release) envelope generator, audio rate VCO, and VCA. The VCO output is always processed by the VCA.
 
 XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same features, but with the following differences/enhancements:
 - VCO waveform can be sine, triangle, square, or saw rather than being fixed at sine
@@ -4322,6 +4322,67 @@ XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same fea
 - The envelope (normal or inverted) is available as a separate output
 - A configurable trigger input that can either sync the VCO, retrigger the envelope during decay or sustain, or both
 
+### WAVE button
+Selects the waveform for the VCO
+- **SIN** (default) sine
+- **TRI** triangle
+- **SQR** square
+- **SAW**
+
+### XMOD (variable modulation type) button
+Selects the modulation mode used for the XMOD input
+- **FM** (default) AC coupled linear through-zero frequency modulation
+- **PM** Phase modulation
+- **RM** Ring modulation - the waveform is multiplied by the XMOD using a 4 quadrant VCA
+- **AM** Amplitude modulation - the waveform is multiplied by the XMOD using a 2 quadrant VCA, so negative XMOD values are treated as 0
+- **AM RECT** Amplitude modulation with the XMOD fully rectified to positive values before multiplying
+- **AM OFF** Amplitude modulation with the XMOD offset +5V before multiplying
+
+Note that the RM and various AM assume the XMOD input is bipolar +/- 5V. The modulation is scaled such that the result is also bipolar +/- 5V (before hitting the VCA).
+
+### FDBK (feedback type) button
+Selects the modulation type used for feedback. The options are the same as for the XMOD type.
+
+### Envelope generator general behavior
+Upon receipt of a high gate, the generator starts the attack stage and rises from 0V to 10V as long as the gate remains high. Once 10V is reached, it proceeds to the decay stage.
+
+The decay stage falls from 10V to the sustain level as long as the gate remains high. Once the sustain level is reached it proceeds to the sustain stage.
+
+The sustain stage maintains the sustain level as long as the gate remains high.
+
+The generator immediately jumps to the release stage whenever the gate goes low. This could happen during the attack, decay, or sustain stage. The release stage falls from the current value back to 0V.
+
+The generator can be retriggered during the decay and release stages, in which case the attack stage is re-started from the current voltage instead of 0V.
+
+### CURVE knob
+Establishes the shape of the envelope attack, decay, and release stages. Fully counter-clockwise is linear, and fully clockwise has the most severe curvature. The knob is scaled to show the amount of curvature.
+
+Curves are concave down for the attack phase, and concave up for the decay and release phases.
+
+Changing the curvature does not change the stage times.
+
+### ATK (envelope attack time) knob
+Establishes the time it takes the attack stage to rise from 0V to 10V. The knob range is 0.98 msec to 11.3 sec.
+
+If the envelope is retriggered, then the attack stage can start above 0V, in which case the attack time is shortened proportionally.
+
+### DEC (envelope decay time) knob
+Establishes the time it takes the decay stage to fall from 10V down to the sustain level. The knob range is 0.98 msec to 11.3 sec.
+
+### SUS (envelope sustain level) knob
+Establishes the voltage of the sustain stage. The knob range is 0% to 100%, which corresponds to 0 to 10 volts.
+
+### REL (envelope release time) knob
+Establishes the time it takes the release stage to fall from the sustain level to 0V. The knob range is 0.98 msec to 11.3 sec.
+
+If gate goes low before the sustain stage is reached, then the release start level will not be the sustain level. If the release start is below the sustain level, then the release time will be decreased proportionally. If the release start is above the sustain level, then the release time will be for the release start down to 0V.
+
+### SMOD (envelope stage CV) input
+This is a shared input that can be used to modulate any of the envelope stages. Each stage has its own attenuverter to attenuate and or invert the SMOD CV. The attenuated CV is summed with the knob value.
+
+The attack, decay, and release stages scale the CV such that for each positive volt of CV, the time is doubled, and for each negative volt the time is halved. The stage times can be modulated beyond the knob values. The absolute minimum stage time is 0.24 msec, and the maximum is 181 seconds.
+
+The sustain CV is scaled at 10% per volt, and the effective sustain level is clamped to 0-10V.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
