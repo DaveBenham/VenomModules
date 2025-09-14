@@ -129,7 +129,7 @@ struct XM_OP : VenomModule {
 
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 2.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
 
-    configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "VCA Level");
+    configParam(LEVEL_PARAM, 0.f, 1.f, 1.f, "VCA Level", "%", 0.f, 100.f);
     configParam(DEPTH_PARAM, -1.f, 1.f, 0.f, "VCO X-Mod depth", "%", 0.f, 100.f);
     configParam(FDBK_PARAM, -1.f, 1.f, 0.f, "VCO Feedback depth", "%", 0.f, 100.f);
 
@@ -271,7 +271,7 @@ struct XM_OP : VenomModule {
           dtuneParam = params[DTUNE_PARAM].getValue(),
           multCVAmt = params[MULT_CV_PARAM].getValue(),
           divCVAmt = params[DIV_CV_PARAM].getValue(),
-          dtuneCVAmt = params[DTUNE_CV_PARAM].getValue(),
+          dtuneCVAmt = params[DTUNE_CV_PARAM].getValue()/120.f,
           levelParam = params[LEVEL_PARAM].getValue(),
           depthParam = params[DEPTH_PARAM].getValue(),
           fdbkParam = params[FDBK_PARAM].getValue(),
