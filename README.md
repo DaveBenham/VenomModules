@@ -4344,15 +4344,15 @@ Note that the RM and various AM assume the XMOD input is bipolar +/- 5V. The mod
 Selects the modulation type used for feedback. The options are the same as for the XMOD type.
 
 ### Envelope generator general behavior
-Upon receipt of a high gate, the generator starts the attack stage and rises from 0V to 10V as long as the gate remains high. Once 10V is reached, it proceeds to the decay stage.
+Upon receipt of a high gate, the generator starts the attack stage and rises from 0% to 100% as long as the gate remains high. Once 100% is reached, it proceeds to the decay stage.
 
-The decay stage falls from 10V to the sustain level as long as the gate remains high. Once the sustain level is reached it proceeds to the sustain stage.
+The decay stage falls from 100% to the sustain level as long as the gate remains high. Once the sustain level is reached it proceeds to the sustain stage.
 
 The sustain stage maintains the sustain level as long as the gate remains high.
 
-The generator immediately jumps to the release stage whenever the gate goes low. This could happen during the attack, decay, or sustain stage. The release stage falls from the current value back to 0V.
+The envelope immediately jumps to the release stage whenever the gate goes low. This could happen during the attack, decay, or sustain stage. The release stage falls from the current value back to 0%.
 
-The generator can be retriggered during the decay and release stages, in which case the attack stage is re-started from the current voltage instead of 0V.
+The generator can be retriggered during the decay and release stages, in which case the attack stage is re-started from the current level instead of 0%.
 
 ### CURVE knob
 Establishes the shape of the envelope attack, decay, and release stages. Fully counter-clockwise is linear, and fully clockwise has the most severe curvature. The knob is scaled to show the amount of curvature.
@@ -4362,27 +4362,27 @@ Curves are concave down for the attack phase, and concave up for the decay and r
 Changing the curvature does not change the stage times.
 
 ### ATK (envelope attack time) knob
-Establishes the time it takes the attack stage to rise from 0V to 10V. The knob range is 0.98 msec to 11.3 sec.
+Establishes the time it takes the attack stage to rise from 0% to 100%. The knob range is 0.98 msec to 11.3 sec.
 
-If the envelope is retriggered, then the attack stage can start above 0V, in which case the attack time is shortened proportionally.
+If the envelope is retriggered, then the attack stage can start above 0%, in which case the attack time is shortened proportionally.
 
 ### DEC (envelope decay time) knob
-Establishes the time it takes the decay stage to fall from 10V down to the sustain level. The knob range is 0.98 msec to 11.3 sec.
+Establishes the time it takes the decay stage to fall from 100% down to the sustain level. The knob range is 0.98 msec to 11.3 sec.
 
 ### SUS (envelope sustain level) knob
-Establishes the voltage of the sustain stage. The knob range is 0% to 100%, which corresponds to 0 to 10 volts.
+Establishes the level of the sustain stage. The knob range is 0% to 100%.
 
 ### REL (envelope release time) knob
-Establishes the time it takes the release stage to fall from the sustain level to 0V. The knob range is 0.98 msec to 11.3 sec.
+Establishes the time it takes the release stage to fall from the sustain level to 0%. The knob range is 0.98 msec to 11.3 sec.
 
-If gate goes low before the sustain stage is reached, then the release start level will not be the sustain level. If the release start is below the sustain level, then the release time will be decreased proportionally. If the release start is above the sustain level, then the release time will be for the release start down to 0V.
+If the gate goes low before the sustain stage is reached, then the release start level will not be the sustain level. If the release start is below the sustain level, then the release time will be decreased proportionally. If the release start is above the sustain level, then the release time will be for the release start down to 0%.
 
 ### SMOD (envelope stage modulation) input
 This is a shared input that can be used to modulate any of the envelope stages. Each stage has its own attenuverter to attenuate and/or invert the SMOD CV. The attenuated CV is summed with the knob value.
 
 The attack, decay, and release stages scale the CV such that for each positive volt of CV, the time is doubled, and for each negative volt the time is halved. The stage times can be modulated beyond the knob values. The absolute minimum stage time is 0.24 msec, and the maximum is 181 seconds.
 
-The sustain CV is scaled 1:1 (or 10% per volt), and the effective sustain level is clamped to 0-10V (0-100%).
+The sustain level CV is scaled at 10% per volt, and the effective sustain level is clamped between 0% and 100%.
 
 ### VCO frequency ratio
 XM-OP is intended to be used as a modulation operator, where one XM-OP modulates another. When performing modulation, the most musical results occur when there is an integral ratio relationship between the frequencies of the two operators. There are three controls to establish this ratio. XM-OP also has a V/Oct input where 0V always represents 261.63 Hz, or C4. There isn't any general tuning knob or octave knob. If there were, then it would disturb the ratio relationships.
@@ -4402,6 +4402,76 @@ This is a shared input that can be used to modulate any of the frequency ratio p
 MULT and DIV CV are scaled at 1 integer per 0.1 volt. The effective MULT and DIV values are clamped between 1 and 64.
 
 DTUNE CV is scaled at 10 cents per volt. The CV can modulate the detune amount beyond the knob limits.
+
+### LEVEL (VCA level) knob and CV input
+The knob establishes the base level of the internal VCA output. It ranges from 0% to 100%.
+
+Above the knob is a small **ENV** button that controls whether the VCA is attenuated by the internal envelope.
+- **Off** (dark gray, default)
+- **On** (yellow) The level is attenuated by the normal 0% - 100% envelope.
+- **Inverted** (red) The level is attenuated by the inverted envelope that goes from 100% to 0%.
+
+Below the knob is a CV input with associated attenuverter. The CV is scaled at 10% per volt. The attenuated CV is summed with the knob value (possibly attenuated by the envelope) to establish the final VCA level.
+
+### DEPTH (XMOD modulation depth) knob and CV input
+The knob establishes the depth of the XMOD modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
+
+Above the knob is a small **ENV** button that controls whether the depth is attenuated by the internal envelope.
+- **Off** (dark gray, default)
+- **On** (yellow) The depth is attenuated by the normal 0% - 100% envelope.
+- **Inverted** (red) The depth is attenuated by the inverted envelope that goes from 100% to 0%.
+
+Below the knob is a CV input with associated attenuverter. The CV is scaled at 10% per volt. The attenuated CV is summed with the knob value (possibly attenuated by the envelope) to establish the final depth value.
+
+Note that for RM and AM modes, the depth cross fades between the raw unmodulated VCO at 0%, and the modulated VCO at 100%.
+
+### FDBK (feedback modulation depth) knob and CV input
+The knob establishes the depth of the feedback modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
+
+Above the knob is a small **ENV** button that controls whether the depth is attenuated by the internal envelope.
+- **Off** (dark gray, default)
+- **On** (yellow) The depth is attenuated by the normal 0% - 100% envelope.
+- **Inverted** (red) The depth is attenuated by the inverted envelope that goes from 100% to 0%.
+
+Below the knob is a CV input with associated attenuverter. The CV is scaled at 10% per volt. The attenuated CV is summed with the knob value (possibly attenuated by the envelope) to establish the final depth value.
+
+Note that for RM and AM modes, the depth cross fades between the raw unmodulated VCO at 0%, and the modulated VCO at 100%.
+
+### OVER (oversample amount) button
+Modulation can introduce unwanted inharmonic audio aliasing that can be mitigated by oversampling. The OVER button provides for the following oversampling levels
+- **Off** (dark gray)
+- **x2** (yellow)
+- **x4** (green, default)
+- **x8** (light blue)
+- **x16** (dark blue)
+- **x32** (purple)
+
+Note that only the XMOD input is upsampled to the oversample rate. The other inputs can be driven at audio rates, but they are not upsampled.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
+### GATE (envelope gate) input
+The internal envelope is triggered on the leading edge of a gate. The envelope proceeds through the attack, decay, and sustain stages for as long as the gate remains high. The gate may also sync the VCO depending on how the SYNC/RTRG input is configured.
+
+### SYNC/RTRG (VCO sync or envelope retrigger) input and mode button
+This trigger input has different behavior depending on the small mode button below the label
+- **VCO sync** (blue, default) - The VCO is hard synced
+- **Envelope retrigger and VCO sync** (green) - The envelope can be retriggered during the decay and sustain stages while the gate remains high, at which point the VCO is also hard synced. The gate input also hard syncs the VCO.
+- **Envelope retrigger, No VCO sync** (yellow) - The envelope can be retriggered during the decay and sustain stages while the gate remains high.
+
+### V/OCT (volt per octave) input
+Establishes the base frequency of the VCO before applying the frequency ratio or XMOD or feedback modulation. 0V represents 261.63 Hz, or C4.
+
+### XMOD (variable modulation) input
+This is the CV that modulates the VCO, with the type of modulation controled by the square XMOD button at the top.
+
+### ENV (envelope) output
+The 0-10V envelope is output here. The mode of the output is controlled by the small button beside the label
+- **Normal** (dark gray, default) - The envelope starts at 0V and rises to 10V.
+- **Inverted** (red) - The envelope is 10V at rest and falls to 0V during the attack stage.
+
+### OUT output
+The output of the VCA is output here. This is the modulated VCO output, after being attenuated by the VCA.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
