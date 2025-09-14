@@ -4377,12 +4377,31 @@ Establishes the time it takes the release stage to fall from the sustain level t
 
 If gate goes low before the sustain stage is reached, then the release start level will not be the sustain level. If the release start is below the sustain level, then the release time will be decreased proportionally. If the release start is above the sustain level, then the release time will be for the release start down to 0V.
 
-### SMOD (envelope stage CV) input
-This is a shared input that can be used to modulate any of the envelope stages. Each stage has its own attenuverter to attenuate and or invert the SMOD CV. The attenuated CV is summed with the knob value.
+### SMOD (envelope stage modulation) input
+This is a shared input that can be used to modulate any of the envelope stages. Each stage has its own attenuverter to attenuate and/or invert the SMOD CV. The attenuated CV is summed with the knob value.
 
 The attack, decay, and release stages scale the CV such that for each positive volt of CV, the time is doubled, and for each negative volt the time is halved. The stage times can be modulated beyond the knob values. The absolute minimum stage time is 0.24 msec, and the maximum is 181 seconds.
 
-The sustain CV is scaled at 10% per volt, and the effective sustain level is clamped to 0-10V.
+The sustain CV is scaled 1:1 (or 10% per volt), and the effective sustain level is clamped to 0-10V (0-100%).
+
+### VCO frequency ratio
+XM-OP is intended to be used as a modulation operator, where one XM-OP modulates another. When performing modulation, the most musical results occur when there is an integral ratio relationship between the frequencies of the two operators. There are three controls to establish this ratio. XM-OP also has a V/Oct input where 0V always represents 261.63 Hz, or C4. There isn't any general tuning knob or octave knob. If there were, then it would disturb the ratio relationships.
+
+### MULT (frequency multiplier) knob
+Establishes the numerator of the frequency ratio. The knob is constrained to integral values from 1 to 64.
+
+### DIV (frequency divisor) knob
+Establishes the denominator of the frequency ratio. The knob is constrained to integral values from 1 to 64.
+
+### DTUNE (detune) knob
+Allows you to detune the ratio from the perfect integral ratio. The knob ranges from -100 cents to 100 cents.
+
+### RMOD (frquency ratio modulation) input
+This is a shared input that can be used to modulate any of the frequency ratio parameters. MULT, DIV, and DTUNE each have their own attenuverter to attenuate and/or invert the RMOD CV. The attenuated CV is summed with the knob value.
+
+MULT and DIV CV are scaled at 1 integer per 0.1 volt. The effective MULT and DIV values are clamped between 1 and 64.
+
+DTUNE CV is scaled at 10 cents per volt. The CV can modulate the detune amount beyond the knob limits.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
