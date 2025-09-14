@@ -4460,13 +4460,13 @@ This trigger input has different behavior depending on the small mode button bel
 - **Envelope retrigger, No VCO sync** (yellow) - The envelope can be retriggered during the decay and sustain stages while the gate remains high.
 
 ### V/OCT (volt per octave) input
-Establishes the base frequency of the VCO before applying the frequency ratio or XMOD or feedback modulation. 0V represents 261.63 Hz, or C4.
+Establishes the base frequency of the VCO before applying any frequency ratio, XMOD or feedback modulation. 0V represents 261.63 Hz, or C4.
 
 ### XMOD (variable modulation) input
-This is the CV that modulates the VCO, with the type of modulation controled by the square XMOD button at the top.
+This is the CV that modulates the VCO, with the type of modulation controled by the square XMOD button at the top. Typically audio signals are used.
 
 ### ENV (envelope) output
-The 0-10V envelope is output here. The mode of the output is controlled by the small button beside the label
+The 0-10V envelope is output here. The mode of the output is controlled by the small button beside the label.
 - **Normal** (dark gray, default) - The envelope starts at 0V and rises to 10V.
 - **Inverted** (red) - The envelope is 10V at rest and falls to 0V during the attack stage.
 
