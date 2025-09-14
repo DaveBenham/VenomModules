@@ -4298,7 +4298,7 @@ If WinComp 2 + Logic is bypassed then all outputs are constant monophonic 0V.
 ![XM-OP module image](doc/XM_OP.png)  
 Polyphonic synth voice with selectable waveform, modulation and feedback types (linear through-zero frequency, phase, ring, amplitude), and integer ratio frequencies.
 
-XM-OP includes an ADSR envelope generator, audio rate VCO, and VCA.
+XM-OP includes an ADSR (Attack, Decay, Sustain, Release) envelope generator, audio rate VCO, and VCA.
 
 XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same features, but with the following differences/enhancements:
 - VCO waveform can be sine, triangle, square, or saw rather than being fixed at sine
@@ -4317,10 +4317,11 @@ XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same fea
     - raw modulation input
     - rectified modulation input
     - modulation input offset by 5V
-- Envelope may be normal or inverted when applied to level, modulation depth, and feedback depth
+- Envelope may be normal or inverted when applied to level, modulation depth, and/or feedback depth
 - Level, mod depth, and feedback depth knob values (optionally attenuated by envelope) are summed with independent CV inputs with attenuverters
 - The envelope (normal or inverted) is available as a separate output
 - A configurable trigger input that can either sync the VCO, retrigger the envelope during decay or sustain, or both
+
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
