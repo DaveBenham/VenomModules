@@ -479,7 +479,7 @@ struct XM_OPWidget : VenomWidget {
     addParam(createLockableParamCentered<WaveSwitch>(Vec(22.5f,49.5f), module, XM_OP::WAVE_PARAM));
     addParam(createLockableParamCentered<OpSwitch>(Vec(57.5f,49.5f), module, XM_OP::XM_TYPE_PARAM));
     addParam(createLockableParamCentered<OpSwitch>(Vec(92.5f,49.5f), module, XM_OP::FDBK_TYPE_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(127.5f,49.5f), module, XM_OP::CURVE_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(127.5f,48.5f), module, XM_OP::CURVE_PARAM));
 
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f,89.5f), module, XM_OP::ATK_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(57.5f,89.5f), module, XM_OP::DEC_PARAM));
@@ -505,7 +505,7 @@ struct XM_OPWidget : VenomWidget {
     addParam(createLockableParamCentered<EnvSwitch>(Vec(57.5f,207.5f), module, XM_OP::DEPTH_ENV_PARAM));
     addParam(createLockableParamCentered<EnvSwitch>(Vec(92.5f,207.5f), module, XM_OP::FDBK_ENV_PARAM));
 
-    addParam(createLockableParamCentered<OverSwitch>(Vec(127.5f,230.f), module, XM_OP::OVER_PARAM));
+    addParam(createLockableParamCentered<OverSwitch>(Vec(127.5f,228.f), module, XM_OP::OVER_PARAM));
 
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f,235.f), module, XM_OP::LEVEL_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(57.5f,235.f), module, XM_OP::DEPTH_PARAM));
