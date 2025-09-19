@@ -546,6 +546,8 @@ The Rungler consists of an eight step shift register driven by a clock and a dat
 
 By default the Benjolin Oscillator DAC is configured to use bits 2,4,7 in order to maximize the number of available Rungler patterns. There is a module context menu option to use Rob Hordijk's original design of bits 6,7,8.
 
+Above the Rungler label are eight LEDs representing the shift register bits. The DAC LEDs glow bright yellow when high. The remaining LEDs glow dim yellow when high.
+
 #### PATTERN knob
 Controls whether the Rungler repeats a pattern or is chaotic. When fully anticlockwise, the Rungler produces an 8 step pattern. When fully clockwise it produces a 16 step pattern, with the first 8 steps being a mirror image of the second 8 steps. At noon the rungler output is chaotic.
 

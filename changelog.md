@@ -9,6 +9,8 @@
 - XM-OP
 
 ### Enhancements
+- Benjolin Oscillator
+  - Add Rungler shift register LEDs
 - Clone Merge, Poly Clone, Poly Unison, Aux Clone
   - Add option to group output channels by individual input channel (original behavior), or input set
 
