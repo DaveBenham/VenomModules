@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.13.0 (2025-??-??)
+## 2.13.0 (2025-09-21)
 ### New Modules
 - AD/ASR Envelope Generator
 - Slew

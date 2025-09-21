@@ -2854,6 +2854,10 @@ This color coded button sets the oversampling rate used to mitigate aliasing. Ov
 - x16 (dark blue)
 - x32 (purple)
 
+There is also a context menu option to select the quality of the filters used for oversampling.
+
+See [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling) for more information.
+
 ### FALL and RISE time
 The Fall and Rise times specify how many milliseconds it takes to rise or fall 10 Volts.
 
