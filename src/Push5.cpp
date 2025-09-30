@@ -6,6 +6,8 @@
 struct Push5 : VenomModule {
   enum ParamId {
     ENUMS(BUTTON_PARAM,5),
+    ENUMS(ON_PARAM,5),
+    ENUMS(OFF_PARAM,5),
     PARAMS_LEN
   };
   enum InputId {
@@ -65,6 +67,8 @@ struct Push5 : VenomModule {
 
   void appendCustomParamMenu(Menu *menu, int paramId){
     ButtonExtension *e = buttonExtension + paramId;
+    ParamQuantity* onq = paramQuantities[ON_PARAM+paramId];
+    ParamQuantity* offq = paramQuantities[OFF_PARAM+paramId];
     menu->addChild(new MenuSeparator);
     menu->addChild(createIndexSubmenuItem(
       "Button mode",
@@ -79,24 +83,54 @@ struct Push5 : VenomModule {
     ));
     menu->addChild(createIndexSubmenuItem(
       "On value",
-      {"10 V","5 V","1 V","0 V","-1 V","-5 V","-10 V"},
+      {"10 V","5 V","1 V","0 V","-1 V","-5 V","-10 V","Custom"},
       [=]() {
         return e->onVal;
       },
       [=](int val) {
         e->onVal = val;
+        if (val<7)
+          onq->setValue(buttonVals[val]);
       }
     ));
+    if (e->onVal == 7){
+      menu->addChild(createSubmenuItem("Custom ON value", onq->getDisplayValueString(),
+        [=](Menu *menu){
+          MenuTextField *editField = new MenuTextField();
+          editField->box.size.x = 150;
+          editField->setText(onq->getDisplayValueString());
+          editField->changeHandler = [=](std::string text) {
+            onq->setDisplayValueString(text);
+          };
+          menu->addChild(editField);
+        }
+      ));
+    }
     menu->addChild(createIndexSubmenuItem(
       "Off value",
-      {"10 V","5 V","1 V","0 V","-1 V","-5 V","-10 V"},
+      {"10 V","5 V","1 V","0 V","-1 V","-5 V","-10 V","Custom"},
       [=]() {
         return e->offVal;
       },
       [=](int val) {
         e->offVal = val;
+        if (val<7)
+          offq->setValue(buttonVals[val]);
       }
     ));
+    if (e->offVal == 7){
+      menu->addChild(createSubmenuItem("Custom OFF value", offq->getDisplayValueString(),
+        [=](Menu *menu){
+          MenuTextField *editField = new MenuTextField();
+          editField->box.size.x = 150;
+          editField->setText(offq->getDisplayValueString());
+          editField->changeHandler = [=](std::string text) {
+            offq->setDisplayValueString(text);
+          };
+          menu->addChild(editField);
+        }
+      ));
+    }
     menu->addChild(createIndexSubmenuItem(
       "On Color",
       {"Red","Yellow","Blue","Green","Purple","Orange","White",
@@ -133,10 +167,20 @@ struct Push5 : VenomModule {
   
   Push5() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    ParamQuantity *q;
     for (int i=0; i<5; i++) {
-      std::string nm = "Button " + std::to_string(i+1);
+      std::string istr = std::to_string(i+1);
+      std::string nm = "Button " + istr;
       configParam(BUTTON_PARAM+i, 0.f, 1.f, 0.f, nm);
       configOutput(OUTPUT+i, nm);
+      nm = "On " + istr;
+      q=configParam(ON_PARAM+i, -100.f, 100.f, 10.f, nm);
+      q->resetEnabled = false;
+      q->randomizeEnabled = false;
+      nm = "Off " + istr;
+      q=configParam(OFF_PARAM+i, -100.f, 100.f, 0.f, nm);
+      q->resetEnabled = false;
+      q->randomizeEnabled = false;
       paramExtensions[i].inputLink = false;
       paramExtensions[i].nameLink = i;
       outputExtensions[i].nameLink = i;
@@ -149,23 +193,25 @@ struct Push5 : VenomModule {
       ButtonExtension *e = buttonExtension+i;
       float val = params[i].getValue();
       float out = 0.f;
+      bool stus;
       switch (e->mode){
         case 0: //trigger
           if (val>0 && !e->buttonOn && !e->lightOn && e->trigGenerator.remaining<=0.f){
             e->trigGenerator.trigger();
           }
-          out = e->trigGenerator.process(args.sampleTime) ? buttonVals[e->onVal] : buttonVals[e->offVal];
-          e->lightOn = math::clamp(out>0.f ? 1.f : e->lightOn - args.sampleTime/0.1f);
+          stus = e->trigGenerator.process(args.sampleTime);
+          out = params[(stus ? ON_PARAM : OFF_PARAM)+i].getValue();
+          e->lightOn = math::clamp(stus ? 1.f : e->lightOn - args.sampleTime/0.1f);
           break;
         case 1: //gate
           e->lightOn = val;
-          out = val ? buttonVals[e->onVal] : buttonVals[e->offVal];
+          out = params[(val ? ON_PARAM : OFF_PARAM)+i].getValue();
           break;
         case 2: //toggle
           if (val && !e->buttonOn){
             e->lightOn = !e->lightOn;
           }
-          out = e->lightOn ? buttonVals[e->onVal] : buttonVals[e->offVal];
+          out = params[(e->lightOn ? ON_PARAM : OFF_PARAM)+i].getValue();
           break;
       }
       e->buttonOn = val;
@@ -233,6 +279,10 @@ struct Push5 : VenomModule {
       if ((val = json_object_get(rootJ, nm.c_str()))){
         e->poly = json_integer_value(val);
       }
+      if (e->onVal<7)
+        params[ON_PARAM+i].setValue(buttonVals[e->onVal]);
+      if (e->offVal<7)
+        params[OFF_PARAM+i].setValue(buttonVals[e->offVal]);
     }
   }
 
@@ -302,6 +352,7 @@ struct Push5Widget : VenomWidget {
         if (val<7){
           for (int i=0; i<5; i++){
             module->buttonExtension[i].onVal = val;
+            module->params[Push5::ON_PARAM+i].setValue(module->buttonVals[val]);
           }
         }
       }
@@ -321,6 +372,7 @@ struct Push5Widget : VenomWidget {
         if (val<7){
           for (int i=0; i<5; i++){
             module->buttonExtension[i].offVal = val;
+            module->params[Push5::OFF_PARAM+i].setValue(module->buttonVals[val]);
           }
         }
       }

@@ -6,6 +6,9 @@
 struct Knob5 : VenomModule {
   enum ParamId {
     ENUMS(KNOB_PARAM,5),
+    ENUMS(MIN_PARAM,5),
+    ENUMS(MAX_PARAM,5),
+    ENUMS(QUANT_PARAM,5),
     PARAMS_LEN
   };
   enum InputId {
@@ -19,10 +22,10 @@ struct Knob5 : VenomModule {
     LIGHTS_LEN
   };
   
-  int knobRange[5]{7,7,7,7,7};
-  int quant[5]{0,0,0,0,0};
-  int unit[5]{0,0,0,0,0};
-  int poly[5]{1,1,1,1,1};
+  int knobRange[5]{7,7,7,7,7},
+      quant[5]{0,0,0,0,0},
+      unit[5]{0,0,0,0,0},
+      poly[5]{1,1,1,1,1};
   dsp::ClockDivider clockDivider;
   
   void configQuantity(int paramId){
@@ -68,16 +71,25 @@ struct Knob5 : VenomModule {
         q->displayMultiplier = 20.f;
         q->displayOffset = -10.f;
         break;
+      case 8:
+        q->defaultValue = 0.5f;
+        q->displayOffset = params[MIN_PARAM+paramId].getValue();
+        q->displayMultiplier = params[MAX_PARAM+paramId].getValue() - q->displayOffset;
+        break;
     }
     paramExtensions[paramId].factoryDflt = q->defaultValue;
     q->unit = unit[paramId] ? " \u00A2" : " V";
   }
 
   void appendCustomParamMenu(Menu *menu, int paramId){
+    ParamQuantity* q = paramQuantities[paramId];
+    ParamQuantity* minq = paramQuantities[MIN_PARAM+paramId];
+    ParamQuantity* maxq = paramQuantities[MAX_PARAM+paramId];
+    ParamQuantity* quantq = paramQuantities[QUANT_PARAM+paramId];
     menu->addChild(new MenuSeparator);
     menu->addChild(createIndexSubmenuItem(
       "Knob range",
-      {"0-1 V","0-2 V","0-5 V","0-10 V","+/- 1 V","+/- 2 V","+/- 5 V","+/- 10 V"},
+      {"0-1 V","0-2 V","0-5 V","0-10 V","+/- 1 V","+/- 2 V","+/- 5 V","+/- 10 V","Custom"},
       [=]() {
         return knobRange[paramId];
       },
@@ -86,9 +98,37 @@ struct Knob5 : VenomModule {
         configQuantity(paramId);
       }
     ));
+    if (knobRange[paramId] == 8){
+      menu->addChild(createSubmenuItem("Custom min", minq->getDisplayValueString(),
+        [=](Menu *menu){
+          MenuTextField *editField = new MenuTextField();
+          editField->box.size.x = 150;
+          editField->setText(minq->getDisplayValueString());
+          editField->changeHandler = [=](std::string text) {
+            minq->setDisplayValueString(text);
+            q->displayOffset = minq->getValue();
+            q->displayMultiplier = maxq->getValue() - minq->getValue();
+          };
+          menu->addChild(editField);
+        }
+      ));
+      menu->addChild(createSubmenuItem("Custom max", maxq->getDisplayValueString(),
+        [=](Menu *menu){
+          MenuTextField *editField = new MenuTextField();
+          editField->box.size.x = 150;
+          editField->setText(maxq->getDisplayValueString());
+          editField->changeHandler = [=](std::string text) {
+            maxq->setDisplayValueString(text);
+            q->displayOffset = minq->getValue();
+            q->displayMultiplier = maxq->getValue() - minq->getValue();
+          };
+          menu->addChild(editField);
+        }
+      ));
+    }
     menu->addChild(createIndexSubmenuItem(
       "Quantize",
-      {"Off (Continuous)","Integers (Octaves)","1/12V (Semitones)"},
+      {"Off (Continuous)","Integers (Octaves)","1/12V (Semitones)","Custom interval"},
       [=]() {
         return quant[paramId];
       },
@@ -96,6 +136,21 @@ struct Knob5 : VenomModule {
         quant[paramId] = val;
       }
     ));
+    if (quant[paramId] == 3) {
+      menu->addChild(createSubmenuItem("Custom quantize interval", quantq->getDisplayValueString(),
+        [=](Menu *menu){
+          MenuTextField *editField = new MenuTextField();
+          editField->box.size.x = 150;
+          editField->setText(quantq->getDisplayValueString());
+          editField->changeHandler = [=](std::string text) {
+            quantq->setDisplayValueString(text);
+            if (quantq->getValue()==0.f)
+              quantq->setValue(1.f);
+          };
+          menu->addChild(editField);
+        }
+      ));
+    }
     menu->addChild(createIndexSubmenuItem(
       "Display unit", 
       {"Volts (V)","Cents (\u00A2)"},
@@ -129,6 +184,10 @@ struct Knob5 : VenomModule {
           break;
         case 2: // Semitone
           val = round(val*12.f)/12.f;
+          break;
+        case 3: // Custom interval
+          val = round(val/mod->params[QUANT_PARAM+paramId].getValue())*mod->params[QUANT_PARAM+paramId].getValue();
+          break;
       }
       if (mod->unit[paramId]) val *= 1200.f;
       return val;
@@ -141,14 +200,28 @@ struct Knob5 : VenomModule {
 
   Knob5() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    ParamQuantity *q;
     for (int i=0; i<5; i++) {
-      std::string nm = "Knob " + std::to_string(i+1);
+      std::string istr = std::to_string(i+1);
+      std::string nm = "Knob " + istr;
       configParam<Knob5Quantity>(KNOB_PARAM+i, 0.f, 1.f, 0.5f, nm, " V", 0.f, 20.f, -10.f);
       configOutput(OUTPUT+i, nm);
       paramExtensions[i].inputLink = false;
       paramExtensions[i].nameLink = i;
       outputExtensions[i].nameLink = i;
-    }  
+      nm = "Custom min " + istr;
+      q=configParam(MIN_PARAM+i, -100.f, 100.f, -10.f, nm);
+      q->resetEnabled = false;
+      q->randomizeEnabled = false;
+      nm = "Custom max " + istr;
+      q=configParam(MAX_PARAM+i, -100.f, 100.f, 10.f, nm);
+      q->resetEnabled = false;
+      q->randomizeEnabled = false;
+      nm = "Custom quant " + istr;
+      q=configParam(QUANT_PARAM+i, 0.f, 100.f, 1.f, nm);
+      q->resetEnabled = false;
+      q->randomizeEnabled = false;
+    }
     clockDivider.setDivision(32);
   }
 
@@ -157,7 +230,6 @@ struct Knob5 : VenomModule {
     if (clockDivider.process()) {
       for (int i=0; i<5; i++){
         ParamQuantity *q = paramQuantities[i];
-//        float out = q->getValue() * q->displayMultiplier + q->displayOffset;
         float out = params[i].getValue() * q->displayMultiplier + q->displayOffset;
         switch (quant[i]){
           case 1:  // integer
@@ -166,6 +238,8 @@ struct Knob5 : VenomModule {
           case 2:  // semitone
             out = round(out*12.f)/12.f;
             break;
+          case 3:  // custom interval
+            out = round(out/params[QUANT_PARAM+i].getValue())*params[QUANT_PARAM+i].getValue();
         }
         for (int c=0; c<poly[i]; c++)
           outputs[i].setVoltage(out,c);

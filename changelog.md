@@ -13,6 +13,10 @@
   - Add Rungler shift register LEDs
 - Clone Merge, Poly Clone, Poly Unison, Aux Clone
   - Add option to group output channels by individual input channel (original behavior), or input set
+- Knob 5, Poly Offset
+  - New knob configuration options to set custom ranges and custom quantize intervals
+- Push 5
+  - New button configuration options to set custom on and off values.
 
 ## 2.12.3 (2025-06-05)
 ### Enhancements

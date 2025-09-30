@@ -1,5 +1,5 @@
 # Venom
-Venom modules version 2.13.0 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave Benham and licensed under GNU General Public License version 3.
+Venom modules version 2.13.1 for VCV Rack 2 are copyright 2023, 2024, 2025 Dave Benham and licensed under GNU General Public License version 3.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
@@ -1052,12 +1052,18 @@ Determines the minimum and maximum voltage of the knob.
 - **+/- 2 V**
 - **+/- 5 V**
 - **+/- 10 V** (default)
+- **Custom**
+
+If **Custom** is chosen, then two menu options are added to set the custom range: **Custom min** for the full counter-clockwise level, and **Custom max** for the full clockwise level. The min and max values can range from -100 to 100. You can enter simple mathematical expressions - all of the keyins that work for setting a knob value also work for the custom levels. You are free to set the min greater than the max so the knob works in reverse.
 
 #### Quantize
-Determines how output values are quantized.
+Determines how knob values are quantized.
 - **Off (continuous)** (default)
 - **Integers (octaves)**
 - **1/12 V (semitones)**
+- **Custom interval**
+
+If **Custom interval** is chosen, then a **Custom quantize interval** menu option is added to set the custom interval. The interval can be any positive value up to 100. You can enter simple mathematical expressions - all of the keyins that work for setting a knob value also work for the custom interval. If you enter a value less than or equal to zero, then the value will be transformed into 1.
 
 #### Display unit
 Determines how knob values are displaed and entered in knob context menu and hover text. Output values are always in Volts.
@@ -1069,9 +1075,9 @@ Determines the number of polyphonic channels to output. All channels will be ide
 
  
 ### Global Knob configuration
-The module context menu include an option to configure all buttons simultaneously. The option values are the same as for individual knobs.
+The module context menu includes options to configure all knobs simultaneously. The option values are the same as for individual knobs except custom values are not supported. You must configure each knob individually if you want custom values.
 
-If all knobs currently share the same value, then the current value is displayed in the menu. If at least one button is different, then the current value is empty.
+If all knobs currently share the same value, then the current value is displayed in the menu. If at least one knob is different, then the current value is empty.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus. However, the rename function is modified slightly. Renameing a knob will automatically rename the corresponding output port, and vice versa.
@@ -2045,17 +2051,25 @@ Determines the minimum and maximum voltage of the knobs.
 - **+/- 2 V**
 - **+/- 5 V**
 - **+/- 10 V** (default)
+- **Custom**
+
+If **Custom** is chosen, then two menu options are added to set the custom range: **Custom min** for the full counter-clockwise level, and **Custom max** for the full clockwise level. The min and max values can range from -100 to 100. You can enter simple mathematical expressions - all of the keyins that work for setting a knob value also work for the custom levels. You are free to set the min greater than the max so the knobs work in reverse.
 
 #### Quantize
 Determines how values are quantized.
 - **Off (continuous)** (default) - Neither the output nor the knob offset values are quantized.
-- **Output to Integers (octaves)** - The sum of input voltage plus knob value is quantized to the nearest integral Volt. The knob offset display value is not quantized.
-- **Output to 1/12 V (semitones)** - The sum of input voltage plus knob value is quantized to the nearest 1/12 Volt. The knob offset display value is not quantized.
+- **Output to Integers (octaves)** - The sum of input voltage plus knob value is quantized to the nearest integral Volt.
+- **Output to 1/12 V (semitones)** - The sum of input voltage plus knob value is quantized to the nearest 1/12 Volt.
+- **Output to custom interval** - The sum of input voltage plus knob value is quantized to the nearest multiple of an interval that you specify.
 - **Offset to Integers (octaves)** - The knob offset value (and display value) is quantized to the nearest integral Volt.
 - **Offset to 1/12 V (semitones)** - The knob offset value (and display value) is quantized to the nearest 1/12 Volt.
+- **Offset to custom interval** - The knob offset value (and display value) is quantized to the nearest multiple of an interval that you specify.
+
+If either **custom interval** option is chosen, then a **Custom quantize interval** menu option is added to set the custom interval. The interval can be any positive value up to 100. You can enter simple mathematical expressions - all of the keyins that work for setting a knob value also work for the custom interval. If you enter a value less than or equal to zero, then the value will be transformed into 1.
+
 
 #### Display unit
-Determines how knob values are displaed and entered in knob context menu and hover text. Output values are always in Volts.
+Determines how knob values are displayed and entered in knob context menu and hover text. Output values are always in Volts.
 - **Volts (V)** (default)
 - **Cents (&cent;)**
 
@@ -2273,9 +2287,12 @@ Each button has custom menu options that allow you to tailor the button to your 
 - **-1 V**
 - **-5 V**
 - **-10 V**
+- **Custom**
+
+If **Custom** is chosen, then a **Custom ON value** menu option is added that lets you type in any value between -100 and 100. You can enter simple mathematical expressions - all of the keyins that work for setting a knob value also work for the custom value.
 
 #### Off value
-Same values as On except the default is 0 V.
+Same values as On except the default is 0 V and the **Custom** value adds a **Custom OFF value** menu option.
 
 #### On Color
 - **Red**
@@ -2301,7 +2318,7 @@ Same values as Off except the default is Dim Gray
 Determines the number of channels to output. All channels will be identical. The default is 1 (mono).
 
 ### Global Button configuration
-The module context menu includes options that configure all buttons simultaneously. The options and values are the same as for individual buttons.
+The module context menu includes options that configure all buttons simultaneously. The options and values are the same as for individual buttons, except Custom values are not supported. You must configure each button individually if you want custom values.
 
 If all buttons currently share the same value, then the current value is displayed in the menu. If at least one button is different then the current value is empty.
 
