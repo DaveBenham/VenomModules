@@ -40,6 +40,7 @@ struct PolyOffset : VenomModule {
   int channels = 0;
   
   void setRange(int val) {
+    rangeId = val;
     Range* r = &ranges[val];
     for (int i=0; i<16; i++){
       ParamQuantity *q = paramQuantities[OFFSET_PARAM+i];
@@ -217,7 +218,6 @@ struct PolyOffsetWidget : VenomWidget {
         return module->rangeId;
       },
       [=](int rangeId) {
-        module->rangeId = rangeId;
         module->setRange(rangeId);
       }
     ));

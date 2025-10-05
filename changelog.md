@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.13.1 (2025-09-30)
+## 2.13.2 (2025-10-05)
 ### New Modules
 - AD/ASR Envelope Generator
 - Slew
@@ -17,6 +17,9 @@
   - New knob configuration options to set custom ranges and custom quantize intervals
 - Push 5
   - New button configuration options to set custom on and off values.
+
+### Bug Fix for unpublished 2.13.1
+- Poly Offset was not properly restoring knob range on load
 
 ## 2.12.3 (2025-06-05)
 ### Enhancements
