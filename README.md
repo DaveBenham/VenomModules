@@ -4345,6 +4345,8 @@ XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same fea
 - The envelope (normal or inverted) is available as a separate output
 - A configurable trigger input that can either sync the VCO, retrigger the envelope during decay or sustain, or both
 
+Watch [this Omri Cohen video](https://www.youtube.com/watch?v=0dWUHg-dJ_0) for some lovely XM-OP voice examples that introduce many of module's features.
+
 ### WAVE button
 Selects the waveform for the VCO
 - **SIN** (default) sine
