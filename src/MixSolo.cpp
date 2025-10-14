@@ -54,4 +54,4 @@ struct MixSoloWidget : MixExpanderWidget {
 
 };
 
-Model* modelMixSolo = createModel<MixSolo, MixSoloWidget>("MixSolo");
+Model* modelVenomMixSolo = createModel<MixSolo, MixSoloWidget>("MixSolo");

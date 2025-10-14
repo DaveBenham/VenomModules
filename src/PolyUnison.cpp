@@ -219,4 +219,4 @@ struct PolyUnisonWidget : CloneModuleWidget {
   }
 };
 
-Model* modelPolyUnison = createModel<PolyUnison, PolyUnisonWidget>("PolyUnison");
+Model* modelVenomPolyUnison = createModel<PolyUnison, PolyUnisonWidget>("PolyUnison");

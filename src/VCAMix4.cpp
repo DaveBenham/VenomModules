@@ -412,4 +412,4 @@ struct VCAMix4Widget : MixBaseWidget {
 
 };
 
-Model* modelVCAMix4 = createModel<VCAMix4, VCAMix4Widget>("VCAMix4");
+Model* modelVenomVCAMix4 = createModel<VCAMix4, VCAMix4Widget>("VCAMix4");

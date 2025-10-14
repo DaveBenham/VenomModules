@@ -290,4 +290,4 @@ struct WaveFolderWidget : VenomWidget {
   }
 };
 
-Model* modelWaveFolder = createModel<WaveFolder, WaveFolderWidget>("WaveFolder");
+Model* modelVenomWaveFolder = createModel<WaveFolder, WaveFolderWidget>("WaveFolder");

@@ -69,4 +69,4 @@ struct MixSendWidget : MixExpanderWidget {
 
 };
 
-Model* modelMixSend = createModel<MixSend, MixSendWidget>("MixSend");
+Model* modelVenomMixSend = createModel<MixSend, MixSendWidget>("MixSend");

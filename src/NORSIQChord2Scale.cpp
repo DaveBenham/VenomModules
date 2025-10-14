@@ -99,4 +99,4 @@ struct NORSIQChord2ScaleWidget : VenomWidget {
   }
 };
 
-Model* modelNORSIQChord2Scale = createModel<NORSIQChord2Scale, NORSIQChord2ScaleWidget>("NORSIQChord2Scale");
+Model* modelVenomNORSIQChord2Scale = createModel<NORSIQChord2Scale, NORSIQChord2ScaleWidget>("NORSIQChord2Scale");

@@ -182,4 +182,4 @@ struct Pan3DWidget : VenomWidget {
   }
 };
 
-Model* modelPan3D = createModel<Pan3D, Pan3DWidget>("Pan3D");
+Model* modelVenomPan3D = createModel<Pan3D, Pan3DWidget>("Pan3D");

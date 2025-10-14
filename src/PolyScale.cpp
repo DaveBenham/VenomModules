@@ -148,4 +148,4 @@ struct PolyScaleWidget : VenomWidget {
   }
 };
 
-Model* modelPolyScale = createModel<PolyScale, PolyScaleWidget>("PolyScale");
+Model* modelVenomPolyScale = createModel<PolyScale, PolyScaleWidget>("PolyScale");

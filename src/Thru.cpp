@@ -65,4 +65,4 @@ struct ThruWidget : VenomWidget {
   
 };
 
-Model* modelThru = createModel<Thru, ThruWidget>("Thru");
+Model* modelVenomThru = createModel<Thru, ThruWidget>("Thru");

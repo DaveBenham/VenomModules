@@ -30,7 +30,7 @@ struct CloneModuleBase : CloneModule {
     Module* expander = getRightExpander().module;
     expander = expander
              && !expander->isBypassed() 
-             && expander->model == modelAuxClone 
+             && expander->model == modelVenomAuxClone 
               ? expander 
               : NULL;
     if (!expander) return;
@@ -59,7 +59,7 @@ struct CloneModuleBase : CloneModule {
     Module* expander = getRightExpander().module;
     expander = expander
              && !expander->isBypassed() 
-             && expander->model == modelAuxClone 
+             && expander->model == modelVenomAuxClone 
               ? expander 
               : NULL;
     if (!expander) return;
@@ -77,7 +77,7 @@ struct CloneModuleBase : CloneModule {
   void onBypass(const BypassEvent& e) override {
     Module* expander = getRightExpander().module;
     expander = expander
-             && expander->model == modelAuxClone 
+             && expander->model == modelVenomAuxClone 
               ? expander 
               : NULL;
     if (expander){
@@ -104,10 +104,10 @@ struct CloneModuleWidget : VenomWidget {
   void appendContextMenu(Menu* menu) override {
     menu->addChild(new MenuSeparator());
     Module* expander = module->rightExpander.module;
-    if (expander && expander->model == modelAuxClone)
+    if (expander && expander->model == modelVenomAuxClone)
       menu->addChild(createMenuLabel("Auxilliary Clone expander connected"));
     else
-      menu->addChild(createMenuItem("Add Auxilliary Clone expander", "", [this](){addExpander(modelAuxClone,this);}));
+      menu->addChild(createMenuItem("Add Auxilliary Clone expander", "", [this](){addExpander(modelVenomAuxClone,this);}));
     VenomWidget::appendContextMenu(menu);
   }
 };

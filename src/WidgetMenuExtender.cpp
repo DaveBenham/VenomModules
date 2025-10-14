@@ -439,4 +439,4 @@ struct WidgetMenuExtenderWidget : VenomWidget {
 
 };
 
-Model* modelWidgetMenuExtender = createModel<WidgetMenuExtender, WidgetMenuExtenderWidget>("WidgetMenuExtender");
+Model* modelVenomWidgetMenuExtender = createModel<WidgetMenuExtender, WidgetMenuExtenderWidget>("WidgetMenuExtender");

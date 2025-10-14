@@ -305,4 +305,4 @@ struct Mix4Widget : MixBaseWidget {
 
 };
 
-Model* modelMix4 = createModel<Mix4, Mix4Widget>("Mix4");
+Model* modelVenomMix4 = createModel<Mix4, Mix4Widget>("Mix4");

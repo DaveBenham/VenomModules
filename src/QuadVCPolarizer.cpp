@@ -251,4 +251,4 @@ struct QuadVCPolarizerWidget : VenomWidget {
 
 };
 
-Model* modelQuadVCPolarizer = createModel<QuadVCPolarizer, QuadVCPolarizerWidget>("QuadVCPolarizer");
+Model* modelVenomQuadVCPolarizer = createModel<QuadVCPolarizer, QuadVCPolarizerWidget>("QuadVCPolarizer");

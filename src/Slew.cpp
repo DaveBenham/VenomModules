@@ -222,4 +222,4 @@ struct SlewWidget : VenomWidget {
 
 };
 
-Model* modelSlew = createModel<Slew, SlewWidget>("Slew");
+Model* modelVenomSlew = createModel<Slew, SlewWidget>("Slew");

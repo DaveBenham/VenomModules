@@ -114,4 +114,4 @@ struct BenjolinGatesExpanderWidget : BenjolinExpanderWidget {
 
 };
 
-Model* modelBenjolinGatesExpander = createModel<BenjolinGatesExpander, BenjolinGatesExpanderWidget>("BenjolinGatesExpander");
+Model* modelVenomBenjolinGatesExpander = createModel<BenjolinGatesExpander, BenjolinGatesExpanderWidget>("BenjolinGatesExpander");

@@ -257,4 +257,4 @@ struct ReformationWidget : VenomWidget {
 
 };
 
-Model* modelReformation = createModel<Reformation, ReformationWidget>("Reformation");
+Model* modelVenomReformation = createModel<Reformation, ReformationWidget>("Reformation");

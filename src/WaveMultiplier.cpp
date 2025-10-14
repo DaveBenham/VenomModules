@@ -304,4 +304,4 @@ struct WaveMultiplierWidget : VenomWidget {
   }
 };
 
-Model* modelWaveMultiplier = createModel<WaveMultiplier, WaveMultiplierWidget>("WaveMultiplier");
+Model* modelVenomWaveMultiplier = createModel<WaveMultiplier, WaveMultiplierWidget>("WaveMultiplier");

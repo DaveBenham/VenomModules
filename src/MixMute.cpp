@@ -59,4 +59,4 @@ struct MixMuteWidget : MixExpanderWidget {
 
 };
 
-Model* modelMixMute = createModel<MixMute, MixMuteWidget>("MixMute");
+Model* modelVenomMixMute = createModel<MixMute, MixMuteWidget>("MixMute");

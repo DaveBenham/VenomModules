@@ -287,4 +287,4 @@ struct ShapedVCAWidget : VenomWidget {
 
 };
 
-Model* modelShapedVCA = createModel<ShapedVCA, ShapedVCAWidget>("ShapedVCA");
+Model* modelVenomShapedVCA = createModel<ShapedVCA, ShapedVCAWidget>("ShapedVCA");

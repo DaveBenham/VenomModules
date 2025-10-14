@@ -217,4 +217,4 @@ struct BypassWidget : VenomWidget {
 
 };
 
-Model* modelBypass = createModel<Bypass, BypassWidget>("Bypass");
+Model* modelVenomBypass = createModel<Bypass, BypassWidget>("Bypass");

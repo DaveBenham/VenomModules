@@ -33,7 +33,7 @@ struct BernoulliSwitchExpander : VenomModule {
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (!e.side) {
       Module* left = getLeftExpander().module;
-      lights[EXPAND_LIGHT].setBrightness(left && left->model == modelBernoulliSwitch);
+      lights[EXPAND_LIGHT].setBrightness(left && left->model == modelVenomBernoulliSwitch);
     }  
   }  
 
@@ -62,4 +62,4 @@ struct BernoulliSwitchExpanderWidget : VenomWidget {
   }
 };
 
-Model* modelBernoulliSwitchExpander = createModel<BernoulliSwitchExpander, BernoulliSwitchExpanderWidget>("BernoulliSwitchExpander");
+Model* modelVenomBernoulliSwitchExpander = createModel<BernoulliSwitchExpander, BernoulliSwitchExpanderWidget>("BernoulliSwitchExpander");

@@ -346,4 +346,4 @@ struct Compare2Widget : VenomWidget {
 
 };
 
-Model* modelCompare2 = createModel<Compare2, Compare2Widget>("Compare2");
+Model* modelVenomCompare2 = createModel<Compare2, Compare2Widget>("Compare2");

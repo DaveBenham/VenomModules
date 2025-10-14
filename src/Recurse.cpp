@@ -194,4 +194,4 @@ struct RecurseWidget : VenomWidget {
 
 };
 
-Model* modelRecurse = createModel<Recurse, RecurseWidget>("Recurse");
+Model* modelVenomRecurse = createModel<Recurse, RecurseWidget>("Recurse");

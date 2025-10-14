@@ -296,4 +296,4 @@ struct WaveManglerWidget : VenomWidget {
 
 };
 
-Model* modelWaveMangler = createModel<WaveMangler, WaveManglerWidget>("WaveMangler");
+Model* modelVenomWaveMangler = createModel<WaveMangler, WaveManglerWidget>("WaveMangler");

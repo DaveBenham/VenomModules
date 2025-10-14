@@ -202,4 +202,4 @@ struct MultiMergeWidget : VenomWidget {
 
 };
 
-Model* modelMultiMerge = createModel<MultiMerge, MultiMergeWidget>("MultiMerge");
+Model* modelVenomMultiMerge = createModel<MultiMerge, MultiMergeWidget>("MultiMerge");

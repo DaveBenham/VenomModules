@@ -36,7 +36,7 @@ struct LinearBeatsExpander : VenomModule {
   
   void setConnectionLight(){
     Module* mod = getRightExpander().module;
-    if (mod && mod->model == modelLinearBeats) {
+    if (mod && mod->model == modelVenomLinearBeats) {
       lights[RIGHT_LIGHT].setBrightness(1.f);
       lights[LEFT_LIGHT].setBrightness(0.f);
       setLabels(" input mute");
@@ -45,7 +45,7 @@ struct LinearBeatsExpander : VenomModule {
     else {
       lights[RIGHT_LIGHT].setBrightness(0.f);
       mod = getLeftExpander().module;
-      if (mod && mod->model == modelLinearBeats) {
+      if (mod && mod->model == modelVenomLinearBeats) {
         lights[LEFT_LIGHT].setBrightness(1.f);
         setLabels(" output mute");
         left = true;
@@ -93,4 +93,4 @@ struct LinearBeatsExpanderWidget : VenomWidget {
 
 };
 
-Model* modelLinearBeatsExpander = createModel<LinearBeatsExpander, LinearBeatsExpanderWidget>("LinearBeatsExpander");
+Model* modelVenomLinearBeatsExpander = createModel<LinearBeatsExpander, LinearBeatsExpanderWidget>("LinearBeatsExpander");

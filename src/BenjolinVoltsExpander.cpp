@@ -42,4 +42,4 @@ struct BenjolinVoltsExpanderWidget : BenjolinExpanderWidget {
   }  
 };
 
-Model* modelBenjolinVoltsExpander = createModel<BenjolinVoltsExpander, BenjolinVoltsExpanderWidget>("BenjolinVoltsExpander");
+Model* modelVenomBenjolinVoltsExpander = createModel<BenjolinVoltsExpander, BenjolinVoltsExpanderWidget>("BenjolinVoltsExpander");

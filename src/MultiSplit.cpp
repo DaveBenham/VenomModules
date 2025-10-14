@@ -219,4 +219,4 @@ struct MultiSplitWidget : VenomWidget {
 
 };
 
-Model* modelMultiSplit = createModel<MultiSplit, MultiSplitWidget>("MultiSplit");
+Model* modelVenomMultiSplit = createModel<MultiSplit, MultiSplitWidget>("MultiSplit");

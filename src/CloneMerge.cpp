@@ -108,4 +108,4 @@ struct CloneMergeWidget : CloneModuleWidget {
 
 };
 
-Model* modelCloneMerge = createModel<CloneMerge, CloneMergeWidget>("CloneMerge");
+Model* modelVenomCloneMerge = createModel<CloneMerge, CloneMergeWidget>("CloneMerge");

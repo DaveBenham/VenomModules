@@ -60,4 +60,4 @@ struct MixFade2Widget : MixExpanderWidget {
 
 };
 
-Model* modelMixFade2 = createModel<MixFade2, MixFade2Widget>("MixFade2");
+Model* modelVenomMixFade2 = createModel<MixFade2, MixFade2Widget>("MixFade2");

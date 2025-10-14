@@ -45,4 +45,4 @@ struct MixPanWidget : MixExpanderWidget {
   }
 };
 
-Model* modelMixPan = createModel<MixPan, MixPanWidget>("MixPan");
+Model* modelVenomMixPan = createModel<MixPan, MixPanWidget>("MixPan");

@@ -216,7 +216,7 @@ struct BenjolinOsc : BenjolinModule {
       oldTrig = clockTrig.isHigh();
     }
     for (BenjolinModule* expndr = rightExpander; expndr; expndr = expndr->rightExpander){
-      if (!expndr->isBypassed() && expndr->model == modelBenjolinGatesExpander && (trig || expndr->expanderTrig)){
+      if (!expndr->isBypassed() && expndr->model == modelVenomBenjolinGatesExpander && (trig || expndr->expanderTrig)){
         expndr->expanderTrig = false;
         BenjolinGatesExpander* gates = static_cast<BenjolinGatesExpander*>(expndr);
         float hi = gates->params[GATES_POLARITY_PARAM].getValue() ? 5.f : 10.f;
@@ -269,7 +269,7 @@ struct BenjolinOsc : BenjolinModule {
           gates->lights[GATE_LIGHT+i].setBrightnessSmooth(val!=0, args.sampleTime);
         }
       }
-      if (!expndr->isBypassed() && expndr->model == modelBenjolinVoltsExpander && (trig || expndr->expanderTrig)){
+      if (!expndr->isBypassed() && expndr->model == modelVenomBenjolinVoltsExpander && (trig || expndr->expanderTrig)){
         expndr->expanderTrig = false;
         BenjolinVoltsExpander* volts = static_cast<BenjolinVoltsExpander*>(expndr);
         float val = 0.f;
@@ -403,8 +403,8 @@ struct BenjolinOscWidget : VenomWidget {
       [=]() {return module->dacMode;},
       [=](int i) {module->setDacMode(i);}
     ));
-    menu->addChild(createMenuItem("Add Benjolin Gates Expander", "", [this](){addExpander(modelBenjolinGatesExpander,this);}));
-    menu->addChild(createMenuItem("Add Benjolin Volts Expander", "", [this](){addExpander(modelBenjolinVoltsExpander,this);}));
+    menu->addChild(createMenuItem("Add Benjolin Gates Expander", "", [this](){addExpander(modelVenomBenjolinGatesExpander,this);}));
+    menu->addChild(createMenuItem("Add Benjolin Volts Expander", "", [this](){addExpander(modelVenomBenjolinVoltsExpander,this);}));
     VenomWidget::appendContextMenu(menu);
   }
 
@@ -418,4 +418,4 @@ struct BenjolinOscWidget : VenomWidget {
   }
 };
 
-Model* modelBenjolinOsc = createModel<BenjolinOsc, BenjolinOscWidget>("BenjolinOsc");
+Model* modelVenomBenjolinOsc = createModel<BenjolinOsc, BenjolinOscWidget>("BenjolinOsc");

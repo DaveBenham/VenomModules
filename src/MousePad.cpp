@@ -189,4 +189,4 @@ struct MousePadWidget : VenomWidget {
   
 };
 
-Model* modelMousePad = createModel<MousePad, MousePadWidget>("MousePad");
+Model* modelVenomMousePad = createModel<MousePad, MousePadWidget>("MousePad");

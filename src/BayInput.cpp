@@ -86,4 +86,4 @@ struct BayInputWidget : VenomWidget {
 
 std::map<int64_t, BayInput*> BayModule::sources{};
 
-Model* modelBayInput = createModel<BayInput, BayInputWidget>("BayInput");
+Model* modelVenomBayInput = createModel<BayInput, BayInputWidget>("BayInput");

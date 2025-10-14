@@ -1503,4 +1503,4 @@ struct OscillatorWidget : VenomWidget {
 
 };
 
-Model* modelOscillator = createModel<Oscillator, OscillatorWidget>("Oscillator");
+Model* modelVenomOscillator = createModel<Oscillator, OscillatorWidget>("Oscillator");

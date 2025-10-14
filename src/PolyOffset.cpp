@@ -291,4 +291,4 @@ struct PolyOffsetWidget : VenomWidget {
 
 };
 
-Model* modelPolyOffset = createModel<PolyOffset, PolyOffsetWidget>("PolyOffset");
+Model* modelVenomPolyOffset = createModel<PolyOffset, PolyOffsetWidget>("PolyOffset");

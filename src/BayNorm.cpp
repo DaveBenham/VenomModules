@@ -77,4 +77,4 @@ struct BayNormWidget : BayOutputModuleWidget {
 
 };
 
-Model* modelBayNorm = createModel<BayNorm, BayNormWidget>("BayNorm");
+Model* modelVenomBayNorm = createModel<BayNorm, BayNormWidget>("BayNorm");

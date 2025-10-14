@@ -44,4 +44,4 @@ struct MixOffsetWidget : MixExpanderWidget {
   }
 };
 
-Model* modelMixOffset = createModel<MixOffset, MixOffsetWidget>("MixOffset");
+Model* modelVenomMixOffset = createModel<MixOffset, MixOffsetWidget>("MixOffset");

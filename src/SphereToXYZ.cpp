@@ -121,4 +121,4 @@ struct SphereToXYZWidget : VenomWidget {
   
 };
 
-Model* modelSphereToXYZ = createModel<SphereToXYZ, SphereToXYZWidget>("SphereToXYZ");
+Model* modelVenomSphereToXYZ = createModel<SphereToXYZ, SphereToXYZWidget>("SphereToXYZ");

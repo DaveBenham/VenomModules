@@ -130,4 +130,4 @@ struct PolyCloneWidget : CloneModuleWidget {
 
 };
 
-Model* modelPolyClone = createModel<PolyClone, PolyCloneWidget>("PolyClone");
+Model* modelVenomPolyClone = createModel<PolyClone, PolyCloneWidget>("PolyClone");

@@ -497,4 +497,4 @@ struct AD_ASRWidget : VenomWidget {
 
 };
 
-Model* modelAD_ASR = createModel<AD_ASR, AD_ASRWidget>("AD_ASR");
+Model* modelVenomAD_ASR = createModel<AD_ASR, AD_ASRWidget>("AD_ASR");

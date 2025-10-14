@@ -422,4 +422,4 @@ struct Mix4StereoWidget : MixBaseWidget {
 
 };
 
-Model* modelMix4Stereo = createModel<Mix4Stereo, Mix4StereoWidget>("Mix4Stereo");
+Model* modelVenomMix4Stereo = createModel<Mix4Stereo, Mix4StereoWidget>("Mix4Stereo");

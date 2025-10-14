@@ -511,4 +511,4 @@ struct NORS_IQWidget : VenomWidget {
 
 };
 
-Model* modelNORS_IQ = createModel<NORS_IQ, NORS_IQWidget>("NORS_IQ");
+Model* modelVenomNORS_IQ = createModel<NORS_IQ, NORS_IQWidget>("NORS_IQ");

@@ -244,4 +244,4 @@ struct RecurseStereoWidget : VenomWidget {
 
 };
 
-Model* modelRecurseStereo = createModel<RecurseStereo, RecurseStereoWidget>("RecurseStereo");
+Model* modelVenomRecurseStereo = createModel<RecurseStereo, RecurseStereoWidget>("RecurseStereo");

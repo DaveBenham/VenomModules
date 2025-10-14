@@ -64,4 +64,4 @@ struct BayOutputWidget : BayOutputModuleWidget {
 
 };
 
-Model* modelBayOutput = createModel<BayOutput, BayOutputWidget>("BayOutput");
+Model* modelVenomBayOutput = createModel<BayOutput, BayOutputWidget>("BayOutput");

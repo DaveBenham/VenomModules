@@ -235,4 +235,4 @@ struct PolySHASRWidget : VenomWidget {
 
 };
 
-Model* modelPolySHASR = createModel<PolySHASR, PolySHASRWidget>("PolySHASR");
+Model* modelVenomPolySHASR = createModel<PolySHASR, PolySHASRWidget>("PolySHASR");

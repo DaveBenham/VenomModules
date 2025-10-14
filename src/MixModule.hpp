@@ -323,14 +323,14 @@ struct MixBaseWidget : VenomWidget {
 
     menu->addChild(new MenuSeparator);
     menu->addChild(createMenuLabel("Note: rearrange after adding expanders"));
-    menu->addChild(createMenuItem("Add Mix Offset expander (Only 1, must be 1st)", "", [this](){addExpander(modelMixOffset,this);}));
-    menu->addChild(createMenuItem("Add Mix Mute expander (Only 1)", "", [this](){addExpander(modelMixMute,this);}));
-    menu->addChild(createMenuItem("Add Mix Solo expander (Only 1)", "", [this](){addExpander(modelMixSolo,this);}));
-    menu->addChild(createMenuItem("Add Mix Fade expander (only 1, needs Mute or Solo to left)", "", [this](){addExpander(modelMixFade,this);}));
-    menu->addChild(createMenuItem("Add Mix Fade 2 expander (only 1, needs Mute or Solo to left)", "", [this](){addExpander(modelMixFade2,this);}));
+    menu->addChild(createMenuItem("Add Mix Offset expander (Only 1, must be 1st)", "", [this](){addExpander(modelVenomMixOffset,this);}));
+    menu->addChild(createMenuItem("Add Mix Mute expander (Only 1)", "", [this](){addExpander(modelVenomMixMute,this);}));
+    menu->addChild(createMenuItem("Add Mix Solo expander (Only 1)", "", [this](){addExpander(modelVenomMixSolo,this);}));
+    menu->addChild(createMenuItem("Add Mix Fade expander (only 1, needs Mute or Solo to left)", "", [this](){addExpander(modelVenomMixFade,this);}));
+    menu->addChild(createMenuItem("Add Mix Fade 2 expander (only 1, needs Mute or Solo to left)", "", [this](){addExpander(modelVenomMixFade2,this);}));
     if (module->stereo)
-      menu->addChild(createMenuItem("Add Mix Pan expander (only 1)", "", [this](){addExpander(modelMixPan,this);}));
-    menu->addChild(createMenuItem("Add Mix Aux Send expander", "", [this](){addExpander(modelMixSend,this);}));
+      menu->addChild(createMenuItem("Add Mix Pan expander (only 1)", "", [this](){addExpander(modelVenomMixPan,this);}));
+    menu->addChild(createMenuItem("Add Mix Aux Send expander", "", [this](){addExpander(modelVenomMixSend,this);}));
 
     if (module->mutePresent || module->soloPresent || module->sendPresent)
       menu->addChild(createBoolMenuItem("Soft mute/solo", "",

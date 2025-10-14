@@ -576,4 +576,4 @@ struct VCAMix4StereoWidget : MixBaseWidget {
 
 };
 
-Model* modelVCAMix4Stereo = createModel<VCAMix4Stereo, VCAMix4StereoWidget>("VCAMix4Stereo");
+Model* modelVenomVCAMix4Stereo = createModel<VCAMix4Stereo, VCAMix4StereoWidget>("VCAMix4Stereo");

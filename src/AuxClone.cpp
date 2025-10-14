@@ -30,7 +30,7 @@ struct AuxClone : CloneModule {
 
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     Module* mod = getLeftExpander().module;
-    bool connected = mod && (mod->model==modelCloneMerge || mod->model==modelPolyUnison || mod->model==modelPolyClone);
+    bool connected = mod && (mod->model==modelVenomCloneMerge || mod->model==modelVenomPolyUnison || mod->model==modelVenomPolyClone);
     lights[EXP_CONNECT_LIGHT].setBrightness( connected );
     if (!connected) {
       for (int i=0; i<EXPANDER_PORTS; i++) {
@@ -69,4 +69,4 @@ struct AuxCloneWidget : VenomWidget {
   
 };
 
-Model* modelAuxClone = createModel<AuxClone, AuxCloneWidget>("AuxClone");
+Model* modelVenomAuxClone = createModel<AuxClone, AuxCloneWidget>("AuxClone");

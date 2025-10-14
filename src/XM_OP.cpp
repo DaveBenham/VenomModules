@@ -531,4 +531,4 @@ struct XM_OPWidget : VenomWidget {
 
 };
 
-Model* modelXM_OP = createModel<XM_OP, XM_OPWidget>("XM_OP");
+Model* modelVenomXM_OP = createModel<XM_OP, XM_OPWidget>("XM_OP");

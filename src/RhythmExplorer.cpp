@@ -967,4 +967,4 @@ struct RhythmExplorerWidget : VenomWidget {
 };
 
 
-Model* modelRhythmExplorer = createModel<RhythmExplorer, RhythmExplorerWidget>("RhythmExplorer");
+Model* modelVenomRhythmExplorer = createModel<RhythmExplorer, RhythmExplorerWidget>("RhythmExplorer");

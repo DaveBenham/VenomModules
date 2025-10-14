@@ -402,4 +402,4 @@ struct Knob5Widget : VenomWidget {
 
 };
 
-Model* modelKnob5 = createModel<Knob5, Knob5Widget>("Knob5");
+Model* modelVenomKnob5 = createModel<Knob5, Knob5Widget>("Knob5");

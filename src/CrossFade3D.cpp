@@ -202,4 +202,4 @@ struct CrossFade3DWidget : VenomWidget {
   }
 };
 
-Model* modelCrossFade3D = createModel<CrossFade3D, CrossFade3DWidget>("CrossFade3D");
+Model* modelVenomCrossFade3D = createModel<CrossFade3D, CrossFade3DWidget>("CrossFade3D");

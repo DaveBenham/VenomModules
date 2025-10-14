@@ -51,4 +51,4 @@ struct BlockerWidget : VenomWidget {
 
 };
 
-Model* modelBlocker = createModel<Blocker, BlockerWidget>("Blocker");
+Model* modelVenomBlocker = createModel<Blocker, BlockerWidget>("Blocker");

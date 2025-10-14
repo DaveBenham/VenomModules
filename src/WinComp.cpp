@@ -478,4 +478,4 @@ struct WinCompWidget : VenomWidget {
 
 };
 
-Model* modelWinComp = createModel<WinComp, WinCompWidget>("WinComp");
+Model* modelVenomWinComp = createModel<WinComp, WinCompWidget>("WinComp");

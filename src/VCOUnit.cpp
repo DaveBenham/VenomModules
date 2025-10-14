@@ -1061,4 +1061,4 @@ struct VCOUnitWidget : VenomWidget {
 
 };
 
-Model* modelVCOUnit = createModel<VCOUnit, VCOUnitWidget>("VCOUnit");
+Model* modelVenomVCOUnit = createModel<VCOUnit, VCOUnitWidget>("VCOUnit");

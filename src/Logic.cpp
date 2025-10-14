@@ -368,4 +368,4 @@ struct LogicWidget : VenomWidget {
 };
 
 
-Model* modelLogic = createModel<Logic, LogicWidget>("Logic");
+Model* modelVenomLogic = createModel<Logic, LogicWidget>("Logic");

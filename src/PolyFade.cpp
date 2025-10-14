@@ -435,4 +435,4 @@ struct PolyFadeWidget : VenomWidget {
 
 };
 
-Model* modelPolyFade = createModel<PolyFade, PolyFadeWidget>("PolyFade");
+Model* modelVenomPolyFade = createModel<PolyFade, PolyFadeWidget>("PolyFade");

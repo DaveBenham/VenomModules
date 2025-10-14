@@ -324,4 +324,4 @@ struct HQWidget : VenomWidget {
 
 };
 
-Model* modelHQ = createModel<HQ, HQWidget>("HQ");
+Model* modelVenomHQ = createModel<HQ, HQWidget>("HQ");
