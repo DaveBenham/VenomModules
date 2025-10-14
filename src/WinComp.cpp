@@ -2,7 +2,7 @@
 // Licensed under GNU GPLv3
 
 #include "Filter.hpp"
-#include "plugin.hpp"
+#include "Venom.hpp"
 
 struct WinComp : VenomModule {
   enum ParamId {

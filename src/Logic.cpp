@@ -2,7 +2,7 @@
 // Licensed under GNU GPLv3
 
 #include "Filter.hpp"
-#include "plugin.hpp"
+#include "Venom.hpp"
 
 #define CHANNEL_COUNT 9
 #define LIGHT_OFF 0.02f

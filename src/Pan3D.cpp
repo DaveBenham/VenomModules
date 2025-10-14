@@ -1,7 +1,7 @@
 // Venom Modules (c) 2023, 2024, 2025 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 
 #define LIGHT_ON 1.f

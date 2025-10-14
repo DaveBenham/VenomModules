@@ -1,7 +1,7 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #define xInEven   14.5f
 #define xInOdd  30.5f
 #define xOutEven  59.5f

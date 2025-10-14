@@ -4,7 +4,7 @@
 // Thanks to Andrew Hanson for the initial prototype code
 // that I was able to flesh out into this final form
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 
 #define SLIDER_COUNT 8
 #define MAX_STEP_LENGTH 16
