@@ -113,6 +113,7 @@ void init(Plugin* p) {
   p->addModel(modelShapedVCA);
   p->addModel(modelSlew);
   p->addModel(modelSphereToXYZ);
+  p->addModel(modelSVF);
   p->addModel(modelThru);
   p->addModel(modelVCAMix4);
   p->addModel(modelVCAMix4Stereo);

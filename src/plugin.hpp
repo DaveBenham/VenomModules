@@ -61,6 +61,7 @@ extern Model* modelRhythmExplorer;
 extern Model* modelShapedVCA;
 extern Model* modelSlew;
 extern Model* modelSphereToXYZ;
+extern Model* modelSVF;
 extern Model* modelThru;
 extern Model* modelVCAMix4;
 extern Model* modelVCAMix4Stereo;

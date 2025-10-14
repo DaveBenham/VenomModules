@@ -1,5 +1,9 @@
 # Venom Modules Changelog
 
+## 2.14.0 (????-??-??)
+### New Modules
+- State Variable Filter
+
 ## 2.13.2 (2025-10-05)
 ### New Modules
 - AD/ASR Envelope Generator
