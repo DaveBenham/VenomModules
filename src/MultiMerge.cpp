@@ -9,6 +9,8 @@
 #define yOrigin  43.5f
 #define yDelta   20.f
 
+namespace Venom {
+
 struct MultiMerge : VenomModule {
   enum ParamId {
     PARAMS_LEN
@@ -202,4 +204,6 @@ struct MultiMergeWidget : VenomWidget {
 
 };
 
-Model* modelVenomMultiMerge = createModel<MultiMerge, MultiMergeWidget>("MultiMerge");
+}
+
+Model* modelVenomMultiMerge = createModel<Venom::MultiMerge, Venom::MultiMergeWidget>("MultiMerge");

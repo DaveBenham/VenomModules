@@ -7,6 +7,8 @@
 #define LIGHT_OFF 0.02f
 #define LIGHT_ON  1.f
 
+namespace Venom {
+
 struct AuxClone : CloneModule {
 
   AuxClone() {
@@ -69,4 +71,6 @@ struct AuxCloneWidget : VenomWidget {
   
 };
 
-Model* modelVenomAuxClone = createModel<AuxClone, AuxCloneWidget>("AuxClone");
+}
+
+Model* modelVenomAuxClone = createModel<Venom::AuxClone, Venom::AuxCloneWidget>("AuxClone");

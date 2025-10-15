@@ -7,6 +7,8 @@
 #define LIGHT_OFF 0.02f
 #define LIGHT_ON  1.f
 
+namespace Venom {
+
 struct MixSend : MixExpanderModule {
 
   MixSend() {
@@ -69,4 +71,6 @@ struct MixSendWidget : MixExpanderWidget {
 
 };
 
-Model* modelVenomMixSend = createModel<MixSend, MixSendWidget>("MixSend");
+}
+
+Model* modelVenomMixSend = createModel<Venom::MixSend, Venom::MixSendWidget>("MixSend");

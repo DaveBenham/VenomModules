@@ -7,6 +7,8 @@
 #define LIGHT_OFF 0.02f
 #define LIGHT_ON  1.f
 
+namespace Venom {
+
 struct MixMute : MixExpanderModule {
   
   MixMute() {
@@ -59,4 +61,6 @@ struct MixMuteWidget : MixExpanderWidget {
 
 };
 
-Model* modelVenomMixMute = createModel<MixMute, MixMuteWidget>("MixMute");
+}
+
+Model* modelVenomMixMute = createModel<Venom::MixMute, Venom::MixMuteWidget>("MixMute");

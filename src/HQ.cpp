@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include <float.h>
 
+namespace Venom {
+
 struct HQ : VenomModule {
   enum ParamId {
     PARTIAL_PARAM,
@@ -324,4 +326,6 @@ struct HQWidget : VenomWidget {
 
 };
 
-Model* modelVenomHQ = createModel<HQ, HQWidget>("HQ");
+}
+
+Model* modelVenomHQ = createModel<Venom::HQ, Venom::HQWidget>("HQ");

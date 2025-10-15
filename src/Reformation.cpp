@@ -8,6 +8,8 @@
 
 #define MAP_COUNT 5
 
+namespace Venom {
+
 std::string mapLabel[MAP_COUNT] = {"Min", "1/4", "1/2", "3/4", "Max"};
 float mapDefault[MAP_COUNT] = {0.f, 0.25f, 0.5f, 0.75f, 1.f};
 float rangeMin[MAP_COUNT-1] = {-FLT_MAX, 0.25f, 0.5f, 0.75f};
@@ -257,4 +259,6 @@ struct ReformationWidget : VenomWidget {
 
 };
 
-Model* modelVenomReformation = createModel<Reformation, ReformationWidget>("Reformation");
+}
+
+Model* modelVenomReformation = createModel<Venom::Reformation, Venom::ReformationWidget>("Reformation");

@@ -1,5 +1,7 @@
 #include <bitset>
 
+namespace Venom {
+
 struct BenjolinModule : VenomModule {
   
   enum GatesParamId {
@@ -272,3 +274,5 @@ struct BenjolinExpanderWidget : VenomWidget {
     VenomWidget::step();
   }  
 };
+
+}

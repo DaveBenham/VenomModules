@@ -6,6 +6,8 @@
 #include "math.hpp"
 #include <float.h>
 
+namespace Venom {
+
 struct PolyFade : VenomModule {
 
   enum ParamId {
@@ -435,4 +437,6 @@ struct PolyFadeWidget : VenomWidget {
 
 };
 
-Model* modelVenomPolyFade = createModel<PolyFade, PolyFadeWidget>("PolyFade");
+}
+
+Model* modelVenomPolyFade = createModel<Venom::PolyFade, Venom::PolyFadeWidget>("PolyFade");

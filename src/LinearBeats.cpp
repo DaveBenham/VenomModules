@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct LinearBeats : VenomModule {
   #include "LinearBeatsExpander.hpp"
 
@@ -203,4 +205,6 @@ struct LinearBeatsWidget : VenomWidget {
 
 };
 
-Model* modelVenomLinearBeats = createModel<LinearBeats, LinearBeatsWidget>("LinearBeats");
+}
+
+Model* modelVenomLinearBeats = createModel<Venom::LinearBeats, Venom::LinearBeatsWidget>("LinearBeats");

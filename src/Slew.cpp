@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "Filter.hpp"
 
+namespace Venom {
+
 struct Slew : VenomModule { 
   enum ParamId {
     SPEED_PARAM,
@@ -222,4 +224,6 @@ struct SlewWidget : VenomWidget {
 
 };
 
-Model* modelVenomSlew = createModel<Slew, SlewWidget>("Slew");
+}
+
+Model* modelVenomSlew = createModel<Venom::Slew, Venom::SlewWidget>("Slew");

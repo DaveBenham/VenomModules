@@ -6,6 +6,8 @@
 #include "math.hpp"
 //#include <float.h>
 
+namespace Venom {
+
 struct WaveFolder : VenomModule {
 
   enum ParamId {
@@ -290,4 +292,6 @@ struct WaveFolderWidget : VenomWidget {
   }
 };
 
-Model* modelVenomWaveFolder = createModel<WaveFolder, WaveFolderWidget>("WaveFolder");
+}
+
+Model* modelVenomWaveFolder = createModel<Venom::WaveFolder, Venom::WaveFolderWidget>("WaveFolder");

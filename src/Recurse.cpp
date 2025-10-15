@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct Recurse : VenomModule {
   enum ParamId {
     COUNT_PARAM,
@@ -194,4 +196,6 @@ struct RecurseWidget : VenomWidget {
 
 };
 
-Model* modelVenomRecurse = createModel<Recurse, RecurseWidget>("Recurse");
+}
+
+Model* modelVenomRecurse = createModel<Venom::Recurse, Venom::RecurseWidget>("Recurse");

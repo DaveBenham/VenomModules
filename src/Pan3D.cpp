@@ -7,6 +7,8 @@
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
 
+namespace Venom {
+
 struct Pan3D : VenomModule {
   
   enum ParamId {
@@ -182,4 +184,6 @@ struct Pan3DWidget : VenomWidget {
   }
 };
 
-Model* modelVenomPan3D = createModel<Pan3D, Pan3DWidget>("Pan3D");
+}
+
+Model* modelVenomPan3D = createModel<Venom::Pan3D, Venom::Pan3DWidget>("Pan3D");

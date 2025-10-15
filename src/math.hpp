@@ -1,5 +1,7 @@
 #include <array>
 
+namespace Venom {
+
 template <typename T>
 T tanh_rational5(T x) {
   T x2 = x * x;
@@ -50,4 +52,6 @@ T1 normSigmoid(T1 x, T2 k) {  // linear phasor x to curve
 template <typename T1, typename T2>
 T1 invNormSigmoid(T1 y, T2 k) { // curve y to linear phasor
   return (y + k*y)/(2.f*k*fabs(y) - k + 1.f);
+}
+
 }

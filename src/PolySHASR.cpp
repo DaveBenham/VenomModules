@@ -6,6 +6,8 @@
 
 #define CHANNEL_COUNT 10
 
+namespace Venom {
+
 struct PolySHASR : VenomModule {
   
   enum ParamId {
@@ -235,4 +237,6 @@ struct PolySHASRWidget : VenomWidget {
 
 };
 
-Model* modelVenomPolySHASR = createModel<PolySHASR, PolySHASRWidget>("PolySHASR");
+}
+
+Model* modelVenomPolySHASR = createModel<Venom::PolySHASR, Venom::PolySHASRWidget>("PolySHASR");

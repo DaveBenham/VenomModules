@@ -9,6 +9,8 @@
 #define HARD_CLIP 1
 #define SOFT_CLIP 2
 
+namespace Venom {
+
 struct ShapedVCA : VenomModule {
   enum ParamId {
     RANGE_PARAM,
@@ -287,4 +289,6 @@ struct ShapedVCAWidget : VenomWidget {
 
 };
 
-Model* modelVenomShapedVCA = createModel<ShapedVCA, ShapedVCAWidget>("ShapedVCA");
+}
+
+Model* modelVenomShapedVCA = createModel<Venom::ShapedVCA, Venom::ShapedVCAWidget>("ShapedVCA");

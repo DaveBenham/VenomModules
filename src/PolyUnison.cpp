@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "CloneModule.hpp"
 
+namespace Venom {
+
 struct PolyUnison : CloneModuleBase {
 
   enum ParamId {
@@ -219,4 +221,6 @@ struct PolyUnisonWidget : CloneModuleWidget {
   }
 };
 
-Model* modelVenomPolyUnison = createModel<PolyUnison, PolyUnisonWidget>("PolyUnison");
+}
+
+Model* modelVenomPolyUnison = createModel<Venom::PolyUnison, Venom::PolyUnisonWidget>("PolyUnison");

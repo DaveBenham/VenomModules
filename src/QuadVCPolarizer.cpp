@@ -5,6 +5,8 @@
 #include "Filter.hpp"
 #include "math.hpp"
 
+namespace Venom {
+
 struct QuadVCPolarizer : VenomModule {
 
   enum ParamId {
@@ -251,4 +253,6 @@ struct QuadVCPolarizerWidget : VenomWidget {
 
 };
 
-Model* modelVenomQuadVCPolarizer = createModel<QuadVCPolarizer, QuadVCPolarizerWidget>("QuadVCPolarizer");
+}
+
+Model* modelVenomQuadVCPolarizer = createModel<Venom::QuadVCPolarizer, Venom::QuadVCPolarizerWidget>("QuadVCPolarizer");

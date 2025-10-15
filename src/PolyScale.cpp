@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct PolyScale : VenomModule {
   enum ParamId {
     ENUMS(LEVEL_PARAM,16),
@@ -148,4 +150,6 @@ struct PolyScaleWidget : VenomWidget {
   }
 };
 
-Model* modelVenomPolyScale = createModel<PolyScale, PolyScaleWidget>("PolyScale");
+}
+
+Model* modelVenomPolyScale = createModel<Venom::PolyScale, Venom::PolyScaleWidget>("PolyScale");

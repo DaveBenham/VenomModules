@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "CloneModule.hpp"
 
+namespace Venom {
+
 struct CloneMerge : CloneModuleBase {
 
   enum ParamId {
@@ -108,4 +110,6 @@ struct CloneMergeWidget : CloneModuleWidget {
 
 };
 
-Model* modelVenomCloneMerge = createModel<CloneMerge, CloneMergeWidget>("CloneMerge");
+}
+
+Model* modelVenomCloneMerge = createModel<Venom::CloneMerge, Venom::CloneMergeWidget>("CloneMerge");

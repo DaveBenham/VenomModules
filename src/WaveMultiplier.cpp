@@ -12,6 +12,8 @@
 #define LEVEL 1
 #define WAVE  2
 
+namespace Venom {
+
 struct WaveMultiplier : VenomModule {
 
   enum ParamId {
@@ -304,4 +306,6 @@ struct WaveMultiplierWidget : VenomWidget {
   }
 };
 
-Model* modelVenomWaveMultiplier = createModel<WaveMultiplier, WaveMultiplierWidget>("WaveMultiplier");
+}
+
+Model* modelVenomWaveMultiplier = createModel<Venom::WaveMultiplier, Venom::WaveMultiplierWidget>("WaveMultiplier");

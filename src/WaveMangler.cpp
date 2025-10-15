@@ -5,6 +5,8 @@
 #include "Filter.hpp"
 #include "math.hpp"
 
+namespace Venom {
+
 struct WaveMangler : VenomModule {
 
   enum ParamId {
@@ -296,4 +298,6 @@ struct WaveManglerWidget : VenomWidget {
 
 };
 
-Model* modelVenomWaveMangler = createModel<WaveMangler, WaveManglerWidget>("WaveMangler");
+}
+
+Model* modelVenomWaveMangler = createModel<Venom::WaveMangler, Venom::WaveManglerWidget>("WaveMangler");

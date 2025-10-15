@@ -1,5 +1,7 @@
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct BayInput;
 
 struct BayModule : VenomModule {
@@ -299,3 +301,5 @@ struct BayOutputLabelsWidget : widget::Widget {
     }
   }
 };
+
+}

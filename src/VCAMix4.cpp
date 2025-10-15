@@ -7,6 +7,8 @@
 #include <cfloat>
 #include "Filter.hpp"
 
+namespace Venom {
+
 struct VCAMix4 : MixBaseModule {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 4),
@@ -412,4 +414,6 @@ struct VCAMix4Widget : MixBaseWidget {
 
 };
 
-Model* modelVenomVCAMix4 = createModel<VCAMix4, VCAMix4Widget>("VCAMix4");
+}
+
+Model* modelVenomVCAMix4 = createModel<Venom::VCAMix4, Venom::VCAMix4Widget>("VCAMix4");

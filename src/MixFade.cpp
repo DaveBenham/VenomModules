@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "MixModule.hpp"
 
+namespace Venom {
+
 struct MixFade : MixExpanderModule {
   
   MixFade() {
@@ -53,4 +55,6 @@ struct MixFadeWidget : MixExpanderWidget {
 
 };
 
-Model* modelVenomMixFade = createModel<MixFade, MixFadeWidget>("MixFade");
+}
+
+Model* modelVenomMixFade = createModel<Venom::MixFade, Venom::MixFadeWidget>("MixFade");

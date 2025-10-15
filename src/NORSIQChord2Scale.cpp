@@ -6,6 +6,8 @@
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
 
+namespace Venom {
+
 struct NORSIQChord2Scale : VenomModule {
 
   enum ParamId {
@@ -99,4 +101,6 @@ struct NORSIQChord2ScaleWidget : VenomWidget {
   }
 };
 
-Model* modelVenomNORSIQChord2Scale = createModel<NORSIQChord2Scale, NORSIQChord2ScaleWidget>("NORSIQChord2Scale");
+}
+
+Model* modelVenomNORSIQChord2Scale = createModel<Venom::NORSIQChord2Scale, Venom::NORSIQChord2ScaleWidget>("NORSIQChord2Scale");

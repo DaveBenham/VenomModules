@@ -9,6 +9,8 @@
 #define LIGHT_OFF 0.02f
 #define MAX_HARMONIC 63
 
+namespace Venom {
+
 struct XM_OP : VenomModule {
  
   enum ParamId {
@@ -531,4 +533,6 @@ struct XM_OPWidget : VenomWidget {
 
 };
 
-Model* modelVenomXM_OP = createModel<XM_OP, XM_OPWidget>("XM_OP");
+}
+
+Model* modelVenomXM_OP = createModel<Venom::XM_OP, Venom::XM_OPWidget>("XM_OP");

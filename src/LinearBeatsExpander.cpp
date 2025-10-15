@@ -6,6 +6,8 @@
 #define LIGHT_OFF 0.02f
 #define LIGHT_ON  1.f
 
+namespace Venom {
+
 struct LinearBeatsExpander : VenomModule {
   #include "LinearBeatsExpander.hpp"
 
@@ -93,4 +95,6 @@ struct LinearBeatsExpanderWidget : VenomWidget {
 
 };
 
-Model* modelVenomLinearBeatsExpander = createModel<LinearBeatsExpander, LinearBeatsExpanderWidget>("LinearBeatsExpander");
+}
+
+Model* modelVenomLinearBeatsExpander = createModel<Venom::LinearBeatsExpander, Venom::LinearBeatsExpanderWidget>("LinearBeatsExpander");

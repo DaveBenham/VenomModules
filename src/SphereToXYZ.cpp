@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "Filter.hpp"
 
+namespace Venom {
+
 struct SphereToXYZ : VenomModule {
 
   enum ParamId {
@@ -121,4 +123,6 @@ struct SphereToXYZWidget : VenomWidget {
   
 };
 
-Model* modelVenomSphereToXYZ = createModel<SphereToXYZ, SphereToXYZWidget>("SphereToXYZ");
+}
+
+Model* modelVenomSphereToXYZ = createModel<Venom::SphereToXYZ, Venom::SphereToXYZWidget>("SphereToXYZ");

@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "MixModule.hpp"
 
+namespace Venom {
+
 struct MixPan : MixExpanderModule {
 
   MixPan() {
@@ -45,4 +47,6 @@ struct MixPanWidget : MixExpanderWidget {
   }
 };
 
-Model* modelVenomMixPan = createModel<MixPan, MixPanWidget>("MixPan");
+}
+
+Model* modelVenomMixPan = createModel<Venom::MixPan, Venom::MixPanWidget>("MixPan");

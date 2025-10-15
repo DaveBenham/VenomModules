@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct BernoulliSwitchExpander : VenomModule {
   #include "BernoulliSwitchExpander.hpp"
 
@@ -62,4 +64,6 @@ struct BernoulliSwitchExpanderWidget : VenomWidget {
   }
 };
 
-Model* modelVenomBernoulliSwitchExpander = createModel<BernoulliSwitchExpander, BernoulliSwitchExpanderWidget>("BernoulliSwitchExpander");
+}
+
+Model* modelVenomBernoulliSwitchExpander = createModel<Venom::BernoulliSwitchExpander, Venom::BernoulliSwitchExpanderWidget>("BernoulliSwitchExpander");

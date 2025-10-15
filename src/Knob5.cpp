@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct Knob5 : VenomModule {
   enum ParamId {
     ENUMS(KNOB_PARAM,5),
@@ -402,4 +404,6 @@ struct Knob5Widget : VenomWidget {
 
 };
 
-Model* modelVenomKnob5 = createModel<Knob5, Knob5Widget>("Knob5");
+}
+
+Model* modelVenomKnob5 = createModel<Venom::Knob5, Venom::Knob5Widget>("Knob5");

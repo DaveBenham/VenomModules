@@ -7,6 +7,8 @@
 #define LIGHT_OFF 0.02f
 #define FADE_RATE 100.f
 
+namespace Venom {
+
 struct BernoulliSwitch : VenomModule {
   #include "BernoulliSwitchExpander.hpp"
   
@@ -373,4 +375,6 @@ struct BernoulliSwitchWidget : VenomWidget {
 
 };
 
-Model* modelVenomBernoulliSwitch = createModel<BernoulliSwitch, BernoulliSwitchWidget>("BernoulliSwitch");
+}
+
+Model* modelVenomBernoulliSwitch = createModel<Venom::BernoulliSwitch, Venom::BernoulliSwitchWidget>("BernoulliSwitch");

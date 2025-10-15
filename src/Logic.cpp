@@ -9,6 +9,8 @@
 #define LIGHT_DIM 0.1f
 #define LIGHT_FADE 5e-6f
 
+namespace Venom {
+
 struct Logic : VenomModule {
   enum ParamId {
     MERGE_PARAM,
@@ -367,5 +369,6 @@ struct LogicWidget : VenomWidget {
 
 };
 
+}
 
-Model* modelVenomLogic = createModel<Logic, LogicWidget>("Logic");
+Model* modelVenomLogic = createModel<Venom::Logic, Venom::LogicWidget>("Logic");

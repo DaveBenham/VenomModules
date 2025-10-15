@@ -1,6 +1,8 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
+namespace Venom {
+
 struct CloneModule : VenomModule {
 
   #define EXPANDER_PORTS 4
@@ -111,3 +113,5 @@ struct CloneModuleWidget : VenomWidget {
     VenomWidget::appendContextMenu(menu);
   }
 };
+
+}

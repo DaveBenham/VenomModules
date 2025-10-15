@@ -6,6 +6,8 @@
 #include "math.hpp"
 #include "Filter.hpp"
 
+namespace Venom {
+
 struct Mix4 : MixBaseModule {
   enum ParamId {
     ENUMS(LEVEL_PARAMS, 4),
@@ -305,4 +307,6 @@ struct Mix4Widget : MixBaseWidget {
 
 };
 
-Model* modelVenomMix4 = createModel<Mix4, Mix4Widget>("Mix4");
+}
+
+Model* modelVenomMix4 = createModel<Venom::Mix4, Venom::Mix4Widget>("Mix4");

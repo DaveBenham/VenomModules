@@ -4,6 +4,8 @@
 #include "Filter.hpp"
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct WinComp : VenomModule {
   enum ParamId {
     A_PARAM,
@@ -478,4 +480,6 @@ struct WinCompWidget : VenomWidget {
 
 };
 
-Model* modelVenomWinComp = createModel<WinComp, WinCompWidget>("WinComp");
+}
+
+Model* modelVenomWinComp = createModel<Venom::WinComp, Venom::WinCompWidget>("WinComp");

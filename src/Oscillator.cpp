@@ -18,6 +18,8 @@
 #define MIX 4
 #define LINFM 5
 
+namespace Venom {
+
 struct Oscillator : VenomModule {
  
   enum ParamId {
@@ -1503,4 +1505,6 @@ struct OscillatorWidget : VenomWidget {
 
 };
 
-Model* modelVenomOscillator = createModel<Oscillator, OscillatorWidget>("Oscillator");
+}
+
+Model* modelVenomOscillator = createModel<Venom::Oscillator, Venom::OscillatorWidget>("Oscillator");

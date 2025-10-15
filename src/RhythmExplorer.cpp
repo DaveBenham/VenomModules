@@ -13,6 +13,8 @@
 #define LIGHT_DIM 0.1f
 #define LIGHT_FADE 5e-6f
 
+namespace Venom {
+
 static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/2",
   "1/4",
@@ -966,5 +968,6 @@ struct RhythmExplorerWidget : VenomWidget {
 
 };
 
+}
 
-Model* modelVenomRhythmExplorer = createModel<RhythmExplorer, RhythmExplorerWidget>("RhythmExplorer");
+Model* modelVenomRhythmExplorer = createModel<Venom::RhythmExplorer, Venom::RhythmExplorerWidget>("RhythmExplorer");

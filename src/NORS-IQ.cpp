@@ -10,6 +10,8 @@
 #define INTVL_CNT 13
 #define RATIO_UNIT HZ_UNIT
 
+namespace Venom {
+
 struct NORS_IQ : VenomModule {
   
   enum ParamId {
@@ -511,4 +513,6 @@ struct NORS_IQWidget : VenomWidget {
 
 };
 
-Model* modelVenomNORS_IQ = createModel<NORS_IQ, NORS_IQWidget>("NORS_IQ");
+}
+
+Model* modelVenomNORS_IQ = createModel<Venom::NORS_IQ, Venom::NORS_IQWidget>("NORS_IQ");

@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct Thru : VenomModule {
 
   enum ExpParamId {
@@ -65,4 +67,6 @@ struct ThruWidget : VenomWidget {
   
 };
 
-Model* modelVenomThru = createModel<Thru, ThruWidget>("Thru");
+}
+
+Model* modelVenomThru = createModel<Venom::Thru, Venom::ThruWidget>("Thru");

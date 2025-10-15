@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct VenomBlank : VenomModule {
   VenomBlank() {
     venomConfig(0, 0, 0, 0);
@@ -19,4 +21,6 @@ struct VenomBlankWidget : VenomWidget {
   }
 };
 
-Model* modelVenomBlank = createModel<VenomBlank, VenomBlankWidget>("VenomBlank");
+}
+
+Model* modelVenomBlank = createModel<Venom::VenomBlank, Venom::VenomBlankWidget>("VenomBlank");

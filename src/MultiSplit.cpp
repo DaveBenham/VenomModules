@@ -9,6 +9,8 @@
 #define yOrigin  43.5f
 #define yDelta   20.f
 
+namespace Venom {
+
 struct MultiSplit : VenomModule {
   enum ParamId {
     PARAMS_LEN
@@ -219,4 +221,6 @@ struct MultiSplitWidget : VenomWidget {
 
 };
 
-Model* modelVenomMultiSplit = createModel<MultiSplit, MultiSplitWidget>("MultiSplit");
+}
+
+Model* modelVenomMultiSplit = createModel<Venom::MultiSplit, Venom::MultiSplitWidget>("MultiSplit");

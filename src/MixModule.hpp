@@ -1,3 +1,5 @@
+namespace Venom {
+
 struct MixModule : VenomModule {
   
   enum MixTypeId {
@@ -429,3 +431,5 @@ struct MixExpanderWidget : VenomWidget {
     VenomWidget::step();
   }  
 };
+
+}

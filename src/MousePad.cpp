@@ -10,6 +10,8 @@
 #define CTRL_PRESS 2
 #define ALT_PRESS 4
 
+namespace Venom {
+
 struct MousePad : VenomModule {
 
   enum ParamId {
@@ -189,4 +191,6 @@ struct MousePadWidget : VenomWidget {
   
 };
 
-Model* modelVenomMousePad = createModel<MousePad, MousePadWidget>("MousePad");
+}
+
+Model* modelVenomMousePad = createModel<Venom::MousePad, Venom::MousePadWidget>("MousePad");

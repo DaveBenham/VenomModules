@@ -1,6 +1,8 @@
 #pragma once
 #include "plugin.hpp"
 
+namespace Venom {
+
 static const std::vector<std::string> modThemes = {
   "Venom Default",
   "Ivory",
@@ -872,3 +874,5 @@ struct PolyPort : VenomPort {
     setSvg(Svg::load(asset::plugin( pluginInstance, "res/PJ301M-poly.svg")));
   }
 };
+
+}

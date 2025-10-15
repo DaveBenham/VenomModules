@@ -1,5 +1,7 @@
 #include "Venom.hpp"
 
+namespace Venom {
+
 static std::string venomSettingsFileName = asset::user("Venom.json");
 
 int defaultTheme = 0;
@@ -53,4 +55,6 @@ int getDefaultTheme(){
 
 int getDefaultDarkTheme(){
   return defaultDarkTheme;
+}
+
 }

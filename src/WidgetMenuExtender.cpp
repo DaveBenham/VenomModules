@@ -6,6 +6,8 @@
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
 
+namespace Venom {
+
 struct WidgetMenuExtender : VenomModule {
 
   enum ParamId {
@@ -439,4 +441,6 @@ struct WidgetMenuExtenderWidget : VenomWidget {
 
 };
 
-Model* modelVenomWidgetMenuExtender = createModel<WidgetMenuExtender, WidgetMenuExtenderWidget>("WidgetMenuExtender");
+}
+
+Model* modelVenomWidgetMenuExtender = createModel<Venom::WidgetMenuExtender, Venom::WidgetMenuExtenderWidget>("WidgetMenuExtender");

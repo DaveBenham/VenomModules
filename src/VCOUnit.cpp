@@ -6,6 +6,8 @@
 #include "math.hpp"
 #include <float.h>
 
+namespace Venom {
+
 struct VCOUnit : VenomModule {
  
   enum ParamId {
@@ -1061,4 +1063,5 @@ struct VCOUnitWidget : VenomWidget {
 
 };
 
-Model* modelVenomVCOUnit = createModel<VCOUnit, VCOUnitWidget>("VCOUnit");
+}
+Model* modelVenomVCOUnit = createModel<Venom::VCOUnit, Venom::VCOUnitWidget>("VCOUnit");

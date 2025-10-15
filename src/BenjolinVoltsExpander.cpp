@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "BenjolinModule.hpp"
 
+namespace Venom {
+
 struct BenjolinVoltsExpanderWidget : BenjolinExpanderWidget {
   int venomDelCnt = 0;
 
@@ -42,4 +44,6 @@ struct BenjolinVoltsExpanderWidget : BenjolinExpanderWidget {
   }  
 };
 
-Model* modelVenomBenjolinVoltsExpander = createModel<BenjolinVoltsExpander, BenjolinVoltsExpanderWidget>("BenjolinVoltsExpander");
+}
+
+Model* modelVenomBenjolinVoltsExpander = createModel<Venom::BenjolinVoltsExpander, Venom::BenjolinVoltsExpanderWidget>("BenjolinVoltsExpander");

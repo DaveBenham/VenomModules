@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "math.hpp"
 
+namespace Venom {
+
 struct AD_ASR : VenomModule { 
   enum ParamId {
     SPEED_PARAM,
@@ -497,4 +499,6 @@ struct AD_ASRWidget : VenomWidget {
 
 };
 
-Model* modelVenomAD_ASR = createModel<AD_ASR, AD_ASRWidget>("AD_ASR");
+}
+
+Model* modelVenomAD_ASR = createModel<Venom::AD_ASR, Venom::AD_ASRWidget>("AD_ASR");

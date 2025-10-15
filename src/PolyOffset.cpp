@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct PolyOffset : VenomModule {
   enum ParamId {
     ENUMS(OFFSET_PARAM,16),
@@ -291,4 +293,6 @@ struct PolyOffsetWidget : VenomWidget {
 
 };
 
-Model* modelVenomPolyOffset = createModel<PolyOffset, PolyOffsetWidget>("PolyOffset");
+}
+
+Model* modelVenomPolyOffset = createModel<Venom::PolyOffset, Venom::PolyOffsetWidget>("PolyOffset");

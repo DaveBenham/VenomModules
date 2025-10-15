@@ -4,6 +4,8 @@
 #include "Venom.hpp"
 #include "TaskWorker.hpp"
 
+namespace Venom {
+
 struct Bypass : VenomModule {
   enum ParamId {
     TRIG_PARAM,
@@ -217,4 +219,6 @@ struct BypassWidget : VenomWidget {
 
 };
 
-Model* modelVenomBypass = createModel<Bypass, BypassWidget>("Bypass");
+}
+
+Model* modelVenomBypass = createModel<Venom::Bypass, Venom::BypassWidget>("Bypass");

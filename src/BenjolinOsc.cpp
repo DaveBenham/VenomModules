@@ -9,6 +9,8 @@
 #define LIGHT_DIM 0.2f
 #define LIGHT_OFF 0.02f
 
+namespace Venom {
+
 struct BenjolinOsc : BenjolinModule {
   
   enum ParamId {
@@ -418,4 +420,6 @@ struct BenjolinOscWidget : VenomWidget {
   }
 };
 
-Model* modelVenomBenjolinOsc = createModel<BenjolinOsc, BenjolinOscWidget>("BenjolinOsc");
+}
+
+Model* modelVenomBenjolinOsc = createModel<Venom::BenjolinOsc, Venom::BenjolinOscWidget>("BenjolinOsc");

@@ -3,6 +3,8 @@
 
 #include "Venom.hpp"
 
+namespace Venom {
+
 struct Blocker : VenomModule {
   enum ParamId {
     PARAMS_LEN
@@ -51,4 +53,6 @@ struct BlockerWidget : VenomWidget {
 
 };
 
-Model* modelVenomBlocker = createModel<Blocker, BlockerWidget>("Blocker");
+}
+
+Model* modelVenomBlocker = createModel<Venom::Blocker, Venom::BlockerWidget>("Blocker");

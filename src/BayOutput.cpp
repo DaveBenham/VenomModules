@@ -3,6 +3,8 @@
 
 #include "BayModule.hpp"
 
+namespace Venom {
+
 struct BayOutput : BayOutputModule {
   
   BayOutput() {
@@ -64,4 +66,6 @@ struct BayOutputWidget : BayOutputModuleWidget {
 
 };
 
-Model* modelVenomBayOutput = createModel<BayOutput, BayOutputWidget>("BayOutput");
+}
+
+Model* modelVenomBayOutput = createModel<Venom::BayOutput, Venom::BayOutputWidget>("BayOutput");
