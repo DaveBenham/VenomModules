@@ -43,7 +43,8 @@ struct SVF : VenomModule {
   };
 
   using float_4 = simd::float_4;
-  float maxFreq;
+  float maxFreqLo,
+        maxFreqHi;
   float sampleRate;
   float rangeFreq[2] {dsp::FREQ_C4, 2.f};
   int oversample = 2,
@@ -120,10 +121,10 @@ struct SVF : VenomModule {
     // update sampleRate
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
-      maxFreq = sampleRate<20000 ? 4 : sampleRate<40000 ? 5 : sampleRate<80000 ? 6 : sampleRate<170000 ? 7 : 8;
-      if (range)
-        maxFreq-=1;
+      maxFreqHi = sampleRate<20000 ? 4 : sampleRate<40000 ? 5 : sampleRate<80000 ? 6 : sampleRate<170000 ? 7 : 8;
+      maxFreqLo = maxFreqHi + 6;
     }
+    float maxFreq = range ? maxFreqLo : maxFreqHi;
 
     float freqParam = params[FREQ_PARAM].getValue(),
           resParam = params[RES_PARAM].getValue(),
