@@ -50,6 +50,7 @@ struct SVF : VenomModule {
   int oversample = 2,
       range = 0;
   int rangeOver[2] {2,1};
+  bool disableDCBlock = false;
   float_4 state[4][8]{}, 
           modeState[4][7][4][8]{};
   OversampleFilter_4 stereoUpSample[8]{},
@@ -57,6 +58,9 @@ struct SVF : VenomModule {
                      bandDownSample[8]{},
                      highDownSample[8]{},
                      notchDownSample[8]{};
+
+  DCBlockFilter_4 dcBlockFilter[4][8]{};
+
   #define INPUT 4  
 
   #define LOW 0
@@ -123,6 +127,9 @@ struct SVF : VenomModule {
       sampleRate = args.sampleRate;
       maxFreqHi = sampleRate<20000 ? 4 : sampleRate<40000 ? 5 : sampleRate<80000 ? 6 : sampleRate<170000 ? 7 : 8;
       maxFreqLo = maxFreqHi + 6;
+      for (int i=0; i<4; i++)
+        for (int j=0; j<8; j++)
+          dcBlockFilter[i][j].init(oversample, sampleRate);
     }
     float maxFreq = range ? maxFreqLo : maxFreqHi;
 
@@ -239,20 +246,36 @@ struct SVF : VenomModule {
             modeState[b][i][LOW][s] = modeState[b][i][LOW][s] + f * modeState[b][i][BAND][s];
           }
         }
-        low = softClip(low);
-        high = softClip(high);
-        band = softClip(band);
-        notch = softClip(notch);
-        if (oversample>1) {
-          if (outConnected[LOW])
+        if (outConnected[LOW]){
+          low = softClip(low);
+          if (oversample>1)
             low = lowDownSample[s].process(low);
-          if (outConnected[BAND])
-            band = bandDownSample[s].process(band);
-          if (outConnected[HIGH])
+        }
+        if (outConnected[HIGH]){
+          high = softClip(high);
+          if (oversample>1)
             high = highDownSample[s].process(high);
-          if (outConnected[NOTCH])
+        }
+        if (outConnected[BAND]){
+          band = softClip(band);
+          if (oversample>1)
+            band = bandDownSample[s].process(band);
+        }
+        if (outConnected[NOTCH]){
+          notch = softClip(notch);
+          if (oversample>1)
             notch = notchDownSample[s].process(notch);
         }
+      }
+      if (range==0 && !disableDCBlock){
+        if (outConnected[LOW])
+          low = dcBlockFilter[LOW][s].process(low);
+        if (outConnected[HIGH])
+          high = dcBlockFilter[HIGH][s].process(high);
+        if (outConnected[BAND])
+          band = dcBlockFilter[BAND][s].process(band);
+        if (outConnected[NOTCH])
+          notch = dcBlockFilter[NOTCH][s].process(notch);
       }
       outputs[L_LOW_OUTPUT].setVoltage(low[0], c1);
       outputs[R_LOW_OUTPUT].setVoltage(low[1], c1);
@@ -283,6 +306,20 @@ struct SVF : VenomModule {
     outputs[R_HIGH_OUTPUT].setChannels(channels);
     outputs[R_BAND_OUTPUT].setChannels(channels);
     outputs[R_NOTCH_OUTPUT].setChannels(channels);
+  }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "disableDCBlock", json_boolean(disableDCBlock));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "disableDCBlock"))) {
+      disableDCBlock = json_boolean_value(val);
+    }
   }
         
 };
@@ -340,6 +377,13 @@ struct SVFWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(49.5f,339.5f), module, SVF::R_BAND_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(85.5f,339.5f), module, SVF::L_NOTCH_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(115.5f,339.5f), module, SVF::R_NOTCH_OUTPUT));
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    SVF* module = static_cast<SVF*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolPtrMenuItem("Disable audio output DC block", "", &module->disableDCBlock));    
+    VenomWidget::appendContextMenu(menu);
   }
 
 };
