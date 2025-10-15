@@ -43,8 +43,7 @@ struct SVF : VenomModule {
   };
 
   using float_4 = simd::float_4;
-  float maxFreqLo,
-        maxFreqHi;
+  float maxFreqHi;
   float sampleRate;
   float rangeFreq[2] {dsp::FREQ_C4, 2.f};
   int oversample = 2,
@@ -114,7 +113,7 @@ struct SVF : VenomModule {
   
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    
+
     // update range
     if (range != static_cast<int>(params[RANGE_PARAM].getValue())) {
       range = static_cast<int>(params[RANGE_PARAM].getValue());
@@ -125,13 +124,19 @@ struct SVF : VenomModule {
     // update sampleRate
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
-      maxFreqHi = sampleRate<20000 ? 4 : sampleRate<40000 ? 5 : sampleRate<80000 ? 6 : sampleRate<170000 ? 7 : 8;
-      maxFreqLo = maxFreqHi + 6;
+      maxFreqHi = sampleRate<12000 ? 3500
+                : sampleRate<22000 ? 3750
+                : sampleRate<24000 ? 7000
+                : sampleRate<44000 ? 7500
+                : sampleRate<48000 ? 14000
+                : sampleRate<88000 ? 15000
+                : sampleRate<96000 ? 28000
+                : 30000;
       for (int i=0; i<4; i++)
         for (int j=0; j<8; j++)
           dcBlockFilter[i][j].init(oversample, sampleRate);
     }
-    float maxFreq = range ? maxFreqLo : maxFreqHi;
+    float maxFreq = range ? maxFreqHi/2.f : maxFreqHi;
 
     float freqParam = params[FREQ_PARAM].getValue(),
           resParam = params[RES_PARAM].getValue(),
@@ -139,7 +144,7 @@ struct SVF : VenomModule {
           freqCVAmt = params[FREQ_CV_PARAM].getValue(),
           resCVAmt = params[RES_CV_PARAM].getValue(),
           driveCVAmt = params[DRIVE_CV_PARAM].getValue(),
-          sampleTimePiK = M_PI * args.sampleTime * rangeFreq[range] / oversample;
+          sampleTimePi = M_PI * args.sampleTime / oversample;
 
     float_4 voctIn{},
             freqIn{},
@@ -195,11 +200,11 @@ struct SVF : VenomModule {
       stereoIn[1] = inputs[R_INPUT].getNormalVoltage(stereoIn[0], c1);
       stereoIn[2] = inputs[L_INPUT].getVoltage(c2);
       stereoIn[3] = inputs[R_INPUT].getNormalVoltage(stereoIn[2], c2);
-      freq = freqParam + voctIn + freqIn * freqCVAmt;
+      freq = pow(2.f, freqParam + voctIn + freqIn * freqCVAmt) * rangeFreq[range];
       freq = ifelse(freq>maxFreq, maxFreq, freq);
       res = clamp(resParam + resIn/10.f * resCVAmt) * 9.f;
       drive = clamp(driveParam + driveIn/5.f * driveCVAmt, 0.f, 2.f);
-      f = 2.f * sin(sampleTimePiK * pow(2.f, freq));
+      f = 2.f * sin(sampleTimePi * freq);
       q = (slope==0) ? 1.f / pow(2.f, res) : 1.f;
       for (int o=0; o<oversample; o++){
         if (oversample>1 && stereoConnected) {
