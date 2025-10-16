@@ -180,26 +180,26 @@ struct SVF : VenomModule {
     }
 
     for (int s=0, c1=0, c2=1; c1<channels; s++, c1+=2, c2+=2) {
-      voctIn[0] = inputs[VOCT_INPUT].getVoltage(c1);
+      voctIn[0] = inputs[VOCT_INPUT].getPolyVoltage(c1);
       voctIn[1] = voctIn[0];
-      voctIn[2] = inputs[VOCT_INPUT].getVoltage(c2);
+      voctIn[2] = inputs[VOCT_INPUT].getPolyVoltage(c2);
       voctIn[3] = voctIn[2];
-      freqIn[0] = inputs[FREQ_CV_INPUT].getVoltage(c1);
+      freqIn[0] = inputs[FREQ_CV_INPUT].getPolyVoltage(c1);
       freqIn[1] = freqIn[0];
-      freqIn[2] = inputs[FREQ_CV_INPUT].getVoltage(c2);
+      freqIn[2] = inputs[FREQ_CV_INPUT].getPolyVoltage(c2);
       freqIn[3] = freqIn[2];
-      resIn[0] = inputs[RES_CV_INPUT].getVoltage(c1);
+      resIn[0] = inputs[RES_CV_INPUT].getPolyVoltage(c1);
       resIn[1] = resIn[0];
-      resIn[2] = inputs[RES_CV_INPUT].getVoltage(c2);
+      resIn[2] = inputs[RES_CV_INPUT].getPolyVoltage(c2);
       resIn[3] = resIn[2];
-      driveIn[0] = inputs[DRIVE_CV_INPUT].getVoltage(c1);
+      driveIn[0] = inputs[DRIVE_CV_INPUT].getPolyVoltage(c1);
       driveIn[1] = driveIn[0];
-      driveIn[2] = inputs[DRIVE_CV_INPUT].getVoltage(c2);
+      driveIn[2] = inputs[DRIVE_CV_INPUT].getPolyVoltage(c2);
       driveIn[3] = driveIn[2];
-      stereoIn[0] = inputs[L_INPUT].getVoltage(c1);
-      stereoIn[1] = inputs[R_INPUT].getNormalVoltage(stereoIn[0], c1);
-      stereoIn[2] = inputs[L_INPUT].getVoltage(c2);
-      stereoIn[3] = inputs[R_INPUT].getNormalVoltage(stereoIn[2], c2);
+      stereoIn[0] = inputs[L_INPUT].getPolyVoltage(c1);
+      stereoIn[1] = inputs[R_INPUT].getNormalPolyVoltage(stereoIn[0], c1);
+      stereoIn[2] = inputs[L_INPUT].getPolyVoltage(c2);
+      stereoIn[3] = inputs[R_INPUT].getNormalPolyVoltage(stereoIn[2], c2);
       freq = pow(2.f, freqParam + voctIn + freqIn * freqCVAmt) * rangeFreq[range];
       freq = ifelse(freq>maxFreq, maxFreq, freq);
       res = clamp(resParam + resIn/10.f * resCVAmt) * 9.f;
