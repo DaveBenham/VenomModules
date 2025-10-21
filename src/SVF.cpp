@@ -117,8 +117,8 @@ struct SVF : VenomModule {
 
     configInput(L_INPUT, "Left");
     configInput(R_INPUT, "Right");
-    configOutput(L_LOW_OUTPUT, "Left morph");
-    configOutput(R_LOW_OUTPUT, "Right morph");
+    configOutput(L_MORPH_OUTPUT, "Left morph");
+    configOutput(R_MORPH_OUTPUT, "Right morph");
 
     configOutput(L_LOW_OUTPUT, "Left low pass");
     configOutput(R_LOW_OUTPUT, "Right low pass");
