@@ -57,7 +57,7 @@ struct SVF : VenomModule {
   };
 
   using float_4 = simd::float_4;
-  float maxFreqHi;
+  float maxFreq;
   float sampleRate;
   float rangeFreq[2] {dsp::FREQ_C4, 2.f};
   int oversample = 2,
@@ -81,11 +81,19 @@ struct SVF : VenomModule {
   #define BAND 2
   #define NOTCH 3
   #define MORPH 4
+
+  struct FreqQuantity:ParamQuantity {
+    float maxFreq = 0;
+    float getDisplayValue() override {
+      float rtn = ParamQuantity::getDisplayValue();
+      return rtn>maxFreq ? maxFreq : rtn;
+    }
+  };
   
   SVF() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configParam(FREQ_PARAM, -4.f, 6.f, 0.f, "Cutoff frequency", " Hz", 2.f, rangeFreq[range], 0.f);
+    configParam<FreqQuantity>(FREQ_PARAM, -4.f, 6.f, 0.f, "Cutoff frequency", " Hz", 2.f, rangeFreq[range], 0.f);
     configSwitch<FixedSwitchQuantity>(SLOPE_PARAM, 0.f, 7.f, 0.f, "Slope", {"12dB", "24dB", "36dB", "48dB", "60dB", "72dB", "84dB", "96dB"});
     configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 1.f, 0.f, "Frequency range", {"Audio rate", "Low frequency"});
     configInput(VOCT_INPUT, "V/Oct");
@@ -157,19 +165,21 @@ struct SVF : VenomModule {
     // update sampleRate
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
-      maxFreqHi = sampleRate<12000 ? 3500
-                : sampleRate<22000 ? 3750
-                : sampleRate<24000 ? 7000
-                : sampleRate<44000 ? 7500
-                : sampleRate<48000 ? 14000
-                : sampleRate<88000 ? 15000
-                : sampleRate<96000 ? 28000
-                : 30000;
+      maxFreq = sampleRate<12000 ? 3500
+              : sampleRate<22000 ? 3750
+              : sampleRate<24000 ? 7000
+              : sampleRate<44000 ? 7500
+              : sampleRate<48000 ? 14000
+              : sampleRate<88000 ? 15000
+              : sampleRate<96000 ? 28000
+              : 30000;
+      if (range)
+        maxFreq /= 2.f;
+      static_cast<FreqQuantity*>(paramQuantities[FREQ_PARAM])->maxFreq = maxFreq;
       for (int i=0; i<5; i++)
         for (int j=0; j<8; j++)
           dcBlockFilter[i][j].init(oversample, sampleRate);
     }
-    float maxFreq = range ? maxFreqHi/2.f : maxFreqHi;
 
     int slope = params[SLOPE_PARAM].getValue(),
         dir = params[SPREAD_DIR_PARAM].getValue(),
@@ -454,10 +464,12 @@ struct SVF : VenomModule {
       outputs[R_NOTCH_OUTPUT].setVoltage(notch[3], c2);
      
     } // end poly channel loop
+    outputs[L_MORPH_OUTPUT].setChannels(channels);
     outputs[L_LOW_OUTPUT].setChannels(channels);
     outputs[L_HIGH_OUTPUT].setChannels(channels);
     outputs[L_BAND_OUTPUT].setChannels(channels);
     outputs[L_NOTCH_OUTPUT].setChannels(channels);
+    outputs[R_MORPH_OUTPUT].setChannels(channels);
     outputs[R_LOW_OUTPUT].setChannels(channels);
     outputs[R_HIGH_OUTPUT].setChannels(channels);
     outputs[R_BAND_OUTPUT].setChannels(channels);
