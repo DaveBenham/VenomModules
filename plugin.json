@@ -361,6 +361,16 @@
       ]
     },
     {
+      "slug": "SVF",
+      "name": "Multi Mode Filter",
+      "description": "Stereo state variable filter for audio and low frequency use",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#state-variable-filter",
+      "tags": [
+        "Filter",
+        "Polyphonic"
+      ]
+    },
+    {
       "slug": "NORS_IQ",
       "name": "Non-Octave-Repeating Scale Intervallic Quantizer",
       "description": "Quantizer for any scale defined by up to 13 intervals between notes",
@@ -565,16 +575,6 @@
       "tags": [
         "Polyphonic",
         "Utility"
-      ]
-    },
-    {
-      "slug": "SVF",
-      "name": "State Variable Filter",
-      "description": "Stereo state variable filter for audio and low frequency use",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#state-variable-filter",
-      "tags": [
-        "Filter",
-        "Polyphonic"
       ]
     },
     {

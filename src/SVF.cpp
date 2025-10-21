@@ -9,13 +9,22 @@ struct SVF : VenomModule {
  
   enum ParamId {
     FREQ_PARAM,
+    SLOPE_PARAM,
+    RANGE_PARAM,
     FREQ_CV_PARAM,
     RES_PARAM,
     RES_CV_PARAM,
     DRIVE_PARAM,
     DRIVE_CV_PARAM,
-    RANGE_PARAM,
-    SLOPE_PARAM,
+    SPREAD_PARAM,
+    SPREAD_DIR_PARAM,
+    SPREAD_MONO_PARAM,
+    SPREAD_CV_PARAM,
+    FDBK_PARAM,
+    FDBK_CV_PARAM,
+    MORPH_PARAM,
+    MORPH_MODE_PARAM,
+    MORPH_CV_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -23,11 +32,16 @@ struct SVF : VenomModule {
     FREQ_CV_INPUT,
     RES_CV_INPUT,
     DRIVE_CV_INPUT,
+    SPREAD_CV_INPUT,
+    FDBK_CV_INPUT,
+    MORPH_CV_INPUT,
     L_INPUT,
     R_INPUT,
     INPUTS_LEN
   };
   enum OutputId {
+    L_MORPH_OUTPUT,
+    R_MORPH_OUTPUT,
     L_LOW_OUTPUT,
     R_LOW_OUTPUT,
     L_HIGH_OUTPUT,
@@ -51,26 +65,29 @@ struct SVF : VenomModule {
   int rangeOver[2] {2,1};
   bool disableDCBlock = false;
   float_4 state[4][8]{}, 
-          modeState[4][7][4][8]{};
+          modeState[4][7][4][8]{},
+          fdbkOld[8]{};
   OversampleFilter_4 stereoUpSample[8]{},
                      lowDownSample[8]{},
+                     morphDownSample[8]{},
                      bandDownSample[8]{},
                      highDownSample[8]{},
                      notchDownSample[8]{};
 
-  DCBlockFilter_4 dcBlockFilter[4][8]{};
-
-  #define INPUT 4  
+  DCBlockFilter_4 dcBlockFilter[5][8]{};
 
   #define LOW 0
   #define HIGH 1
   #define BAND 2
   #define NOTCH 3
+  #define MORPH 4
   
   SVF() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
     configParam(FREQ_PARAM, -4.f, 6.f, 0.f, "Cutoff frequency", " Hz", 2.f, rangeFreq[range], 0.f);
+    configSwitch<FixedSwitchQuantity>(SLOPE_PARAM, 0.f, 7.f, 0.f, "Slope", {"12dB", "24dB", "36dB", "48dB", "60dB", "72dB", "84dB", "96dB"});
+    configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 1.f, 0.f, "Frequency range", {"Audio rate", "Low frequency"});
     configInput(VOCT_INPUT, "V/Oct");
     configParam(FREQ_CV_PARAM, -1.f, 1.f, 0.f, "Cutoff CV amount", "%", 0.f, 100.f, 0.f);
     configInput(FREQ_CV_INPUT, "Cutoff CV");
@@ -79,14 +96,29 @@ struct SVF : VenomModule {
     configParam(RES_CV_PARAM, -1.f, 1.f, 0.f, "Resonance CV amount", "%", 0.f, 100.f, 0.f);
     configInput(RES_CV_INPUT, "Resonance CV");
 
-    configParam(DRIVE_PARAM, 0.f, 2.f, 1.f, "Drive");
-    configParam(DRIVE_CV_PARAM, -1.f, 1.f, 0.f, "Drive CV amount", "%", 0.f, 100.f, 0.f);
-    configInput(DRIVE_CV_INPUT, "Drive CV");
+    configParam(DRIVE_PARAM, 0.f, 2.f, 1.f, "Gain");
+    configParam(DRIVE_CV_PARAM, -1.f, 1.f, 0.f, "Gain CV amount", "%", 0.f, 100.f, 0.f);
+    configInput(DRIVE_CV_INPUT, "Gain CV");
+    
+    configParam(SPREAD_PARAM, -2.f, 2.f, 0.f, "Cutoff spread", "");
+    configSwitch<FixedSwitchQuantity>(SPREAD_DIR_PARAM, 0.f, 1.f, 0.f, "Spread direction", {"Bipolar (both)", "Unipolar (right)"});
+    configSwitch<FixedSwitchQuantity>(SPREAD_MONO_PARAM, 0.f, 1.f, 0.f, "Spread mono mode", {"Additive", "Subtractive"});
+    configParam(SPREAD_CV_PARAM, -1.f, 1.f, 0.f, "Cutoff spread CV amount", "%", 0.f, 100.f, 0.f);
+    configInput(SPREAD_CV_INPUT, "Cutoff spread CV");
+
+    configParam(FDBK_PARAM, 0.f, 1.f, 0.f, "Feedback");
+    configParam(FDBK_CV_PARAM, -1.f, 1.f, 0.f, "Feedback CV amount", "%", 0.f, 100.f, 0.f);
+    configInput(FDBK_CV_INPUT, "Feedback CV");
+
+    configParam(MORPH_PARAM, 0.f, 1.f, 0.5f, "Morph", "");
+    configSwitch<FixedSwitchQuantity>(MORPH_MODE_PARAM, 0.f, 3.f, 2.f, "Morph mode", {"LP <-> BP", "LP <-> BP <-> HP", "LP <-> HP", "BP <-> HP"});
+    configParam(MORPH_CV_PARAM, -1.f, 1.f, 0.f, "Morph CV Amount", "%", 0.f, 100.f, 0.f);
+    configInput(MORPH_CV_INPUT, "Morph CV");
 
     configInput(L_INPUT, "Left");
     configInput(R_INPUT, "Right");
-    configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 1.f, 0.f, "Frequency range", {"Audio rate", "Low frequency"});
-    configSwitch<FixedSwitchQuantity>(SLOPE_PARAM, 0.f, 7.f, 0.f, "Slope", {"12dB", "24dB", "36dB", "48dB", "60dB", "72dB", "84dB", "96dB"});
+    configOutput(L_LOW_OUTPUT, "Left morph");
+    configOutput(R_LOW_OUTPUT, "Right morph");
 
     configOutput(L_LOW_OUTPUT, "Left low pass");
     configOutput(R_LOW_OUTPUT, "Right low pass");
@@ -104,6 +136,7 @@ struct SVF : VenomModule {
   void setOversample() override {
     for (int i=0; i<8; i++){
       stereoUpSample[i].setOversample(oversample, 5);
+      morphDownSample[i].setOversample(oversample, 5);
       lowDownSample[i].setOversample(oversample, 5);
       bandDownSample[i].setOversample(oversample, 5);
       highDownSample[i].setOversample(oversample, 5);
@@ -132,24 +165,38 @@ struct SVF : VenomModule {
                 : sampleRate<88000 ? 15000
                 : sampleRate<96000 ? 28000
                 : 30000;
-      for (int i=0; i<4; i++)
+      for (int i=0; i<5; i++)
         for (int j=0; j<8; j++)
           dcBlockFilter[i][j].init(oversample, sampleRate);
     }
     float maxFreq = range ? maxFreqHi/2.f : maxFreqHi;
 
+    int slope = params[SLOPE_PARAM].getValue(),
+        dir = params[SPREAD_DIR_PARAM].getValue(),
+        mono = params[SPREAD_MONO_PARAM].getValue(),
+        mode = params[MORPH_MODE_PARAM].getValue();
+    
     float freqParam = params[FREQ_PARAM].getValue(),
           resParam = params[RES_PARAM].getValue(),
           driveParam = params[DRIVE_PARAM].getValue(),
+          fdbkParam = params[FDBK_PARAM].getValue(),
+          morphParam = params[MORPH_PARAM].getValue(),
           freqCVAmt = params[FREQ_CV_PARAM].getValue(),
-          resCVAmt = params[RES_CV_PARAM].getValue(),
-          driveCVAmt = params[DRIVE_CV_PARAM].getValue(),
+          resCVAmt = params[RES_CV_PARAM].getValue() / 10.f,
+          driveCVAmt = params[DRIVE_CV_PARAM].getValue() / 5.f,
+          spreadCVAmt = params[SPREAD_CV_PARAM].getValue(),
+          fdbkCVAmt = params[FDBK_CV_PARAM].getValue() / 10.f,
+          morphCVAmt = params[MORPH_CV_PARAM].getValue() / 10.f,
           sampleTimePi = M_PI * args.sampleTime / oversample;
 
-    float_4 voctIn{},
+    float_4 spreadParam{},
+            voctIn{},
             freqIn{},
             resIn{},
             driveIn{},
+            spreadIn{},
+            fdbkIn{},
+            morphIn{},
             stereoIn{},
             voct{},
             freq{},
@@ -161,16 +208,33 @@ struct SVF : VenomModule {
             low{},
             band{},
             high{},
-            notch{};
+            notch{},
+            morph{},
+            morphARatio{},
+            morphBRatio{},
+            morphBHigh{},
+            morphA,
+            morphB;
 
-    int slope = params[SLOPE_PARAM].getValue();
-    
     bool stereoConnected = inputs[L_INPUT].isConnected() || inputs[R_INPUT].isConnected(),
-         outConnected[4]{ outputs[L_LOW_OUTPUT].isConnected() || outputs[R_LOW_OUTPUT].isConnected(),
+         outConnected[5]{ outputs[L_LOW_OUTPUT].isConnected() || outputs[R_LOW_OUTPUT].isConnected(),
                           outputs[L_HIGH_OUTPUT].isConnected() || outputs[R_HIGH_OUTPUT].isConnected(),
                           outputs[L_BAND_OUTPUT].isConnected() || outputs[R_BAND_OUTPUT].isConnected(),
-                          outputs[L_NOTCH_OUTPUT].isConnected() || outputs[R_NOTCH_OUTPUT].isConnected() };
+                          outputs[L_NOTCH_OUTPUT].isConnected() || outputs[R_NOTCH_OUTPUT].isConnected(),
+                          outputs[L_MORPH_OUTPUT].isConnected() || outputs[R_MORPH_OUTPUT].isConnected() },
+         rightConnected[5]{ outputs[R_LOW_OUTPUT].isConnected(),
+                            outputs[R_HIGH_OUTPUT].isConnected(),
+                            outputs[R_BAND_OUTPUT].isConnected(),
+                            outputs[R_NOTCH_OUTPUT].isConnected(),
+                            outputs[R_MORPH_OUTPUT].isConnected() };
 
+    if (dir) {
+      spreadParam[1] = spreadParam[3] = params[SPREAD_PARAM].getValue();
+    }
+    else {
+      spreadParam[0] = spreadParam[2] = params[SPREAD_PARAM].getValue()*-0.5f;
+      spreadParam[1] = spreadParam[3] = -spreadParam[0];
+    }
 
     // get channel count
     int channels=1;
@@ -179,7 +243,7 @@ struct SVF : VenomModule {
         channels = inputs[i].getChannels();
     }
 
-    for (int s=0, c1=0, c2=1; c1<channels; s++, c1+=2, c2+=2) {
+    for (int s=0, c1=0, c2=1; c1<channels; s++, c1+=2, c2+=2) { // poly channel loop
       voctIn[0] = inputs[VOCT_INPUT].getPolyVoltage(c1);
       voctIn[1] = voctIn[0];
       voctIn[2] = inputs[VOCT_INPUT].getPolyVoltage(c2);
@@ -196,30 +260,61 @@ struct SVF : VenomModule {
       driveIn[1] = driveIn[0];
       driveIn[2] = inputs[DRIVE_CV_INPUT].getPolyVoltage(c2);
       driveIn[3] = driveIn[2];
+
+      if (dir){
+        spreadIn[1] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c1);
+        spreadIn[3] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c2);
+      }
+      else {
+        spreadIn[0] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c1)*-0.5f;
+        spreadIn[2] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c2)*-0.5f;
+        spreadIn[1] = -spreadIn[0];
+        spreadIn[3] = -spreadIn[2];
+      }
+
+      fdbkIn[0] = inputs[FDBK_CV_INPUT].getPolyVoltage(c1);
+      fdbkIn[1] = fdbkIn[0];
+      fdbkIn[2] = inputs[FDBK_CV_INPUT].getPolyVoltage(c2);
+      fdbkIn[3] = fdbkIn[2];
+
+      morphIn[0] = inputs[MORPH_CV_INPUT].getPolyVoltage(c1);
+      morphIn[1] = morphIn[0];
+      morphIn[2] = inputs[MORPH_CV_INPUT].getPolyVoltage(c2);
+      morphIn[3] = morphIn[2];
+
       stereoIn[0] = inputs[L_INPUT].getPolyVoltage(c1);
       stereoIn[1] = inputs[R_INPUT].getNormalPolyVoltage(stereoIn[0], c1);
       stereoIn[2] = inputs[L_INPUT].getPolyVoltage(c2);
       stereoIn[3] = inputs[R_INPUT].getNormalPolyVoltage(stereoIn[2], c2);
-      freq = pow(2.f, freqParam + voctIn + freqIn * freqCVAmt) * rangeFreq[range];
+      freq = pow(2.f, freqParam + voctIn + freqIn*freqCVAmt + spreadParam + spreadIn*spreadCVAmt) * rangeFreq[range];
       freq = ifelse(freq>maxFreq, maxFreq, freq);
       res = clamp(resParam + resIn/10.f * resCVAmt) * 9.f;
       drive = clamp(driveParam + driveIn/5.f * driveCVAmt, 0.f, 2.f);
       f = 2.f * sin(sampleTimePi * freq);
       q = (slope==0) ? 1.f / pow(2.f, res) : 1.f;
-      for (int o=0; o<oversample; o++){
+      if (outConnected[MORPH]){
+        morphBRatio = clamp(morphParam + morphIn*morphCVAmt);
+        if (mode==1){
+          morphBRatio *= 2.f;
+          morphBHigh = morphBRatio > 1.f;
+          morphBRatio = ifelse(morphBHigh, morphBRatio - 1.f, morphBRatio);
+        }
+        morphARatio = 1.f - morphBRatio;
+      }
+      for (int o=0; o<oversample; o++){ // oversample loop
         if (oversample>1 && stereoConnected) {
           stereoIn = stereoUpSample[s].process(o ? 0.f : stereoIn*oversample);
         }
-        stereo = stereoIn * drive + 1e-6f * (2.f * random::uniform() - 1.f);
+        stereo = stereoIn * drive + (1e-6f * (2.f * random::uniform() - 1.f)) + (fdbkOld[s] * clamp(fdbkParam + fdbkIn*fdbkCVAmt));
         notch = state[NOTCH][s] = q * state[BAND][s] - stereo;
         high = state[HIGH][s] = -(state[NOTCH][s] + state[LOW][s]);
         band = state[BAND][s] = state[BAND][s] + f * state[HIGH][s];
         low = state[LOW][s] = state[LOW][s] + f * state[BAND][s];
-        for (int i=0; i<slope; i++){
+        for (int i=0; i<slope; i++){ // slope loop
           if (i==slope-1)
             q = 1.f / pow(2.f, res);
           int b=LOW;
-          if (outConnected[b]){
+          if (outConnected[b] || outConnected[MORPH]){
             stereo = low;
             modeState[b][i][NOTCH][s] = q * modeState[b][i][BAND][s] - stereo;
             modeState[b][i][HIGH][s] = -(modeState[b][i][NOTCH][s] + modeState[b][i][LOW][s]);
@@ -227,7 +322,7 @@ struct SVF : VenomModule {
             low = modeState[b][i][LOW][s] = modeState[b][i][LOW][s] + f * modeState[b][i][BAND][s];
           }
           b=HIGH;
-          if (outConnected[b]){
+          if (outConnected[b] || outConnected[MORPH]){
             stereo = high;
             modeState[b][i][NOTCH][s] = q * modeState[b][i][BAND][s] - stereo;
             high = modeState[b][i][HIGH][s] = -(modeState[b][i][NOTCH][s] + modeState[b][i][LOW][s]);
@@ -235,13 +330,13 @@ struct SVF : VenomModule {
             modeState[b][i][LOW][s] = modeState[b][i][LOW][s] + f * modeState[b][i][BAND][s];
           }
           b=BAND;
-          if (outConnected[b]){
+          // always compute band states for feedback
             stereo = band;
             modeState[b][i][NOTCH][s] = q * modeState[b][i][BAND][s] - stereo;
             modeState[b][i][HIGH][s] = -(modeState[b][i][NOTCH][s] + modeState[b][i][LOW][s]);
             band = modeState[b][i][BAND][s] = modeState[b][i][BAND][s] + f * modeState[b][i][HIGH][s];
             modeState[b][i][LOW][s] = modeState[b][i][LOW][s] + f * modeState[b][i][BAND][s];
-          }
+          //
           b=NOTCH;
           if (outConnected[b]){
             stereo = notch;
@@ -250,29 +345,80 @@ struct SVF : VenomModule {
             modeState[b][i][BAND][s] = modeState[b][i][BAND][s] + f * modeState[b][i][HIGH][s];
             modeState[b][i][LOW][s] = modeState[b][i][LOW][s] + f * modeState[b][i][BAND][s];
           }
+        } // end slope loop
+        fdbkOld[s] = softClip(band/10.f);
+        if (outConnected[MORPH]){
+          switch (mode){
+            case 0:
+              morphA = low;
+              morphB = band * (slope%4==1?-1.f:1.f);
+              break;
+            case 1:
+              morphA = ifelse(morphBHigh, band * (slope%4==1?-1.f:1.f), low);
+              morphB = ifelse(morphBHigh, high, band * (slope%4==1?-1.f:1.f));
+              break;
+            case 2:
+              morphA = low;
+              morphB = high * (slope%2?1.f:-1.f);
+              break;
+            default: // 3
+              morphA = band * (slope%4==1?-1.f:1.f);
+              morphB = high;
+          }
+          morph = morphA * morphARatio + morphB * morphBRatio;
+          if (!rightConnected[MORPH]){
+            morph[0] = mono ? morph[0]-morph[1] : (morph[0]+morph[1])/2.f;
+            morph[2] = mono ? morph[2]-morph[3] : (morph[2]+morph[3])/2.f;
+            morph[1] = morph[3] = 0.f;
+          }
+          morph = softClip(morph);
+          if (oversample>1)
+            morph = morphDownSample[s].process(morph);
         }
         if (outConnected[LOW]){
+          if (!rightConnected[LOW]){
+            low[0] = mono ? low[0]-low[1] : (low[0]+low[1])/2.f;
+            low[2] = mono ? low[2]-low[3] : (low[2]+low[3])/2.f;
+            low[1] = low[3] = 0.f;
+          }
           low = softClip(low);
           if (oversample>1)
             low = lowDownSample[s].process(low);
         }
         if (outConnected[HIGH]){
+          if (!rightConnected[HIGH]){
+            high[0] = mono ? high[0]-high[1] : (high[0]+high[1])/2.f;
+            high[2] = mono ? high[2]-high[3] : (high[2]+high[3])/2.f;
+            high[1] = high[3] = 0.f;
+          }
           high = softClip(high);
           if (oversample>1)
             high = highDownSample[s].process(high);
         }
         if (outConnected[BAND]){
+          if (!rightConnected[BAND]){
+            band[0] = mono ? band[0]-band[1] : (band[0]+band[1])/2.f;
+            band[2] = mono ? band[2]-band[3] : (band[2]+band[3])/2.f;
+            band[1] = band[3] = 0.f;
+          }
           band = softClip(band);
           if (oversample>1)
             band = bandDownSample[s].process(band);
         }
         if (outConnected[NOTCH]){
+          if (!rightConnected[NOTCH]){
+            notch[0] = mono ? notch[0]-notch[1] : (notch[0]+notch[1])/2.f;
+            notch[2] = mono ? notch[2]-notch[3] : (notch[2]+notch[3])/2.f;
+            notch[1] = notch[3] = 0.f;
+          }
           notch = softClip(notch);
           if (oversample>1)
             notch = notchDownSample[s].process(notch);
         }
-      }
+      } // end oversample loop
       if (range==0 && !disableDCBlock){
+        if (outConnected[MORPH])
+          morph = dcBlockFilter[MORPH][s].process(morph);
         if (outConnected[LOW])
           low = dcBlockFilter[LOW][s].process(low);
         if (outConnected[HIGH])
@@ -282,6 +428,11 @@ struct SVF : VenomModule {
         if (outConnected[NOTCH])
           notch = dcBlockFilter[NOTCH][s].process(notch);
       }
+      outputs[L_MORPH_OUTPUT].setVoltage(morph[0], c1);
+      outputs[R_MORPH_OUTPUT].setVoltage(morph[1], c1);
+      outputs[L_MORPH_OUTPUT].setVoltage(morph[2], c2);
+      outputs[R_MORPH_OUTPUT].setVoltage(morph[3], c2);
+      
       outputs[L_LOW_OUTPUT].setVoltage(low[0], c1);
       outputs[R_LOW_OUTPUT].setVoltage(low[1], c1);
       outputs[L_LOW_OUTPUT].setVoltage(low[2], c2);
@@ -302,7 +453,7 @@ struct SVF : VenomModule {
       outputs[L_NOTCH_OUTPUT].setVoltage(notch[2], c2);
       outputs[R_NOTCH_OUTPUT].setVoltage(notch[3], c2);
      
-    }
+    } // end poly channel loop
     outputs[L_LOW_OUTPUT].setChannels(channels);
     outputs[L_HIGH_OUTPUT].setChannels(channels);
     outputs[L_BAND_OUTPUT].setChannels(channels);
@@ -333,21 +484,44 @@ struct SVFWidget : VenomWidget {
   
   struct RangeSwitch : GlowingSvgSwitchLockable {
     RangeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/range_Audio.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/range_LowFreq.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
     }
   };
 
   struct SlopeSwitch : GlowingSvgSwitchLockable {
     SlopeSwitch() {
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/slope_12dB.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/slope_24dB.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/slope_36dB.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/slope_48dB.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/slope_60dB.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/slope_72dB.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/slope_84dB.svg")));
-      addFrame(Svg::load(asset::plugin(pluginInstance,"res/slope_96dB.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+    }
+  };
+  
+  struct DirSwitch : GlowingSvgSwitchLockable {
+    DirSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+    }
+  };
+
+  struct MonoSwitch : GlowingSvgSwitchLockable {
+    MonoSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+    }
+  };
+
+  struct MorphSwitch : GlowingSvgSwitchLockable {
+    MorphSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
     }
   };
 
@@ -355,33 +529,50 @@ struct SVFWidget : VenomWidget {
     setModule(module);
     setVenomPanel("SVF");
     
-    addParam(createLockableParamCentered<RoundBigBlackKnobLockable>(Vec(35.5f,77.5f), module, SVF::FREQ_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(81.5f,92.5f), module, SVF::FREQ_CV_PARAM));
-    addInput(createInputCentered<PolyPort>(Vec(115.5f, 62.5f), module, SVF::VOCT_INPUT));
-    addInput(createInputCentered<PolyPort>(Vec(115.5f, 92.5f), module, SVF::FREQ_CV_INPUT));
+    addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(26.5f,49.5f), module, SVF::FREQ_PARAM));
+    addParam(createLockableParamCentered<SlopeSwitch>(Vec(50.5f,30.f), module, SVF::SLOPE_PARAM));
+    addParam(createLockableParamCentered<RangeSwitch>(Vec(63.5f,30.f), module, SVF::RANGE_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(67.5f,60.5f), module, SVF::FREQ_CV_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(88.5f, 34.5f), module, SVF::VOCT_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(108.5f, 60.5f), module, SVF::FREQ_CV_INPUT));
 
-    addParam(createLockableParamCentered<RoundLargeBlackKnobLockable>(Vec(35.5f,141.5f), module, SVF::RES_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(81.5f,141.5f), module, SVF::RES_CV_PARAM));
-    addInput(createInputCentered<PolyPort>(Vec(115.5f, 141.5f), module, SVF::RES_CV_INPUT));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(26.5f,89.5f), module, SVF::RES_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(67.5f,89.5f), module, SVF::RES_CV_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(108.5f, 89.5f), module, SVF::RES_CV_INPUT));
 
-    addParam(createLockableParamCentered<RoundLargeBlackKnobLockable>(Vec(35.5f,201.f), module, SVF::DRIVE_PARAM));
-    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(81.5f,201.f), module, SVF::DRIVE_CV_PARAM));
-    addInput(createInputCentered<PolyPort>(Vec(115.5f, 201.f), module, SVF::DRIVE_CV_INPUT));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(26.5f,124.5f), module, SVF::DRIVE_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(67.5f,124.5f), module, SVF::DRIVE_CV_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(108.5f, 124.5f), module, SVF::DRIVE_CV_INPUT));
 
-    addInput(createInputCentered<PolyPort>(Vec(19.5f, 253.f), module, SVF::L_INPUT));
-    addInput(createInputCentered<PolyPort>(Vec(49.5f, 253.f), module, SVF::R_INPUT));
-    addParam(createLockableParamCentered<RangeSwitch>(Vec(81.5f,253.f), module, SVF::RANGE_PARAM));
-    addParam(createLockableParamCentered<SlopeSwitch>(Vec(115.f,253.f), module, SVF::SLOPE_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(26.5f,159.5f), module, SVF::SPREAD_PARAM));
+    addParam(createLockableParamCentered<DirSwitch>(Vec(50.5f,143.f), module, SVF::SPREAD_DIR_PARAM));
+    addParam(createLockableParamCentered<MonoSwitch>(Vec(63.5f,143.f), module, SVF::SPREAD_MONO_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(67.5f,159.5f), module, SVF::SPREAD_CV_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(108.5f, 159.5f), module, SVF::SPREAD_CV_INPUT));
 
-    addOutput(createOutputCentered<PolyPort>(Vec(19.5f,295.5f), module, SVF::L_LOW_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(49.5f,295.5f), module, SVF::R_LOW_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(85.5f,295.5f), module, SVF::L_HIGH_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(115.5f,295.5f), module, SVF::R_HIGH_OUTPUT));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(26.5f,194.5f), module, SVF::FDBK_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(67.5f,194.5f), module, SVF::FDBK_CV_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(108.5f, 194.5f), module, SVF::FDBK_CV_INPUT));
 
-    addOutput(createOutputCentered<PolyPort>(Vec(19.5f,339.5f), module, SVF::L_BAND_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(49.5f,339.5f), module, SVF::R_BAND_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(85.5f,339.5f), module, SVF::L_NOTCH_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(115.5f,339.5f), module, SVF::R_NOTCH_OUTPUT));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(26.5f,229.5f), module, SVF::MORPH_PARAM));
+    addParam(createLockableParamCentered<MorphSwitch>(Vec(50.5f,213.f), module, SVF::MORPH_MODE_PARAM));
+    addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(67.5f,229.5f), module, SVF::MORPH_CV_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(108.5f, 229.5f), module, SVF::MORPH_CV_INPUT));
+
+    addInput(createInputCentered<PolyPort>(Vec(19.5f, 267.f), module, SVF::L_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(49.5f, 267.f), module, SVF::R_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(85.5f,267.5f), module, SVF::L_MORPH_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(115.5f,267.5f), module, SVF::R_MORPH_OUTPUT));
+
+    addOutput(createOutputCentered<PolyPort>(Vec(19.5f,305.5f), module, SVF::L_LOW_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(49.5f,305.5f), module, SVF::R_LOW_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(85.5f,305.5f), module, SVF::L_HIGH_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(115.5f,305.5f), module, SVF::R_HIGH_OUTPUT));
+
+    addOutput(createOutputCentered<PolyPort>(Vec(19.5f,343.5f), module, SVF::L_BAND_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(49.5f,343.5f), module, SVF::R_BAND_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(85.5f,343.5f), module, SVF::L_NOTCH_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(115.5f,343.5f), module, SVF::R_NOTCH_OUTPUT));
   }
 
   void appendContextMenu(Menu* menu) override {
