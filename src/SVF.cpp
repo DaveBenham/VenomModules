@@ -90,6 +90,13 @@ struct SVF : VenomModule {
     }
   };
   
+  struct FdbkQuantity:ParamQuantity {
+    float getDisplayValue() override {
+      float rtn = ParamQuantity::getDisplayValue();
+      return rtn<0.001f ? 0.f : rtn;
+    }
+  };
+  
   SVF() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
@@ -114,7 +121,7 @@ struct SVF : VenomModule {
     configParam(SPREAD_CV_PARAM, -1.f, 1.f, 0.f, "Cutoff spread CV amount", "%", 0.f, 100.f, 0.f);
     configInput(SPREAD_CV_INPUT, "Cutoff spread CV");
 
-    configParam(FDBK_PARAM, 0.f, 1.f, 0.f, "Feedback");
+    configParam<FdbkQuantity>(FDBK_PARAM, -10.f, 0.f, -10.f, "Feedback", "", 2.f, 1.f, 0.f);
     configParam(FDBK_CV_PARAM, -1.f, 1.f, 0.f, "Feedback CV amount", "%", 0.f, 100.f, 0.f);
     configInput(FDBK_CV_INPUT, "Feedback CV");
 
@@ -195,7 +202,7 @@ struct SVF : VenomModule {
           resCVAmt = params[RES_CV_PARAM].getValue() / 10.f,
           driveCVAmt = params[DRIVE_CV_PARAM].getValue() / 5.f,
           spreadCVAmt = params[SPREAD_CV_PARAM].getValue(),
-          fdbkCVAmt = params[FDBK_CV_PARAM].getValue() / 10.f,
+          fdbkCVAmt = params[FDBK_CV_PARAM].getValue(),
           morphCVAmt = params[MORPH_CV_PARAM].getValue() / 10.f,
           sampleTimePi = M_PI * args.sampleTime / oversample;
 
@@ -212,6 +219,7 @@ struct SVF : VenomModule {
             freq{},
             res{},
             drive{},
+            fdbkAmt{},
             stereo{},
             f{},
             q{},
@@ -300,6 +308,8 @@ struct SVF : VenomModule {
       freq = ifelse(freq>maxFreq, maxFreq, freq);
       res = clamp(resParam + resIn/10.f * resCVAmt) * 9.f;
       drive = clamp(driveParam + driveIn/5.f * driveCVAmt, 0.f, 2.f);
+      fdbkAmt = clamp(pow(2.f, fdbkParam + fdbkIn*fdbkCVAmt));
+      fdbkAmt = ifelse(fdbkAmt<0.001f, 0.f, fdbkAmt);
       f = 2.f * sin(sampleTimePi * freq);
       q = (slope==0) ? 1.f / pow(2.f, res) : 1.f;
       if (outConnected[MORPH]){
@@ -315,7 +325,7 @@ struct SVF : VenomModule {
         if (oversample>1 && stereoConnected) {
           stereoIn = stereoUpSample[s].process(o ? 0.f : stereoIn*oversample);
         }
-        stereo = stereoIn * drive + (1e-6f * (2.f * random::uniform() - 1.f)) + (fdbkOld[s] * clamp(fdbkParam + fdbkIn*fdbkCVAmt));
+        stereo = (stereoIn * drive) + (1e-4f * (2.f*random::uniform() - 1.f)) + (fdbkOld[s] * fdbkAmt);
         notch = state[NOTCH][s] = q * state[BAND][s] - stereo;
         high = state[HIGH][s] = -(state[NOTCH][s] + state[LOW][s]);
         band = state[BAND][s] = state[BAND][s] + f * state[HIGH][s];
