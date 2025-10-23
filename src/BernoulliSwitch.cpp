@@ -1,11 +1,13 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 
 #define LIGHT_OFF 0.02f
 #define FADE_RATE 100.f
+
+namespace Venom {
 
 struct BernoulliSwitch : VenomModule {
   #include "BernoulliSwitchExpander.hpp"
@@ -127,7 +129,7 @@ struct BernoulliSwitch : VenomModule {
     Module* expanderCandidate = getRightExpander().module;
     Module* expander = expanderCandidate 
                     && !expanderCandidate->isBypassed() 
-                    && expanderCandidate->model == modelBernoulliSwitchExpander 
+                    && expanderCandidate->model == modelVenomBernoulliSwitchExpander 
                      ? expanderCandidate 
                      : NULL;
     float scaleA = params[SCALE_A_PARAM].getValue(),
@@ -364,13 +366,15 @@ struct BernoulliSwitchWidget : VenomWidget {
       }
     ));
     Module* expander = module->rightExpander.module;
-    if (expander && expander->model == modelBernoulliSwitchExpander)
+    if (expander && expander->model == modelVenomBernoulliSwitchExpander)
       menu->addChild(createMenuLabel("Bernoulli Switch expander connected"));
     else
-      menu->addChild(createMenuItem("Add Bernoulli Switch expander", "", [this](){addExpander(modelBernoulliSwitchExpander,this);}));
+      menu->addChild(createMenuItem("Add Bernoulli Switch expander", "", [this](){addExpander(modelVenomBernoulliSwitchExpander,this);}));
     VenomWidget::appendContextMenu(menu);
   }
 
 };
 
-Model* modelBernoulliSwitch = createModel<BernoulliSwitch, BernoulliSwitchWidget>("BernoulliSwitch");
+}
+
+Model* modelVenomBernoulliSwitch = createModel<Venom::BernoulliSwitch, Venom::BernoulliSwitchWidget>("BernoulliSwitch");

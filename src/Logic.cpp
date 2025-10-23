@@ -2,12 +2,14 @@
 // Licensed under GNU GPLv3
 
 #include "Filter.hpp"
-#include "plugin.hpp"
+#include "Venom.hpp"
 
 #define CHANNEL_COUNT 9
 #define LIGHT_OFF 0.02f
 #define LIGHT_DIM 0.1f
 #define LIGHT_FADE 5e-6f
+
+namespace Venom {
 
 struct Logic : VenomModule {
   enum ParamId {
@@ -367,5 +369,6 @@ struct LogicWidget : VenomWidget {
 
 };
 
+}
 
-Model* modelLogic = createModel<Logic, LogicWidget>("Logic");
+Model* modelVenomLogic = createModel<Venom::Logic, Venom::LogicWidget>("Logic");

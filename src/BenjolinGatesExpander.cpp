@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "BenjolinModule.hpp"
+
+namespace Venom {
 
 struct BenjolinGatesExpanderWidget : BenjolinExpanderWidget {
   int venomDelCnt = 0;
@@ -114,4 +116,6 @@ struct BenjolinGatesExpanderWidget : BenjolinExpanderWidget {
 
 };
 
-Model* modelBenjolinGatesExpander = createModel<BenjolinGatesExpander, BenjolinGatesExpanderWidget>("BenjolinGatesExpander");
+}
+
+Model* modelVenomBenjolinGatesExpander = createModel<Venom::BenjolinGatesExpander, Venom::BenjolinGatesExpanderWidget>("BenjolinGatesExpander");

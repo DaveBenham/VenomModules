@@ -1,11 +1,13 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "MixModule.hpp"
 
 #define LIGHT_OFF 0.02f
 #define LIGHT_ON  1.f
+
+namespace Venom {
 
 struct MixSolo : MixExpanderModule {
 
@@ -54,4 +56,6 @@ struct MixSoloWidget : MixExpanderWidget {
 
 };
 
-Model* modelMixSolo = createModel<MixSolo, MixSoloWidget>("MixSolo");
+}
+
+Model* modelVenomMixSolo = createModel<Venom::MixSolo, Venom::MixSoloWidget>("MixSolo");

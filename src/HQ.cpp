@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include <float.h>
+
+namespace Venom {
 
 struct HQ : VenomModule {
   enum ParamId {
@@ -324,4 +326,6 @@ struct HQWidget : VenomWidget {
 
 };
 
-Model* modelHQ = createModel<HQ, HQWidget>("HQ");
+}
+
+Model* modelVenomHQ = createModel<Venom::HQ, Venom::HQWidget>("HQ");

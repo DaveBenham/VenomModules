@@ -1,7 +1,7 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
@@ -9,6 +9,8 @@
 #define SHIFT_PRESS 1
 #define CTRL_PRESS 2
 #define ALT_PRESS 4
+
+namespace Venom {
 
 struct MousePad : VenomModule {
 
@@ -189,4 +191,6 @@ struct MousePadWidget : VenomWidget {
   
 };
 
-Model* modelMousePad = createModel<MousePad, MousePadWidget>("MousePad");
+}
+
+Model* modelVenomMousePad = createModel<Venom::MousePad, Venom::MousePadWidget>("MousePad");

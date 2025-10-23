@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "MixModule.hpp"
+
+namespace Venom {
 
 struct MixPan : MixExpanderModule {
 
@@ -45,4 +47,6 @@ struct MixPanWidget : MixExpanderWidget {
   }
 };
 
-Model* modelMixPan = createModel<MixPan, MixPanWidget>("MixPan");
+}
+
+Model* modelVenomMixPan = createModel<Venom::MixPan, Venom::MixPanWidget>("MixPan");

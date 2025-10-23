@@ -1,7 +1,7 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include <float.h>
 #include <string.h>
 
@@ -9,6 +9,8 @@
 #define LIGHT_OFF 0.02f
 #define INTVL_CNT 13
 #define RATIO_UNIT HZ_UNIT
+
+namespace Venom {
 
 struct NORS_IQ : VenomModule {
   
@@ -511,4 +513,6 @@ struct NORS_IQWidget : VenomWidget {
 
 };
 
-Model* modelNORS_IQ = createModel<NORS_IQ, NORS_IQWidget>("NORS_IQ");
+}
+
+Model* modelVenomNORS_IQ = createModel<Venom::NORS_IQ, Venom::NORS_IQWidget>("NORS_IQ");

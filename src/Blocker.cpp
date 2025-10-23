@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct Blocker : VenomModule {
   enum ParamId {
@@ -51,4 +53,6 @@ struct BlockerWidget : VenomWidget {
 
 };
 
-Model* modelBlocker = createModel<Blocker, BlockerWidget>("Blocker");
+}
+
+Model* modelVenomBlocker = createModel<Venom::Blocker, Venom::BlockerWidget>("Blocker");

@@ -1,12 +1,14 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
 #include <float.h>
 
 #define MAP_COUNT 5
+
+namespace Venom {
 
 std::string mapLabel[MAP_COUNT] = {"Min", "1/4", "1/2", "3/4", "Max"};
 float mapDefault[MAP_COUNT] = {0.f, 0.25f, 0.5f, 0.75f, 1.f};
@@ -257,4 +259,6 @@ struct ReformationWidget : VenomWidget {
 
 };
 
-Model* modelReformation = createModel<Reformation, ReformationWidget>("Reformation");
+}
+
+Model* modelVenomReformation = createModel<Venom::Reformation, Venom::ReformationWidget>("Reformation");

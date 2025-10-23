@@ -1,10 +1,12 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
 //#include <float.h>
+
+namespace Venom {
 
 struct WaveFolder : VenomModule {
 
@@ -290,4 +292,6 @@ struct WaveFolderWidget : VenomWidget {
   }
 };
 
-Model* modelWaveFolder = createModel<WaveFolder, WaveFolderWidget>("WaveFolder");
+}
+
+Model* modelVenomWaveFolder = createModel<Venom::WaveFolder, Venom::WaveFolderWidget>("WaveFolder");

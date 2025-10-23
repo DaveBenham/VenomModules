@@ -1,13 +1,15 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #define xInEven   14.5f
 #define xInOdd  30.5f
 #define xOutEven  59.5f
 #define xOutOdd 75.5f
 #define yOrigin  43.5f
 #define yDelta   20.f
+
+namespace Venom {
 
 struct MultiSplit : VenomModule {
   enum ParamId {
@@ -219,4 +221,6 @@ struct MultiSplitWidget : VenomWidget {
 
 };
 
-Model* modelMultiSplit = createModel<MultiSplit, MultiSplitWidget>("MultiSplit");
+}
+
+Model* modelVenomMultiSplit = createModel<Venom::MultiSplit, Venom::MultiSplitWidget>("MultiSplit");

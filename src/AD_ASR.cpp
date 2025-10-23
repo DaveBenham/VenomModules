@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "math.hpp"
+
+namespace Venom {
 
 struct AD_ASR : VenomModule { 
   enum ParamId {
@@ -497,4 +499,6 @@ struct AD_ASRWidget : VenomWidget {
 
 };
 
-Model* modelAD_ASR = createModel<AD_ASR, AD_ASRWidget>("AD_ASR");
+}
+
+Model* modelVenomAD_ASR = createModel<Venom::AD_ASR, Venom::AD_ASRWidget>("AD_ASR");

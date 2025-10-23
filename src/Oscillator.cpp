@@ -1,7 +1,7 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
 #include <float.h>
@@ -17,6 +17,8 @@
 #define SAW 3
 #define MIX 4
 #define LINFM 5
+
+namespace Venom {
 
 struct Oscillator : VenomModule {
  
@@ -1503,4 +1505,6 @@ struct OscillatorWidget : VenomWidget {
 
 };
 
-Model* modelOscillator = createModel<Oscillator, OscillatorWidget>("Oscillator");
+}
+
+Model* modelVenomOscillator = createModel<Venom::Oscillator, Venom::OscillatorWidget>("Oscillator");

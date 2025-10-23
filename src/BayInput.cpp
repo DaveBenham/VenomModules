@@ -3,6 +3,8 @@
 
 #include "BayModule.hpp"
 
+namespace Venom {
+
 // BayInput module defined in BayModule.hpp
 
 struct BayInputWidget : VenomWidget {
@@ -86,4 +88,6 @@ struct BayInputWidget : VenomWidget {
 
 std::map<int64_t, BayInput*> BayModule::sources{};
 
-Model* modelBayInput = createModel<BayInput, BayInputWidget>("BayInput");
+}
+
+Model* modelVenomBayInput = createModel<Venom::BayInput, Venom::BayInputWidget>("BayInput");

@@ -1,13 +1,15 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #define xInEven   14.5f
 #define xInOdd  30.5f
 #define xOutEven  59.5f
 #define xOutOdd 75.5f
 #define yOrigin  43.5f
 #define yDelta   20.f
+
+namespace Venom {
 
 struct MultiMerge : VenomModule {
   enum ParamId {
@@ -202,4 +204,6 @@ struct MultiMergeWidget : VenomWidget {
 
 };
 
-Model* modelMultiMerge = createModel<MultiMerge, MultiMergeWidget>("MultiMerge");
+}
+
+Model* modelVenomMultiMerge = createModel<Venom::MultiMerge, Venom::MultiMergeWidget>("MultiMerge");

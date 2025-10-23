@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "MixModule.hpp"
+
+namespace Venom {
 
 struct MixOffset : MixExpanderModule {
 
@@ -44,4 +46,6 @@ struct MixOffsetWidget : MixExpanderWidget {
   }
 };
 
-Model* modelMixOffset = createModel<MixOffset, MixOffsetWidget>("MixOffset");
+}
+
+Model* modelVenomMixOffset = createModel<Venom::MixOffset, Venom::MixOffsetWidget>("MixOffset");

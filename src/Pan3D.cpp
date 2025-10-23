@@ -1,11 +1,13 @@
 // Venom Modules (c) 2023, 2024, 2025 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
+
+namespace Venom {
 
 struct Pan3D : VenomModule {
   
@@ -182,4 +184,6 @@ struct Pan3DWidget : VenomWidget {
   }
 };
 
-Model* modelPan3D = createModel<Pan3D, Pan3DWidget>("Pan3D");
+}
+
+Model* modelVenomPan3D = createModel<Venom::Pan3D, Venom::Pan3DWidget>("Pan3D");

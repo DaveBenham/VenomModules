@@ -1,5 +1,7 @@
 #include <bitset>
 
+namespace Venom {
+
 struct BenjolinModule : VenomModule {
   
   enum GatesParamId {
@@ -240,7 +242,7 @@ struct BenjolinExpanderWidget : VenomWidget {
     BenjolinModule* thisMod = static_cast<BenjolinModule*>(this->module);
     BenjolinModule* leftMod = thisMod ? thisMod->leftExpander : NULL;
     while(leftMod) {
-      if (leftMod->model == modelBenjolinOsc) {
+      if (leftMod->model == modelVenomBenjolinOsc) {
         connected = true;
         break;
       }
@@ -255,7 +257,7 @@ struct BenjolinExpanderWidget : VenomWidget {
         for (int i=0; i<thisMod->getNumOutputs(); i++) {
           thisMod->outputs[i].setVoltage(0.f);
           thisMod->outputs[i].setChannels(1);
-          if (thisMod->model == modelBenjolinGatesExpander)
+          if (thisMod->model == modelVenomBenjolinGatesExpander)
             thisMod->lights[BenjolinModule::GATE_LIGHT+i].setBrightness(0);
         }
       }
@@ -272,3 +274,5 @@ struct BenjolinExpanderWidget : VenomWidget {
     VenomWidget::step();
   }  
 };
+
+}

@@ -1,9 +1,11 @@
 // Venom Modules (c) 2023, 2024, 2025 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
+
+namespace Venom {
 
 struct Compare2 : VenomModule {
 
@@ -346,4 +348,6 @@ struct Compare2Widget : VenomWidget {
 
 };
 
-Model* modelCompare2 = createModel<Compare2, Compare2Widget>("Compare2");
+}
+
+Model* modelVenomCompare2 = createModel<Venom::Compare2, Venom::Compare2Widget>("Compare2");

@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
+
+namespace Venom {
 
 struct SphereToXYZ : VenomModule {
 
@@ -121,4 +123,6 @@ struct SphereToXYZWidget : VenomWidget {
   
 };
 
-Model* modelSphereToXYZ = createModel<SphereToXYZ, SphereToXYZWidget>("SphereToXYZ");
+}
+
+Model* modelVenomSphereToXYZ = createModel<Venom::SphereToXYZ, Venom::SphereToXYZWidget>("SphereToXYZ");

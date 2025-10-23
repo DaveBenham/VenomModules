@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct PolyScale : VenomModule {
   enum ParamId {
@@ -148,4 +150,6 @@ struct PolyScaleWidget : VenomWidget {
   }
 };
 
-Model* modelPolyScale = createModel<PolyScale, PolyScaleWidget>("PolyScale");
+}
+
+Model* modelVenomPolyScale = createModel<Venom::PolyScale, Venom::PolyScaleWidget>("PolyScale");

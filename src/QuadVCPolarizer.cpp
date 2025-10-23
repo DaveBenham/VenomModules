@@ -1,9 +1,11 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
+
+namespace Venom {
 
 struct QuadVCPolarizer : VenomModule {
 
@@ -251,4 +253,6 @@ struct QuadVCPolarizerWidget : VenomWidget {
 
 };
 
-Model* modelQuadVCPolarizer = createModel<QuadVCPolarizer, QuadVCPolarizerWidget>("QuadVCPolarizer");
+}
+
+Model* modelVenomQuadVCPolarizer = createModel<Venom::QuadVCPolarizer, Venom::QuadVCPolarizerWidget>("QuadVCPolarizer");

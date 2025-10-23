@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
+
+namespace Venom {
 
 struct Slew : VenomModule { 
   enum ParamId {
@@ -222,4 +224,6 @@ struct SlewWidget : VenomWidget {
 
 };
 
-Model* modelSlew = createModel<Slew, SlewWidget>("Slew");
+}
+
+Model* modelVenomSlew = createModel<Venom::Slew, Venom::SlewWidget>("Slew");

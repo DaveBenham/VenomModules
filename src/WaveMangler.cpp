@@ -1,9 +1,11 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
+
+namespace Venom {
 
 struct WaveMangler : VenomModule {
 
@@ -296,4 +298,6 @@ struct WaveManglerWidget : VenomWidget {
 
 };
 
-Model* modelWaveMangler = createModel<WaveMangler, WaveManglerWidget>("WaveMangler");
+}
+
+Model* modelVenomWaveMangler = createModel<Venom::WaveMangler, Venom::WaveManglerWidget>("WaveMangler");

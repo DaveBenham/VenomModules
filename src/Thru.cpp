@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct Thru : VenomModule {
 
@@ -65,4 +67,6 @@ struct ThruWidget : VenomWidget {
   
 };
 
-Model* modelThru = createModel<Thru, ThruWidget>("Thru");
+}
+
+Model* modelVenomThru = createModel<Venom::Thru, Venom::ThruWidget>("Thru");

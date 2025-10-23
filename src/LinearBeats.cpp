@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct LinearBeats : VenomModule {
   #include "LinearBeatsExpander.hpp"
@@ -66,7 +68,7 @@ struct LinearBeats : VenomModule {
     bool preState = false;
     bool trig = (!inputs[CLOCK_INPUT].isConnected()) || clockTrigger.process(inputs[CLOCK_INPUT].getVoltage(), 0.1f, 1.f);
     Module* finalInMute = inMute && !inMute->isBypassed() ? inMute : NULL;
-    Module* finalOutMute = outMute && !outMute->isBypassed() && (!outMute->getRightExpander().module || outMute->getRightExpander().module->model != modelLinearBeats) ? outMute : NULL;
+    Module* finalOutMute = outMute && !outMute->isBypassed() && (!outMute->getRightExpander().module || outMute->getRightExpander().module->model != modelVenomLinearBeats) ? outMute : NULL;
     if (finalInMute) {
       for (int i=0; i<9; i++) {
         int evnt = inMuteCV[i].processEvent(finalInMute->inputs[MUTE_INPUT+i].getVoltage(), 0.1f, 1.f);
@@ -141,12 +143,12 @@ struct LinearBeats : VenomModule {
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (e.side) { // right
       outMute = getRightExpander().module;
-      if (outMute && outMute->model != modelLinearBeatsExpander)
+      if (outMute && outMute->model != modelVenomLinearBeatsExpander)
         outMute = NULL;
     }
     else { // left
       inMute = getLeftExpander().module;
-      if ( inMute && inMute->model != modelLinearBeatsExpander)
+      if ( inMute && inMute->model != modelVenomLinearBeatsExpander)
         inMute = NULL;
     }
   }  
@@ -183,11 +185,11 @@ struct LinearBeatsWidget : VenomWidget {
     if (module->inMute)
       menu->addChild(createMenuLabel("Left Linear Beats expander connected"));
     else
-      menu->addChild(createMenuItem("Add left Linear Beats expander", "", [this](){addExpander(modelLinearBeatsExpander,this,true);}));
+      menu->addChild(createMenuItem("Add left Linear Beats expander", "", [this](){addExpander(modelVenomLinearBeatsExpander,this,true);}));
     if (module->outMute)
       menu->addChild(createMenuLabel("Right Linear Beats expander connected"));
     else
-      menu->addChild(createMenuItem("Add right Linear Beats expander", "", [this](){addExpander(modelLinearBeatsExpander,this,false);}));
+      menu->addChild(createMenuItem("Add right Linear Beats expander", "", [this](){addExpander(modelVenomLinearBeatsExpander,this,false);}));
     if (module->inMute || module->outMute) {
       menu->addChild(createBoolMenuItem("Expander CV toggles button on/off", "",
         [=]() {
@@ -203,4 +205,6 @@ struct LinearBeatsWidget : VenomWidget {
 
 };
 
-Model* modelLinearBeats = createModel<LinearBeats, LinearBeatsWidget>("LinearBeats");
+}
+
+Model* modelVenomLinearBeats = createModel<Venom::LinearBeats, Venom::LinearBeatsWidget>("LinearBeats");

@@ -2,7 +2,9 @@
 // Licensed under GNU GPLv3
 
 #include "Filter.hpp"
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct WinComp : VenomModule {
   enum ParamId {
@@ -478,4 +480,6 @@ struct WinCompWidget : VenomWidget {
 
 };
 
-Model* modelWinComp = createModel<WinComp, WinCompWidget>("WinComp");
+}
+
+Model* modelVenomWinComp = createModel<Venom::WinComp, Venom::WinCompWidget>("WinComp");

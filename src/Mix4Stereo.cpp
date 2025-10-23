@@ -1,10 +1,12 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "MixModule.hpp"
 #include "math.hpp"
 #include "Filter.hpp"
+
+namespace Venom {
 
 struct Mix4Stereo : MixBaseModule {
   enum ParamId {
@@ -422,4 +424,6 @@ struct Mix4StereoWidget : MixBaseWidget {
 
 };
 
-Model* modelMix4Stereo = createModel<Mix4Stereo, Mix4StereoWidget>("Mix4Stereo");
+}
+
+Model* modelVenomMix4Stereo = createModel<Venom::Mix4Stereo, Venom::Mix4StereoWidget>("Mix4Stereo");

@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct PolyOffset : VenomModule {
   enum ParamId {
@@ -291,4 +293,6 @@ struct PolyOffsetWidget : VenomWidget {
 
 };
 
-Model* modelPolyOffset = createModel<PolyOffset, PolyOffsetWidget>("PolyOffset");
+}
+
+Model* modelVenomPolyOffset = createModel<Venom::PolyOffset, Venom::PolyOffsetWidget>("PolyOffset");

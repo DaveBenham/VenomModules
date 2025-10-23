@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "MixModule.hpp"
+
+namespace Venom {
 
 struct MixFade2 : MixExpanderModule {
   
@@ -60,4 +62,6 @@ struct MixFade2Widget : MixExpanderWidget {
 
 };
 
-Model* modelMixFade2 = createModel<MixFade2, MixFade2Widget>("MixFade2");
+}
+
+Model* modelVenomMixFade2 = createModel<Venom::MixFade2, Venom::MixFade2Widget>("MixFade2");

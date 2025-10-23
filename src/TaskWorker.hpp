@@ -4,6 +4,8 @@
 #include <mutex>
 #include <condition_variable>
 
+namespace Venom {
+
 // This code comes directly from Stoermelder PackOne helpers/TaskWorker.hpp
 
 struct TaskWorker {
@@ -47,3 +49,5 @@ struct TaskWorker {
     workerCondVar.notify_one();
   }
 };
+
+}

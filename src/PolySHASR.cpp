@@ -1,10 +1,12 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 
 #define CHANNEL_COUNT 10
+
+namespace Venom {
 
 struct PolySHASR : VenomModule {
   
@@ -235,4 +237,6 @@ struct PolySHASRWidget : VenomWidget {
 
 };
 
-Model* modelPolySHASR = createModel<PolySHASR, PolySHASRWidget>("PolySHASR");
+}
+
+Model* modelVenomPolySHASR = createModel<Venom::PolySHASR, Venom::PolySHASRWidget>("PolySHASR");

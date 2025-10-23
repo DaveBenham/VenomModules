@@ -1,10 +1,12 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 
 #define LIGHT_ON 1.f
 #define LIGHT_OFF 0.02f
+
+namespace Venom {
 
 struct WidgetMenuExtender : VenomModule {
 
@@ -439,4 +441,6 @@ struct WidgetMenuExtenderWidget : VenomWidget {
 
 };
 
-Model* modelWidgetMenuExtender = createModel<WidgetMenuExtender, WidgetMenuExtenderWidget>("WidgetMenuExtender");
+}
+
+Model* modelVenomWidgetMenuExtender = createModel<Venom::WidgetMenuExtender, Venom::WidgetMenuExtenderWidget>("WidgetMenuExtender");

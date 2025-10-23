@@ -1,4 +1,6 @@
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct BayInput;
 
@@ -299,3 +301,5 @@ struct BayOutputLabelsWidget : widget::Widget {
     }
   }
 };
+
+}

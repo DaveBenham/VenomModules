@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "TaskWorker.hpp"
+
+namespace Venom {
 
 struct Bypass : VenomModule {
   enum ParamId {
@@ -217,4 +219,6 @@ struct BypassWidget : VenomWidget {
 
 };
 
-Model* modelBypass = createModel<Bypass, BypassWidget>("Bypass");
+}
+
+Model* modelVenomBypass = createModel<Venom::Bypass, Venom::BypassWidget>("Bypass");

@@ -1,10 +1,12 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
 #include <float.h>
+
+namespace Venom {
 
 struct PolyFade : VenomModule {
 
@@ -435,4 +437,6 @@ struct PolyFadeWidget : VenomWidget {
 
 };
 
-Model* modelPolyFade = createModel<PolyFade, PolyFadeWidget>("PolyFade");
+}
+
+Model* modelVenomPolyFade = createModel<Venom::PolyFade, Venom::PolyFadeWidget>("PolyFade");

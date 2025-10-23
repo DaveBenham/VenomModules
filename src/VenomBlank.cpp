@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct VenomBlank : VenomModule {
   VenomBlank() {
@@ -19,4 +21,6 @@ struct VenomBlankWidget : VenomWidget {
   }
 };
 
-Model* modelVenomBlank = createModel<VenomBlank, VenomBlankWidget>("VenomBlank");
+}
+
+Model* modelVenomBlank = createModel<Venom::VenomBlank, Venom::VenomBlankWidget>("VenomBlank");

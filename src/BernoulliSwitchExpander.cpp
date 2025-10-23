@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct BernoulliSwitchExpander : VenomModule {
   #include "BernoulliSwitchExpander.hpp"
@@ -33,7 +35,7 @@ struct BernoulliSwitchExpander : VenomModule {
   void onExpanderChange(const ExpanderChangeEvent& e) override {
     if (!e.side) {
       Module* left = getLeftExpander().module;
-      lights[EXPAND_LIGHT].setBrightness(left && left->model == modelBernoulliSwitch);
+      lights[EXPAND_LIGHT].setBrightness(left && left->model == modelVenomBernoulliSwitch);
     }  
   }  
 
@@ -62,4 +64,6 @@ struct BernoulliSwitchExpanderWidget : VenomWidget {
   }
 };
 
-Model* modelBernoulliSwitchExpander = createModel<BernoulliSwitchExpander, BernoulliSwitchExpanderWidget>("BernoulliSwitchExpander");
+}
+
+Model* modelVenomBernoulliSwitchExpander = createModel<Venom::BernoulliSwitchExpander, Venom::BernoulliSwitchExpanderWidget>("BernoulliSwitchExpander");

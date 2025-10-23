@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "CloneModule.hpp"
+
+namespace Venom {
 
 struct PolyUnison : CloneModuleBase {
 
@@ -219,4 +221,6 @@ struct PolyUnisonWidget : CloneModuleWidget {
   }
 };
 
-Model* modelPolyUnison = createModel<PolyUnison, PolyUnisonWidget>("PolyUnison");
+}
+
+Model* modelVenomPolyUnison = createModel<Venom::PolyUnison, Venom::PolyUnisonWidget>("PolyUnison");

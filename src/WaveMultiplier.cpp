@@ -1,7 +1,7 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
 
@@ -11,6 +11,8 @@
 #define DEPTH 0
 #define LEVEL 1
 #define WAVE  2
+
+namespace Venom {
 
 struct WaveMultiplier : VenomModule {
 
@@ -304,4 +306,6 @@ struct WaveMultiplierWidget : VenomWidget {
   }
 };
 
-Model* modelWaveMultiplier = createModel<WaveMultiplier, WaveMultiplierWidget>("WaveMultiplier");
+}
+
+Model* modelVenomWaveMultiplier = createModel<Venom::WaveMultiplier, Venom::WaveMultiplierWidget>("WaveMultiplier");

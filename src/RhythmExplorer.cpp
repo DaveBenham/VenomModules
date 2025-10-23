@@ -4,7 +4,7 @@
 // Thanks to Andrew Hanson for the initial prototype code
 // that I was able to flesh out into this final form
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 
 #define SLIDER_COUNT 8
 #define MAX_STEP_LENGTH 16
@@ -12,6 +12,8 @@
 #define LIGHT_OFF 0.02f
 #define LIGHT_DIM 0.1f
 #define LIGHT_FADE 5e-6f
+
+namespace Venom {
 
 static const std::vector<std::string> CHANNEL_DIVISION_LABELS = {
   "1/2",
@@ -966,5 +968,6 @@ struct RhythmExplorerWidget : VenomWidget {
 
 };
 
+}
 
-Model* modelRhythmExplorer = createModel<RhythmExplorer, RhythmExplorerWidget>("RhythmExplorer");
+Model* modelVenomRhythmExplorer = createModel<Venom::RhythmExplorer, Venom::RhythmExplorerWidget>("RhythmExplorer");

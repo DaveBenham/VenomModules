@@ -4,6 +4,8 @@
 #pragma once
 #include "rack.hpp"
 
+namespace Venom {
+
 class OversampleFilter {
   public:
     int stages = 3;
@@ -180,3 +182,5 @@ class DCBlockFilter_4 {
     rack::simd::float_4 rtn = rack::simd::float_4::zero();
     double r = 1. - 100. / static_cast<double>(APP->engine->getSampleRate ());
 };
+
+}

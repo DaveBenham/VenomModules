@@ -1,10 +1,12 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
 #include <float.h>
+
+namespace Venom {
 
 struct VCOUnit : VenomModule {
  
@@ -1061,4 +1063,5 @@ struct VCOUnitWidget : VenomWidget {
 
 };
 
-Model* modelVCOUnit = createModel<VCOUnit, VCOUnitWidget>("VCOUnit");
+}
+Model* modelVenomVCOUnit = createModel<Venom::VCOUnit, Venom::VCOUnitWidget>("VCOUnit");

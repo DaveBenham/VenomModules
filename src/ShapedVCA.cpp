@@ -1,13 +1,15 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "math.hpp"
 #include <cfloat>
 #include "Filter.hpp"
 
 #define HARD_CLIP 1
 #define SOFT_CLIP 2
+
+namespace Venom {
 
 struct ShapedVCA : VenomModule {
   enum ParamId {
@@ -287,4 +289,6 @@ struct ShapedVCAWidget : VenomWidget {
 
 };
 
-Model* modelShapedVCA = createModel<ShapedVCA, ShapedVCAWidget>("ShapedVCA");
+}
+
+Model* modelVenomShapedVCA = createModel<Venom::ShapedVCA, Venom::ShapedVCAWidget>("ShapedVCA");

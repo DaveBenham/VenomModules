@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct Push5 : VenomModule {
   enum ParamId {
@@ -454,4 +456,6 @@ struct Push5Widget : VenomWidget {
 
 };
 
-Model* modelPush5 = createModel<Push5, Push5Widget>("Push5");
+}
+
+Model* modelVenomPush5 = createModel<Venom::Push5, Venom::Push5Widget>("Push5");

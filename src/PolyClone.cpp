@@ -1,8 +1,10 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
 #include "CloneModule.hpp"
+
+namespace Venom {
 
 struct PolyClone : CloneModuleBase {
 
@@ -130,4 +132,6 @@ struct PolyCloneWidget : CloneModuleWidget {
 
 };
 
-Model* modelPolyClone = createModel<PolyClone, PolyCloneWidget>("PolyClone");
+}
+
+Model* modelVenomPolyClone = createModel<Venom::PolyClone, Venom::PolyCloneWidget>("PolyClone");

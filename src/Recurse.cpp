@@ -1,7 +1,9 @@
 // Venom Modules (c) 2023, 2024 Dave Benham
 // Licensed under GNU GPLv3
 
-#include "plugin.hpp"
+#include "Venom.hpp"
+
+namespace Venom {
 
 struct Recurse : VenomModule {
   enum ParamId {
@@ -194,4 +196,6 @@ struct RecurseWidget : VenomWidget {
 
 };
 
-Model* modelRecurse = createModel<Recurse, RecurseWidget>("Recurse");
+}
+
+Model* modelVenomRecurse = createModel<Venom::Recurse, Venom::RecurseWidget>("Recurse");
