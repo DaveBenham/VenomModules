@@ -311,8 +311,8 @@ struct SVF : VenomModule {
       stereoIn[3] = inputs[R_INPUT].getNormalPolyVoltage(stereoIn[2], c2);
       freq = pow(2.f, freqParam + voctIn + freqIn*freqCVAmt + spreadParam + spreadIn*spreadCVAmt) * rangeFreq[range];
       freq = ifelse(freq>maxFreq, maxFreq, freq);
-      res = clamp(resParam + resIn/10.f * resCVAmt) * 9.f;
-      drive = clamp(driveParam + driveIn/5.f * driveCVAmt, 0.f, 2.f);
+      res = clamp(resParam + resIn * resCVAmt) * 9.f;
+      drive = clamp(driveParam + driveIn * driveCVAmt, 0.f, 2.f);
       fdbkAmt = clamp(pow(2.f, fdbkParam + fdbkIn*fdbkCVAmt));
       fdbkAmt = ifelse(fdbkAmt<0.001f, 0.f, fdbkAmt);
       f = 2.f * sin(sampleTimePi * freq);
