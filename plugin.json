@@ -362,9 +362,9 @@
     },
     {
       "slug": "SVF",
-      "name": "Multi Mode Filter",
+      "name": "Multimode Filter",
       "description": "Stereo state variable filter for audio and low frequency use",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#state-variable-filter",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multimode-filter",
       "tags": [
         "Filter",
         "Polyphonic"

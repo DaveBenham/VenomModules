@@ -46,6 +46,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomMousePad);
   p->addModel(modelVenomMultiMerge);
   p->addModel(modelVenomMultiSplit);
+  p->addModel(modelVenomSVF);
   p->addModel(modelVenomOscillator);
   p->addModel(modelVenomNORS_IQ);
   p->addModel(modelVenomNORSIQChord2Scale);

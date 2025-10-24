@@ -105,7 +105,7 @@ struct Bypass : VenomModule {
       outputs[BYPASS_OUTPUT+i].writeVoltages(inputs[BYPASS_INPUT+i].getVoltages());
     }
     if (event || buttonEvent)
-      taskWorker.work([=](){ processBypass(); });
+      taskWorker.work([=](){ venomProcessBypass(); });
   }
   
   struct BypassGroup {
@@ -113,7 +113,7 @@ struct Bypass : VenomModule {
     int scope = 0;
   };
 
-  void processBypass(){
+  void venomProcessBypass(){
     BypassGroup bypassGroup[6]{};
     std::vector<Module*> inMods[INPUTS_LEN]{};
     std::vector<Module*> outMods[OUTPUTS_LEN]{};

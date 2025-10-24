@@ -42,6 +42,7 @@ extern Model* modelVenomMixSolo;
 extern Model* modelVenomMousePad;
 extern Model* modelVenomMultiMerge;
 extern Model* modelVenomMultiSplit;
+extern Model* modelVenomSVF;
 extern Model* modelVenomOscillator;
 extern Model* modelVenomNORS_IQ;
 extern Model* modelVenomNORSIQChord2Scale;
