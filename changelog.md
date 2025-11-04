@@ -2,7 +2,12 @@
 
 ## 2.14.0 (????-??-??)
 ### New Modules
-- Multi Mode Filter
+- Multimode Filter
+
+### Enhancements
+- XM-OP
+  - Added a DC coupled FM option for XMod and Feedback
+  - Added a Velocity CV option for the envelope when applied to Level, XMod depth, or Feedback depth.
 
 ## 2.13.2 (2025-10-05)
 ### New Modules
