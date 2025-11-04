@@ -348,20 +348,20 @@ struct XM_OP : VenomModule {
       float_4 baseFreq = inputs[VOCT_INPUT].getPolyVoltageSimd<float_4>(c)
                          + dtuneParam + rmod*dtuneCVAmt,
               xmod = inputs[XMOD_INPUT].getPolyVoltageSimd<float_4>(c),
-              level = clamp(levelParam * (levelEnv==0.f ? 1.f : levelEnv==3.f ? 1.f-envOut : envOut)),
+              level = levelParam * (levelEnv==0.f ? 1.f : levelEnv==3.f ? 1.f-envOut : envOut),
               depth = depthParam * (depthEnv==0.f ? 1.f : depthEnv==3.f ? 1.f-envOut : envOut),
               fdbk = fdbkParam * (fdbkEnv==0.f ? 1.f : fdbkEnv==3.f ? 1.f-envOut : envOut),
               vcoOut{};
       if (levelVelo)
-        level *= levelCVAmt + (1.f-levelCVAmt)*inputs[LEVEL_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
+        level *= levelCVAmt + (1.f-levelCVAmt)*clamp(inputs[LEVEL_INPUT].getPolyVoltageSimd<float_4>(c)/10.f);
       else
-        level += levelCVAmt * inputs[LEVEL_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
+        level = clamp(level + levelCVAmt * inputs[LEVEL_INPUT].getPolyVoltageSimd<float_4>(c)/10.f);
       if (depthVelo)
-        depth *= depthCVAmt + (1.f-depthCVAmt)*inputs[DEPTH_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
+        depth *= depthCVAmt + (1.f-depthCVAmt)*clamp(inputs[DEPTH_INPUT].getPolyVoltageSimd<float_4>(c)/10.f);
       else
-        depth += depthCVAmt * inputs[DEPTH_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
+        depth *= depthCVAmt * inputs[DEPTH_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
       if (fdbkVelo)
-        fdbk *= fdbkCVAmt + (1.f-fdbkCVAmt)*inputs[FDBK_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
+        fdbk *= fdbkCVAmt + (1.f-fdbkCVAmt)*clamp(inputs[FDBK_INPUT].getPolyVoltageSimd<float_4>(c)/10.f);
       else
         fdbk += fdbkCVAmt * inputs[FDBK_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
 
