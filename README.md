@@ -4369,7 +4369,8 @@ Selects the waveform for the VCO
 
 ### XMOD (variable modulation type) button
 Selects the modulation mode used for the XMOD input
-- **FM** (default) AC coupled linear through-zero frequency modulation
+- **FM AC** (default) AC coupled linear through-zero frequency modulation for audio CV only
+- **FM DC** DC coupled linear through-zero frequency modulation for audio or LFO CV
 - **PM** Phase modulation
 - **RM** Ring modulation - the waveform is multiplied by the XMOD using a 4 quadrant VCA
 - **AM** Amplitude modulation - the waveform is multiplied by the XMOD using a 2 quadrant VCA, so negative XMOD values are treated as 0
@@ -4446,34 +4447,49 @@ The knob establishes the base level of the internal VCA output. It ranges from 0
 
 Above the knob is a small **ENV** button that controls whether the VCA is attenuated by the internal envelope.
 - **Off** (dark gray, default)
-- **On** (yellow) The level is attenuated by the normal 0% - 100% envelope.
+- **On** (yellow) The level is attenuated by the 0% to 100% envelope.
+- **On with velocity CV** (green) The level is first attenuated by the 0% - 100% envelope, and then attenuated again by velocity CV.
 - **Inverted** (red) The level is attenuated by the inverted envelope that goes from 100% to 0%.
 
-Below the knob is a CV input with associated attenuverter. The CV is scaled at 10% per volt. The attenuated CV is summed with the knob value (possibly attenuated by the envelope) to establish the final VCA level.
+Below the Level knob is a CV input with associated small knob.
+
+For most ENV options the small knob is an attenuverter that attenuates the CV scaled at 10% per volt. The attenuated CV is summed with the Level knob value (possibly attenuated by the envelope) to establish the final VCA level.
+
+If the selected ENV option is "On with velocity CV" then the CV input becomes velocity, and the small knob sets the velocity floor (the attenuation level when velocity is 0). The velocity is scaled at 10% per volt and clamped to a value between 0% and 100%. The effective velocity attenuation is VelocityFloor + (100% - VelocityFloor) x Velocity.
 
 ### DEPTH (XMOD modulation depth) knob and CV input
-The knob establishes the depth of the XMOD modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
+The knob establishes the depth of the XMod modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
 
-Above the knob is a small **ENV** button that controls whether the depth is attenuated by the internal envelope.
+Above the knob is a small **ENV** button that controls whether the XMod depth is attenuated by the internal envelope.
 - **Off** (dark gray, default)
-- **On** (yellow) The depth is attenuated by the normal 0% - 100% envelope.
-- **Inverted** (red) The depth is attenuated by the inverted envelope that goes from 100% to 0%.
-
-Below the knob is a CV input with associated attenuverter. The CV is scaled at 10% per volt. The attenuated CV is summed with the knob value (possibly attenuated by the envelope) to establish the final depth value.
+- **On** (yellow) The XMod depth is attenuated by the 0% to 100% envelope.
+- **On with velocity CV** (green) The XMod depth is first attenuated by the 0% to 100% envelope, and then attenuated again by velocity CV.
+- **Inverted** (red) The XMod depth is attenuated by the inverted envelope that goes from 100% to 0%.
 
 Note that for RM and AM modes, the depth cross fades between the raw unmodulated VCO at 0%, and the modulated VCO at 100%.
+
+Below the Depth knob is a CV input with associated small knob.
+
+For most ENV options the small knob is an attenuverter that attenuates the CV scaled at 10% per volt. The attenuated CV is summed with the Depth knob value (possibly attenuated by the envelope) to establish the final XMod depth.
+
+If the selected ENV option is "On with velocity CV" then the CV input becomes velocity, and the small knob sets the velocity floor (the attenuation level when velocity is 0). The velocity is scaled at 10% per volt and clamped to a value between 0% and 100%. The effective velocity attenuation is VelocityFloor + (100% - VelocityFloor) x Velocity.
 
 ### FDBK (feedback modulation depth) knob and CV input
 The knob establishes the depth of the feedback modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
 
-Above the knob is a small **ENV** button that controls whether the depth is attenuated by the internal envelope.
+Above the knob is a small **ENV** button that controls whether the feedback depth is attenuated by the internal envelope.
 - **Off** (dark gray, default)
-- **On** (yellow) The depth is attenuated by the normal 0% - 100% envelope.
-- **Inverted** (red) The depth is attenuated by the inverted envelope that goes from 100% to 0%.
-
-Below the knob is a CV input with associated attenuverter. The CV is scaled at 10% per volt. The attenuated CV is summed with the knob value (possibly attenuated by the envelope) to establish the final depth value.
+- **On** (yellow) The feedback depth is attenuated by the 0% to 100% envelope.
+- **On with velocity CV** (green) The feedback depth is first attenuated by the 0% to 100% envelope, and then attenuated again by velocity CV.
+- **Inverted** (red) The feedback depth is attenuated by the inverted envelope that goes from 100% to 0%.
 
 Note that for RM and AM modes, the depth cross fades between the raw unmodulated VCO at 0%, and the modulated VCO at 100%.
+
+Below the Depth knob is a CV input with associated small knob.
+
+For most ENV options the small knob is an attenuverter that attenuates the CV scaled at 10% per volt. The attenuated CV is summed with the Feedback knob value (possibly attenuated by the envelope) to establish the final feedback depth.
+
+If the selected ENV option is "On with velocity CV" then the CV input becomes velocity, and the small knob sets the velocity floor (the attenuation level when velocity is 0). The velocity is scaled at 10% per volt and clamped to a value between 0% and 100%. The effective velocity attenuation is VelocityFloor + (100% - VelocityFloor) x Velocity.
 
 ### OVER (oversample amount) button
 Modulation can introduce unwanted inharmonic audio aliasing that can be mitigated by oversampling. The OVER button provides for the following oversampling levels
