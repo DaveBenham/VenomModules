@@ -4453,7 +4453,7 @@ Above the knob is a small **ENV** button that controls whether the VCA is attenu
 
 Below the Level knob is a CV input with associated small knob.
 
-For most ENV options the small knob is an attenuverter that attenuates the CV scaled at 10% per volt. The attenuated CV is summed with the Level knob value (possibly attenuated by the envelope) to establish the final VCA level.
+For most ENV options the small knob is an attenuverter that attenuates the CV scaled at 10% per volt. To compute the final effective Level the attenuated CV is summed with the Level knob value (possibly attenuated by the envelope), and then clamped to a value between 0% and 100%.
 
 If the selected ENV option is "On with velocity CV" then the CV input becomes velocity, and the small knob sets the velocity floor (the attenuation level when velocity is 0). The velocity is scaled at 10% per volt and clamped to a value between 0% and 100%. The effective velocity attenuation is VelocityFloor + (100% - VelocityFloor) x Velocity.
 
