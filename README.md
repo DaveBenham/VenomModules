@@ -4439,7 +4439,7 @@ Above the knob is a small **ENV** button that controls whether the VCA is attenu
 Below the knob is a CV input with associated attenuverter. The CV is scaled at 10% per volt. The attenuated CV is summed with the knob value (possibly attenuated by the envelope) to establish the final VCA level.
 
 ### DEPTH (XMOD modulation depth) knob and CV input
-The knob establishes the depth of the XMOD modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
+The knob establishes the depth of the XMOD modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
 
 Above the knob is a small **ENV** button that controls whether the depth is attenuated by the internal envelope.
 - **Off** (dark gray, default)
@@ -4451,7 +4451,7 @@ Below the knob is a CV input with associated attenuverter. The CV is scaled at 1
 Note that for RM and AM modes, the depth cross fades between the raw unmodulated VCO at 0%, and the modulated VCO at 100%.
 
 ### FDBK (feedback modulation depth) knob and CV input
-The knob establishes the depth of the feedback modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
+The knob establishes the depth of the feedback modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
 
 Above the knob is a small **ENV** button that controls whether the depth is attenuated by the internal envelope.
 - **Off** (dark gray, default)
