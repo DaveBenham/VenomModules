@@ -134,9 +134,9 @@ struct XM_OP : VenomModule {
     configParam(DTUNE_CV_PARAM, -1.f, 1.f, 0.f, "VCO detune mod amount", "%", 0.f, 100.f);
     configInput(RMOD_INPUT, "frequency Ratio modulation");
 
-    configSwitch<FixedSwitchQuantity>(LEVEL_ENV_PARAM, 0.f, 3.f, 0.f, "Level envelope", {"Off", "On", "On with velocity CV", "Inverted"});
-    configSwitch<FixedSwitchQuantity>(DEPTH_ENV_PARAM, 0.f, 3.f, 0.f, "X-Mod depth envelope", {"Off", "On", "On with velocity CV", "Inverted"});
-    configSwitch<FixedSwitchQuantity>(FDBK_ENV_PARAM, 0.f, 3.f, 0.f, "Feedback depth envelope", {"Off", "On", "On with velocity CV", "Inverted"});
+    configSwitch<FixedSwitchQuantity>(LEVEL_ENV_PARAM, 0.f, 6.f, 0.f, "Level envelope", {"Off", "Knob", "CV", "Both", "Knob Inverted", "CV Inverted", "Both Inverted"});
+    configSwitch<FixedSwitchQuantity>(DEPTH_ENV_PARAM, 0.f, 6.f, 0.f, "X-Mod depth envelope", {"Off", "Knob", "CV", "Both", "Knob Inverted", "CV Inverted", "Both Inverted"});
+    configSwitch<FixedSwitchQuantity>(FDBK_ENV_PARAM, 0.f, 6.f, 0.f, "Feedback depth envelope", {"Off", "Knob", "CV", "Both", "Knob Inverted", "CV Inverted", "Both Inverted"});
 
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 2.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
 
@@ -210,6 +210,32 @@ struct XM_OP : VenomModule {
     paramQuantities[param]->displayMultiplier = velo ? 50.f : 100.f;
     paramQuantities[param]->displayOffset = velo ? 50.f : 0.f;
   }
+  
+  void computeVal(float_4 &var, int envMode, float_4 &env, float paramVal, float cvAmt, int cvPort, int channel) {
+    switch (envMode) {
+      case 0: // off
+        var = paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f;
+        break;
+      case 1: // knob only
+        var = (paramVal * env) + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f);
+        break;
+      case 2: // CV
+        var = paramVal + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f * env);
+        break;
+      case 3: // both
+        var = (paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f) * env;
+        break;
+      case 4: // knob inverted
+        var = (paramVal * (1.f - env)) + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f);
+        break;
+      case 5: // CV inverted
+        var = paramVal + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f * (1.f - env));
+        break;
+      case 6: // both inverted
+        var = (paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f) * (1.f - env);
+        break;
+    }
+  }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
@@ -274,7 +300,11 @@ struct XM_OP : VenomModule {
 
     int wave = params[WAVE_PARAM].getValue(),
         xmodType = params[XM_TYPE_PARAM].getValue(),
-        fdbkType = params[FDBK_TYPE_PARAM].getValue();
+        fdbkType = params[FDBK_TYPE_PARAM].getValue(),
+        levelEnv = params[LEVEL_ENV_PARAM].getValue(),
+        depthEnv = params[DEPTH_ENV_PARAM].getValue(),
+        fdbkEnv = params[FDBK_ENV_PARAM].getValue(),
+        invEnv = params[ENV_OUT_PARAM].getValue();
     
     float atkParam = params[ATK_PARAM].getValue(),
           decParam = params[DEC_PARAM].getValue(),
@@ -297,17 +327,13 @@ struct XM_OP : VenomModule {
           levelCVAmt = params[LEVEL_CV_PARAM].getValue(),
           depthCVAmt = params[DEPTH_CV_PARAM].getValue(),
           fdbkCVAmt = params[FDBK_CV_PARAM].getValue(),
-          levelEnv = params[LEVEL_ENV_PARAM].getValue(),
-          depthEnv = params[DEPTH_ENV_PARAM].getValue(),
-          fdbkEnv = params[FDBK_ENV_PARAM].getValue(),
-          invEnv = params[ENV_OUT_PARAM].getValue(),
           k =  1000.f * args.sampleTime / oversample;          
 
-    if (levelVelo != (levelEnv == 2))
+    if (levelVelo != (levelEnv == 3 || levelEnv == 6))
       toggleVelocity(LEVEL_INPUT, LEVEL_CV_PARAM, levelVelo);
-    if (depthVelo != (depthEnv == 2))
+    if (depthVelo != (depthEnv == 3 || depthEnv == 6))
       toggleVelocity(DEPTH_INPUT, DEPTH_CV_PARAM, depthVelo);
-    if (fdbkVelo != (fdbkEnv == 2))
+    if (fdbkVelo != (fdbkEnv == 3 || fdbkEnv == 6))
       toggleVelocity(FDBK_INPUT, FDBK_CV_PARAM, fdbkVelo);
     if (levelVelo)
       levelCVAmt = (levelCVAmt + 1.f)*0.5f;
@@ -348,23 +374,14 @@ struct XM_OP : VenomModule {
       float_4 baseFreq = inputs[VOCT_INPUT].getPolyVoltageSimd<float_4>(c)
                          + dtuneParam + rmod*dtuneCVAmt,
               xmod = inputs[XMOD_INPUT].getPolyVoltageSimd<float_4>(c),
-              level = levelParam * (levelEnv==0.f ? 1.f : levelEnv==3.f ? 1.f-envOut : envOut),
-              depth = depthParam * (depthEnv==0.f ? 1.f : depthEnv==3.f ? 1.f-envOut : envOut),
-              fdbk = fdbkParam * (fdbkEnv==0.f ? 1.f : fdbkEnv==3.f ? 1.f-envOut : envOut),
+              level{},
+              depth{},
+              fdbk{},
               vcoOut{};
-      if (levelVelo)
-        level *= levelCVAmt + (1.f-levelCVAmt)*clamp(inputs[LEVEL_INPUT].getPolyVoltageSimd<float_4>(c)/10.f);
-      else
-        level = clamp(level + levelCVAmt * inputs[LEVEL_INPUT].getPolyVoltageSimd<float_4>(c)/10.f);
-      if (depthVelo)
-        depth *= depthCVAmt + (1.f-depthCVAmt)*clamp(inputs[DEPTH_INPUT].getPolyVoltageSimd<float_4>(c)/10.f);
-      else
-        depth *= depthCVAmt * inputs[DEPTH_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
-      if (fdbkVelo)
-        fdbk *= fdbkCVAmt + (1.f-fdbkCVAmt)*clamp(inputs[FDBK_INPUT].getPolyVoltageSimd<float_4>(c)/10.f);
-      else
-        fdbk += fdbkCVAmt * inputs[FDBK_INPUT].getPolyVoltageSimd<float_4>(c)/10.f;
-
+      computeVal(level, levelEnv, envOut, levelParam, levelCVAmt, LEVEL_INPUT, c);
+      level = clamp(level);
+      computeVal(depth, depthEnv, envOut, depthParam, depthCVAmt, DEPTH_INPUT, c);
+      computeVal(fdbk, fdbkEnv, envOut, fdbkParam, fdbkCVAmt, FDBK_INPUT, c);
       for (int i=0; i<4; i++){
         baseFreq[i] += harmonic[clamp(static_cast<int>(multParam + rmod[i]*10.f*multCVAmt),0,MAX_HARMONIC)];
         baseFreq[i] -= harmonic[clamp(static_cast<int>(divParam  + rmod[i]*10.f*divCVAmt ),0,MAX_HARMONIC)];
@@ -474,11 +491,11 @@ struct XM_OP : VenomModule {
       if ((val=params[FDBK_TYPE_PARAM].getValue()))
         params[FDBK_TYPE_PARAM].setValue(val+1);
       if ((val=params[LEVEL_ENV_PARAM].getValue()>1))
-        params[LEVEL_ENV_PARAM].setValue(val+1);
+        params[LEVEL_ENV_PARAM].setValue(val+2);
       if ((val=params[DEPTH_ENV_PARAM].getValue()>1))
-        params[DEPTH_ENV_PARAM].setValue(val+1);
+        params[DEPTH_ENV_PARAM].setValue(val+2);
       if ((val=params[FDBK_ENV_PARAM].getValue()>1))
-        params[FDBK_ENV_PARAM].setValue(val+1);
+        params[FDBK_ENV_PARAM].setValue(val+2);
     }
   }
     
@@ -511,8 +528,11 @@ struct XM_OPWidget : VenomWidget {
     EnvSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
     }
   };
 
