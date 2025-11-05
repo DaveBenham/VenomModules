@@ -4458,7 +4458,7 @@ For most ENV options the small knob is an attenuverter that attenuates the CV sc
 If the selected ENV option is "On with velocity CV" then the CV input becomes velocity, and the small knob sets the velocity floor (the attenuation level when velocity is 0). The velocity is scaled at 10% per volt and clamped to a value between 0% and 100%. The effective velocity attenuation is VelocityFloor + (100% - VelocityFloor) x Velocity.
 
 ### DEPTH (XMOD modulation depth) knob and CV input
-The knob establishes the depth of the XMod modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
+The knob establishes the depth of the XMod modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
 
 Above the knob is a small **ENV** button that controls whether the XMod depth is attenuated by the internal envelope.
 - **Off** (dark gray, default)
@@ -4475,7 +4475,7 @@ For most ENV options the small knob is an attenuverter that attenuates the CV sc
 If the selected ENV option is "On with velocity CV" then the CV input becomes velocity, and the small knob sets the velocity floor (the attenuation level when velocity is 0). The velocity is scaled at 10% per volt and clamped to a value between 0% and 100%. The effective velocity attenuation is VelocityFloor + (100% - VelocityFloor) x Velocity.
 
 ### FDBK (feedback modulation depth) knob and CV input
-The knob establishes the depth of the feedback modulation. It ranges from 0% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
+The knob establishes the depth of the feedback modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
 
 Above the knob is a small **ENV** button that controls whether the feedback depth is attenuated by the internal envelope.
 - **Off** (dark gray, default)
