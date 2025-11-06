@@ -4445,20 +4445,34 @@ DTUNE CV is scaled at 10 cents per volt. The CV can modulate the detune amount b
 ### LEVEL (VCA level) knob and CV input
 The knob establishes the base level of the internal VCA output. It ranges from 0% to 100%.
 
-See the Level and Depth Modulation section for information on the associated Env button, CV input, and attenuverter.
+See [Level and Depth Modulation](#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### DEPTH (XMOD modulation depth) knob and CV input
 The knob establishes the depth of the XMod modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
 
-See the Level and Depth Modulation section for information on the associated Env button, CV input, and attenuverter.
+See [Level and Depth Modulation](#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### FDBK (feedback modulation depth) knob and CV input
 The knob establishes the depth of the feedback modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
-See the Level and Depth Modulation section for information on the associated Env button, CV input, and attenuverter.
+
+See [Level and Depth Modulation](#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### Level and Depth modulation
 
 The Level, Depth, and Feedback controls each have an associated Envelope mode button above, and CV input below with attenuverter.
+
+#### CV input and attenuverter
+The CV input is scaled at 10% per volt. The value is attenuated and/or inverted by the small attenuverter knob, and the effective CV value is summed with the parent knob value. The final value is clamped to values between 0% and 100% for the Level. The final value is unconstrained for the XMod and Feedback depths.
+
+#### ENV (envelope mode) button
+Controls how the internal envelope modulates the control
+- **Off** (dark gray, default) The envelope is not used
+- **Knob** (yellow) The envelope attenuates the larger control knob value
+- **CV** (blue) The envelope attenuates the effective CV value
+- **Both** (green) The envelope attenuates both the larger control knob and the effective CV value
+- **Knob Inverted** (red) The inverted envelope (computed as 100% - EnvelopeValue) attenuates the larger control knob value
+- **CV Inverted** (purple) The inverted envelope (computed as 100% - EnvelopeValue) attenuates the effective CV value
+- **Both Inverted** (orange) The inverted envelope (computed as 100% - EnvelopeValue) attenuates both the larger control knob and the effective CV value.
 
 ### OVER (oversample amount) button
 Modulation can introduce unwanted inharmonic audio aliasing that can be mitigated by oversampling. The OVER button provides for the following oversampling levels
