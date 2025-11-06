@@ -7,7 +7,7 @@
 ### Enhancements
 - XM-OP
   - Added a DC coupled FM option for XMod and Feedback
-  - Added a Velocity CV option for the envelope when applied to Level, XMod depth, or Feedback depth.
+  - Added options to apply envelope attenuation to CV instead of or in addition to the control knob.
 
 ## 2.13.2 (2025-10-05)
 ### New Modules
