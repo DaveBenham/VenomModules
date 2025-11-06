@@ -4465,7 +4465,7 @@ The Level, Depth, and Feedback controls each have an associated Envelope mode bu
 The CV input is scaled at 10% per volt. The value is attenuated and/or inverted by the small attenuverter knob, and the effective CV value is summed with the parent knob value. The final value is clamped to values between 0% and 100% for the Level. The final value is unconstrained for the XMod and Feedback depths.
 
 #### ENV (envelope mode) button
-Controls how the internal envelope modulates the control
+Controls how the internal envelope further modulates the control
 - **Off** (dark gray, default) The envelope is not used
 - **Knob** (yellow) The envelope attenuates the larger control knob value
 - **CV** (blue) The envelope attenuates the effective CV value
