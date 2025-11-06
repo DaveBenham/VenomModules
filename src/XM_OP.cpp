@@ -44,6 +44,7 @@ struct XM_OP : VenomModule {
     FDBK_CV_PARAM,
     SYNC_RTRG_MODE_PARAM,
     ENV_OUT_PARAM,
+    QUANT_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -67,18 +68,12 @@ struct XM_OP : VenomModule {
     SYNC_LIGHT,
     LIGHTS_LEN
   };
+  
+  Knob *multKnob = NULL,
+       *divKnob = NULL;
 
   using float_4 = simd::float_4;
   
-  bool levelVelo = false,
-       depthVelo = false,
-       fdbkVelo = false;
-
-  std::string veloParamNames[3] = {"VCA velocity floor", "VCO X-Mod velocity floor", "VCO feedback velocity floor"},
-              veloPortNames[3] = {"VCA velocity", "VCO X-Mod velocity", "VCO feedback velocity"},
-              cvAmtParamNames[3] = {"VCA level CV amount", "VCO X-Mod depth CV amount", "VCO feedback depth CV amount"},
-              cvAmtPortNames[3] = {"VCA level CV", "VCO X-Mod depth CV", "VCO feedback depth CV"};
-
   int oversample = 0,
       sampleRate = 0,
       oldChannels = 0,
@@ -97,15 +92,13 @@ struct XM_OP : VenomModule {
           prevVcoOut[4]{};
   DCBlockFilter_4 xmodDcBlockFilter[4]{},
                   fdbkDcBlockFilter[4]{};
+
+  bool quantize = true;
   
   int wave = 0,
       xmType = 0,
       fdbkType = 0;
 
-  float harmonic[MAX_HARMONIC+1] = {
-    #include "XM_OP.data"
-  };
-  
   XM_OP() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
@@ -129,6 +122,8 @@ struct XM_OP : VenomModule {
     configParam(DTUNE_PARAM, -1.f/12.f, 1.f/12.f, 0.f, "VCO detune", " cents", 0.f, 1200.f);
     configInput(SMOD_INPUT, "envelope Stage modulation");
 
+    configSwitch<FixedSwitchQuantity>(QUANT_PARAM, 0.f, 1.f, 1.f, "Quantize ratio", {"Off", "On"});
+
     configParam(MULT_CV_PARAM, -1.f, 1.f, 0.f, "VCO frequency multiplier mod amount", "%", 0.f, 100.f);
     configParam(DIV_CV_PARAM, -1.f, 1.f, 0.f, "VCO frequency divisor mod amount", "%", 0.f, 100.f);
     configParam(DTUNE_CV_PARAM, -1.f, 1.f, 0.f, "VCO detune mod amount", "%", 0.f, 100.f);
@@ -144,15 +139,15 @@ struct XM_OP : VenomModule {
     configParam(DEPTH_PARAM, -1.f, 1.f, 0.f, "VCO X-Mod depth", "%", 0.f, 100.f);
     configParam(FDBK_PARAM, -1.f, 1.f, 0.f, "VCO Feedback depth", "%", 0.f, 100.f);
 
-    configParam(LEVEL_CV_PARAM, -1.f, 1.f, 0.f, cvAmtParamNames[0], "%", 0.f, 100.f);
-    configParam(DEPTH_CV_PARAM, -1.f, 1.f, 0.f, cvAmtParamNames[1], "%", 0.f, 100.f);
-    configParam(FDBK_CV_PARAM, -1.f, 1.f, 0.f, cvAmtParamNames[2], "%", 0.f, 100.f);
+    configParam(LEVEL_CV_PARAM, -1.f, 1.f, 0.f, "VCA level CV amount", "%", 0.f, 100.f);
+    configParam(DEPTH_CV_PARAM, -1.f, 1.f, 0.f, "XMod depth CV amount", "%", 0.f, 100.f);
+    configParam(FDBK_CV_PARAM, -1.f, 1.f, 0.f, "Feedback depth CV amount", "%", 0.f, 100.f);
     configSwitch<FixedSwitchQuantity>(SYNC_RTRG_MODE_PARAM, 0.f, 2.f, 0.f, "Sync/Rtrg input mode", {"VCO sync", "Envelope retrigger and VCO sync (Gate also syncs)", "Envelope retrigger, no VCO sync"});
     configInput(SYNC_RTRG_INPUT, "VCO sync");
 
-    configInput(LEVEL_INPUT, cvAmtPortNames[0]);
-    configInput(DEPTH_INPUT, cvAmtPortNames[1]);
-    configInput(FDBK_INPUT, cvAmtPortNames[2]);
+    configInput(LEVEL_INPUT, "VCA level CV");
+    configInput(DEPTH_INPUT, "XMod depth CV");
+    configInput(FDBK_INPUT, "Feedback depth CV");
     configInput(GATE_INPUT, "Envelope gate");
 
     configInput(VOCT_INPUT, "VCO V/Oct");
@@ -201,14 +196,6 @@ struct XM_OP : VenomModule {
       buffer[i] = (p * p * p - p) / 6.0f;
     }
     return ((buffer[0] - buffer[1] - buffer[1] + buffer[2])*denInv + 1.f) / 2.f;
-  }
-  
-  void toggleVelocity(int port, int param, bool &velo) {
-    velo = !velo;
-    inputInfos[port]->name = velo ? veloPortNames[port - LEVEL_INPUT] : cvAmtPortNames[port - LEVEL_INPUT];
-    paramQuantities[param]->name = velo ? veloParamNames[param - LEVEL_CV_PARAM] : cvAmtParamNames[param - LEVEL_CV_PARAM];
-    paramQuantities[param]->displayMultiplier = velo ? 50.f : 100.f;
-    paramQuantities[param]->displayOffset = velo ? 50.f : 0.f;
   }
   
   void computeVal(float_4 &var, int envMode, float_4 &env, float paramVal, float cvAmt, int cvPort, int channel) {
@@ -298,6 +285,18 @@ struct XM_OP : VenomModule {
       }
     }
 
+    if (quantize != static_cast<bool>(params[QUANT_PARAM].getValue())) {
+      quantize = !quantize;
+      multKnob->snap = multKnob->getParamQuantity()->snapEnabled = quantize;
+      divKnob->snap = divKnob->getParamQuantity()->snapEnabled = quantize;
+      multKnob->smooth = multKnob->getParamQuantity()->smoothEnabled = !quantize;
+      divKnob->smooth = divKnob->getParamQuantity()->smoothEnabled = !quantize;
+      if (quantize) {
+        params[MULT_PARAM].setValue(round(params[MULT_PARAM].getValue()));
+        params[MULT_PARAM].setValue(round(params[MULT_PARAM].getValue()));
+      }
+    }
+
     int wave = params[WAVE_PARAM].getValue(),
         xmodType = params[XM_TYPE_PARAM].getValue(),
         fdbkType = params[FDBK_TYPE_PARAM].getValue(),
@@ -315,8 +314,8 @@ struct XM_OP : VenomModule {
           susCVAmt = params[SUS_CV_PARAM].getValue()/10.f,
           relCVAmt = params[REL_CV_PARAM].getValue(),
           shape = -params[CURVE_PARAM].getValue() * 0.95f,
-          multParam = params[MULT_PARAM].getValue(),
-          divParam = params[DIV_PARAM].getValue(),
+          multParam = params[MULT_PARAM].getValue() + 1.f,
+          divParam = params[DIV_PARAM].getValue() + 1.f,
           dtuneParam = params[DTUNE_PARAM].getValue(),
           multCVAmt = params[MULT_CV_PARAM].getValue(),
           divCVAmt = params[DIV_CV_PARAM].getValue(),
@@ -328,19 +327,6 @@ struct XM_OP : VenomModule {
           depthCVAmt = params[DEPTH_CV_PARAM].getValue(),
           fdbkCVAmt = params[FDBK_CV_PARAM].getValue(),
           k =  1000.f * args.sampleTime / oversample;          
-
-    if (levelVelo != (levelEnv == 3 || levelEnv == 6))
-      toggleVelocity(LEVEL_INPUT, LEVEL_CV_PARAM, levelVelo);
-    if (depthVelo != (depthEnv == 3 || depthEnv == 6))
-      toggleVelocity(DEPTH_INPUT, DEPTH_CV_PARAM, depthVelo);
-    if (fdbkVelo != (fdbkEnv == 3 || fdbkEnv == 6))
-      toggleVelocity(FDBK_INPUT, FDBK_CV_PARAM, fdbkVelo);
-    if (levelVelo)
-      levelCVAmt = (levelCVAmt + 1.f)*0.5f;
-    if (depthVelo)
-      depthCVAmt = (depthCVAmt + 1.f)*0.5f;
-    if (fdbkVelo)
-      fdbkCVAmt = (fdbkCVAmt + 1.f)*0.5f;
 
     for (int s=0, c=0; c<channels; s++, c+=4) {
       float_4 rmod = inputs[RMOD_INPUT].getPolyVoltageSimd<float_4>(c),
@@ -382,10 +368,10 @@ struct XM_OP : VenomModule {
       level = clamp(level);
       computeVal(depth, depthEnv, envOut, depthParam, depthCVAmt, DEPTH_INPUT, c);
       computeVal(fdbk, fdbkEnv, envOut, fdbkParam, fdbkCVAmt, FDBK_INPUT, c);
-      for (int i=0; i<4; i++){
-        baseFreq[i] += harmonic[clamp(static_cast<int>(multParam + rmod[i]*10.f*multCVAmt),0,MAX_HARMONIC)];
-        baseFreq[i] -= harmonic[clamp(static_cast<int>(divParam  + rmod[i]*10.f*divCVAmt ),0,MAX_HARMONIC)];
-      }
+      if (quantize)
+        baseFreq += log2(fmax(round(multParam + rmod*10.f*multCVAmt), 1.f) / fmax(round(divParam + rmod*10.f*divCVAmt), 1.f));
+      else
+        baseFreq += log2(fmax(multParam + rmod*10.f*multCVAmt, 1.f) / fmax(divParam + rmod*10.f*divCVAmt, 1.f));
       baseFreq = dsp::exp2_taylor5(baseFreq);
       for (int o=0; o<oversample; o++) {
         if (oversample>1)
@@ -478,14 +464,14 @@ struct XM_OP : VenomModule {
 
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
-    json_object_set_new(rootJ, "veloAvail", json_boolean(true));
+    json_object_set_new(rootJ, "cvEnvAvail", json_boolean(true));
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
     int val;
-    if (!json_object_get(rootJ, "veloAvail")){
+    if (!json_object_get(rootJ, "cvEnvAvail")){
       if ((val=params[XM_TYPE_PARAM].getValue()))
         params[XM_TYPE_PARAM].setValue(val+1);
       if ((val=params[FDBK_TYPE_PARAM].getValue()))
@@ -563,7 +549,14 @@ struct XM_OPWidget : VenomWidget {
     }
   };
 
-  XM_OPWidget(XM_OP* module) {
+   struct QuantSwitch : GlowingSvgSwitchLockable {
+    QuantSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
+    }
+  };
+
+ XM_OPWidget(XM_OP* module) {
     setModule(module);
     setVenomPanel("XM_OP");
     
@@ -582,10 +575,22 @@ struct XM_OPWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(92.5f,121.f), module, XM_OP::SUS_CV_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(127.5f,121.f), module, XM_OP::REL_CV_PARAM));
 
-    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(22.5f,157.f), module, XM_OP::MULT_PARAM));
-    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(57.5f,157.f), module, XM_OP::DIV_PARAM));
+//    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(22.5f,157.f), module, XM_OP::MULT_PARAM));
+//    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(57.5f,157.f), module, XM_OP::DIV_PARAM));
+    RotarySwitch <RoundSmallBlackKnobLockable>*knob = createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(22.5f,157.f), module, XM_OP::MULT_PARAM);
+    addParam(knob);
+    if (module)
+      module->multKnob = knob;
+    knob = createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(57.5f,157.f), module, XM_OP::DIV_PARAM);
+    addParam(knob);
+    if (module)
+      module->divKnob = knob;
+    
+
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(92.5f,157.f), module, XM_OP::DTUNE_PARAM));
     addInput(createInputCentered<PolyPort>(Vec(127.5f, 153.f), module, XM_OP::SMOD_INPUT));
+
+    addParam(createLockableParamCentered<QuantSwitch>(Vec(40.f,167.f), module, XM_OP::QUANT_PARAM));
 
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(22.5f,188.5f), module, XM_OP::MULT_CV_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(57.5f,188.5f), module, XM_OP::DIV_CV_PARAM));

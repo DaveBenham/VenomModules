@@ -525,7 +525,8 @@ struct RotarySwitch : TBase {
   // handle the manually entered values
   void onChange(const event::Change &e) override {
     SvgKnob::onChange(e);
-    this->getParamQuantity()->setValue(roundf(this->getParamQuantity()->getValue()));
+    if (this->snap)
+      this->getParamQuantity()->setValue(roundf(this->getParamQuantity()->getValue()));
   }
 };
 
