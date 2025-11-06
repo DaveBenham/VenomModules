@@ -1,13 +1,14 @@
 # Venom Modules Changelog
 
 ## 2.14.0 (????-??-??)
-### New Modules
+### New Module
 - Multimode Filter
 
 ### Enhancements
 - XM-OP
   - Added a DC coupled FM option for XMod and Feedback
-  - Added options to apply envelope attenuation to CV instead of or in addition to the control knob.
+  - Added options to apply envelope attenuation to CV instead of or in addition to the control knob
+  - Added button to enable or disable ratio quantization
 
 ## 2.13.2 (2025-10-05)
 ### New Modules
