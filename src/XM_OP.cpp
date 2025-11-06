@@ -575,8 +575,6 @@ struct XM_OPWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(92.5f,121.f), module, XM_OP::SUS_CV_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(127.5f,121.f), module, XM_OP::REL_CV_PARAM));
 
-//    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(22.5f,157.f), module, XM_OP::MULT_PARAM));
-//    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(57.5f,157.f), module, XM_OP::DIV_PARAM));
     RotarySwitch <RoundSmallBlackKnobLockable>*knob = createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(Vec(22.5f,157.f), module, XM_OP::MULT_PARAM);
     addParam(knob);
     if (module)
