@@ -143,8 +143,8 @@ struct SVF : VenomModule {
    
     configOutput(L_BAND_OUTPUT, "Left band pass");
     configOutput(R_BAND_OUTPUT, "Right band pass");
-    configOutput(L_NOTCH_OUTPUT, "Left notch pass");
-    configOutput(R_NOTCH_OUTPUT, "Right notch pass");
+    configOutput(L_NOTCH_OUTPUT, "Left notch");
+    configOutput(R_NOTCH_OUTPUT, "Right notch");
     
     for (int i=0; i<OUTPUTS_LEN; i+=2){
       configBypass(L_INPUT,i);
