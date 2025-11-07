@@ -310,9 +310,10 @@ struct SVF : VenomModule {
       stereoIn[1] = inputs[R_INPUT].getNormalPolyVoltage(stereoIn[0], c1);
       stereoIn[2] = inputs[L_INPUT].getPolyVoltage(c2);
       stereoIn[3] = inputs[R_INPUT].getNormalPolyVoltage(stereoIn[2], c2);
+      stereoIn *= 10.f;
       freq = pow(2.f, freqParam + voctIn + freqIn*freqCVAmt + spreadParam + spreadIn*spreadCVAmt) * rangeFreq[range];
       freq = ifelse(freq>maxFreq, maxFreq, freq);
-      res = clamp(resParam + resIn * resCVAmt) * 9.f;
+      res = clamp(resParam + resIn * resCVAmt) * 4.5f;
       drive = clamp(driveParam + driveIn * driveCVAmt, 0.f, 2.f);
       fdbkAmt = clamp(pow(2.f, fdbkParam + fdbkIn*fdbkCVAmt));
       fdbkAmt = ifelse(fdbkAmt<0.001f, 0.f, fdbkAmt);
@@ -397,7 +398,7 @@ struct SVF : VenomModule {
             morph[2] = mono ? morph[2]-morph[3] : (morph[2]+morph[3])/2.f;
             morph[1] = morph[3] = 0.f;
           }
-          morph = softClip(morph);
+          morph = softClip(morph*0.1f);
           if (oversample>1)
             morph = morphDownSample[s].process(morph);
         }
@@ -407,7 +408,7 @@ struct SVF : VenomModule {
             low[2] = mono ? low[2]-low[3] : (low[2]+low[3])/2.f;
             low[1] = low[3] = 0.f;
           }
-          low = softClip(low);
+          low = softClip(low*0.1f);
           if (oversample>1)
             low = lowDownSample[s].process(low);
         }
@@ -417,7 +418,7 @@ struct SVF : VenomModule {
             high[2] = mono ? high[2]-high[3] : (high[2]+high[3])/2.f;
             high[1] = high[3] = 0.f;
           }
-          high = softClip(high);
+          high = softClip(high*0.1f);
           if (oversample>1)
             high = highDownSample[s].process(high);
         }
@@ -427,7 +428,7 @@ struct SVF : VenomModule {
             band[2] = mono ? band[2]-band[3] : (band[2]+band[3])/2.f;
             band[1] = band[3] = 0.f;
           }
-          band = softClip(band);
+          band = softClip(band*0.1f);
           if (oversample>1)
             band = bandDownSample[s].process(band);
         }
@@ -437,7 +438,7 @@ struct SVF : VenomModule {
             notch[2] = mono ? notch[2]-notch[3] : (notch[2]+notch[3])/2.f;
             notch[1] = notch[3] = 0.f;
           }
-          notch = softClip(notch);
+          notch = softClip(notch*0.1f);
           if (oversample>1)
             notch = notchDownSample[s].process(notch);
         }
