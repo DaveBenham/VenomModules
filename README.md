@@ -4377,7 +4377,7 @@ XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same fea
   - This is very conveninent for establishing a wide range of musical ratios
 - The ratio multiplier, divisor, and detune can be CV controlled via three attenuverters with a shared CV input
 - VCO external modulation and VCO feedback have selectable modulation types rather than being fixed at phase modulation
-  - Through zero linear frequency modulation (AC coupled)
+  - Through zero linear frequency modulation (AC or DC coupled)
   - Phase modulation (called through zero linear FM by Bogaudio)
   - Ring modulation
   - Amplitude modulation with options
