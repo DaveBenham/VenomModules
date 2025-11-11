@@ -61,9 +61,14 @@ struct SVF : VenomModule {
   float maxFreq;
   float sampleRate;
   float rangeFreq[2] {dsp::FREQ_C4, 2.f};
-  int oversample = 2,
+  float rangeMaxFreq[2][8] {
+ //sample rate 11kHz 12kHz 22kHz 24kHz 44kHz  48kHz  88kHz  96kHz+
+              {3750, 4000, 7500, 8000, 15000, 16000, 30000, 32000},
+              {1250, 1250, 2500, 2500,  5000,  5000, 10000, 10000}
+        };
+  int oversample = 4,
       range = 0;
-  int rangeOver[2] {2,1};
+  int rangeOver[2] {4,1};
   bool disableDCBlock = false;
   float_4 state[4][8]{}, 
           modeState[4][7][4][8]{},
@@ -97,7 +102,7 @@ struct SVF : VenomModule {
       return rtn<0.001f ? 0.f : rtn;
     }
   };
-  
+
   SVF() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
@@ -150,7 +155,7 @@ struct SVF : VenomModule {
       configBypass(L_INPUT,i);
       configBypass(R_INPUT,i+1);
     }
-
+    
     setOversample();
   }
 
@@ -164,7 +169,7 @@ struct SVF : VenomModule {
       notchDownSample[i].setOversample(oversample, 5);
     }
   }
-  
+
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
 
@@ -178,16 +183,15 @@ struct SVF : VenomModule {
     // update sampleRate
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
-      maxFreq = sampleRate<12000 ? 3500
-              : sampleRate<22000 ? 3750
-              : sampleRate<24000 ? 7000
-              : sampleRate<44000 ? 7500
-              : sampleRate<48000 ? 14000
-              : sampleRate<88000 ? 15000
-              : sampleRate<96000 ? 28000
-              : 30000;
-      if (range)
-        maxFreq /= 2.f;
+      maxFreq = rangeMaxFreq[range][
+                    sampleRate<12000 ? 0
+                  : sampleRate<22000 ? 1
+                  : sampleRate<24000 ? 2
+                  : sampleRate<44000 ? 3
+                  : sampleRate<48000 ? 4
+                  : sampleRate<88000 ? 5
+                  : sampleRate<96000 ? 6
+                  : 7];
       static_cast<FreqQuantity*>(paramQuantities[FREQ_PARAM])->maxFreq = maxFreq;
       for (int i=0; i<5; i++)
         for (int j=0; j<8; j++)
@@ -317,6 +321,8 @@ struct SVF : VenomModule {
       drive = clamp(driveParam + driveIn * driveCVAmt, 0.f, 2.f);
       fdbkAmt = clamp(pow(2.f, fdbkParam + fdbkIn*fdbkCVAmt));
       fdbkAmt = ifelse(fdbkAmt<0.001f, 0.f, fdbkAmt);
+      if (range==0)
+        fdbkAmt *= 0.5;
       f = 2.f * sin(sampleTimePi * freq);
       q = (slope==0) ? 1.f / pow(2.f, res) : 1.f;
       if (outConnected[MORPH]){
