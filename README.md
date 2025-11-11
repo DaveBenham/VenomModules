@@ -1568,7 +1568,38 @@ All outputs are monophonic 0V if Multi Split is bypassed.
 
 ## MULTIMODE FILTER
 ![Multimode Filter module image](doc/SVF.png)  
-Stereo state variable filter for audio and low frequency use.
+Polyphonic stereo state variable filter for audio and low frequency use. It provides simultaneous outputs for low pass, high pass, band pass, and notch modes. It also provides a morph output that crossfades between different filter modes.
+
+The filter is highly resonant without any self oscillation unless feedback is applied. This makes it an excellent choice for pinging.
+
+Every parameter has a primary labeled knob to set the base value, plus an unlabeled CV input with asscociated attenuverter. The Cutoff parameter has an additional V/Oct CV input. CV input is always summed with the parent base knob value.
+
+Some parameters have one or two small buttons beside the label to configure additional aspects of the parameter.
+
+All CV inputs can be driven at audio rates.
+
+### Cutoff controls
+
+#### Slope (left) button
+Controls the slope of the amplitude dropoff beyond the cutoff frequency, measured as dB per octave.
+- 12dB (yellow, default)
+- 24dB (orange)
+- 36dB (red)
+- 48dB (pink) 
+- 60dB (purple)
+- 72dB (green)
+- 84dB (light blue)
+- 96dB (dark blue)
+
+#### Frequency range (right) button
+Controls the range of the Cutoff knob
+- **Audio rate** ***(yellow, default)*** 16.352 Hz to 16744 Hz, with default at C4
+- **Low frequency** ***(orange)*** 0.125 Hz to 128 Hz, with default at 2 Hz.
+
+In addition, a high pass filter is applied to all outputs when Audio rate is selected to prevent DC offset from appearing in the outputs.
+
+#### Cutoff frequency knob
+The range of the Cutoff frequency knob is dependent on the selected frequency range.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
