@@ -5,6 +5,8 @@
 - Multimode Filter
 
 ### Enhancements
+- SLEW
+  - Added context menu to adjust sensitivity of oversampled slope detector
 - XM-OP
   - Added a DC coupled FM option for XMod and Feedback
   - Added options to apply envelope attenuation to CV instead of or in addition to the control knob
