@@ -3150,7 +3150,13 @@ There are three gate output ports that indicate the slope of the slewed output
 - **FALL** - 10V when falling, else 0V
 - **FLAT** - 10V when steady (not changing), else 0V
 
-Note that gate outputs can be noisy when processing audio inputs due to the effect anti-aliasing has on waveforms. It is best to use Slew oversampling when working with audio inputs. In an effort to reduce gate noise, the slope detector sensitivity is normally reduced when oversampling is enabled. There is a context menu option to set the oversampled slope sensitivity, expressed as minimum delta voltage per sample.
+Between the Rise and Fall labels is a small button to control the polarity of the gate outputs
+
+**Gate polarity**
+- **Unipolar** (green default)  0V - 10V
+- **Bipolar** (red) -5V - +5V
+
+Note that gate outputs can be noisy when processing audio inputs. It is best to use Slew oversampling when working with audio inputs. In an effort to reduce gate noise, the slope detector sensitivity is normally reduced when oversampling is enabled. There is a context menu option to set the oversampled slope sensitivity, expressed as minimum delta voltage per sample needed to detect a rising or falling slope.
 
 **Oversampled slope sensitivity (min delta)**
 - 10 mV (default)
