@@ -148,7 +148,7 @@ struct Slew : VenomModule {
         float_4 diff = in[RAW_INPUT] - oldOut[s];
         out[RISE_OUTPUT] = ifelse(diff>minDelta, hi, lo);
         out[FALL_OUTPUT] = ifelse(diff<-minDelta, hi, lo);
-        out[FLAT_OUTPUT] = ifelse(out[RISE_OUTPUT]+out[FALL_OUTPUT]==float_4::zero(), hi, lo);
+        out[FLAT_OUTPUT] = ifelse(out[RISE_OUTPUT]+out[FALL_OUTPUT]<=lo, hi, lo);
         float_4 lin = oldOut[s] + ifelse(diff>float_4::zero(), fmin(diff, kLin*riseMult), -fmin(-diff, kLin*fallMult));
         float_4 curve = clamp(oldOut[s] + diff * 48000.f * ifelse(diff>float_4::zero(), riseMult, fallMult) / kCurve / args.sampleRate / oversample, -20.f, 20.f);
         float_4 curveAmt = clamp(ifelse( diff>float_4::zero(), 
