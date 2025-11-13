@@ -3150,16 +3150,16 @@ There are three gate output ports that indicate the slope of the slewed output
 - **FALL** - 10V when falling, else 0V
 - **FLAT** - 10V when steady (not changing), else 0V
 
-Note that gate outputs can be noisy when processing audio inputs, especially when oversampling is enabled. In an effort to reduce noise, the slope detector sensitivity is normally reduced when oversampling is enabled. There is a context menu option to set the oversampled slope sensitivity, expressed as minimum delta voltage per sample.
+Note that gate outputs can be noisy when processing audio inputs due to the effect anti-aliasing has on waveforms. It is best to use Slew oversampling when working with audio inputs. In an effort to reduce gate noise, the slope detector sensitivity is normally reduced when oversampling is enabled. There is a context menu option to set the oversampled slope sensitivity, expressed as minimum delta voltage per sample.
 
-**Oversampled minimum slope delta**
+**Oversampled slope sensitivity (min delta)**
 - 10 mV (default)
 - 1 mV
 - 0.1 mV
 - 0.01 mV
 - 0.001 mV
 
-The minimum slope delta is always 0.001 mV whenever oversampling is disabled.
+The sensitivity is always 0.001 mV whenever oversampling is disabled.
 
 ### OUT (Slewed) output
 This is the final result of the slew processing.
