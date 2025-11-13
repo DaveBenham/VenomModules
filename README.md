@@ -3159,7 +3159,7 @@ Note that gate outputs can be noisy when processing audio inputs, especially whe
 - 0.01 mV
 - 0.001 mV
 
-The minimum slope delta is always 0.001 mV whenver oversampling is disabled.
+The minimum slope delta is always 0.001 mV whenever oversampling is disabled.
 
 ### OUT (Slewed) output
 This is the final result of the slew processing.
