@@ -18,6 +18,7 @@ struct Slew : VenomModule {
     FALL_SHAPE_PARAM,
     RISE_SHAPE_CV_PARAM,
     FALL_SHAPE_CV_PARAM,
+    POLARITY_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -45,6 +46,8 @@ struct Slew : VenomModule {
   int oversample=0;
   int oversampleValues[6]{1,2,4,8,16,32};
   OversampleFilter_4 upSample[6][4]{}, downSample[4][4]{};
+  int overMinDeltaIndex = 0;
+  float overMinDelta[5] {1e-2f,1e-3f,1e-4f,1e-5f,1e-6f};
   float_4 oldOut[4]{};
   
 
@@ -75,6 +78,8 @@ struct Slew : VenomModule {
     configInput(RAW_INPUT, "Raw");
     configInput(VOCT_INPUT, "V/Oct");
 
+    configSwitch<FixedSwitchQuantity>(POLARITY_PARAM, 0.f, 1.f, 0.f, "Gate polarity", {"Unipolar", "Bipolar"});
+
     configOutput(RISE_OUTPUT, "Rise gate");
     configOutput(FALL_OUTPUT, "Fall gate");
     configOutput(FLAT_OUTPUT, "Flat gate");
@@ -103,6 +108,11 @@ struct Slew : VenomModule {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
       setOversample();
     }
+    // gate values
+    float lo = params[POLARITY_PARAM].getValue() ? -5.f : 0.f,
+          hi = lo ? 5.f : 10.f;
+    // slope detector min delta
+    float minDelta = oversample>1 ? overMinDelta[overMinDeltaIndex] : 1e-6f;
     // configure time knobs
     bool fast = params[SPEED_PARAM].getValue();
     float msecScale = 1000.f/(fast ? 523.26f : 4.f);
@@ -136,9 +146,9 @@ struct Slew : VenomModule {
         float_4 riseMult = pow(2.f, in[VOCT_INPUT] - params[RISE_TIME_PARAM].getValue() - in[RISE_TIME_CV_INPUT]*params[RISE_TIME_CV_PARAM].getValue());
         float_4 fallMult = pow(2.f, in[VOCT_INPUT] - params[FALL_TIME_PARAM].getValue() - in[FALL_TIME_CV_INPUT]*params[FALL_TIME_CV_PARAM].getValue());
         float_4 diff = in[RAW_INPUT] - oldOut[s];
-        out[RISE_OUTPUT] = ifelse(diff>1e-6f, 10.f, 0.f);
-        out[FALL_OUTPUT] = ifelse(diff<-1e-6f, 10.f, 0.f);
-        out[FLAT_OUTPUT] = ifelse(out[RISE_OUTPUT]+out[FALL_OUTPUT]==float_4::zero(), 10.f, 0.f);
+        out[RISE_OUTPUT] = ifelse(diff>minDelta, hi, lo);
+        out[FALL_OUTPUT] = ifelse(diff<-minDelta, hi, lo);
+        out[FLAT_OUTPUT] = ifelse(out[RISE_OUTPUT]+out[FALL_OUTPUT]==float_4::zero(), hi, lo);
         float_4 lin = oldOut[s] + ifelse(diff>float_4::zero(), fmin(diff, kLin*riseMult), -fmin(-diff, kLin*fallMult));
         float_4 curve = clamp(oldOut[s] + diff * 48000.f * ifelse(diff>float_4::zero(), riseMult, fallMult) / kCurve / args.sampleRate / oversample, -20.f, 20.f);
         float_4 curveAmt = clamp(ifelse( diff>float_4::zero(), 
@@ -162,7 +172,21 @@ struct Slew : VenomModule {
     // set output channel count
     for (int i=0; i<OUTPUTS_LEN; i++)
       outputs[i].setChannels(channels);
-    
+  }
+
+  json_t* dataToJson() override {
+    json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "overMinDeltaIndex", json_integer(overMinDeltaIndex));
+    return rootJ;
+  }
+
+  void dataFromJson(json_t* rootJ) override {
+    VenomModule::dataFromJson(rootJ);
+    json_t* val;
+    if ((val = json_object_get(rootJ, "overMinDeltaIndex")))
+      overMinDeltaIndex = json_integer_value(val);
+    else
+      overMinDeltaIndex = 4;
   }
 
 };
@@ -184,6 +208,13 @@ struct SlewWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
+    }
+  };
+  
+  struct PolaritySwitch : GlowingSvgSwitchLockable {
+    PolaritySwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
     }
   };
 
@@ -214,6 +245,8 @@ struct SlewWidget : VenomWidget {
 
     addInput(createInputCentered<PolyPort>(Vec(20.f, 264.5), module, Slew::RAW_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(55.f, 264.5), module, Slew::VOCT_INPUT));
+    
+    addParam(createLockableParamCentered<PolaritySwitch>(Vec(37.5f, 288.f), module, Slew::POLARITY_PARAM));
 
     addOutput(createOutputCentered<PolyPort>(Vec(20.f, 304.5), module, Slew::RISE_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(55.f, 304.5), module, Slew::FALL_OUTPUT));
@@ -221,6 +254,14 @@ struct SlewWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(20.f, 341.5), module, Slew::FLAT_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(55.f, 341.5), module, Slew::SLEW_OUTPUT));
   }
+
+  void appendContextMenu(Menu* menu) override {
+    Slew* module = static_cast<Slew*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createIndexPtrSubmenuItem("Oversampled slope sensitivity (min delta)", {"10 mV","1 mV","0.1 mV","0.01 mV","0.001 mV"}, &module->overMinDeltaIndex));    
+    VenomWidget::appendContextMenu(menu);
+  }
+
 
 };
 
