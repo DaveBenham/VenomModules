@@ -1593,13 +1593,37 @@ Controls the slope of the amplitude dropoff beyond the cutoff frequency, measure
 
 #### Frequency range (right) button
 Controls the range of the Cutoff knob
-- **Audio rate** ***(yellow, default)*** 16.352 Hz to 16744 Hz, with default at C4
+- **Audio rate** ***(yellow, default)*** 16.352 Hz to 16744 Hz (or less), with default at C4
 - **Low frequency** ***(orange)*** 0.125 Hz to 128 Hz, with default at 2 Hz.
 
-In addition, a high pass filter is applied to all outputs when Audio rate is selected to prevent DC offset from appearing in the outputs.
+The audio rate maximum may be less than 16744 Hz depending on the VCV sample rate.
 
 #### Cutoff frequency knob
-The range of the Cutoff frequency knob is dependent on the selected frequency range.
+The range of the Cutoff frequency knob is dependent on the selected frequency range, and in some cases the VCV sample rate.
+
+#### Modulated cutoff frequency upper limits
+The cutoff frequency can be modulated below and often times above the knob limits. However, digital implementations of state variable filters become unstable at high cutoff frequencies, thus imposing an upper limit to the cutoff frequency. Higher sample rates are capable of processing higher cutoff frequencies. The default audio mode uses oversampling to increase the upper limit.
+
+VCV Sample Rate | Audio Mode Cutoff Limit | LFO Mode Cutoff Limit
+--|--|--
+~11 kHz|3750 Hz|1250 Hz
+12 kHz|4000 Hz|1250 Hz
+~22 kHz|7500 Hz|2500 Hz
+24 kHz|8000 Hz|2500 Hz
+~44 kHz|15000 Hz|5000 Hz
+48 kHz|16000 Hz|5000 Hz
+~88 kHz|30000 Hz|10000 Hz
+96 kHz +|32000 Hz|10000 Hz
+
+### Resonance
+
+### Gain
+
+### Spread
+
+### Fdbk (band pass feedback)
+
+### Morph
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
