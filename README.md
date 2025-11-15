@@ -1578,7 +1578,9 @@ Some parameters have one or two small buttons beside the label to configure addi
 
 All CV inputs can be driven at audio rates.
 
-### Cutoff controls
+### CUTOFF controls
+
+Controls the point where frequencies begin to be attenuated.
 
 #### Slope (left) button
 Controls the slope of the amplitude dropoff beyond the cutoff frequency, measured as dB per octave.
@@ -1615,15 +1617,46 @@ VCV Sample Rate | Audio Mode Cutoff Limit | LFO Mode Cutoff Limit
 ~88 kHz|30000 Hz|10000 Hz
 96 kHz +|32000 Hz|10000 Hz
 
-### Resonance
+### RES (Resonance)
 
-### Gain
+Controls the amount that the cutoff frequency is emphasized.
 
-### Spread
+Note that the Multimode Filter will never self oscillate unless band pass feedback is applied to the input. But with enough feedback and resonance applied, the oscillator will self oscillate at the cutoff frequency.
 
-### Fdbk (band pass feedback)
+### GAIN
 
-### Morph
+Controls how much the input is attenuated or amplified before processing by the filter. The value is clamped to a value between 0 and 2.
+
+### SPREAD
+
+Creates a difference between the Left and Right cutoff frequencies.
+
+#### Spread Direction button
+
+
+#### Spread Mono Mode button
+
+Determines how the left and right outputs are merged into the left when the right output is unpatched.
+- Additive (green, default) - The left and right are averaged (summed and divided by two)
+- Subtractive (red) - The right is subtracted from the left.
+
+### FDBK (band pass feedback)
+
+Makes the filter more resonant by internally feeding back a portion of the band pass output to the filter input. Note that the internal feedback is not affected by the Gain.
+
+The filter will self oscillate with high feedback and resonance.
+
+### MORPH
+
+Cross-fades between different filter modes. 
+
+The small **Morph Mode button** controls which filter types are used.
+- LP <-> BP (red)
+- LP <-> BP <-> HP (orange)
+- LP <-> HP (green, default)
+- BP <-> HP (blue)
+
+The different filter modes effect signal phase differently, as does the slope (number of poles). The differential phase shifts could lead to phase cancellation when cross-fading. To mitigate this, the band pass may be inverted in the morph cross fade, depending on the current slope setting.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
