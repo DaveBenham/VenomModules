@@ -1638,13 +1638,13 @@ The knob spread ranges from -2 to 2 octaves. The spread CV is 1 volt per octave 
 
 #### Spread Direction (left) button 
 Determines how the spread is applied to the left and right cutoffs.
-- Bipolar (orange, default) - 1/2 the spread is added to the right cutoff, and 1/2 the spread is subtracted from the left cutoff.
-- Unipolar (green) - The entire spread value is added to the right cutoff, and the left cutoff is unchanged.
+- **Bipolar** ***(orange, default)*** - 1/2 the spread is added to the right cutoff, and 1/2 the spread is subtracted from the left cutoff.
+- **Unipolar** ***(green)*** - The entire spread value is added to the right cutoff, and the left cutoff is unchanged.
 
 #### Spread Mono Mode (right) button
 Determines how the left and right outputs are merged into the left when the right output is unpatched.
-- Additive (green, default) - The left and right are averaged (summed and divided by two)
-- Subtractive (red) - The right is subtracted from the left. This effectively converts the low and high pass outputs into band pass with two resonant peaks.
+- **Additive** ***(green, default)*** - The left and right are averaged (summed and divided by two)
+- **Subtractive** ***(orange)*** - The right is subtracted from the left. This effectively converts the low and high pass outputs into band pass with two resonant peaks.
 
 ### FDBK (band pass feedback)
 
@@ -1656,11 +1656,12 @@ The filter will self oscillate with high feedback and resonance.
 
 Cross-fades between different filter modes. 
 
-The small **Morph Mode button** controls which filter modes are used.
-- LP <-> BP (red) - low pass to band pass
-- LP <-> BP <-> HP (orange) - low pass to band pass to high pass
-- LP <-> HP (green, default) - low pass to high pass
-- BP <-> HP (blue) - band pass to high pass
+#### Morph Mode button
+Controls which filter modes are used for the cross-fade.
+- **LP <-> BP** ***(red)*** - low pass to band pass
+- **LP <-> BP <-> HP** ***(orange)*** - low pass to band pass to high pass
+- **LP <-> HP** ***(green, default)*** - low pass to high pass
+- **BP <-> HP** ***(blue)*** - band pass to high pass
 
 The different filter modes effect signal phase differently. The phase relationship between the different filter modes varies depending on the selected filter slope. The differential phase shifts could lead to phase cancellation when cross-fading. To mitigate this, some filter modes are inverted in the morph cross fade, depending on the current slope setting.
 
@@ -1673,23 +1674,23 @@ There is a left and right output for each filter mode. If the right output is un
 
 If the filter is set to the audio range, then by default DC offsets are blocked by a high pass filter. There is a context menu option to disable the Audio DC block.
 
-#### MORPH
+#### MORPH output
 
 This is the result of the Morph cross fade.
 
-#### LOW PASS
+#### LOW PASS output
 
 Frequencies above the cutoff are attenuated.
 
-#### HIGH PASS
+#### HIGH PASS output
 
 Frequencies below the cutoff are attenuated.
 
-#### BAND PASS
+#### BAND PASS output
 
 Frequencies above and below the cutoff are attenuated.
 
-#### NOTCH
+#### NOTCH output
 
 Frequencies at or near the cutoff are attenuated.
 
