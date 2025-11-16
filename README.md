@@ -1572,6 +1572,8 @@ Polyphonic stereo state variable filter for audio and low frequency use. It prov
 
 The filter is highly resonant, yet will not self oscillate unless feedback is applied. This makes it an excellent choice for pinging.
 
+There is also a Spread option to apply different cutoff frequencies to the left and right inputs. Because the right input is normalled to the left, and there is an option to subtract the right output from the left, the filter can function similarly to the Rob Hordijk Twin Peaks filter.
+
 Every parameter has a primary labeled knob to set the base value, plus an unlabeled CV input with asscociated attenuverter. The Cutoff parameter has an additional V/Oct CV input. CV input is always summed with the parent base knob value.
 
 Some parameters have one or two small buttons beside the label to configure additional aspects of the parameter.
@@ -1634,11 +1636,13 @@ Creates a difference between the Left and Right cutoff frequencies. With high re
 
 The knob spread ranges from -2 to 2 octaves. The spread CV is 1 volt per octave with the attenuator at 100%.
 
-The small left **Spread Direction** button determines how the spread is applied to the left and right cutoffs.
+#### Spread Direction (left) button 
+Determines how the spread is applied to the left and right cutoffs.
 - Bipolar (orange, default) - 1/2 the spread is added to the right cutoff, and 1/2 the spread is subtracted from the left cutoff.
 - Unipolar (green) - The entire spread value is added to the right cutoff, and the left cutoff is unchanged.
 
-The small right **Spread Mono Mode** button determines how the left and right outputs are merged into the left when the right output is unpatched.
+#### Spread Mono Mode (right) button
+Determines how the left and right outputs are merged into the left when the right output is unpatched.
 - Additive (green, default) - The left and right are averaged (summed and divided by two)
 - Subtractive (red) - The right is subtracted from the left. This effectively converts the low and high pass outputs into band pass with two resonant peaks.
 
@@ -1675,19 +1679,19 @@ This is the result of the Morph cross fade.
 
 #### LOW PASS
 
-Frequencies above the cutoff are attenuated
+Frequencies above the cutoff are attenuated.
 
 #### HIGH PASS
 
-Frequencies below the cutoff are attenuated
+Frequencies below the cutoff are attenuated.
 
 #### BAND PASS
 
-Frequencies above and below the cutoff are attenuated
+Frequencies above and below the cutoff are attenuated.
 
 #### NOTCH
 
-Frequencies at or near the cutoff are attenuated
+Frequencies at or near the cutoff are attenuated.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
