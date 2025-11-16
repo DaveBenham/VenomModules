@@ -1570,7 +1570,7 @@ All outputs are monophonic 0V if Multi Split is bypassed.
 ![Multimode Filter module image](doc/SVF.png)  
 Polyphonic stereo state variable filter for audio and low frequency use. It provides simultaneous outputs for low pass, high pass, band pass, and notch modes. It also provides a morph output that crossfades between different filter modes.
 
-The filter is highly resonant without any self oscillation unless feedback is applied. This makes it an excellent choice for pinging.
+The filter is highly resonant, yet will not self oscillate unless feedback is applied. This makes it an excellent choice for pinging.
 
 Every parameter has a primary labeled knob to set the base value, plus an unlabeled CV input with asscociated attenuverter. The Cutoff parameter has an additional V/Oct CV input. CV input is always summed with the parent base knob value.
 
@@ -1578,9 +1578,11 @@ Some parameters have one or two small buttons beside the label to configure addi
 
 All CV inputs can be driven at audio rates.
 
-### CUTOFF controls
+### CUTOFF
 
-Controls the point where frequencies begin to be attenuated.
+Controls the point where frequency amplitudes begin to be attenuated.
+
+The Cutoff has an extra unattenuated volt per octave CV input. The attenuated CV input is also 1 volt per octave if the attenuverter is at 100%.
 
 #### Slope (left) button
 Controls the slope of the amplitude dropoff beyond the cutoff frequency, measured as dB per octave.
@@ -1596,17 +1598,14 @@ Controls the slope of the amplitude dropoff beyond the cutoff frequency, measure
 #### Frequency range (right) button
 Controls the range of the Cutoff knob
 - **Audio rate** ***(yellow, default)*** 16.352 Hz to 16744 Hz (or less), with default at C4
+  - The knob maximum may be less than 16744 Hz depending on the VCV sample rate
+  - Also by default applies a high pass filter to all outputs to eliminate DC offset, meaning the outputs become AC coupled
 - **Low frequency** ***(orange)*** 0.125 Hz to 128 Hz, with default at 2 Hz.
 
-The audio rate maximum may be less than 16744 Hz depending on the VCV sample rate.
-
-#### Cutoff frequency knob
-The range of the Cutoff frequency knob is dependent on the selected frequency range, and in some cases the VCV sample rate.
-
 #### Modulated cutoff frequency upper limits
-The cutoff frequency can be modulated below and often times above the knob limits. However, digital implementations of state variable filters become unstable at high cutoff frequencies, thus imposing an upper limit to the cutoff frequency. Higher sample rates are capable of processing higher cutoff frequencies. The default audio mode uses oversampling to increase the upper limit.
+The cutoff frequency can be modulated below and often times above the knob limits. However, digital implementations of state variable filters become unstable at high cutoff frequencies, thus imposing an upper limit to the cutoff frequency. Higher sample rates are capable of processing higher cutoff frequencies. The default audio range uses oversampling to increase the upper limit.
 
-VCV Sample Rate | Audio Mode Cutoff Limit | LFO Mode Cutoff Limit
+VCV Sample Rate | Audio Range Cutoff Limit | LFO Range Cutoff Limit
 --|--|--
 ~11 kHz|3750 Hz|1250 Hz
 12 kHz|4000 Hz|1250 Hz
@@ -1619,26 +1618,29 @@ VCV Sample Rate | Audio Mode Cutoff Limit | LFO Mode Cutoff Limit
 
 ### RES (Resonance)
 
-Controls the amount that the cutoff frequency is emphasized.
+Controls the amount of emphasis (amplification) applied to the cutoff frequency.
 
-Note that the Multimode Filter will never self oscillate unless band pass feedback is applied to the input. But with enough feedback and resonance applied, the oscillator will self oscillate at the cutoff frequency.
+The Multimode Filter will never self oscillate unless band pass feedback is applied to the input. But with enough feedback and resonance applied, the oscillator will self oscillate at the cutoff frequency.
 
 ### GAIN
 
 Controls how much the input is attenuated or amplified before processing by the filter. The value is clamped to a value between 0 and 2.
 
+All outputs are soft clipped at +/- 10V using tanh clipping, so higher gains can be used to drive the output to saturation.
+
 ### SPREAD
 
-Creates a difference between the Left and Right cutoff frequencies.
+Creates a difference between the Left and Right cutoff frequencies. With high resonance this can create formant sounds.
 
-#### Spread Direction button
+The knob spread ranges from -2 to 2 octaves. The spread CV is 1 volt per octave with the attenuator at 100%.
 
+The small left **Spread Direction** button determines how the spread is applied to the left and right cutoffs.
+- Bipolar (orange, default) - 1/2 the spread is added to the right cutoff, and 1/2 the spread is subtracted from the left cutoff.
+- Unipolar (green) - The entire spread value is added to the right cutoff, and the left cutoff is unchanged.
 
-#### Spread Mono Mode button
-
-Determines how the left and right outputs are merged into the left when the right output is unpatched.
+The small right **Spread Mono Mode** button determines how the left and right outputs are merged into the left when the right output is unpatched.
 - Additive (green, default) - The left and right are averaged (summed and divided by two)
-- Subtractive (red) - The right is subtracted from the left.
+- Subtractive (red) - The right is subtracted from the left. This effectively converts the low and high pass outputs into band pass with two resonant peaks.
 
 ### FDBK (band pass feedback)
 
@@ -1650,13 +1652,42 @@ The filter will self oscillate with high feedback and resonance.
 
 Cross-fades between different filter modes. 
 
-The small **Morph Mode button** controls which filter types are used.
-- LP <-> BP (red)
-- LP <-> BP <-> HP (orange)
-- LP <-> HP (green, default)
-- BP <-> HP (blue)
+The small **Morph Mode button** controls which filter modes are used.
+- LP <-> BP (red) - low pass to band pass
+- LP <-> BP <-> HP (orange) - low pass to band pass to high pass
+- LP <-> HP (green, default) - low pass to high pass
+- BP <-> HP (blue) - band pass to high pass
 
-The different filter modes effect signal phase differently, as does the slope (number of poles). The differential phase shifts could lead to phase cancellation when cross-fading. To mitigate this, the band pass may be inverted in the morph cross fade, depending on the current slope setting.
+The different filter modes effect signal phase differently. The phase relationship between the different filter modes varies depending on the selected filter slope. The differential phase shifts could lead to phase cancellation when cross-fading. To mitigate this, some filter modes are inverted in the morph cross fade, depending on the current slope setting.
+
+### INPUT
+The right input is normalled to the left input, meaning the right will receive the left input if the right is unpatched.
+
+### Outputs
+
+There is a left and right output for each filter mode. If the right output is unpatched, then the right output is added to or subtracted from the left output, depending on the Spread Mono Mode selection.
+
+If the filter is set to the audio range, then by default DC offsets are blocked by a high pass filter. There is a context menu option to disable the Audio DC block.
+
+#### MORPH
+
+This is the result of the Morph cross fade.
+
+#### LOW PASS
+
+Frequencies above the cutoff are attenuated
+
+#### HIGH PASS
+
+Frequencies below the cutoff are attenuated
+
+#### BAND PASS
+
+Frequencies above and below the cutoff are attenuated
+
+#### NOTCH
+
+Frequencies at or near the cutoff are attenuated
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
