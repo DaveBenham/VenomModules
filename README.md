@@ -1646,6 +1646,10 @@ Determines how the left and right outputs are merged into the left when the righ
 - **Additive** ***(green, default)*** - The left and right are averaged (summed and divided by two)
 - **Subtractive** ***(orange)*** - The right is subtracted from the left. This effectively converts the low and high pass outputs into band pass with two resonant peaks.
 
+Note that Subtractive mono mode should only be used when the spread value is non-zero. Subtractive mode will effectively kill all mono output if the spread is zero.
+
+This button has no effect if the right output is patched.
+
 ### FDBK (band pass feedback)
 
 Makes the filter more resonant by internally feeding back a portion of the band pass output to the filter input. Note that the internal feedback is not affected by the Gain.
