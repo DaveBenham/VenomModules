@@ -1,6 +1,6 @@
 # Venom Modules Changelog
 
-## 2.14.0 (????-??-??)
+## 2.14.0 (2025-11-23)
 ### New Module
 - Multimode Filter
 
