@@ -55,20 +55,26 @@ struct AD_ASR : VenomModule {
         case 2:
           offset = -3.5f;
           break;
+        case 3:
+          offset = 8.f;
       }
       return pow(2.f, module->params[paramId].getValue() + offset);
     }
     void setDisplayValue(float v) override {
+      int speedParam = static_cast<int>(module->params[SPEED_PARAM].getValue());
       if (v<=0.f)
-        setValue(-8.5f);
+        setValue(speedParam==3 ? -4.5 : -8.5f);
       else {
         float offset = 0.f;
-        switch (static_cast<int>(module->params[SPEED_PARAM].getValue())) {
+        switch (speedParam) {
           case 0:
             offset = -4.f;
             break;
           case 2:
             offset = 3.5f;
+            break;
+          case 3:
+            offset = -8.f;
             break;
         }
         setValue(log2(v) + offset);
@@ -89,10 +95,13 @@ struct AD_ASR : VenomModule {
 
   float mode = 0.f,
         blockRetrigStage = 1.f;
-  float_4 loop{};
 
-  float const minTime = pow(2.f,-12.f);
-  float const maxTime = pow(2.f,7.5f);
+  const float normMinTime = pow(2.f, -12.f),
+              normMaxTime = pow(2.f, 7.5f),
+              slowMinTime = pow(2.f, -5.f),
+              slowMaxTime = pow(2.f, 11.5f);
+
+  float_4 loop{};
 
   float_4 trigCVState[4]{},
           gateCVState[4]{},
@@ -106,7 +115,7 @@ struct AD_ASR : VenomModule {
   AD_ASR() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configSwitch<FixedSwitchQuantity>(SPEED_PARAM, 0.f, 2.f, 1.f, "Stage speed", {"Slow (0.044 - 181 sec)", "Medium (0.0027 - 11.3 sec)", "Fast (0.00024 - 1.0 sec)"});
+    configSwitch<FixedSwitchQuantity>(SPEED_PARAM, 0.f, 3.f, 1.f, "Stage speed", {"Slow (0.044 - 181 sec)", "Medium (0.0027 - 11.3 sec)", "Fast (0.00024 - 1.0 sec)", "Glacial (0.707 sec - 48.27 min)"});
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 3.f, 0.f, "Mode", {
       "1) TRIG=AD, GATE=ASR | Retrig current level",
       "2) TRIG=AD, GATE=ASR | Retrig 0V",
@@ -146,18 +155,21 @@ struct AD_ASR : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+    int speedParam = static_cast<int>(params[SPEED_PARAM].getValue());
     int undersample=1;
     // under-sample (skip frames) if speed is slow and sample rate is high
-    if (params[SPEED_PARAM].getValue()==0.f && args.sampleRate>97000.f){
+    if ((speedParam==0 || speedParam==3) && args.sampleRate>97000.f){
       if (args.sampleRate>385000.f)
         undersample=8;
       else if (args.sampleRate>143000.f)
         undersample=4;
       else // sampleRate>97000.f
         undersample=2;
-      if (args.frame % undersample)
-        return;
     }
+    if (speedParam==3)
+      undersample*=16;
+    if (args.frame % undersample)
+      return;
     // get channel count
     int channels=1;
     for (int i=0; i<INPUTS_LEN; i++){
@@ -268,6 +280,9 @@ struct AD_ASR : VenomModule {
       case 2:
         offset = -3.5f;
         break;
+      case 3:
+        offset = 8.f;
+        break;
     }
     float riseParm = params[RISE_TIME_PARAM].getValue() + offset;
     float fallParm = params[FALL_TIME_PARAM].getValue() + offset;
@@ -275,6 +290,8 @@ struct AD_ASR : VenomModule {
     float fallShape = -params[FALL_SHAPE_PARAM].getValue()*0.95f;
     float riseCVAmt = params[RISE_CV_PARAM].getValue();
     float fallCVAmt = params[FALL_CV_PARAM].getValue();
+    float minTime = speedParam==3 ? slowMinTime : normMinTime;
+    float maxTime = speedParam==3 ? slowMaxTime : normMaxTime;
     int envMode = static_cast<int>(params[ENV_OUT_PARAM].getValue());
     // iterate the channels
     for (int s=0, c=0; c<channels; s++, c+=4){
@@ -415,6 +432,7 @@ struct AD_ASRWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
     }
   };
   
