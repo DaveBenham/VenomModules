@@ -1,10 +1,12 @@
 # Venom Modules Changelog
 
-## 2.14.0 (2025-11-23)
+## 2.14.1 (2025-11-23)
 ### New Module
 - Multimode Filter
 
 ### Enhancements
+- AD/ASR Envelope Generator
+  - Added a Glacial speed with stage lengths as long as 48 minutes 
 - SLEW
   - Added context menu to adjust sensitivity of oversampled slope detector
 - XM-OP
