@@ -145,7 +145,7 @@ Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope ge
 
 ### Summary of Features
 * Separate trigger and gate inputs allow one envelope generator to support both AD and ASR behaviors simultaneously
-* Wide stage length range: 0.24 msec to 3 min
+* Wide stage length range: 0.24 msec to 48 min
 * Stage lengths are precise with accuracy dictated by VCV sample rate
 * V/Oct CV control over stage lengths with attenuverters
 * Independent stage shape controls for Rise and Fall: concave up to linear to concave down
@@ -177,18 +177,19 @@ There are also options as to whether a new ASR envelope can be retriggered durin
 ### RISE and FALL stage times
 Rise and Fall stages each have a large knob to set the base time of the stage, as well as a CV input and attenuator to dynamically modulate the time.
 
-The total effective time for a Rise from 0 to 10 or Fall from 10 to 0 can be as short as 0.24 msec or as long as 3 minutes.
+The total effective time for a Rise from 0 to 10 or Fall from 10 to 0 can be as short as 0.24 msec or as long as 48 minutes.
 
 The small top left **SPD** (Speed) button sets the range of the time knobs:
 - **Slow** ***(red)***: 0.044 to 181 seconds
 - **Medium** ***(yellow, default)***: 0.0028 to 11.3 seconds
 - **Fast** ***(green)***: 0.00024 to 1.0 seconds
+- **Glacial** ***(purple)***: 0.707 seconds to 48 minutes
 
 The knob speed can be modulated by the associated CV input with attenuator. Each positive volt of CV doubles the length of the stage. Each negative volt cuts the length in half.
 
-The CV can modulate the effective length beyond the limits of the current time knob configuration. However, the effective length is always clamped to between ~0.24 msec and ~3 min.
+The CV can modulate the effective length beyond the limits of the current time knob configuration. However, the effective length for slow, medium, and fast speeds is always clamped to between ~0.24 msec and ~3 min. The effective length for glacial speed is clamped between 3.9 msec and 48 minutes, and stages shorter than 0.5 seconds are not smooth.
 
-Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically under-sampled to guarantee that the envelope never stalls. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz. The envelope will never stall if stage length CV is not used.
+Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically under-sampled to guarantee that the envelope never stalls. If using the glacial configuration than all sample rates are under-sampled. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz. The envelope will never stall if stage length CV is not used.
 
 ### RISE and FALL shapes
 The Rise and Fall stages each have a dedicated small knob to adjust the shape or curve of the stage.
