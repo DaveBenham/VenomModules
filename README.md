@@ -187,7 +187,7 @@ The small top left **SPD** (Speed) button sets the range of the time knobs:
 
 The knob speed can be modulated by the associated CV input with attenuator. Each positive volt of CV doubles the length of the stage. Each negative volt cuts the length in half.
 
-The CV can modulate the effective length beyond the limits of the current time knob configuration. However, the effective length for slow, medium, and fast speeds is always clamped to between ~0.24 msec and ~3 min. The effective length for glacial speed is clamped between 3.9 msec and 48 minutes, and stages shorter than 0.5 seconds are not smooth.
+The CV can modulate the effective length beyond the limits of the current time knob configuration. However, the effective length for slow, medium, and fast speeds is always clamped to between ~0.24 msec and ~3 min. The effective length for glacial speed is clamped between 3.9 msec and 48 minutes, and stages shorter than 0.1 seconds are not smooth.
 
 Note that floating point computations have limited precision that could cause an envelope to stall. If using the Slow configuration and the VCV sample rate is greater than 96 kHz, then the processing is automatically under-sampled to guarantee that the envelope never stalls. If using the glacial configuration than all sample rates are under-sampled. But if using the Medium or Fast speeds then it is possible for CV modulated slow envelopes to stall if the VCV sample rate is above 96 kHz. The envelope will never stall if stage length CV is not used.
 
