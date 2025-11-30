@@ -1,4 +1,25 @@
 # Venom Modules Changelog
+## 2.14.2 (2025-12-??)
+### Enhancements
+- Multimode Filter
+  - Four new Morph modes
+    - Dry <-> Wet LP
+    - Dry <-> Wet HP
+    - Dry <-> Wet BP
+    - Dry <-> Wet Notch
+  - New input coupling option button
+    - DC (default) - old behavior
+    - AC - This can eliminate asymmetric saturation if the input has a DC offset
+  - New Gain VCA polarity option button
+    - Unipolar (default) - old behavior
+    - Bipolar - This can only have an effect with Gain CV
+  - Gain range extended to 10
+    - CV now scaled at 1 per Volt instead of 0.2 per Volt
+    - Effective gain now clamped to 0V - 10V or -10V - 10V, depending on VCA polarity
+    - This can be a breaking change for old patches with Gain CV
+
+### Bug Fix
+- Multimode Filter Notch output was inverted
 
 ## 2.14.1 (2025-11-25)
 ### New Module

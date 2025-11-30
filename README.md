@@ -1627,15 +1627,21 @@ The Multimode Filter will never self oscillate unless band pass feedback is appl
 
 ### GAIN
 
-Controls how much the input is attenuated or amplified before processing by the filter. The value is clamped to a value between 0 and 2.
+Controls how much the input is attenuated or amplified before processing by the filter.
 
-All outputs are soft clipped at +/- 10V using tanh clipping, so higher gains can be used to drive the output to saturation.
+The Gain knob ranges from 0 to 10. The Gain CV is scaled at 1 (100%) per volt.
+
+The small Gain VCA Polarity button controls whether the VCA is unipolar or bipolar
+- **Unipolar** ***(green - default)*** - The effective gain is clamped between 0V and 10V
+- **Bipolar** ***(orange)*** - The effective gain is clamped between -10V and 10V, enabling ring modulation
+
+Since all outputs are soft clipped at +/- 10V using tanh clipping, higher gains can be used to drive the output to saturation.
 
 ### SPREAD
 
 Creates a difference between the Left and Right cutoff frequencies. With high resonance this can create formant sounds.
 
-The knob spread ranges from -2 to 2 octaves. The spread CV is 1 volt per octave with the attenuator at 100%.
+The knob spread ranges from -2 to 2 octaves. The spread CV is 1 volt per octave with the attenuator at 100%. The final effective spread is unbounded.
 
 #### Spread Direction (left) button 
 Determines how the spread is applied to the left and right cutoffs.
@@ -1667,17 +1673,31 @@ Controls which filter modes are used for the cross-fade.
 - **LP <-> BP <-> HP** ***(orange)*** - low pass to band pass to high pass
 - **LP <-> HP** ***(green, default)*** - low pass to high pass
 - **BP <-> HP** ***(blue)*** - band pass to high pass
+- **Dry <-> Wet LP** ***(pink)*** - raw input to low pass
+- **Dry <-> Wet HP** ***(light blue)*** - raw input to high pass
+- **Dry <-> Wet BP** ***(yellow)*** - raw input to yellow
+- **Dry <-> Wet Notch** ***(white)*** - raw input to notch
 
 The different filter modes effect signal phase differently. The phase relationship between the different filter modes varies depending on the selected filter slope. The differential phase shifts could lead to phase cancellation when cross-fading. To mitigate this, some filter modes are inverted in the morph cross fade, depending on the current slope setting.
 
+Note that raw audio input may be slightly modified by the internal upsample/downsample process, as well as the output DC offset block (high pass filter).
+
 ### INPUT
 The right input is normalled to the left input, meaning the right will receive the left input if the right is unpatched.
+
+The small Input Coupling option button to the left can be used to eliminate DC offset from the input
+- **DC** ***(off - default)*** - Input DC offset is preserved
+- **AC** ***(yellow)*** - Input DC offset is removed.
+
+AC coupling is useful for removing assymmetric saturation.
 
 ### Outputs
 
 There is a left and right output for each filter mode. If the right output is unpatched, then the right output is added to or subtracted from the left output, depending on the Spread Mono Mode selection.
 
-If the filter is set to the audio range, then by default DC offsets are blocked by a high pass filter. There is a context menu option to disable the Audio DC block.
+All outputs are soft clipped (tanh saturation) at +/- 10V.
+
+The filter algorithm has a tendency to add a DC offset to audio outputs. To mitigate this, when using the audio range all outputs will remove DC offset via a high pass filter. There is a context menu option to disable the Audio DC block.
 
 #### MORPH output
 
