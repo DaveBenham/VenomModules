@@ -1689,7 +1689,7 @@ The small Input Coupling option button to the left can be used to eliminate DC o
 - **DC** ***(off - default)*** - Input DC offset is preserved
 - **AC** ***(yellow)*** - Input DC offset is removed.
 
-AC coupling is useful for removing assymmetric saturation.
+AC coupling is useful for removing saturation assymmetry.
 
 ### Outputs
 
