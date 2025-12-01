@@ -9,7 +9,7 @@
     - Dry <-> Wet Notch
   - New input coupling option button
     - DC (default) - old behavior
-    - AC - This can eliminate asymmetric saturation if the input has a DC offset
+    - AC - This can eliminate saturation assymmetry when the input has a DC offset
   - New Gain VCA polarity option button
     - Unipolar (default) - old behavior
     - Bipolar - This can only have an effect with Gain CV
