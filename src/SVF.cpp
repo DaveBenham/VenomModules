@@ -394,44 +394,51 @@ struct SVF : VenomModule {
           switch (mode){
             case 0:
               morphA = low;
-              morphB = band * (slope%4==1?-1.f:1.f);
+              morphB = band * (slope%4==1 ? -1.f : 1.f);
               break;
             case 1:
-              morphA = ifelse(morphBHigh, band * (slope%4==1?-1.f:1.f), low);
-              morphB = ifelse(morphBHigh, high, band * (slope%4==1?-1.f:1.f));
+              morphA = ifelse(morphBHigh, band * (slope%4==1 ? -1.f : 1.f), low);
+              morphB = ifelse(morphBHigh, high, band * (slope%4==1 ? -1.f : 1.f));
               break;
             case 2:
               morphA = low;
-              morphB = high * (slope%2?1.f:-1.f);
+              morphB = high * (slope%2 ? 1.f : -1.f);
               break;
             case 3:
-              morphA = band * (slope%4==1?-1.f:1.f);
+              morphA = band * (slope%4==1 ? -1.f : 1.f);
               morphB = high;
               break;
             case 4:
-              morphA = stereoIn * 0.1f;
-              morphB = softClip(low*0.1f);
+              morphA = stereoIn;
+              morphB = low;
               break;
             case 5:
-              morphA = stereoIn * 0.1f;
-              morphB = softClip(high*0.1f);
+              morphA = stereoIn;
+              morphB = high;
               break;
             case 6:
-              morphA = stereoIn * 0.1f;
-              morphB = softClip(band*0.1f);
+              morphA = stereoIn;
+              morphB = band;
               break;
             case 7:
-              morphA = stereoIn * 0.1f;
-              morphB = -softClip(notch*0.1f);
+              morphA = stereoIn;
+              morphB = notch * (slope%2 ? 1.f : -1.f);
           }
-          morph = morphA * morphARatio + morphB * morphBRatio;
-          if (!rightConnected[MORPH]){
-            morph[0] = mono ? morph[0]-morph[1] : (morph[0]+morph[1])/2.f;
-            morph[2] = mono ? morph[2]-morph[3] : (morph[2]+morph[3])/2.f;
-            morph[1] = morph[3] = 0.f;
-          }
-          if (mode < 4)
+          if (mode<4){
+            morph = morphA * morphARatio + morphB * morphBRatio;
+            if (!rightConnected[MORPH]){
+              morph[0] = mono ? morph[0]-morph[1] : (morph[0]+morph[1])/2.f;
+              morph[2] = mono ? morph[2]-morph[3] : (morph[2]+morph[3])/2.f;
+            }
             morph = softClip(morph*0.1f);
+          }
+          else {
+            if (!rightConnected[MORPH]){
+              morphB[0] = mono ? morphB[0]-morphB[1] : (morphB[0]+morphB[1])/2.f;
+              morphB[2] = mono ? morphB[2]-morphB[3] : (morphB[2]+morphB[3])/2.f;
+            }
+            morph = morphA*morphARatio*0.1f + softClip(morphB*0.1f)*morphBRatio;
+          }
           if (oversample>1)
             morph = morphDownSample[s].process(morph);
         }
@@ -471,7 +478,7 @@ struct SVF : VenomModule {
             notch[2] = mono ? notch[2]-notch[3] : (notch[2]+notch[3])/2.f;
             notch[1] = notch[3] = 0.f;
           }
-          notch = -softClip(notch*0.1f);
+          notch = softClip(notch*0.1f * (slope%2 ? 1.f : -1.f));
           if (oversample>1)
             notch = notchDownSample[s].process(notch);
         }
