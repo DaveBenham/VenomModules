@@ -48,11 +48,17 @@ struct WinComp : VenomModule {
     ENUMS(GREQ_LIGHT, 2),
     ENUMS(GR_LIGHT, 2),
     ENUMS(LS_LIGHT, 2),
+    B_FROM_A_LIGHT,
+    MIN_GATE_LIGHT,
     LIGHTS_LEN
   };
   
+  using float_4 = simd::float_4;
+  float_4 oldA[4]{};
   float gateTypes[6][3] = {{0.f,1.f,0.5f},{-1.f,1.f,0.f},{0.f,5.f,2.5f},{-5.f,5.f,0.f},{0.f,10.f,5.f},{-10.f,10.f,0.f}};
   int gateType = 4;
+  bool bFromA = false,
+       minGate = false;
   
   enum ModPorts {
     MIN_PORT,
@@ -124,6 +130,7 @@ struct WinComp : VenomModule {
     configOutput(LS_OUTPUT, "A<B");
     configOutput(GR_OUTPUT, "A>B");
     
+    configLight(B_FROM_A_LIGHT, "B normalled to A -1 sample indicator");
     configLight(OVERSAMPLE_LIGHT, "Oversample indicator");
     configLight(MIN_ABS_LIGHT, "Minimum absolute value indicator");
     configLight(MAX_ABS_LIGHT, "Maximum absolute value indicator");
@@ -176,13 +183,13 @@ struct WinComp : VenomModule {
     bool compGr = outputs[GR_OUTPUT].isConnected();
 
     bool processLights = lightDivider.process();
-    using float_4 = simd::float_4;
     float_4 low = gateTypes[gateType][0];
     float_4 high = gateTypes[gateType][1];
     float mid = gateTypes[gateType][2];
-    for (int c = 0; c < channels; c += 4) {
-      float_4 a = inputs[A_INPUT].getPolyVoltageSimd<float_4>(c) + aOffset;
-      float_4 b = inputs[B_INPUT].getPolyVoltageSimd<float_4>(c) + bOffset;
+    for (int c = 0, s=0; c < channels; c += 4, s++) {
+      float_4 b = inputs[B_INPUT].getNormalPolyVoltageSimd<float_4>(bFromA?oldA[s]:float_4::zero(), c) + bOffset;
+      oldA[s] = inputs[A_INPUT].getPolyVoltageSimd<float_4>(c);
+      float_4 a = oldA[s] + aOffset;
       float_4 tol = simd::fabs(inputs[TOL_INPUT].getPolyVoltageSimd<float_4>(c) + tolOffset);
       float_4 minVal=float_4::zero(), maxVal=float_4::zero(), clampVal=float_4::zero(), overVal=float_4::zero(),
             eqVal=float_4::zero(), neqVal=float_4::zero(), leqVal=float_4::zero(), geqVal=float_4::zero(),
@@ -228,16 +235,16 @@ struct WinComp : VenomModule {
         grVal = simd::ifelse(a > b + tol, high, low);
 
         if (oversample>1) {
-          if (compMin) minVal = minDownSample[c/4].process(minVal);
-          if (compMax) maxVal = maxDownSample[c/4].process(maxVal);
-          if (compClamp) clampVal = clampDownSample[c/4].process(clampVal);
-          if (compOver) overVal = overDownSample[c/4].process(overVal);
-          if (compEq) eqVal = eqDownSample[c/4].process(eqVal);
-          if (compNeq) neqVal = neqDownSample[c/4].process(neqVal);
-          if (compLeq) leqVal = leqDownSample[c/4].process(leqVal);
-          if (compGeq) geqVal = geqDownSample[c/4].process(geqVal);
-          if (compLs) lsVal = lsDownSample[c/4].process(lsVal);
-          if (compGr) grVal = grDownSample[c/4].process(grVal);
+          if (compMin) minVal = minDownSample[s].process(minVal);
+          if (compMax) maxVal = maxDownSample[s].process(maxVal);
+          if (compClamp) clampVal = clampDownSample[s].process(clampVal);
+          if (compOver) overVal = overDownSample[s].process(overVal);
+          if (compEq) eqVal = eqDownSample[s].process(eqVal);
+          if (compNeq) neqVal = neqDownSample[s].process(neqVal);
+          if (compLeq) leqVal = leqDownSample[s].process(leqVal);
+          if (compGeq) geqVal = geqDownSample[s].process(geqVal);
+          if (compLs) lsVal = lsDownSample[s].process(lsVal);
+          if (compGr) grVal = grDownSample[s].process(grVal);
         }
         if (processLights && i == oversample-1) {
           anyEq = anyEq || eqVal.s[0]>mid || eqVal.s[1]>mid || eqVal.s[2]>mid || eqVal.s[3]>mid;
@@ -274,6 +281,7 @@ struct WinComp : VenomModule {
     if (processLights) {
       float lightTime = args.sampleTime * lightDivider.getDivision();
       
+      lights[B_FROM_A_LIGHT].setBrightness(bFromA);
       lights[OVERSAMPLE_LIGHT].setBrightness(oversample>1);
 
       if (absPort[MIN_PORT] != absMinOld) {
@@ -344,6 +352,7 @@ struct WinComp : VenomModule {
     json_object_set_new(rootJ, "invOver", json_boolean(invPort[OVER_PORT]));
     json_object_set_new(rootJ, "oversample", json_integer(oversample));
     json_object_set_new(rootJ, "gateType", json_integer(gateType));
+    json_object_set_new(rootJ, "bFromA", json_boolean(bFromA));
     return rootJ;
   }
 
@@ -379,6 +388,9 @@ struct WinComp : VenomModule {
     val = json_object_get(rootJ, "gateType");
     if (val)
       gateType = json_integer_value(val);
+    val = json_object_get(rootJ, "bFromA");
+    if (val)
+      bFromA = json_boolean_value(val);
 
     setOversample();
   }
@@ -431,6 +443,7 @@ struct WinCompWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(mm2px(Vec(18.134, 116.0)), module, WinComp::GR_OUTPUT));
 
 
+    addChild(createLightCentered<SmallLight<BluLight<>>>(mm2px(Vec( 3.547, 22.99)), module, WinComp::B_FROM_A_LIGHT));
     addChild(createLightCentered<SmallLight<BluLight<>>>(mm2px(Vec(12.7, 51.5)), module, WinComp::OVERSAMPLE_LIGHT));
     addChild(createLightCentered<SmallLight<GrnLight<>>>(mm2px(Vec( 3.547, 54.58+7.46)), module, WinComp::MIN_ABS_LIGHT));
     addChild(createLightCentered<SmallLight<RdLight<>>>(mm2px(Vec(11.047, 54.58+7.46)), module, WinComp::MIN_INV_LIGHT));
@@ -475,6 +488,7 @@ struct WinCompWidget : VenomWidget {
           module->setOversample();
         }
     ));
+    menu->addChild(createBoolPtrMenuItem("B normalled to A -1 sample", "", &module->bFromA));
     VenomWidget::appendContextMenu(menu);
   }
 

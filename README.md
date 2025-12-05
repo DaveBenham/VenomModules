@@ -1673,9 +1673,10 @@ Controls which filter modes are used for the cross-fade.
 - **LP <-> BP <-> HP** ***(orange)*** - low pass to band pass to high pass
 - **LP <-> HP** ***(green, default)*** - low pass to high pass
 - **BP <-> HP** ***(blue)*** - band pass to high pass
+- **BP <-> Notch** ***(purple)*** - band pass to notch
 - **Dry <-> Wet LP** ***(pink)*** - raw input to low pass
 - **Dry <-> Wet HP** ***(light blue)*** - raw input to high pass
-- **Dry <-> Wet BP** ***(yellow)*** - raw input to yellow
+- **Dry <-> Wet BP** ***(yellow)*** - raw input to band pass
 - **Dry <-> Wet Notch** ***(white)*** - raw input to notch
 
 The different filter modes effect signal phase differently. The phase relationship between the different filter modes varies depending on the selected filter slope. The differential phase shifts could lead to phase cancellation when cross-fading. To mitigate this, some filter modes are inverted in the morph cross fade, depending on the current slope setting.
@@ -4297,8 +4298,8 @@ A windowed polyphonic comparator inspired by the VCV Free COMPARE module, includ
 - Gate output voltage options
 - Additional gate outputs for A>=B and A<=B
 - Oversampling options for audio applications
-
-
+- An option to normal the B input to the previoua A input sample so WinComp can function as a crude slope detector.
+                                                                                                                   
 ### Polyphony
 WINCOMP is fully polyphonic - the number of output channels is the maximum number of channels found across all three inputs.
 Monophonic inputs are replicated to match the number of output channels. Polyphonic inputs that have fewer channels use 0V for missing channels.
@@ -4344,6 +4345,16 @@ The gate high and low values are 0V and 10V by default. The module context menu 
 - +/-5
 - 0,10
 - +/-10
+
+### Slope Detector mode
+The context menu has a "B normalled to A -1 sample" so WinComp functions as a crude slope detector. When enabled, the small LED between the A and B inputs glows blue.
+
+If enabled and the B input is unpatched, then B will receive the A input from the previous sample. In this mode the following gates indicate the current slope of the A input.
+- **A>B** - Positive (rising) slope
+- **A<B** - Negative (falling) slope
+- **A=B** - Zero (flat) slope
+
+The slope detection works well with LFO inputs. But with audio inputs anti-aliasing can lead to noisy gates. Careful adjustment of the Tolerance may improve the quality of the slope detection.
 
 ### Oversampling
 By default WINCOMP is configured to output CV values, without any anti-aliasing. But if producing audio output, then the output may have unacceptable aliasing artifacts. The context menu has an option to enable oversampling to greatly reduce aliasing in audio outputs. The oversampling applies to all the outputs, including gate outputs.

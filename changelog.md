@@ -2,7 +2,8 @@
 ## 2.14.2 (2025-12-??)
 ### Enhancements
 - Multimode Filter
-  - Four new Morph modes
+  - Five new Morph modes
+    - BP <-> Notch
     - Dry <-> Wet LP
     - Dry <-> Wet HP
     - Dry <-> Wet BP
@@ -17,6 +18,8 @@
     - CV now scaled at 1 per Volt instead of 0.2 per Volt
     - Effective gain now clamped to 0V - 10V or -10V - 10V, depending on VCA polarity
     - This can be a breaking change for old patches with Gain CV
+- Wincomp
+  - Added context menu option to normal B input to the A input from the previous sample so Wincomp can function as a crude slope detector.
 
 ### Bug Fix
 - Multimode Filter Notch output was inverted

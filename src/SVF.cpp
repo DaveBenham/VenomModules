@@ -136,7 +136,7 @@ struct SVF : VenomModule {
     configInput(FDBK_CV_INPUT, "Feedback CV");
 
     configParam(MORPH_PARAM, 0.f, 1.f, 0.5f, "Morph", "");
-    configSwitch<FixedSwitchQuantity>(MORPH_MODE_PARAM, 0.f, 7.f, 2.f, "Morph mode", {"LP <-> BP", "LP <-> BP <-> HP", "LP <-> HP", "BP <-> HP", 
+    configSwitch<FixedSwitchQuantity>(MORPH_MODE_PARAM, 0.f, 8.f, 2.f, "Morph mode", {"LP <-> BP", "LP <-> BP <-> HP", "LP <-> HP", "BP <-> HP", "BP <-> Notch", 
                                                                                       "Dry <-> Wet LP", "Dry <-> Wet HP", "Dry <-> Wet BP", "Dry <-> Wet Notch"});
     configParam(MORPH_CV_PARAM, -1.f, 1.f, 0.f, "Morph CV Amount", "%", 0.f, 100.f, 0.f);
     configInput(MORPH_CV_INPUT, "Morph CV");
@@ -409,22 +409,26 @@ struct SVF : VenomModule {
               morphB = high;
               break;
             case 4:
-              morphA = stereoIn;
-              morphB = low;
+              morphA = band;
+              morphB = notch * (slope%2 ? 1.f : -1.f);
               break;
             case 5:
               morphA = stereoIn;
-              morphB = high;
+              morphB = low;
               break;
             case 6:
               morphA = stereoIn;
-              morphB = band;
+              morphB = high;
               break;
             case 7:
               morphA = stereoIn;
+              morphB = band;
+              break;
+            case 8:
+              morphA = stereoIn;
               morphB = notch * (slope%2 ? 1.f : -1.f);
           }
-          if (mode<4){
+          if (mode<5){
             morph = morphA * morphARatio + morphB * morphBRatio;
             if (!rightConnected[MORPH]){
               morph[0] = mono ? morph[0]-morph[1] : (morph[0]+morph[1])/2.f;
@@ -605,6 +609,7 @@ struct SVFWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPurpleButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallPinkButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
