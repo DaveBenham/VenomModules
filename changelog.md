@@ -19,7 +19,7 @@
     - Effective gain now clamped to 0V - 10V or -10V - 10V, depending on VCA polarity
     - This can be a breaking change for old patches with Gain CV
 - Wincomp
-  - Added context menu option to normal B input to the A input from the previous sample so Wincomp can function as a crude slope detector.
+  - Added context menu option to normal B input to the previous sample from the A input so Wincomp can function as a crude slope detector.
 
 ### Bug Fix
 - Multimode Filter Notch output was inverted
