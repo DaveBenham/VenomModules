@@ -4298,7 +4298,7 @@ A windowed polyphonic comparator inspired by the VCV Free COMPARE module, includ
 - Gate output voltage options
 - Additional gate outputs for A>=B and A<=B
 - Oversampling options for audio applications
-- An option to normal the B input to the previoua A input sample so WinComp can function as a crude slope detector.
+- An option to normal the B input to the previous A input sample so WinComp can function as a crude slope detector.
                                                                                                                    
 ### Polyphony
 WINCOMP is fully polyphonic - the number of output channels is the maximum number of channels found across all three inputs.
