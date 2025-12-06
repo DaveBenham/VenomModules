@@ -22,7 +22,7 @@
   - Added context menu option to normal B input to the previous sample from the A input so Wincomp can function as a crude slope detector.
 
 ### Bug Fix
-- Multimode Filter Notch output was inverted
+- Multimode Filter Notch output was sometimes inverted
 
 ## 2.14.1 (2025-11-25)
 ### New Module
