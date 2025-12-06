@@ -1,5 +1,5 @@
 # Venom Modules Changelog
-## 2.14.2 (2025-12-??)
+## 2.14.2 (2025-12-06)
 ### Enhancements
 - Multimode Filter
   - Five new Morph modes
