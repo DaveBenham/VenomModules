@@ -4347,7 +4347,7 @@ The gate high and low values are 0V and 10V by default. The module context menu 
 - +/-10
 
 ### Slope Detector mode
-The context menu has a "B normalled to A -1 sample" so WinComp functions as a crude slope detector. When enabled, the small LED between the A and B inputs glows blue.
+The context menu has a "B normalled to A -1 sample" option so WinComp functions as a crude slope detector. When enabled, the small LED between the A and B inputs glows blue.
 
 If enabled and the B input is unpatched, then B will receive the previous sample from the A input. In this mode the following gates indicate the current slope of the A input.
 - **A>B** - Positive (rising) slope
