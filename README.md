@@ -599,13 +599,13 @@ This output is also bipolar varying between +/-5V. It is a stepped voltage signa
 The original release of the Benjolin Oscillator had CV1, CV2, and Clock normalled values that were 20% of what they should have been. This bug has been fixed, but just in case there are existing patches that depended on the original normalled values, there is a module context menu option "Original release normalled values" that uses the old values when enabled. Patches with the Benjolin Oscillator that were created using the original release will default to having this option enabled.
 
 ### Patching a Complete Benjolin
-A minimal complete Benjolin can be patched simply by pairing the Benjolin Oscillator with a resonant filter with good ping characteristics. I find the Vult Unstabile filter works extremely well. Simply patch the PWM output to the filter input, and the Rungler output to the filter cuttoff input.
+A minimal complete Benjolin can be patched simply by pairing the Benjolin Oscillator with a resonant filter with good ping characteristics. The Venom Multimode Filter works extremely well. Simply patch the PWM output to the filter input, and the Rungler output to the filter cuttoff input.
 
 A Benjolin should not self oscillate unless given feedback from the filter band pass output. So ideally the cutoff frequency and resonance amount should be constrained so as to prevent self oscillation. Other things to consider are a crossfade module to allow a mix of PWM and external CV (or self patched CV) as input to the filter. Also a mixer would be good to allow a mix of external (or self patched) CV and Rungler input to the Cutoff frequency.
 
-The patch below closely emulates the features of the Benjolin version 2 from After Later Audio. A version of the patch wired up as a walking bass line is available at https://patchstorage.com/venom-2-8-benjolin-walking-bass/
+The patch below closely emulates the features of the Benjolin version 2 from After Later Audio. A version of the patch wired up to show a fun example sound is available at https://patchstorage.com/venom-2-14-3-all-venom-benjolin/.
 
-![Complete Benjolin patch example image](doc/Venom2-8Benjolin.PNG)
+![Complete Benjolin patch example image](doc/AllVenomBenjolin.png)
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
