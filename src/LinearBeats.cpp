@@ -50,7 +50,7 @@ struct LinearBeats : VenomModule {
       if (trig && (event = processEvent(inValue, 0.1f, 1.f))){
         if (event == TRIGGERED) {
           outState = (mode==1 || mode==3 || !preState) && !inMute;
-          preState = mode==2 ? preState : mode==3 ? outState : preState || outState;
+          preState = mode==2 ? preState : preState || outState;
         }
         else
           outState = false;
@@ -117,6 +117,8 @@ struct LinearBeats : VenomModule {
         for (int c=oldCnt[i]; c<cnt; c++)
           channel[i][c].outState = channel[i][c].state = false;
         int mode = params[MODE_PARAM+i].getValue();
+        if (mode==3)
+          preState = false;
         bool muteIn = finalInMute && inMute->params[MUTE_PARAM+i].getValue();
         bool muteOut = finalOutMute && finalOutMute->params[MUTE_PARAM+i].getValue();
         for(int c=0; c<cnt; c++)

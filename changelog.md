@@ -1,4 +1,8 @@
 # Venom Modules Changelog
+## 2.14.3 (2025-12-08)
+### Bug Fix
+- Linear Beats All New mode was broken as per https://github.com/DaveBenham/VenomModules/issues/33
+
 ## 2.14.2 (2025-12-06)
 ### Enhancements
 - Multimode Filter
