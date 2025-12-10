@@ -4512,7 +4512,7 @@ If WinComp 2 + Logic is bypassed then all outputs are constant monophonic 0V.
 
 ## XM-OP
 ![XM-OP module image](doc/XM_OP.png)  
-Polyphonic synth voice with selectable waveform, modulation and feedback types (linear through-zero frequency, phase, ring, amplitude), and integer ratio frequencies.
+Polyphonic synth voice with selectable waveform, modulation and feedback types (linear through-zero frequency, phase, ring, amplitude), and integer frequency ratios.
 
 XM-OP includes an ADSR (Attack, Decay, Sustain, Release) envelope generator, audio rate VCO, and VCA. The VCO output is always processed by the VCA.
 
