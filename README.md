@@ -1583,7 +1583,7 @@ All CV inputs can be driven at audio rates.
 
 ### CUTOFF
 
-Controls the point where frequency amplitudes begin to be attenuated.
+Controls the point where frequency amplitudes begin to be attenuated. By default this applies to both the left and right channels. But if Spread Direction is set to Right Absolute then this only applies to the left channel.
 
 The Cutoff has an extra unattenuated volt per octave CV input. The attenuated CV input is also 1 volt per octave if the attenuverter is at 100%.
 
@@ -1599,7 +1599,7 @@ Controls the slope of the amplitude dropoff beyond the cutoff frequency, measure
 - 96dB (dark blue)
 
 #### Frequency range (right) button
-Controls the range of the Cutoff knob
+Controls the range of the Cutoff knob (and the Spread knob if in Right Absolute mode)
 - **Audio rate** ***(yellow, default)*** 16.352 Hz to 16744 Hz (or less), with default at C4
   - The knob maximum may be less than 16744 Hz depending on the VCV sample rate
   - Also by default applies a high pass filter to all outputs to eliminate DC offset, meaning the outputs become AC coupled
@@ -1641,19 +1641,24 @@ Since all outputs are soft clipped at +/- 10V using tanh clipping, higher gains 
 
 Creates a difference between the Left and Right cutoff frequencies. With high resonance this can create formant sounds.
 
-The knob spread ranges from -2 to 2 octaves. The spread CV is 1 volt per octave with the attenuator at 100%. The final effective spread is unbounded.
-
 #### Spread Direction (left) button 
 Determines how the spread is applied to the left and right cutoffs.
-- **Bipolar** ***(orange, default)*** - 1/2 the spread is added to the right cutoff, and 1/2 the spread is subtracted from the left cutoff.
+- **Bipolar** ***(orange, default)*** - Half the spread is added to the right cutoff, and half the spread is subtracted from the left cutoff.
 - **Unipolar** ***(green)*** - The entire spread value is added to the right cutoff, and the left cutoff is unchanged.
+- **Right Absolute** ***(blue)*** - The Cutoff knob and CV only applies to the left channel, and the Spread is transformed into the right cutoff.
+
+In Bipolar and Unipolar modes the Spread knob ranges from -2 to 2 octaves.
+
+In Right Absolute mode the Spread knob is configured the same as the Cutoff knob.
+
+The Spread CV is always 1 volt per octave when the attenuator is at 100%. The CV can modulate the Spread beyond the knob limits.
 
 #### Spread Mono Mode (right) button
 Determines how the left and right outputs are merged into the left when the right output is unpatched.
 - **Additive** ***(green, default)*** - The left and right are averaged (summed and divided by two)
 - **Subtractive** ***(orange)*** - The right is subtracted from the left. This effectively converts the low and high pass outputs into band pass with two resonant peaks.
 
-Note that Subtractive mono mode should only be used when the spread value is non-zero. Subtractive mode will effectively kill all mono output if the spread is zero.
+Note that Subtractive mono mode should only be used when the left and right inputs differ and/or the left and right cutoffs differ. Subtractive mode will effectively kill all mono output if the left and right inputs and cutoffs are identical.
 
 This button has no effect if the right output is patched.
 

@@ -1,4 +1,4 @@
-// Venom Modules (c) 2023, 2024 Dave Benham
+// Venom Modules (c) 2023, 2024, 2025 Dave Benham
 // Licensed under GNU GPLv3
 
 #include "Venom.hpp"
@@ -58,6 +58,9 @@ struct SVF : VenomModule {
   enum LightId {
     LIGHTS_LEN
   };
+  
+  std::string freqName[2] {"Cutoff frequency", "Cutoff frequency left"};
+  std::string spreadName[2] {"Cutoff spread", "Cutoff frequency right"};
 
   using float_4 = simd::float_4;
   float maxFreq;
@@ -98,7 +101,25 @@ struct SVF : VenomModule {
       return rtn>maxFreq ? maxFreq : rtn;
     }
   };
-  
+
+  struct SpreadQuantity:ParamQuantity {
+    float maxFreq = 0;
+    float getDisplayValue() override {
+      if (displayBase == 2.f) {
+        float rtn = pow(2.f, getValue()*2.5f + 1.f) * displayMultiplier;
+        return rtn>maxFreq ? maxFreq : rtn;
+      }
+      else
+        return ParamQuantity::getDisplayValue();
+    }
+    void setDisplayValue(float v) override {
+      if (displayBase == 2.f)
+        setValue(clamp((std::log2f(v / displayMultiplier)-1.f) / 2.5f, -2.f, 2.f));
+      else
+        ParamQuantity::setDisplayValue(v);
+    }
+  };
+
   struct FdbkQuantity:ParamQuantity {
     float getDisplayValue() override {
       float rtn = ParamQuantity::getDisplayValue();
@@ -109,7 +130,7 @@ struct SVF : VenomModule {
   SVF() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configParam<FreqQuantity>(FREQ_PARAM, -4.f, 6.f, 0.f, "Cutoff frequency", " Hz", 2.f, rangeFreq[range], 0.f);
+    configParam<FreqQuantity>(FREQ_PARAM, -4.f, 6.f, 0.f, freqName[0], " Hz", 2.f, rangeFreq[range], 0.f);
     configSwitch<FixedSwitchQuantity>(SLOPE_PARAM, 0.f, 7.f, 0.f, "Slope", {"12dB", "24dB", "36dB", "48dB", "60dB", "72dB", "84dB", "96dB"});
     configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 1.f, 0.f, "Frequency range", {"Audio rate", "Low frequency"});
     configInput(VOCT_INPUT, "V/Oct");
@@ -125,8 +146,8 @@ struct SVF : VenomModule {
     configParam(DRIVE_CV_PARAM, -1.f, 1.f, 0.f, "Gain CV amount", "%", 0.f, 100.f, 0.f);
     configInput(DRIVE_CV_INPUT, "Gain CV");
     
-    configParam(SPREAD_PARAM, -2.f, 2.f, 0.f, "Cutoff spread", "");
-    configSwitch<FixedSwitchQuantity>(SPREAD_DIR_PARAM, 0.f, 1.f, 0.f, "Spread direction", {"Bipolar (both)", "Unipolar (right)"});
+    configParam<SpreadQuantity>(SPREAD_PARAM, -2.f, 2.f, 0.f, spreadName[0], "");
+    configSwitch<FixedSwitchQuantity>(SPREAD_DIR_PARAM, 0.f, 2.f, 0.f, "Spread direction", {"Bipolar (both)", "Unipolar (right)", "Right absolute"});
     configSwitch<FixedSwitchQuantity>(SPREAD_MONO_PARAM, 0.f, 1.f, 0.f, "Spread mono mode", {"Additive", "Subtractive"});
     configParam(SPREAD_CV_PARAM, -1.f, 1.f, 0.f, "Cutoff spread CV amount", "%", 0.f, 100.f, 0.f);
     configInput(SPREAD_CV_INPUT, "Cutoff spread CV");
@@ -179,11 +200,22 @@ struct SVF : VenomModule {
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
 
+    int slope = params[SLOPE_PARAM].getValue(),
+        dir = params[SPREAD_DIR_PARAM].getValue(),
+        mono = params[SPREAD_MONO_PARAM].getValue(),
+        mode = params[MORPH_MODE_PARAM].getValue(),
+        inputMode = params[INPUT_PARAM].getValue();
+
+    SpreadQuantity *spreadQuantity = static_cast<SpreadQuantity*>(paramQuantities[SPREAD_PARAM]);
+    FreqQuantity *freqQuantity = static_cast<FreqQuantity*>(paramQuantities[FREQ_PARAM]);
+
     // update range
     if (range != static_cast<int>(params[RANGE_PARAM].getValue())) {
       range = static_cast<int>(params[RANGE_PARAM].getValue());
       oversample = rangeOver[range];
-      paramQuantities[FREQ_PARAM]->displayMultiplier = rangeFreq[range];
+      freqQuantity->displayMultiplier = rangeFreq[range];
+      if (dir == 2)
+        spreadQuantity->displayMultiplier = rangeFreq[range];
       sampleRate = 0.f;
     }
     // update sampleRate
@@ -198,20 +230,40 @@ struct SVF : VenomModule {
                   : sampleRate<88000 ? 5
                   : sampleRate<96000 ? 6
                   : 7];
-      static_cast<FreqQuantity*>(paramQuantities[FREQ_PARAM])->maxFreq = maxFreq;
+      freqQuantity->maxFreq = maxFreq;
+      spreadQuantity->maxFreq = maxFreq;
       for (int i=0; i<6; i++)
         for (int j=0; j<8; j++)
           dcBlockFilter[i][j].init(oversample, sampleRate);
     }
 
-    int slope = params[SLOPE_PARAM].getValue(),
-        dir = params[SPREAD_DIR_PARAM].getValue(),
-        mono = params[SPREAD_MONO_PARAM].getValue(),
-        mode = params[MORPH_MODE_PARAM].getValue(),
-        inputMode = params[INPUT_PARAM].getValue();
+    if ((dir==2) != (spreadQuantity->displayBase==2.f)) {
+      ParamExtension *freqExt = &paramExtensions[FREQ_PARAM];
+      ParamExtension *spreadExt = &paramExtensions[SPREAD_PARAM];
+      if (dir==2) {
+        if (freqQuantity->name == freqExt->factoryName)
+          freqQuantity->name = freqName[1];
+        freqExt->factoryName = freqName[1];
+        if (spreadQuantity->name == spreadExt->factoryName)
+          spreadQuantity->name = spreadName[1];
+        spreadExt->factoryName = spreadName[1];
+        spreadQuantity->unit = " Hz";
+        spreadQuantity->displayBase = 2.f;
+        spreadQuantity->displayMultiplier = rangeFreq[range];
+      } else {
+        if (freqQuantity->name == freqExt->factoryName)
+          freqQuantity->name = freqName[0];
+        freqExt->factoryName = freqName[0];
+        if (spreadQuantity->name == spreadExt->factoryName)
+          spreadQuantity->name = spreadName[0];
+        spreadExt->factoryName = spreadName[0];
+        spreadQuantity->unit = "";
+        spreadQuantity->displayBase = 0.f;
+        spreadQuantity->displayMultiplier = 1.f;
+      }
+    }
     
-    float freqParam = params[FREQ_PARAM].getValue(),
-          resParam = params[RES_PARAM].getValue(),
+    float resParam = params[RES_PARAM].getValue(),
           driveParam = params[DRIVE_PARAM].getValue(),
           fdbkParam = params[FDBK_PARAM].getValue(),
           morphParam = params[MORPH_PARAM].getValue(),
@@ -225,6 +277,7 @@ struct SVF : VenomModule {
           minGain = params[VCA_PARAM].getValue() ? -10.f : 0.f;
 
     float_4 spreadParam{},
+            freqParam{},
             voctIn{},
             freqIn{},
             resIn{},
@@ -264,12 +317,20 @@ struct SVF : VenomModule {
                             outputs[R_NOTCH_OUTPUT].isConnected(),
                             outputs[R_MORPH_OUTPUT].isConnected() };
 
-    if (dir) {
-      spreadParam[1] = spreadParam[3] = params[SPREAD_PARAM].getValue();
-    }
-    else {
-      spreadParam[0] = spreadParam[2] = params[SPREAD_PARAM].getValue()*-0.5f;
-      spreadParam[1] = spreadParam[3] = -spreadParam[0];
+    switch (dir) {
+      case 0: // bipolar
+        freqParam = params[FREQ_PARAM].getValue();
+        spreadParam[0] = spreadParam[2] = params[SPREAD_PARAM].getValue()*-0.5f;
+        spreadParam[1] = spreadParam[3] = -spreadParam[0];
+        break;
+      case 1: // unipolar
+        freqParam = params[FREQ_PARAM].getValue();
+        spreadParam[1] = spreadParam[3] = params[SPREAD_PARAM].getValue();
+        break;
+      case 2: // unipolar absolute
+        freqParam[0] = freqParam[2] = params[FREQ_PARAM].getValue();
+        spreadParam[1] = spreadParam[3] = params[SPREAD_PARAM].getValue()*2.5f + 1.f;
+        break;
     }
 
     // get channel count
@@ -280,14 +341,6 @@ struct SVF : VenomModule {
     }
 
     for (int s=0, c1=0, c2=1; c1<channels; s++, c1+=2, c2+=2) { // poly channel loop
-      voctIn[0] = inputs[VOCT_INPUT].getPolyVoltage(c1);
-      voctIn[1] = voctIn[0];
-      voctIn[2] = inputs[VOCT_INPUT].getPolyVoltage(c2);
-      voctIn[3] = voctIn[2];
-      freqIn[0] = inputs[FREQ_CV_INPUT].getPolyVoltage(c1);
-      freqIn[1] = freqIn[0];
-      freqIn[2] = inputs[FREQ_CV_INPUT].getPolyVoltage(c2);
-      freqIn[3] = freqIn[2];
       resIn[0] = inputs[RES_CV_INPUT].getPolyVoltage(c1);
       resIn[1] = resIn[0];
       resIn[2] = inputs[RES_CV_INPUT].getPolyVoltage(c2);
@@ -296,18 +349,34 @@ struct SVF : VenomModule {
       driveIn[1] = driveIn[0];
       driveIn[2] = inputs[DRIVE_CV_INPUT].getPolyVoltage(c2);
       driveIn[3] = driveIn[2];
-
-      if (dir){
-        spreadIn[1] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c1);
-        spreadIn[3] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c2);
+      switch (dir) {
+        case 0: // bipolar
+          voctIn[0] = voctIn[1] = inputs[VOCT_INPUT].getPolyVoltage(c1);
+          voctIn[2] = voctIn[3] = inputs[VOCT_INPUT].getPolyVoltage(c2);
+          freqIn[0] = freqIn[1] = inputs[FREQ_CV_INPUT].getPolyVoltage(c1);
+          freqIn[2] = freqIn[2] = inputs[FREQ_CV_INPUT].getPolyVoltage(c2);
+          spreadIn[0] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c1)*-0.5f;
+          spreadIn[2] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c2)*-0.5f;
+          spreadIn[1] = -spreadIn[0];
+          spreadIn[3] = -spreadIn[2];
+          break;
+        case 1: // unipolar
+          voctIn[0] = voctIn[1] = inputs[VOCT_INPUT].getPolyVoltage(c1);
+          voctIn[2] = voctIn[3] = inputs[VOCT_INPUT].getPolyVoltage(c2);
+          freqIn[0] = freqIn[1] = inputs[FREQ_CV_INPUT].getPolyVoltage(c1);
+          freqIn[2] = freqIn[2] = inputs[FREQ_CV_INPUT].getPolyVoltage(c2);
+          spreadIn[1] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c1);
+          spreadIn[3] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c2);
+          break;
+        case 2: // unipolar absolute
+          voctIn[0] = inputs[VOCT_INPUT].getPolyVoltage(c1);
+          voctIn[2] = inputs[VOCT_INPUT].getPolyVoltage(c2);
+          freqIn[0] = inputs[FREQ_CV_INPUT].getPolyVoltage(c1);
+          freqIn[2] = inputs[FREQ_CV_INPUT].getPolyVoltage(c2);
+          spreadIn[1] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c1);
+          spreadIn[3] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c2);
+          break;
       }
-      else {
-        spreadIn[0] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c1)*-0.5f;
-        spreadIn[2] = inputs[SPREAD_CV_INPUT].getPolyVoltage(c2)*-0.5f;
-        spreadIn[1] = -spreadIn[0];
-        spreadIn[3] = -spreadIn[2];
-      }
-
       fdbkIn[0] = inputs[FDBK_CV_INPUT].getPolyVoltage(c1);
       fdbkIn[1] = fdbkIn[0];
       fdbkIn[2] = inputs[FDBK_CV_INPUT].getPolyVoltage(c2);
@@ -579,6 +648,7 @@ struct SVFWidget : VenomWidget {
     DirSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
     }
   };
 
