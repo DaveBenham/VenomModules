@@ -1,11 +1,12 @@
 # Venom Modules Changelog
-## 2.14.4 (2025-12-10)
+## 2.14.5 (2025-12-10)
 ### Enhancement
 - Multimode Filter
   - New Spread direction Right Absolute in which the Cutoff Frequency knob and CV only applies to the left, and the Spread knob and CV becomes the right cutoff
 
-### Bug Fix
+### Bug Fixes
 - Linear Beats All New mode was broken as per https://github.com/DaveBenham/VenomModules/issues/33
+- XM-OP would sometimes crash on patch load if quantize is off as per https://github.com/DaveBenham/VenomModules/issues/34
 
 ## 2.14.2 (2025-12-06)
 ### Enhancements
