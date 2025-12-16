@@ -93,7 +93,7 @@ struct XM_OP : VenomModule {
   DCBlockFilter_4 xmodDcBlockFilter[4]{},
                   fdbkDcBlockFilter[4]{};
 
-  bool quantize = true;
+  bool quantize = true, first=true;
   
   int wave = 0,
       xmType = 0,
@@ -285,7 +285,8 @@ struct XM_OP : VenomModule {
       }
     }
 
-    if (quantize != static_cast<bool>(params[QUANT_PARAM].getValue())) {
+    if (divKnob && quantize != static_cast<bool>(params[QUANT_PARAM].getValue())) {
+      //make sure XM_OPWidget constructor has defined divKnob and multKnob before entering
       quantize = !quantize;
       multKnob->snap = multKnob->getParamQuantity()->snapEnabled = quantize;
       divKnob->snap = divKnob->getParamQuantity()->snapEnabled = quantize;
