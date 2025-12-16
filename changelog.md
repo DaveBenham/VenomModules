@@ -1,5 +1,5 @@
 # Venom Modules Changelog
-## 2.14.5 (2025-12-10)
+## 2.14.5 (2025-12-16)
 ### Enhancement
 - Multimode Filter
   - New Spread direction Right Absolute in which the Cutoff Frequency knob and CV only applies to the left, and the Spread knob and CV becomes the right cutoff
