@@ -34,7 +34,7 @@ struct MixSoloWidget : MixExpanderWidget {
     setModule(module);
     setVenomPanel("MixSolo");
 
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
     addParam(createLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<GreenLight>>>(Vec(22.5f,  42.295f), module, MixModule::SOLO_PARAM+0, MixModule::SOLO_LIGHT+0));
     addParam(createLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<GreenLight>>>(Vec(22.5f,  73.035f), module, MixModule::SOLO_PARAM+1, MixModule::SOLO_LIGHT+1));
     addParam(createLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<GreenLight>>>(Vec(22.5f, 103.775f), module, MixModule::SOLO_PARAM+2, MixModule::SOLO_LIGHT+2));

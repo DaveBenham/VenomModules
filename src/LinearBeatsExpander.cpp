@@ -79,8 +79,8 @@ struct LinearBeatsExpanderWidget : VenomWidget {
     }  
     addInput(createInputCentered<MonoPort>(Vec(20.5f,344.85f), module, LinearBeatsExpander::BYPASS_INPUT));
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(55.5f,344.85f), module, LinearBeatsExpander::BYPASS_PARAM, LinearBeatsExpander::BYPASS_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(6.f, 21.3f), module, LinearBeatsExpander::LEFT_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(69.f, 21.3f), module, LinearBeatsExpander::RIGHT_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(6.f, 21.3f), module, LinearBeatsExpander::LEFT_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(69.f, 21.3f), module, LinearBeatsExpander::RIGHT_LIGHT));
   }
 
   void step() override {

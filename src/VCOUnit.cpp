@@ -957,8 +957,8 @@ struct VCOUnitWidget : VenomWidget {
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(37.5f, 186.f), module, VCOUnit::EXP_LIGHT));
     addInput(createOverInputCentered<LinPort>(Vec(67.5f, 197.5f), module, VCOUnit::LIN_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(81.f, 186.f), module, VCOUnit::LIN_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(81.f, 209.f), module, VCOUnit::LIN_DC_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(54.f, 209.f), module, VCOUnit::LIN_NO_THRU0_LIGHT));
+    addChild(createLightCentered<SmallLight<RedLight>>(Vec(81.f, 209.f), module, VCOUnit::LIN_DC_LIGHT));
+    addChild(createLightCentered<SmallLight<RedLight>>(Vec(54.f, 209.f), module, VCOUnit::LIN_NO_THRU0_LIGHT));
 
     addInput(createInputCentered<PolyPort>(Vec(24.f, 244.5f), module, VCOUnit::EXP_DEPTH_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(67.5f, 244.5f), module, VCOUnit::LIN_DEPTH_INPUT));
@@ -991,8 +991,8 @@ struct VCOUnitWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(121.5f,315.5f), module, VCOUnit::LEVEL_AMT_PARAM));
     addInput(createOverInputCentered<LevelPort>(Vec(111.f,341.5f), module, VCOUnit::LEVEL_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(124.5f,330.f), module, VCOUnit::LEVEL_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(97.5f,330.f), module, VCOUnit::RM_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(97.5f,353.f), module, VCOUnit::VCA_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(97.5f,330.f), module, VCOUnit::RM_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(97.5f,353.f), module, VCOUnit::VCA_LIGHT));
   }
 
   void step() override {

@@ -1399,8 +1399,8 @@ struct OscillatorWidget : VenomWidget {
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(42.5f, 230.f), module, Oscillator::EXP_LIGHT));
     addInput(createOverInputCentered<LinPort>(Vec(64.f, 241.5f), module, Oscillator::LIN_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(77.5f, 230.f), module, Oscillator::LIN_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(77.5f, 253.f), module, Oscillator::LIN_DC_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(50.5f, 253.f), module, Oscillator::LIN_NO_THRU0_LIGHT));
+    addChild(createLightCentered<SmallLight<RedLight>>(Vec(77.5f, 253.f), module, Oscillator::LIN_DC_LIGHT));
+    addChild(createLightCentered<SmallLight<RedLight>>(Vec(50.5f, 253.f), module, Oscillator::LIN_NO_THRU0_LIGHT));
     addInput(createInputCentered<PolyPort>(Vec(29.f, 290.5f), module, Oscillator::EXP_DEPTH_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(64.f, 290.5f), module, Oscillator::LIN_DEPTH_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(29.f, 335.5f), module, Oscillator::VOCT_INPUT));
@@ -1422,8 +1422,8 @@ struct OscillatorWidget : VenomWidget {
             break;
           case 3:
             addInput(createOverInputCentered<LevelPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));
-            addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 83.f+dy*y), module, Oscillator::SIN_RM_LIGHT+x));
-            addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(116.5f+dx*x, 106.f+dy*y), module, Oscillator::SIN_VCA_LIGHT+x));
+            addChild(createLightCentered<SmallLight<YellowLight>>(Vec(116.5f+dx*x, 83.f+dy*y), module, Oscillator::SIN_RM_LIGHT+x));
+            addChild(createLightCentered<SmallLight<YellowLight>>(Vec(116.5f+dx*x, 106.f+dy*y), module, Oscillator::SIN_VCA_LIGHT+x));
             break;
           default:
             addInput(createOverInputCentered<OverPort>(Vec(130.f+dx*x,94.5f+dy*y), module, Oscillator::GRID_INPUT+y*5+x));

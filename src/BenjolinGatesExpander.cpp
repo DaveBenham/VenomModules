@@ -95,10 +95,10 @@ struct BenjolinGatesExpanderWidget : BenjolinExpanderWidget {
     float delta=0.f;
     for(int i=0; i<8; i++){
       addOutput(createGateOutputCentered(Vec(22.5f,92.5f+delta), module, BenjolinModule::GATE_OUTPUT+i));
-      addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(36.f, 84.f+delta), module, BenjolinModule::GATE_LIGHT+i));
+      addChild(createLightCentered<SmallLight<YellowLight>>(Vec(36.f, 84.f+delta), module, BenjolinModule::GATE_LIGHT+i));
       delta+=35.f;
     }  
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(6.f, 33.f), module, 0));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(6.f, 33.f), module, 0));
   }
   
   void step() override {

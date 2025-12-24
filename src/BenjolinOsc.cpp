@@ -381,7 +381,7 @@ struct BenjolinOscWidget : VenomWidget {
       int i;
       float x;
       for (i=0, x=93.066f; i<8; i++, x+=7.959f){
-        addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(x,90.137f), module, BenjolinOsc::RUNGLER_LIGHT+i));
+        addChild(createLightCentered<SmallLight<YellowLight>>(Vec(x,90.137f), module, BenjolinOsc::RUNGLER_LIGHT+i));
       }
     }
   }

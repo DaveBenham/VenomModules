@@ -189,7 +189,7 @@ struct MultiSplitWidget : VenomWidget {
 
     for (int i=0; i<16; i++){
       addInput(createInputCentered<PolyPort>(Vec(i%2 ? xInOdd : xInEven, yOrigin+yDelta*i), module, MultiSplit::POLY_INPUT+i));
-      addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(i%2 ? xInOdd-18.5f : xInEven+18.5f, yOrigin+yDelta*i), module, MultiSplit::DROP_LIGHT+i));
+      addChild(createLightCentered<SmallLight<RedLight>>(Vec(i%2 ? xInOdd-18.5f : xInEven+18.5f, yOrigin+yDelta*i), module, MultiSplit::DROP_LIGHT+i));
       addOutput(createConfigChannelsOutputCentered<OutPort>(Vec(i%2 ? xOutOdd : xOutEven, yOrigin+yDelta*i), module, MultiSplit::POLY_OUTPUT+i));
     }
   }

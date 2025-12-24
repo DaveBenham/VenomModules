@@ -66,7 +66,7 @@ struct AuxCloneWidget : VenomWidget {
       addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(36.f, 214.f+delta), module, AuxClone::EXP_POLY_LIGHT+i*2));
       delta+=35.f;
     }  
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(6.f, 10.f), module, AuxClone::EXP_CONNECT_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(6.f, 10.f), module, AuxClone::EXP_CONNECT_LIGHT));
   }
   
 };

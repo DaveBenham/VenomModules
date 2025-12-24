@@ -172,7 +172,7 @@ struct MultiMergeWidget : VenomWidget {
 
     for (int i=0; i<16; i++){
       addInput(createConfigChannelsInputCentered<InPort>(Vec(i%2 ? xInOdd : xInEven, yOrigin+yDelta*i), module, MultiMerge::POLY_INPUT+i));
-      addChild(createLightCentered<SmallSimpleLight<RedLight>>(Vec(i%2 ? xInOdd-18.5f : xInEven+18.5f, yOrigin+yDelta*i), module, MultiMerge::DROP_LIGHT+i));
+      addChild(createLightCentered<SmallLight<RedLight>>(Vec(i%2 ? xInOdd-18.5f : xInEven+18.5f, yOrigin+yDelta*i), module, MultiMerge::DROP_LIGHT+i));
       addOutput(createOutputCentered<PolyPort>(Vec(i%2 ? xOutOdd : xOutEven, yOrigin+yDelta*i), module, MultiMerge::POLY_OUTPUT+i));
     }
   }

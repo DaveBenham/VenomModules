@@ -46,7 +46,7 @@ struct BernoulliSwitchExpanderWidget : VenomWidget {
     setModule(module);
     setVenomPanel("BernoulliSwitchExpander");
 
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(10.f, 30.f), module, BernoulliSwitchExpander::EXPAND_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(10.f, 30.f), module, BernoulliSwitchExpander::EXPAND_LIGHT));
     addInput(createInputCentered<MonoPort>(Vec(22.f, 97.f), module, BernoulliSwitchExpander::MODE_CV_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(53.f, 97.f), module, BernoulliSwitchExpander::PROB_CV_PARAM));
     addInput(createInputCentered<MonoPort>(Vec(22.f, 137.f), module, BernoulliSwitchExpander::RISE_CV_INPUT));

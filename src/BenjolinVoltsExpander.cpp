@@ -29,7 +29,7 @@ struct BenjolinVoltsExpanderWidget : BenjolinExpanderWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 265.f), module, BenjolinModule::VOLTS_RANGE_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 299.f), module, BenjolinModule::VOLTS_OFFSET_PARAM));
     addOutput(createOutputCentered<MonoPort>(Vec(22.5f,339.5f), module, BenjolinModule::VOLTS_OUTPUT));
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(6.f, 33.f), module, 0));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(6.f, 33.f), module, 0));
   }
   
   void step() override {
