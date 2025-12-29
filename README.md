@@ -141,7 +141,7 @@ Finally thanks to Ewan Hemingway. Through discussions and studying the Befaco Ev
 
 ## AD/ASR ENVELOPE GENERATOR
 ![AD/ASR Envelope Generator module image](doc/AD_ASR.png)  
-Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope generator with stage gates/triggers, looping capabilities, and precise V/Oct CV control over stage lengths with an extremely wide range of times.
+Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope generator with stage gates/triggers, looping capabilities, and precise V/Oct CV control over stage lengths covering an extremely wide range.
 
 ### Summary of Features
 * Separate trigger and gate inputs allow one envelope generator to support both AD and ASR behaviors simultaneously
