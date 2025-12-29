@@ -141,17 +141,18 @@ Finally thanks to Ewan Hemingway. Through discussions and studying the Befaco Ev
 
 ## AD/ASR ENVELOPE GENERATOR
 ![AD/ASR Envelope Generator module image](doc/AD_ASR.png)  
-Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope generator with looping capabilities and precise V/Oct CV control over stage lengths.
+Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope generator with stage gates/triggers, looping capabilities, and precise V/Oct CV control over stage lengths covering an extremely wide range.
 
 ### Summary of Features
 * Separate trigger and gate inputs allow one envelope generator to support both AD and ASR behaviors simultaneously
-* Wide stage length range: 0.24 msec to 48 min
+* Wide stage length range: 0.24 msec to 48.27 min
 * Stage lengths are precise with accuracy dictated by VCV sample rate
 * V/Oct CV control over stage lengths with attenuverters
 * Independent stage shape controls for Rise and Fall: concave up to linear to concave down
 * Changing a stage shape does not alter the overall time
 * Multiple modes with different retrigger options: retrigger from 0 or current level
 * Configurable Rise, Fall, and Sustain stage outputs indicate different events within the envelope
+* Gate outputs can be used to convert triggers into precicely timed gates or delayed gates
 * Feedback from stage gates can block retrigger behavior and/or force ASR attack to rise to full value
 * Loop options turn the envelope into a V/Oct LFO with CV control to start and stop the oscillation
 * All inputs and outputs are polyphonic with support for audio rates
@@ -183,7 +184,7 @@ The small top left **SPD** (Speed) button sets the range of the time knobs:
 - **Slow** ***(red)***: 0.044 to 181 seconds
 - **Medium** ***(yellow, default)***: 0.0028 to 11.3 seconds
 - **Fast** ***(green)***: 0.00024 to 1.0 seconds
-- **Glacial** ***(purple)***: 0.707 seconds to 48 minutes
+- **Glacial** ***(purple)***: 0.707 seconds to 48.27 minutes
 
 The knob speed can be modulated by the associated CV input with attenuator. Each positive volt of CV doubles the length of the stage. Each negative volt cuts the length in half.
 
@@ -228,7 +229,7 @@ There are four modes to choose from:
 
 AD/ASR Rise stages that start above 0V due to a retrigger are shortened proportionally to where they start. Likewise, ASR Fall stages that start below 10V are also shortened proportionally.
 
-Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is patched to both the Rise and Fall CV inputs, and both attenuverters are set fully counter-clockwise to -100%. The looping frequency can go into audio rates as high as ~2 kHz, or slow LFO rates as low as ~0.0028 Hz (~6 minutes per cycle).
+Looping envelopes can behave like a V/Oct LFO if the V/Oct control voltage is patched to both the Rise and Fall CV inputs, and both attenuverters are set fully counter-clockwise to -100%. The looping frequency can go into audio rates as high as ~2 kHz, or slow LFO rates as low as ~0.0001726 Hz (96.54 minutes per cycle).
 
 #### Light Blue Mode 1 (AD or ASR | Retrigger from current value)
 
@@ -338,6 +339,28 @@ Retrigger and ASR Rise behavior can be modified by patching one or more of the s
 |2|RISE->GATE|Yes|No|No|From 0|Yes|While<br />gate<br />high|From 0|
 |2|RISE->TRIG<br />SUS->TRIG<br />FALL->TRIG|Yes|No|No|No|While<br />gate<br />high|While<br />gate<br />high|No|
 |2|RISE->GATE<br />SUS->TRIG<br />FALL->TRIG|Yes|No|No|No|Yes|While<br />gate<br />high|No|
+
+### Timed gate generator
+
+The Rise gate output can be used to convert triggers into precicely timed gates.
+
+Set the Mode to dark blue mode 2, set the Rise stage output to gate mode, and set the Rise time to the desired gate length. A trigger or gate at the Trig input will generate your gate at the Rise stage output. The Fall time is irrelevant because a trigger received during the fall stage will initiate a new envelope from 0, so the generated gate will always have the correct length.
+
+If a second trigger is received during the rise stage, then the old gate is aborted and a new gate is begun immediately without the gate output going low.
+
+You can prevent triggers from initiating overlapping gates by patching the Rise output to the Trig input.
+
+### Delayed gate generator
+
+The Fall gate output can be used to convert triggers into precicely timed delayed gates.
+
+Set the Mode to light blue mode 2, set the Fall stage output to gate mode, set the Rise time to your desired delay time, and the Fall time to your desired gate length. A trigger or gate at the Trig input will start the delay period, and then after the delay your desired gate will be sent through the Fall stage output.
+
+If a subsequent trigger is received during the delay (rise) or gate (fall) period, then the current delayed gate will be aborted and a new delayed gate will be initiated.
+
+You can prevent subsequent triggers from being received during the delay by setting the Rise stage to gate mode and patching the rise gate to the Trig input.
+
+You can prevent all triggers from being received during the delay or gate by setting the Rise stage to gate mode and patching both the rise gate and fall gate to the Trig input. This guarantees that once a trigger is received, the full gate output will be initiated after the full delay period.
 
 ### Polyphony
 
