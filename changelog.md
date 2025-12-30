@@ -1,4 +1,9 @@
 # Venom Modules Changelog
+## 2.15.? (????-??-??)
+
+### Enhancements
+- Give consistent appearance to all LED lights
+
 ## 2.14.5 (2025-12-16)
 ### Enhancement
 - Multimode Filter
