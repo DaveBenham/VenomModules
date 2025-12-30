@@ -354,7 +354,7 @@ You can prevent triggers from initiating overlapping gates by patching the Rise 
 
 The Fall gate output can be used to convert triggers into precicely timed delayed gates.
 
-Set the Mode to light blue mode 2, set the Fall stage output to gate mode, set the Rise time to your desired delay time, and the Fall time to your desired gate length. A trigger or gate at the Trig input will start the delay period, and then after the delay your desired gate will be sent through the Fall stage output.
+Set the Mode to dark blue mode 2, set the Fall stage output to gate mode, set the Rise time to your desired delay time, and the Fall time to your desired gate length. A trigger or gate at the Trig input will start the delay period, and then after the delay your desired gate will be sent through the Fall stage output.
 
 If a subsequent trigger is received during the delay (rise) or gate (fall) period, then the current delayed gate will be aborted and a new delayed gate will be initiated.
 
