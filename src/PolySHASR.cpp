@@ -95,6 +95,8 @@ struct PolySHASR : VenomModule {
         if (!c || inputs[TRIG_INPUT+c].isConnected()){
           if (!o) {
            trigCnt[c] = inputs[TRIG_INPUT+c].getChannels();
+           if (!c && !trigCnt[c])
+             trigCnt[c] = 1;
           }
           for (int p=0, pi=0; p<trigCnt[c]; p+=4, pi++){
             float_4 trigIn{}, oldState{};
@@ -127,7 +129,7 @@ struct PolySHASR : VenomModule {
             data = inputs[DATA_INPUT+c].getPolyVoltageSimd<float_4>(p);
             if (oversample>1)
               data = inUpSample[c][pi].process(o ? float_4::zero() : data * oversample);
-          } else if (inputs[TRIG_INPUT+c].isConnected()){
+          } else if (!c || inputs[TRIG_INPUT+c].isConnected()){
             float_4 rnd{tempTrig[0]?random::uniform():0.f, tempTrig[1]?random::uniform():0.f, tempTrig[2]?random::uniform():0.f, tempTrig[3]?random::uniform():0.f,};
             data = rnd * scale + offset;
           } else {

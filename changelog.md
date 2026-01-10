@@ -4,6 +4,9 @@
 ### Enhancements
 - Give consistent appearance to all LED lights
 
+### Bug Fixes
+- The Trig button on the Poly Sample & Hold Analog Shift Register was not working unless the top trigger input was patched
+
 ## 2.14.5 (2025-12-16)
 ### Enhancement
 - Multimode Filter
