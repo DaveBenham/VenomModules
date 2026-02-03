@@ -4541,8 +4541,9 @@ XM-OP includes an ADSR (Attack, Decay, Sustain, Release) envelope generator, aud
 
 XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same features, but with the following differences/enhancements:
 - VCO waveform can be sine, triangle, square, or saw rather than being fixed at sine
-- Envelope generator stage shape cross-fades between linear and curved rather having linear vs. exponential VCA response
-  - Rising curves are concave down and falling curves are convcave up instead of exponential rise and fall both being concave up
+- Level VCA response is linear by default, with a context menu option for exponential (the FM-OP default)
+- Envelope generator has a stage shape knob that cross-fades between linear and curved
+  - Rising curves are concave down and falling curves are convcave up
 - Each ADSR stage has an attenuverter for a shared modulation input rather than only having CV control over sustain
   - Attenuated CV values are summed with the base knob values
 - Frequency ratio is specified by separate integer multiplier (numerator) and divisor (denominator) controls rather than a single continuous ratio control
@@ -4556,6 +4557,7 @@ XM-OP is very much inspired by the Bogaudio FM-OP, offering most of the same fea
     - raw modulation input
     - rectified modulation input
     - modulation input offset by 5V
+- Feedback is pre level by default , with a context menu option to use post level feedback (FM-OP always uses post level feedback)
 - Envelope may be normal or inverted when applied to level, modulation depth, and/or feedback depth
 - Level, mod depth, and feedback depth knob values (optionally attenuated by envelope) are summed with independent CV inputs with attenuverters
 - The envelope (normal or inverted) is available as a separate output
@@ -4651,6 +4653,8 @@ DTUNE CV is scaled at 10 cents per volt. The CV can modulate the detune amount b
 ### LEVEL (VCA level) knob and CV input
 The knob establishes the base level of the internal VCA output. It ranges from 0% to 100%.
 
+By default the Level VCA responds linearly. An exponential response is available via the context menu "Exponential level response" option.
+
 See [Level and Depth Modulation](#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### DEPTH (XMOD modulation depth) knob and CV input
@@ -4660,6 +4664,8 @@ See [Level and Depth Modulation](#level-and-depth-modulation) for information on
 
 ### FDBK (feedback modulation depth) knob and CV input
 The knob establishes the depth of the feedback modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
+
+By default the feedback source is the raw internal waveform, before any Level is applied. The context menu "Post level feedback" option uses the internal waveform after the Level has been applied.
 
 See [Level and Depth Modulation](#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 

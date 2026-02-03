@@ -2,7 +2,10 @@
 ## 2.15.? (????-??-??)
 
 ### Enhancements
-- Give consistent appearance to all LED lights
+- Entire plugin
+  - Give consistent appearance to all LED lights
+- XM-OP
+  - Add context menu options for exponential level response and post level feedback so as to better replicate Bogaudio FM-OP sound
 
 ### Bug Fixes
 - The Trig button on the Poly Sample & Hold Analog Shift Register was not working unless the top trigger input was patched
