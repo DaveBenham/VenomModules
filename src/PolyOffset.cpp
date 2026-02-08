@@ -43,6 +43,10 @@ struct PolyOffset : VenomModule {
   
   void setRange(int val) {
     rangeId = val;
+    float customMin = paramQuantities[MIN_PARAM]->getValue(),
+          customMax = paramQuantities[MAX_PARAM]->getValue();
+    ranges[8].offset = customMin;
+    ranges[8].scale = customMax - customMin;
     Range* r = &ranges[val];
     for (int i=0; i<16; i++){
       ParamQuantity *q = paramQuantities[OFFSET_PARAM+i];
@@ -153,8 +157,6 @@ struct PolyOffset : VenomModule {
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
     json_t* val;
-    if ((val = json_object_get(rootJ, "rangeId")))
-      setRange(json_integer_value(val));
     if ((val = json_object_get(rootJ, "quantV2")))
       quant = json_integer_value(val);
     if ((val = json_object_get(rootJ, "quant"))){
@@ -162,6 +164,8 @@ struct PolyOffset : VenomModule {
       if (quant>2)
         quant++;
     }
+    if ((val = json_object_get(rootJ, "rangeId")))
+      setRange(json_integer_value(val));
     if ((val = json_object_get(rootJ, "unit")))
       setUnit(json_integer_value(val));
     if ((val = json_object_get(rootJ, "channels")))
@@ -231,8 +235,6 @@ struct PolyOffsetWidget : VenomWidget {
           editField->setText(minq->getDisplayValueString());
           editField->changeHandler = [=](std::string text) {
             minq->setDisplayValueString(text);
-            module->ranges[8].offset = minq->getValue();
-            module->ranges[8].scale  = maxq->getValue() - minq->getValue();
             module->setRange(8);
           };
           menu->addChild(editField);
@@ -245,8 +247,6 @@ struct PolyOffsetWidget : VenomWidget {
           editField->setText(maxq->getDisplayValueString());
           editField->changeHandler = [=](std::string text) {
             maxq->setDisplayValueString(text);
-            module->ranges[8].offset = minq->getValue();
-            module->ranges[8].scale  = maxq->getValue() - minq->getValue();
             module->setRange(8);
           };
           menu->addChild(editField);
