@@ -706,6 +706,10 @@ struct GlowingSvgSwitch : app::SvgSwitch {
   GlowingSvgSwitch(){
     shadow->opacity = 0.0;
   }
+  void 	draw (const DrawArgs &args) override {
+    fb->oversample = APP->window->pixelRatio<2.0 ? 2.0 : 1.0;
+    app::SvgSwitch::draw(args);
+  }
   void drawLayer(const DrawArgs& args, int layer) override {
     if (layer==1) {
       if (module && !module->isBypassed()) {
