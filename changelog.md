@@ -4,13 +4,13 @@
 ### Enhancements
 - Entire plugin
   - Give consistent appearance to all LED lights
+  - Improve rendering of square switches
 - XM-OP
   - Add context menu options for exponential level response and post level feedback so as to better replicate Bogaudio FM-OP sound
 
 ### Bug Fixes
 - The Trig button on the Poly Sample & Hold Analog Shift Register was not working unless the top trigger input was patched
 - Fixed Poly Offset custom min/max restoration on patch load
-- Improve rendering of square switches
 
 ## 2.14.5 (2025-12-16)
 ### Enhancement
