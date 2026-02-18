@@ -27,7 +27,7 @@ struct MergeSplit : VenomModule {
   };
    
   int outChannels[5]{};
-  std::string outLabels[16]{"Auto/1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
+  std::string outLabels[17]{"Resplit","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"};
   
   void setOutputDescription(int id){
     outputInfos[id]->description = "Channels: "+outLabels[outChannels[id]];
@@ -76,7 +76,7 @@ struct MergeSplit : VenomModule {
     if (mergeChannels != inChannels)
       resplit = false;
     for (int i=0; i<4; i++) {
-      int cnt = resplit ? std::max(inputs[MERGE_INPUT+i].getChannels(),1) : outChannels[i]+1;
+      int cnt = std::max(resplit ? inputs[MERGE_INPUT+i].getChannels() : outChannels[i], 1);
       for (int y=0; y<cnt; y++){
         outputs[SPLIT_OUTPUT+i].setVoltage(activeChannel<inChannels ? inputs[SPLIT_INPUT].getVoltage(activeChannel++) : 0.f, y);
       }
@@ -120,7 +120,7 @@ struct MergeSplitWidget : VenomWidget {
       menu->addChild(new MenuSeparator);
       menu->addChild(createIndexSubmenuItem(
         "Channels",
-        {"Auto/1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
+        {"Resplit","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"},
         [=]() {
           return module->outChannels[portId];
         },
@@ -158,7 +158,7 @@ struct MergeSplitWidget : VenomWidget {
   void appendContextMenu(Menu* menu) override {
     MergeSplit* module = static_cast<MergeSplit*>(this->module);
     menu->addChild(new MenuSeparator);
-    menu->addChild(createMenuItem("Restore automatic split outputs", "",
+    menu->addChild(createMenuItem("Restore resplit mode", "",
       [=]() {
         for (int i=1; i<5; i++) {
           module->outChannels[i]=0;
