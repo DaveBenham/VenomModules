@@ -1,5 +1,10 @@
 # Venom Modules Changelog
-## 2.15.? (????-??-??)
+## 2.15.0 (????-??-??)
+
+### New Modules
+- Merge 4x2
+- Merge Split
+- Split 4x2
 
 ### Enhancements
 - Entire plugin

@@ -215,6 +215,26 @@
       ]
     },
     {
+      "slug": "Merge4x2",
+      "name": "Merge 4x2",
+      "description": "Compact polyphonic merge utility",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "MergeSplit",
+      "name": "Merge Split",
+      "description": "Compact polyphonic merge and split utility",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "Mix4",
       "name": "Mix 4",
       "description": "Compact audio or CV mixer, attenuator, inverter, amplifier, and/or offset",
@@ -572,6 +592,16 @@
       "name": "Sphere To XYZ",
       "description": "Convert spherical coordinates r,theta, phi to cartesian coordinates x, y, z",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#sphere-to-xyz",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "Split4x2",
+      "name": "Split 4x2",
+      "description": "Compact polyphonic split utility",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
       "tags": [
         "Polyphonic",
         "Utility"

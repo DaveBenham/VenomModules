@@ -34,6 +34,8 @@ void init(Plugin* p) {
   p->addModel(modelVenomLinearBeats);
   p->addModel(modelVenomLinearBeatsExpander);
   p->addModel(modelVenomLogic);
+  p->addModel(modelVenomMerge4x2);
+  p->addModel(modelVenomMergeSplit);
   p->addModel(modelVenomMix4);
   p->addModel(modelVenomMix4Stereo);
   p->addModel(modelVenomMixFade);
@@ -66,6 +68,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomShapedVCA);
   p->addModel(modelVenomSlew);
   p->addModel(modelVenomSphereToXYZ);
+  p->addModel(modelVenomSplit4x2);
   p->addModel(modelVenomThru);
   p->addModel(modelVenomVCAMix4);
   p->addModel(modelVenomVCAMix4Stereo);
