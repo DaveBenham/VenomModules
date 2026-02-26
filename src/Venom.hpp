@@ -280,7 +280,7 @@ struct VenomModule : Module {
     }
   }
 
-  void process(const ProcessArgs& args) override {
+  void initializeParams() {
     if (drawn && extProcNeeded){
       for (int i=0; i<getNumParams(); i++){
         ParamExtension* e = &paramExtensions[i];
@@ -295,6 +295,14 @@ struct VenomModule : Module {
       paramsInitialized = true;
       extProcNeeded = false;
     }
+  }  
+
+  void process(const ProcessArgs& args) override {
+    initializeParams();
+  }
+  
+  void processBypass(const ProcessArgs& args) override {
+    initializeParams();
   }
   
   virtual void initialPostDrawnProcess(){}

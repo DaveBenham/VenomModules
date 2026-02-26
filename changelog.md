@@ -16,6 +16,7 @@
 ### Bug Fixes
 - The Trig button on the Poly Sample & Hold Analog Shift Register was not working unless the top trigger input was patched
 - Fixed Poly Offset custom min/max restoration on patch load
+- Restore bypassed module parameter locks and custom defaults on load
 
 ## 2.14.5 (2025-12-16)
 ### Enhancement
