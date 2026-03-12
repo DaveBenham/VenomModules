@@ -507,7 +507,7 @@ struct VenomWidget : ModuleWidget {
     Module* module = model->createModule();
     APP->engine->addModule(module);
     ModuleWidget* modWidget = model->createModuleWidget(module);
-    APP->scene->rack->setModulePosForce( modWidget, Vec( parentModWidget->box.pos.x + (left ? -modWidget->box.size.x : parentModWidget->box.size.x), parentModWidget->box.pos.y));
+    APP->scene->rack->setModulePosForce( modWidget, Vec( parentModWidget->box.pos.x + (left ? 0.f : parentModWidget->box.size.x), parentModWidget->box.pos.y));
     APP->scene->rack->addModule(modWidget);
     history::ModuleAdd* h = new history::ModuleAdd;
     h->name = "create "+model->name;
