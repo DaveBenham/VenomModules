@@ -33,7 +33,7 @@ Venom modules version 2.15.0 for VCV Rack 2 are copyright 2023, 2024, 2025, 2026
 |----|----|----|----|----|
 |![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![SHAPED VCA module image](doc/ShapedVCA.png)|
 
-|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4X2](#split-4x2)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|
+|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4x2](#split-4x2)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|
 |----|----|----|----|----|----|----|
 |![SLEW module image](doc/Slew.png)|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![Split 4x2 module image](doc/Split4x2.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|
 
@@ -1251,7 +1251,7 @@ All outputs are monophonic 0V if LOGIC is bypassed.
 
 [Return to Table Of Contents](#venom)
 
-## MERGE 4X2
+## MERGE 4x2
 ![Merge 4x2 module image](doc/Merge4x2.png)  
 
 ## MERGE SPLIT
@@ -3399,8 +3399,8 @@ All outputs are constant monophonic 0V when Sphere To XYZ is bypassed.
 
 [Return to Table Of Contents](#venom)
 
-## SPLIT 4X2
-![Split 4X2 module image](doc/Split4x2.png)  
+## SPLIT 4x2
+![Split 4x2 module image](doc/Split4x2.png)  
 
 
 ## THRU
