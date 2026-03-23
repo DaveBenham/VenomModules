@@ -3400,7 +3400,7 @@ All outputs are constant monophonic 0V when Sphere To XYZ is bypassed.
 [Return to Table Of Contents](#venom)
 
 ## SPLIT 4X2
-![Split 4X2 module image](doc/Split4X2.png)  
+![Split 4X2 module image](doc/Split4x2.png)  
 
 
 ## THRU
