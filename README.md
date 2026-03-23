@@ -1253,9 +1253,7 @@ All outputs are monophonic 0V if LOGIC is bypassed.
 
 ## MERGE 4x2
 ![Merge 4x2 module image](doc/Merge4x2.png)  
-Merge 4x2 is a compact and versatile polyphonic merge utility. 
-
-It can merge monophonic and/or polyphonic inputs into a polyphonic output.
+Merge 4x2 is a compact and versatile polyphonic merge utility that can combine monophonic and/or polyphonic inputs into a polyphonic output.
 
 There are two independent sections, each capable of merging up to four inputs into one output. If the top output is not patched, then the two sections are merged, thus allowing up to eight inputs to be merged into a single polyphonic output at the bottom output port.
 
