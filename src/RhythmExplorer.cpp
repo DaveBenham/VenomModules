@@ -48,24 +48,6 @@ static const std::vector<std::string> POLY_MODE_LABELS = {
   "Offbeat"
 };
 
-/*
-static const int GATE_LENGTH [14] = { //Assuming 24 PPQN
-  48,
-  24,
-  12,
-  6,
-  3,
-  32,
-  16,
-  8,
-  4,
-  2,
-  72,
-  36,
-  18,
-  9
-};
-*/
 static const int ppqn_div[3]{4,2,1};
 
 static const int GATE_LENGTH [15] = { //Assuming 96 PPQN
@@ -167,6 +149,7 @@ struct RhythmExplorer : VenomModule {
   int ppqn = 0;
   int clockWidth = 0;
   int gateWidth = 0;
+  bool fixedBarDiv = true;
 
   //Non Persistant State
   bool isUni;
@@ -277,12 +260,37 @@ struct RhythmExplorer : VenomModule {
     lightDivider.setDivision(32);
     getSeed();
     initialize();
+    setBarUnit();
   }
   
   void setPPQN(int val) {
     ppqn = val;
     getInputInfo(CLOCK_INPUT)->name = val==2 ? "96 PPQN Clock" : (val ? "48 PPQN Clock" : "24 PPQN Clock");
-  }  
+    setBarUnit();
+  }
+  
+  void setBarUnit(void) {
+    ParamQuantity *q = paramQuantities[BAR_LENGTH_PARAM];
+    PortInfo *i = getInputInfo(BAR_LENGTH_INPUT);
+    if (fixedBarDiv){
+      q->name = "Bar 1/4 Count";
+      i->name = "Bar 1/4 Count CV";
+    }
+    else switch (ppqn){
+      case 0:
+        q->name = "Bar 1/4 Count";
+        i->name = "Bar 1/4 Count CV";
+        break;
+      case 1:
+        q->name = "Bar 1/8 Count";
+        i->name = "Bar 1/8 Count CV";
+        break;
+      case 2:
+        q->name = "Bar 1/16 Count";
+        i->name = "Bar 1/16 Count CV";
+        break;
+    }
+  }
 
   void onReset(const ResetEvent& e) override {
     ParamQuantity* q;
@@ -330,6 +338,7 @@ struct RhythmExplorer : VenomModule {
     json_object_set_new(rootJ, "clockWidth", json_integer(clockWidth));
     json_object_set_new(rootJ, "gateWidth", json_integer(gateWidth));
     json_object_set_new(rootJ, "resetTiming", json_integer(resetTiming));
+    json_object_set_new(rootJ, "fixedBarDiv", json_boolean(fixedBarDiv));
     return rootJ;
   }
 
@@ -357,6 +366,9 @@ struct RhythmExplorer : VenomModule {
     val = json_object_get(rootJ, "resetTiming");
     if (val)
       resetTiming = json_integer_value(val);
+    val = json_object_get(rootJ, "fixedBarDiv");
+    fixedBarDiv = val ? json_is_true(val) : false;
+    setBarUnit();
     reseedRng();
   }
 
@@ -568,7 +580,7 @@ struct RhythmExplorer : VenomModule {
         newPhrase = true;
       }
       else {
-        if (currentPulse % 24 == 0)
+        if (currentPulse % (fixedBarDiv ? 96/ppqn_div[ppqn] : 24) == 0)
           currentCycle++;
         if (currentCycle >= maxBar){
           newBar = true;
@@ -961,6 +973,16 @@ struct RhythmExplorerWidget : VenomWidget {
     menu->addChild(createIndexSubmenuItem("Reset timing", resetLabels,
       [=]() {return module->resetTiming;},
       [=](int i) {module->resetTiming = i;}
+    ));
+    
+    menu->addChild(createBoolMenuItem("Fixed 1/4 bar division", "",
+      [=]() {
+        return module->fixedBarDiv;
+      },
+      [=](bool val) {
+        module->fixedBarDiv = val;
+        module->setBarUnit();
+      }
     ));
 
     VenomWidget::appendContextMenu(menu);
