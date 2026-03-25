@@ -562,6 +562,15 @@
       ]
     },
     {
+      "slug": "REXCV",
+      "name": "Rhythm Explorer CV Expander",
+      "description": "Add three channels of CV outputs for each Rhythm Explorer division",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#rhythm-explorer-cv-expander",
+      "tags": [
+        "Expander"
+      ]
+    },
+    {
       "slug": "ShapedVCA",
       "name": "Shaped VCA",
       "description": "Stereo VCA with a variable response curve, hard/soft clipping, ring modulation, and oversampling",

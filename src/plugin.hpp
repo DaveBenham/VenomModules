@@ -61,6 +61,7 @@ extern Model* modelVenomRecurse;
 extern Model* modelVenomRecurseStereo;
 extern Model* modelVenomReformation;
 extern Model* modelVenomRhythmExplorer;
+extern Model* modelVenomREXCV;
 extern Model* modelVenomShapedVCA;
 extern Model* modelVenomSlew;
 extern Model* modelVenomSphereToXYZ;

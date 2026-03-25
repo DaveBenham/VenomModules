@@ -65,6 +65,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomRecurseStereo);
   p->addModel(modelVenomReformation);
   p->addModel(modelVenomRhythmExplorer);
+  p->addModel(modelVenomREXCV);
   p->addModel(modelVenomShapedVCA);
   p->addModel(modelVenomSlew);
   p->addModel(modelVenomSphereToXYZ);
