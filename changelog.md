@@ -5,6 +5,7 @@
 - Merge 4x2
 - Merge Split
 - Split 4x2
+- Rhythm Explorer CV Expander
 
 ### Enhancements
 - Entire plugin
