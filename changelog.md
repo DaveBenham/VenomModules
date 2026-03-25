@@ -18,6 +18,7 @@
 - Fixed Poly Offset custom min/max restoration on patch load
 - Restore bypassed module parameter locks and custom defaults on load
 - Linear Beats Add left expander option sometimes misplaced the expander
+- Rhythm Explorer bar count now properly defaults to fixed 1/4 divisions with option for old behavior where 48 PPQN uses 1/8 and 96 PPQN uses 1/16 
 
 ## 2.14.5 (2025-12-16)
 ### Enhancement
