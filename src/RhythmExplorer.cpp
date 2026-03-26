@@ -382,8 +382,12 @@ struct RhythmExplorer : VenomModule {
   }
 
   void getSeed(){
-    internalSeed = inputs[SEED_INPUT].isConnected() ? rack::math::clamp(inputs[SEED_INPUT].getVoltage(), 0.f, 10.f) : rack::math::clamp(rack::random::uniform() * 10.f, 1e-19f, 10.f);
-    if (internalSeed < 1e-19f)
+    float minSeed = 1e-19f,
+          maxSeed = 10.f - 1e-6f;
+    internalSeed = rack::math::clamp(inputs[SEED_INPUT].getVoltage(), 0.f, 10.f);
+    if (internalSeed > maxSeed || !inputs[SEED_INPUT].isConnected())
+      internalSeed =  rack::math::clamp(rack::random::uniform() * 10.f, minSeed, maxSeed);
+    if (internalSeed < minSeed)
       internalSeed = 0.f;
     seedArmed = true;
   }
