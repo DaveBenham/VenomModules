@@ -13,13 +13,15 @@
   - Improve rendering of square switches
 - XM-OP
   - Add context menu options for exponential level response and post level feedback so as to better replicate Bogaudio FM-OP sound
+- Rhythm Explorer
+  - External seed of 10 V forces use of internal random seed
 
 ### Bug Fixes
 - The Trig button on the Poly Sample & Hold Analog Shift Register was not working unless the top trigger input was patched
 - Fixed Poly Offset custom min/max restoration on patch load
 - Restore bypassed module parameter locks and custom defaults on load
 - Linear Beats Add left expander option sometimes misplaced the expander
-- Rhythm Explorer bar count now properly defaults to fixed 1/4 divisions with option for old behavior when 48 PPQN uses 1/8 and 96 PPQN uses 1/16. Old patches default to old behavior.
+- Rhythm Explorer bar count now properly defaults to fixed 1/4 divisions with option for old behavior when 48 PPQN used 1/8 and 96 PPQN used 1/16. Old patches default to old behavior.
 
 ## 2.14.5 (2025-12-16)
 ### Enhancement
