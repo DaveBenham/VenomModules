@@ -33,7 +33,7 @@ Venom modules version 2.15.0 for VCV Rack 2 are copyright 2023, 2024, 2025, 2026
 |----|----|----|----|----|----|----|----|
 |![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|
 
-|[RHYTHM EXPLORER](#rhythm-explorer)|[RHYTHM EXPLORER<br />CV EXPANDER](rhythm-explorer-cv-expander)|[SHAPED<br />VCA](#shaped-vca)|[SLEW](#slew)|
+|[RHYTHM EXPLORER](#rhythm-explorer)|[RHYTHM EXPLORER<br />CV EXPANDER](#rhythm-explorer-cv-expander)|[SHAPED<br />VCA](#shaped-vca)|[SLEW](#slew)|
 |----|----|----|----|
 |![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![Rhythm Explorer CV Expander module image](doc/REXCV.png)|![SHAPED VCA module image](doc/ShapedVCA.png)|![SLEW module image](doc/Slew.png)|
 
