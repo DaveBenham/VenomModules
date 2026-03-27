@@ -3097,9 +3097,9 @@ Specifies the minimum voltage for the channel output. The value ranges from -10 
 ### RNDn (Random for channel n) input
 Normally each channel will sample output voltages from the Rhythm Explorer internal random number generator. This is true even if the Rhythm Explorer RAND input has been patched.
 
-The RNDn input lets you override the random number generator with your own voltage values. The input should have 8 polyphonic varying voltage channels so each division has its own voltage to choose from. If the input is monophonic than all divisions will be sampling from the same value. If polyphonic with fewer than 8 channels than constant 0V will be used for all missing channels.
+The RNDn input lets you override the random number generator with your own voltage values. The input should have 8 polyphonic varying voltage channels so each division has its own voltage to choose from. If the input is monophonic than all divisions will be sampling from the same value. If the input is polyphonic with fewer than 8 channels than constant 0V will be used for all missing channels.
 
-Typically a polyphonic oscillator with its reset or hard sync input patched to the Rhythm Explorer Phrase Start output so that the oscillator provides repeatable patterns. Ideally each channel of the oscillator should be running at a different rate so each division gets a different voltage.
+Typically the source is a polyphonic oscillator with its reset or hard sync input patched to the Rhythm Explorer Phrase Start output so that the oscillator provides repeatable patterns. Ideally each channel of the oscillator should be running at a different rate so each division gets a different voltage.
 
 The RNG and OFF knobs are ignored if the RNDn input is patched, meaning the input value is used directly, without any scaling or offset.
 
