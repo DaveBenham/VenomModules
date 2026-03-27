@@ -2823,8 +2823,6 @@ Pressing the DICE button or sending a CV trigger to the DICE input causes the se
 
 Typically the seed value is sampled from an internal RNG. Alternatively, you can provide your own unipolar CV seed value at the SEED input. The input is clamped to 0-10V. A sample and hold is used to save the seed value at the time of the dice action.
 
-A user supplied value of 10V forces Rhythm Explorer to use the internally generated seed value instead.
-
 Wherever the seed value comes from, the sampled value is continuously sent to the SEED output.
 
 The current seed value is preserved across sessions, and is saved with each patch and preset.
