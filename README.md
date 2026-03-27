@@ -1259,7 +1259,7 @@ There are two independent sections, each capable of merging up to four inputs in
 
 Input ports should be patched starting at the top and working down within a section. Unused input ports below the last patched port are ignored. Unused ports above the last port are treated as a single channel of constant 0V.
 
-At most 16 channels can be merged, starting at the top, and working down. A glowing red LED indicates an input with channels that could not be merged.
+At most 16 channels can be merged, starting at the top, and working down. A glowing red LED indicates a polyphonic input with channels that could not be merged.
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
@@ -1270,6 +1270,24 @@ All outputs are monophonic 0V if Merge 4x2 is bypassed.
 
 ## MERGE SPLIT
 ![Merge Split module image](doc/MergeSplit.png)  
+Merge Split is a compact and versatile polyphonic utility that can merge up to 4 monophonic or polyphonic inputs into one polyphonic output, and also split a single polyphonic input into any combination of monophonic and polyphonic outputs.
+
+The top merge section can merge up to 16 channels. A glowing red LED next to an input port indicates a polyphonic input that has channels that could not be merged.
+
+If the polyphonic input in the bottom split section contains the same number of channels found across all inputs in the merge section, then the split output polyphonic channel counts will match the merge inputs. The LED between the merge and split sections will glow yellow to indicate a successful resplit.
+
+If the number of channels at the split input does not match the merge input channel count, then by default each split output will be monophonic.
+
+You can override the channel count for each split output via a port context menu. Setting any split output port to a specific channel count will disable automatic resplitting.
+
+There is a module context menu option to restore resplit mode for all outputs.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are monophonic 0V if Merge Split is bypassed.
 
 ## MIX 4
 ![Mix 4 module image](doc/Mix4.png)  
@@ -3417,7 +3435,20 @@ All outputs are constant monophonic 0V when Sphere To XYZ is bypassed.
 
 ## SPLIT 4x2
 ![Split 4x2 module image](doc/Split4x2.png)  
+Split 4x2 is a compact and versatile polyphonic split utility that can separate one or two polyphonic inputs into multiple monophonic or polyphonic outputs.
 
+There are two independent sections, each capable of splitting one input into four outputs. If the bottom input is not patched, then the two sections are merged, thus allowing the top input to be split into up to eight outputs.
+
+By default all outputs are monophonic. Each output port has its own context menu option where you can specify any number of output channels between 1 and 16.
+
+A glowing red LED next to an input port indicates there is at least one polyphonic input channel that could not be split into one of the outputs.
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are monophonic 0V if Split 4x2 is bypassed.
 
 ## THRU
 ![THRU module image](doc/Thru.png)  
