@@ -503,7 +503,7 @@ struct VenomWidget : ModuleWidget {
     Widget::step();
   }
   
-  void addExpander( Model* model, ModuleWidget* parentModWidget, bool left = false ) {
+  Module*  addExpander( Model* model, ModuleWidget* parentModWidget, bool left = false ) {
     Module* module = model->createModule();
     APP->engine->addModule(module);
     ModuleWidget* modWidget = model->createModuleWidget(module);
@@ -513,6 +513,7 @@ struct VenomWidget : ModuleWidget {
     h->name = "create "+model->name;
     h->setModule(modWidget);
     APP->history->push(h);
+    return module;
   }  
 
 };

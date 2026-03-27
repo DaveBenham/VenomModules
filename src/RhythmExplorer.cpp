@@ -458,19 +458,32 @@ struct RhythmExplorer : VenomModule {
 
   void process(const ProcessArgs& args) override {
     Module* expanderCandidate = getRightExpander().module;
-    Module* expander = expanderCandidate 
-                    && !expanderCandidate->isBypassed() 
-                    && expanderCandidate->model == modelVenomREXCV 
-                     ? expanderCandidate 
-                     : NULL;
+    Module* rightExpander = expanderCandidate
+                         && !expanderCandidate->isBypassed()
+                         && expanderCandidate->model == modelVenomREXCV
+                         && !expanderCandidate->params[6].getValue()
+                          ? expanderCandidate
+                          : NULL;
+    expanderCandidate = getLeftExpander().module;
+    Module* leftExpander = expanderCandidate
+                        && !expanderCandidate->isBypassed()
+                        && expanderCandidate->model == modelVenomREXCV
+                        && expanderCandidate->params[6].getValue()
+                         ? expanderCandidate
+                         : NULL;
 
-
-    float cv1Range = expander ? expander->params[0].getValue()*2.32830629e-10f : 1.f,
-          cv1Offset = expander ? expander->params[1].getValue() : 0.f,
-          cv2Range = expander ? expander->params[2].getValue()*2.32830629e-10f : 1.f,
-          cv2Offset = expander ? expander->params[3].getValue() : 0.f,
-          cv3Range = expander ? expander->params[4].getValue()*2.32830629e-10f : 1.f,
-          cv3Offset = expander ? expander->params[5].getValue() : 0.f;
+    float rightCv1Range = rightExpander ? rightExpander->params[0].getValue()*2.32830629e-10f : 1.f,
+          rightCv1Offset = rightExpander ? rightExpander->params[1].getValue() : 0.f,
+          rightCv2Range = rightExpander ? rightExpander->params[2].getValue()*2.32830629e-10f : 1.f,
+          rightCv2Offset = rightExpander ? rightExpander->params[3].getValue() : 0.f,
+          rightCv3Range = rightExpander ? rightExpander->params[4].getValue()*2.32830629e-10f : 1.f,
+          rightCv3Offset = rightExpander ? rightExpander->params[5].getValue() : 0.f,
+          leftCv1Range = leftExpander ? leftExpander->params[0].getValue()*2.32830629e-10f : 1.f,
+          leftCv1Offset = leftExpander ? leftExpander->params[1].getValue() : 0.f,
+          leftCv2Range = leftExpander ? leftExpander->params[2].getValue()*2.32830629e-10f : 1.f,
+          leftCv2Offset = leftExpander ? leftExpander->params[3].getValue() : 0.f,
+          leftCv3Range = leftExpander ? leftExpander->params[4].getValue()*2.32830629e-10f : 1.f,
+          leftCv3Offset = leftExpander ? leftExpander->params[5].getValue() : 0.f;
 
     // Density polarity
     if ((params[POLAR_PARAM].getValue()==0) != isUni){
@@ -689,10 +702,14 @@ struct RhythmExplorer : VenomModule {
             0.f, 10.f
           );
 
-          float cv[3];
-          if (expander)
+          float leftCv[3],
+                rightCv[3];
+          if (leftExpander)
             for (int c=0; c<3; c++)
-              cv[c] = (rng() >> 32);
+              leftCv[c] = (rng() >> 32);
+          if (rightExpander)
+            for (int c=0; c<3; c++)
+              rightCv[c] = (rng() >> 32);
 
           if (rndFloat < threshold) {
             if ( !params[MUTE_CHANNEL_PARAM + si].getValue() && !params[MUTE_POLY_PARAM].getValue() && (channelMode == ALL_MODE || (channelMode == LINEAR_MODE && !linearChannelShadow) || (channelMode == OFFBEAT_MODE && !offbeatShadow))){
@@ -701,10 +718,15 @@ struct RhythmExplorer : VenomModule {
               outputs[GATE_POLY_OUTPUT].setVoltage(10.f, si);
               lights[DENSITY_LIGHT + si].setBrightness(1.f);
               densityLightOn[si] = true;
-              if (expander) {
-                expander->outputs[0+si].setVoltage(expander->inputs[0].getNormalPolyVoltage(cv[0]*cv1Range + cv1Offset, si));
-                expander->outputs[8+si].setVoltage(expander->inputs[1].getNormalPolyVoltage(cv[1]*cv2Range + cv2Offset, si));
-                expander->outputs[16+si].setVoltage(expander->inputs[2].getNormalPolyVoltage(cv[2]*cv3Range + cv3Offset, si));
+              if (leftExpander) {
+                leftExpander->outputs[0+si].setVoltage(leftExpander->inputs[0].getNormalPolyVoltage(leftCv[0]*leftCv1Range + leftCv1Offset, si));
+                leftExpander->outputs[8+si].setVoltage(leftExpander->inputs[1].getNormalPolyVoltage(leftCv[1]*leftCv2Range + leftCv2Offset, si));
+                leftExpander->outputs[16+si].setVoltage(leftExpander->inputs[2].getNormalPolyVoltage(leftCv[2]*leftCv3Range + leftCv3Offset, si));
+              }
+              if (rightExpander) {
+                rightExpander->outputs[0+si].setVoltage(rightExpander->inputs[0].getNormalPolyVoltage(rightCv[0]*rightCv1Range + rightCv1Offset, si));
+                rightExpander->outputs[8+si].setVoltage(rightExpander->inputs[1].getNormalPolyVoltage(rightCv[1]*rightCv2Range + rightCv2Offset, si));
+                rightExpander->outputs[16+si].setVoltage(rightExpander->inputs[2].getNormalPolyVoltage(rightCv[2]*rightCv3Range + rightCv3Offset, si));
               }
             }
             if (!params[MUTE_CHANNEL_PARAM + si].getValue() && !params[MUTE_POLY_PARAM].getValue() && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
@@ -1015,10 +1037,15 @@ struct RhythmExplorerWidget : VenomWidget {
     ));
 
     Module* expander = module->rightExpander.module;
-    if (expander && expander->model == modelVenomREXCV)
-      menu->addChild(createMenuLabel("Rhythm Explorer CV expander connected"));
+    if (expander && expander->model == modelVenomREXCV && !expander->params[6].getValue())
+      menu->addChild(createMenuLabel("Right Rhythm Explorer CV expander connected"));
     else
-      menu->addChild(createMenuItem("Add Rhythm Explorer CV expander", "", [this](){addExpander(modelVenomREXCV,this);}));
+      menu->addChild(createMenuItem("Add right Rhythm Explorer CV expander", "", [this](){addExpander(modelVenomREXCV,this);}));
+    expander = module->leftExpander.module;
+    if (expander && expander->model == modelVenomREXCV && expander->params[6].getValue())
+      menu->addChild(createMenuLabel("Left Rhythm Explorer CV expander connected"));
+    else
+      menu->addChild(createMenuItem("Add left Rhythm Explorer CV expander", "", [this](){addExpander(modelVenomREXCV,this,true)->params[6].setValue(1);}));
 
     VenomWidget::appendContextMenu(menu);
   }

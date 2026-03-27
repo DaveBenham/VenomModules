@@ -564,7 +564,7 @@
     {
       "slug": "REXCV",
       "name": "Rhythm Explorer CV Expander",
-      "description": "Add three channels of CV outputs for each Rhythm Explorer division",
+      "description": "Add three channels of CV output for each division of the parent Rhythm Explorer",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#rhythm-explorer-cv-expander",
       "tags": [
         "Expander"
