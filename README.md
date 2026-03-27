@@ -3079,9 +3079,17 @@ All outputs are monophonic 0V when the module is bypassed.
 
 ## RHYTHM EXPLORER CV EXPANDER
 ![Rhythm Explorer CV Expander module image](doc/REXCV.png)  
-Adds three channels of CV outputs for each division of the parent Rhythm Explorer.
+Adds three channels of stepped CV outputs for each division of the parent Rhythm Explorer. All three channels for a division are updated each time the division fires. The Rhythm Explorer module supports one expander on either side, so each division can have as many as 6 channels of CV.
 
-This expander must be placed to the immediate right of the parent Rhythm Expander. The LED in the upper left glows yellow when the expander is successfully connected.
+### Unlabled direction button
+
+### RNGn (Range for channel n) knob
+
+### OFFn (Offset for channel n) knob
+
+### RNDn (Random for channel n) input
+
+### CVn (CV for channel n) outputs
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
