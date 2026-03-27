@@ -2823,6 +2823,8 @@ Pressing the DICE button or sending a CV trigger to the DICE input causes the se
 
 Typically the seed value is sampled from an internal RNG. Alternatively, you can provide your own unipolar CV seed value at the SEED input. The input is clamped to 0-10V. A sample and hold is used to save the seed value at the time of the dice action.
 
+A user supplied value of 10V forces Rhythm Explorer to use the internally generated seed value instead.
+
 Wherever the seed value comes from, the sampled value is continuously sent to the SEED output.
 
 The current seed value is preserved across sessions, and is saved with each patch and preset.
@@ -2837,7 +2839,7 @@ Note that the internal RNG will never generate a 0V seed value.
 
 ### RAND
 
-Normally the patterns are established by an internal RNG that has been seeded with the sampled seed value. Alternatively, any varying CV can be patched into the RAND input to override the internal RNG. Each division will sample the RAND signal at the appropriate time to establish the next "random" value to compare against the division slider threshold. Note that the seed value has no effect when using an external RAND source.
+Normally the patterns are established by an internal RNG that has been seeded with the sampled seed value. Alternatively, any varying unipolar CV between 0-10V can be patched into the RAND input to override the internal RNG. Each division will sample the RAND signal at the appropriate time to establish the next "random" value to compare against the division slider threshold. Note that the seed value has no effect when using an external RAND source.
 
 If the RAND input is monophonic, then all divisions will sample the same RAND input. But if you provide a polyphonic input with 8 channels, then each division will get its own "random" input. Note that if you patch a polyphonic input with fewer than 8 channels, then the missing channels will get constant 0V.
 
