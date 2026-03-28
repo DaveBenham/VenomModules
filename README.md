@@ -6,7 +6,7 @@ Venom modules version 2.15.0 for VCV Rack 2 are copyright 2023, 2024, 2025, 2026
 [Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Venom Expander Modules](#venom-expander-modules)  
-[Anti-aliasing via oversampling](#anti-ahttps://youtu.be/JmPvRy2DljIliasing-via-oversampling)  
+[Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
 [Acknowledgments](#acknowledgments)  
 
 |[AD/ASR<br />ENVELOPE<br />GENERATOR](#adasr-envelope-generator)|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
