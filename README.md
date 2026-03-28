@@ -6,7 +6,7 @@ Venom modules version 2.15.0 for VCV Rack 2 are copyright 2023, 2024, 2025, 2026
 [Custom Names](#custom-names)  
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Venom Expander Modules](#venom-expander-modules)  
-[Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
+[Anti-aliasing via oversampling](#anti-ahttps://youtu.be/JmPvRy2DljIliasing-via-oversampling)  
 [Acknowledgments](#acknowledgments)  
 
 |[AD/ASR<br />ENVELOPE<br />GENERATOR](#adasr-envelope-generator)|[AUXILLIARY<br />CLONE<br />EXPANDER](#auxilliary-clone-expander)|[BAY MODULES](#bay-modules)|[BENJOLIN<br />OSCILLATOR](#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](#benjolin-volts-expander)|
@@ -2954,7 +2954,7 @@ The mode can influence whether a given beat will fire. Pressing the square butto
 - OFF - Offbeat mode, meaning that the beat will be blocked if one of the divisions to the left coincides with this division's beat, regardless whether the left division actually fires or not. This is a special case of linear drumming. For example, if division 1 is 1/4 note, and division 2 is 1/8 note with OFF mode, then the 1/8 will never fire with the 1/4 beats - it will fire only on the "and" of each beat.
 - --- Global default, meaning the division will inherit the mode that is specified at the global level.
 - ALL - RESET (dashed square bracket) - Same as ALL, except the linear and offbeat computations are reset such that divisions to the left do not effect linear or offbeat divisions to the right.
-- ALL - NEW (solid square bracket) - Same as ALL - RESET, except an additional channel is added to the OR, XOR ODD, and XOR 1 outputs, and this division and those to the right are assigned to the new channel.
+- ALL - NEW (solid square bracket) - Same as ALL - RESET, except an additional polyphonic channel is added to the OR, XOR ODD, and XOR 1 outputs, and this division and those to the right are assigned to the new channel.
 
 The mode can be overridden by division Mode CV.
 
@@ -3069,7 +3069,58 @@ These outputs are normally monophonic, combining the beats of all 8 divisions. B
 
 There is a Vermona randomRHYTHM preset available that configures the Rhythm Explorer to make it easy to get a flavor of what it would be like to actually use the Vermona hardware. The Phrase is set to 1 and Bar to 4, like the Vermona 4/4 time. It configures the divisions as 1/4, 1/8, 1/16, 1/4T, 1/4, 1/8, 1/16, 1/4T. All divisions are assigned mode ALL except division 5 is assigned ALL - NEW. It also sets the Global Mode to Offset so the OR output will behave like the Vermona. In this way there are effectively two rhythm generators configured like the Vermona, exept they both share a common clock, dice, and reset. The OR output is polyphonic - an external split module is needed to separate the OR output into separate outputs for each rhythm generator. 
 
-### Standard Venom Context Menus
+### Context menu options
+
+#### Clock input PPQN
+Specifies the number of incoming clock Pulses Per Quarter Note
+- 24 PPQN
+- 48 PPQN
+- 96 PPQN
+
+#### Clock output width
+Specifies the width of each division clock pulse
+- Input clock pulse - matches the width of the driving clock pulse
+- 50% - one half the division width
+
+#### Gate output width
+Specifies the width of each division gate pulse
+- Input clock pulse - matches the width of the driving clock pulse
+- 50% - one half the division width
+- 100% - full division width, meaning consecutive gates are tied together
+
+#### Reset timing
+Specifies when reset actions are taken. Resets are delayed until the start of the next occurrence of the selected division
+- Input clock pulse
+- Bar
+- 1/2
+- 1/4
+- 1/8
+- 1/16
+- 1/32
+- 1/2 Triplet
+- 1/4 Triplet
+- 1/8 Triplet
+- 1/16 Triplet
+- 1/32 Triplet
+- Dotted 1/2
+- Dotted 1/4
+- Dotted 1/8
+- Dotted 1/16
+- Dotted 1/32
+
+#### Fixed 1/4 bar division
+This should normally be enabled so that the Bar Count uses 1/4 divisions regardless what PPQN clock is used. 
+
+If disabled then Rhythm Explorer reverts to bugged Bar count behavior that was introduced in version 2.4.0 in 2023 and not fixed until version 2.15 in 2026.
+- 48 PPQN clocks cause the Bar Count to use 1/8 divisions
+- 96 PPQN clocks cause the Bar Count to use 1/16 divisions
+
+Patches that were created during the bugged period default to disabling the fix so the patches preserve their old behavior.
+
+#### Add Rhythm Explorer CV Expander
+Adds a [Rhythm Explorer CV Expander](#rhythm-explorer-cv-expander) to either the left or right of the Rhythm Explorer. Each expander provides three channels of randomly generated stepped CV for each division. The randomly generated CV repeats in a pattern the same way as the Rhythm Explorer division gates. Up to two expanders can be added, one on either side, for a total of 6 CV channels per division.
+
+#### Standard Venom Context Menus
 [Venom Themes](#themes) are available via standard Venom context menus. But Rhythm Explorer has its own design for limited parameter locking, so the standard parameter locking menus are not available. Neither are custom default options available for parameters.
 
 ### Bypass
@@ -3079,7 +3130,7 @@ All outputs are monophonic 0V when the module is bypassed.
 
 ## RHYTHM EXPLORER CV EXPANDER
 ![Rhythm Explorer CV Expander module image](doc/REXCV.png)  
-Adds three channels of stepped CV output for each division of the parent Rhythm Explorer. All three channels for a division are updated each time the division fires. The Rhythm Explorer module supports one expander on either side, so each division can have as many as 6 channels of CV.
+Adds three channels of stepped CV output for each division of the parent Rhythm Explorer. All three channels for a division are updated each time the division fires, and the randomly generated CV repeats in a pattern the same way as the Rhythm Explorer division gates. The Rhythm Explorer module supports one expander on either side, so each division can have as many as 6 channels of CV.
 
 ### Unlabled direction button
 Determines which direction the expander looks for the parent Rhythm Explorer
