@@ -4,8 +4,9 @@
 ### New Modules
 - Merge 4x2
 - Merge Split
-- Split 4x2
+- Octaver
 - Rhythm Explorer CV Expander
+- Split 4x2
 
 ### Enhancements
 - Entire plugin
