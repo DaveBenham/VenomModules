@@ -303,6 +303,7 @@ struct VenomModule : Module {
   
   void processBypass(const ProcessArgs& args) override {
     initializeParams();
+    Module::processBypass(args);
   }
   
   virtual void initialPostDrawnProcess(){}

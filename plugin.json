@@ -411,6 +411,16 @@
       ]
     },
     {
+      "slug": "Octaver",
+      "name": "Octaver",
+      "description": "Old school octaver effect",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#octaver",
+      "tags": [
+        "Effect",
+        "Polyphonic"
+      ]
+    },
+    {
       "slug": "Pan3D",
       "name": "Pan 3D",
       "description": "Pan 1 input to 8 outputs using X, Y, and Z axes",

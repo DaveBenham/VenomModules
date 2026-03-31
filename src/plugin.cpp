@@ -52,6 +52,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomOscillator);
   p->addModel(modelVenomNORS_IQ);
   p->addModel(modelVenomNORSIQChord2Scale);
+  p->addModel(modelVenomOctaver);
   p->addModel(modelVenomPan3D);
   p->addModel(modelVenomPolyClone);
   p->addModel(modelVenomPolyFade);

@@ -48,6 +48,7 @@ extern Model* modelVenomSVF;
 extern Model* modelVenomOscillator;
 extern Model* modelVenomNORS_IQ;
 extern Model* modelVenomNORSIQChord2Scale;
+extern Model* modelVenomOctaver;
 extern Model* modelVenomPan3D;
 extern Model* modelVenomPolyClone;
 extern Model* modelVenomPolyFade;
