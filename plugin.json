@@ -413,7 +413,7 @@
     {
       "slug": "Octaver",
       "name": "Octaver",
-      "description": "Old school octaver effect",
+      "description": "An old school octave effect similar to the Pearl OC-7 Octaver pedal, with the addition of tone and drive controls as well as CV control",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#octaver",
       "tags": [
         "Effect",

@@ -82,27 +82,27 @@ struct Octaver : VenomModule {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
     configParam(UP1_PARAM, 0.f, 1.f, 0.f, "Octave +1 Mix", "%", 0.f, 100.f);
-    configParam(UP1_CV_PARAM, 0.f, 0.1f, 0.f, "Octave +1 CV", "%", 0.f, 1000.f);
+    configParam(UP1_CV_PARAM, -0.1f, 0.1f, 0.f, "Octave +1 CV", "%", 0.f, 1000.f);
     configInput(UP1_CV_INPUT, "Octave +1 CV");
 
     configParam(DRY_PARAM, 0.f, 1.f, 0.f, "Dry Mix", "%", 0.f, 100.f);
-    configParam(DRY_CV_PARAM, 0.f, 0.1f, 0.f, "Dry CV", "%", 0.f, 1000.f);
+    configParam(DRY_CV_PARAM, -0.1f, 0.1f, 0.f, "Dry CV", "%", 0.f, 1000.f);
     configInput(DRY_CV_INPUT, "Dry CV");
 
     configParam(DOWN1_PARAM, 0.f, 1.f, 0.f, "Octave -1 Mix", "%", 0.f, 100.f);
-    configParam(DOWN1_CV_PARAM, 0.f, 0.1f, 0.f, "Octave -1 CV", "%", 0.f, 1000.f);
+    configParam(DOWN1_CV_PARAM, -0.1f, 0.1f, 0.f, "Octave -1 CV", "%", 0.f, 1000.f);
     configInput(DOWN1_CV_INPUT, "Octave -1 CV");
 
     configParam(DOWN2_PARAM, 0.f, 1.f, 0.f, "Octave -2 Mix", "%", 0.f, 100.f);
-    configParam(DOWN2_CV_PARAM, 0.f, 0.1f, 0.f, "Octave -2 CV", "%", 0.f, 1000.f);
+    configParam(DOWN2_CV_PARAM, -0.1f, 0.1f, 0.f, "Octave -2 CV", "%", 0.f, 1000.f);
     configInput(DOWN2_CV_INPUT, "Octave -2 CV");
     
     configParam(TONE_PARAM, -3.f, 5.f, 0.f, "Tone", " Hz", 2.f, dsp::FREQ_C4);
-    configParam(TONE_CV_PARAM, 0.f, 1.f, 0.f, "Tone CV", "%", 0.f, 100.f);
+    configParam(TONE_CV_PARAM, -1.f, 1.f, 0., "Tone CV", "%", 0.f, 100.f);
     configInput(TONE_CV_INPUT, "Tone CV");
 
     configParam(DRIVE_PARAM, 0.f, 5.f, 1.f, "Drive", "");
-    configParam(DRIVE_CV_PARAM, 0.f, 1.f, 0.f, "Drive CV", "%", 0.f, 100.f);
+    configParam(DRIVE_CV_PARAM, -1.f, 1.f, 0.f, "Drive CV", "%", 0.f, 100.f);
     configInput(DRIVE_CV_INPUT, "Drive CV");
 
     configInput(SIGNAL_INPUT, "Signal");
