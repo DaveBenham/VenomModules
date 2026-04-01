@@ -2004,7 +2004,9 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 
 ## OCTAVER
 ![Octaver module image](doc/Octaver.png)  
-An old school octave effect similar to the Pearl OC-7 Octaver effects pedal, with the addition of tone and drive controls as well as CV control over all parameters.
+An old school analog style octave effect similar to the Pearl OC-7 Octaver effects pedal, with the addition of tone and drive controls as well as CV control over all parameters.
+
+
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
