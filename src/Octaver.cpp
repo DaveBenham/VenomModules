@@ -22,6 +22,7 @@ struct Octaver : VenomModule {
     DOWN2_CV_PARAM,
     TONE_CV_PARAM,
     DRIVE_CV_PARAM,
+    OVER_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -48,10 +49,6 @@ struct Octaver : VenomModule {
           down2State[4]{-50.f,-50.f,-50.f,-50.f},
           level[4]{},
           freqOct{1.f,0.f,-1.f,-2.f};
-  #define UP1 0
-  #define DRY 1
-  #define DN1 2
-  #define DN2 3
   
 
   OversampleFilter_4 upSample[4]{},
@@ -60,18 +57,21 @@ struct Octaver : VenomModule {
   DCBlockFilter_4 inDcBlock[4]{},
                   up1DcBlock[4]{};
   
-  double preVcf[4][16]{},
-         up1Vcf[4][16]{},
-         down1Vcf[4][16]{},
-         down2Vcf[4][16]{};
+  float_4 vcf[3][4][4]{}; // [octave][mode][simIndex]
+
+  #define UP1 0
+  #define DN1 1
+  #define DN2 2
+
   #define LOW   0
   #define HIGH  1
   #define BAND  2
   #define NOTCH 3
   
-  const double q = 1. / pow(2., 0.9);
+  const float q = 1.f / pow(2.f, 0.9f);
 
-  int oversample = 2;
+  int oversample = 0;
+  int overVals[3]{2,4,8};
   float sampleRate = 0.f,
         maxFreq = 0.f,
         maxRise = 0.f,
@@ -104,13 +104,14 @@ struct Octaver : VenomModule {
     configParam(DRIVE_PARAM, 0.f, 5.f, 1.f, "Drive", "");
     configParam(DRIVE_CV_PARAM, -1.f, 1.f, 0.f, "Drive CV", "%", 0.f, 100.f);
     configInput(DRIVE_CV_INPUT, "Drive CV");
+    
+    configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 2.f, 1.f, "Oversample", {"x2", "x4", "x8"});
 
     configInput(SIGNAL_INPUT, "Signal");
     configOutput(SIGNAL_OUTPUT, "Signal");
 
     configBypass(SIGNAL_INPUT, SIGNAL_OUTPUT);
 
-    setOversample();
   }
   
   void setOversample() override {
@@ -122,6 +123,11 @@ struct Octaver : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+    if (oversample != overVals[static_cast<int>(params[OVER_PARAM].getValue())]){
+      oversample = overVals[static_cast<int>(params[OVER_PARAM].getValue())];
+      setOversample();
+      sampleRate = 0.f;
+    }
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
       for (int i=0; i<4; i++) {
@@ -145,14 +151,18 @@ struct Octaver : VenomModule {
       float_4 in = inputs[SIGNAL_INPUT].getPolyVoltage(c) * oversample,
               out{},
               inAmt = clamp(params[DRY_PARAM].getValue() + params[DRY_CV_PARAM].getValue() * inputs[DRY_CV_INPUT].getPolyVoltageSimd<float_4>(c)),
-              up1Amt = clamp(params[UP1_PARAM].getValue() + params[UP1_CV_PARAM].getValue() * inputs[UP1_CV_INPUT].getPolyVoltageSimd<float_4>(c))/10.f,
-              down1Amt = clamp(params[DOWN1_PARAM].getValue() + params[DOWN1_CV_PARAM].getValue() * inputs[DOWN1_CV_INPUT].getPolyVoltageSimd<float_4>(c))/10.f,
-              down2Amt = clamp(params[DOWN2_PARAM].getValue() + params[DOWN2_CV_PARAM].getValue() * inputs[DOWN2_CV_INPUT].getPolyVoltageSimd<float_4>(c))/10.f,
               drive = clamp(params[DRIVE_PARAM].getValue() + params[DRIVE_CV_PARAM].getValue() * inputs[DRIVE_CV_INPUT].getPolyVoltageSimd<float_4>(c), 0.f, 10.f);
+      float_4 amt[3]{};
+      amt[UP1] = clamp(params[UP1_PARAM].getValue() + params[UP1_CV_PARAM].getValue() * inputs[UP1_CV_INPUT].getPolyVoltageSimd<float_4>(c))/10.f;
+      amt[DN1] = clamp(params[DOWN1_PARAM].getValue() + params[DOWN1_CV_PARAM].getValue() * inputs[DOWN1_CV_INPUT].getPolyVoltageSimd<float_4>(c))/10.f;
+      amt[DN2] = clamp(params[DOWN2_PARAM].getValue() + params[DOWN2_CV_PARAM].getValue() * inputs[DOWN2_CV_INPUT].getPolyVoltageSimd<float_4>(c))/10.f;
 
-      float_4 freq[4]{};
-      for (int i=0; i<4; i++){
-        freq[i] = pow(2.f, params[TONE_PARAM].getValue() + params[TONE_CV_PARAM].getValue() * inputs[TONE_CV_INPUT].getVoltage(c+i) + freqOct) * dsp::FREQ_C4;
+      float_4 freq[3]{};
+      freq[UP1] = params[TONE_PARAM].getValue() + params[TONE_CV_PARAM].getValue() * inputs[TONE_CV_INPUT].getPolyVoltageSimd<float_4>(c);
+      freq[DN1] = pow(2.f, freq[UP1]-1.f) * dsp::FREQ_C4;
+      freq[DN2] = pow(2.f, freq[UP1]-2.f) * dsp::FREQ_C4;
+      freq[UP1] = pow(2.f, freq[UP1]+1.f) * dsp::FREQ_C4;
+      for (int i=0; i<3; i++){
         freq[i] = ifelse(freq[i]>maxFreq, maxFreq, freq[i]);
         freq[i] = 2.f * sin(sampleTimePi * freq[i]);
       }
@@ -160,54 +170,29 @@ struct Octaver : VenomModule {
       for (int o=0; o<oversample; o++) {
         in = upSample[s].process(o ? 0.f : in);
         in = inDcBlock[s].process(in);
-        float_4 up1 = abs(in) * 2.f;
-        float_4 diff = up1 - level[s];
+        float_4 oct[3]{};
+        oct[UP1] = abs(in) * 2.f;
+        float_4 diff = oct[UP1] - level[s];
         diff = ifelse( diff > maxRise, maxRise, diff);
         diff = ifelse (diff < maxFall, maxFall, diff);
         level[s] += diff;
-        up1 = up1DcBlock[s].process(up1) * 10.f;
+        oct[UP1] = up1DcBlock[s].process(oct[UP1]) * 10.f;
         float_4 newInState = ifelse( in>0.f, 1.f, 0.f),
                 newDown1State = ifelse((newInState>0.f) & (newInState!=inState[s]), down1State[s]*-1.f, down1State[s]);
         down2State[s] = ifelse((newDown1State>0.f) & (newDown1State!=down1State[s]), down2State[s]*-1.f, down2State[s]);
         down1State[s] = newDown1State;
         inState[s] = newInState;
-        float_4 down1 = down1State[s] * level[s],
-                down2 = down2State[s] * level[s];
+        oct[DN1] = down1State[s] * level[s];
+        oct[DN2] = down2State[s] * level[s];
+        out = in * inAmt;
 
-        float_4 up1Bp{},
-                down1Bp{},
-                down2Bp{};
-        for (int i=0; i<4; i++) {
-          int c2 = c+i;
-          up1Vcf[NOTCH][c2] = q * up1Vcf[BAND][c2] - static_cast<double>(up1[i]);
-          up1Vcf[HIGH][c2] = -(up1Vcf[NOTCH][c2] + up1Vcf[LOW][c2]);
-          up1Vcf[BAND][c2] = up1Vcf[BAND][c2] + static_cast<double>(freq[i][UP1]) * up1Vcf[HIGH][c2];
-          up1Vcf[LOW][c2] = up1Vcf[LOW][c2] + static_cast<double>(freq[i][UP1]) * up1Vcf[BAND][c2];
-          up1[i] = static_cast<float>(up1Vcf[LOW][c2]);
-          up1Bp[i] = static_cast<float>(up1Vcf[BAND][c2]);
-  
-          down1Vcf[NOTCH][c2] = q * down1Vcf[BAND][c2] - static_cast<double>(down1[i]);
-          down1Vcf[HIGH][c2] = -(down1Vcf[NOTCH][c2] + down1Vcf[LOW][c2]);
-          down1Vcf[BAND][c2] = down1Vcf[BAND][c2] + static_cast<double>(freq[i][DN1]) * down1Vcf[HIGH][c2];
-          down1Vcf[LOW][c2] = down1Vcf[LOW][c2] + static_cast<double>(freq[i][DN1]) * down1Vcf[BAND][c2];
-          down1[i] = static_cast<float>(down1Vcf[LOW][c2]);
-          down1Bp[i] = static_cast<float>(down1Vcf[BAND][c2]);
-  
-          down2Vcf[NOTCH][c2] = q * down2Vcf[BAND][c2] - static_cast<double>(down2[i]);
-          down2Vcf[HIGH][c2] = -(down2Vcf[NOTCH][c2] + down2Vcf[LOW][c2]);
-          down2Vcf[BAND][c2] = down2Vcf[BAND][c2] + static_cast<double>(freq[i][DN2]) * down2Vcf[HIGH][c2];
-          down2Vcf[LOW][c2] = down2Vcf[LOW][c2] + static_cast<double>(freq[i][DN2]) * down2Vcf[BAND][c2];
-          down2[i] = static_cast<float>(down2Vcf[LOW][c2]);
-          down2Bp[i] = static_cast<float>(down2Vcf[BAND][c2]);
+        for (int i=0; i<3; i++) {
+          vcf[i][NOTCH][s] = q * vcf[i][BAND][s] - oct[i];
+          vcf[i][HIGH][s] = -(vcf[i][NOTCH][s] + vcf[i][LOW][s]);
+          vcf[i][BAND][s] = vcf[i][BAND][s] + freq[i] * vcf[i][HIGH][s];
+          vcf[i][LOW][s] = vcf[i][LOW][s] + freq[i] * vcf[i][BAND][s];
+          out = out + (vcf[i][LOW][s]*0.7f + vcf[i][BAND][s]*0.3f) * amt[i];
         }
-        up1 = (up1*0.7f + up1Bp*0.3f);
-        down1 = (down1*0.7f + down1Bp*0.3f);
-        down2 = (down2*0.7f + down2Bp*0.3f);
-
-        out = up1 * up1Amt
-            + in * inAmt
-            + down1 * down1Amt
-            + down2 * down2Amt;
         out = softClip(out*10.f/6.f * drive) * 6.f/10.f;
         out = downSample[s].process(out);
       }
@@ -219,6 +204,14 @@ struct Octaver : VenomModule {
 };
 
 struct OctaverWidget : VenomWidget {
+
+  struct OverSwitch : GlowingSvgSwitchLockable {
+    OverSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+    }
+  };
 
   OctaverWidget(Octaver* module) {
     setModule(module);
@@ -247,6 +240,8 @@ struct OctaverWidget : VenomWidget {
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(55.5f, 241.f), module, Octaver::DRIVE_PARAM));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(55.5f, 269.5f), module, Octaver::DRIVE_CV_PARAM));
     addInput(createInputCentered<PolyPort>(Vec(55.5f, 298.5f), module, Octaver::DRIVE_CV_INPUT));
+    
+    addParam(createLockableParamCentered<OverSwitch>(Vec(37.5f,262.f), module, Octaver::OVER_PARAM));
 
     addInput(createInputCentered<PolyPort>(Vec(19.5f, 341.5f), module, Octaver::SIGNAL_INPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(55.5f, 341.5f), module, Octaver::SIGNAL_OUTPUT));
