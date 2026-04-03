@@ -125,7 +125,7 @@ struct Octaver : VenomModule {
     int mode = params[MODE_PARAM].getValue(),
         channels = inputs[SIGNAL_INPUT].getChannels();
     for (int s=0, c=0; c < channels; s++, c+=4) {
-      float_4 in = inputs[SIGNAL_INPUT].getPolyVoltage(c) * oversample,
+      float_4 in = inputs[SIGNAL_INPUT].getPolyVoltageSimd<float_4>(c) * oversample,
               out{},
               inAmt = clamp(params[DRY_PARAM].getValue() + params[DRY_CV_PARAM].getValue() * inputs[DRY_CV_INPUT].getPolyVoltageSimd<float_4>(c)),
               up1Amt = clamp(params[UP1_PARAM].getValue() + params[UP1_CV_PARAM].getValue() * inputs[UP1_CV_INPUT].getPolyVoltageSimd<float_4>(c)),
