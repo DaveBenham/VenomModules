@@ -2004,7 +2004,10 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 
 ## OCTAVER
 ![Octaver module image](doc/Octaver.png)  
-An old school analog style octave effect similar to the Pearl OC-7 Octaver effects pedal, with the addition of tone and drive controls as well as CV control over all parameters.
+An old school octave effect in the style of the Pearl OC-7 and Boss OC-2 analog effect pedals. Feed in a monophonic signal with a regular periodic waveform and it can generate a mix consisting of the original input plus 1 octave up, 1 octave down, and 2 octaves down. Just like the old pedals, an input mix of multiple pitches will lead to problems with tracking. But unlike the old pedals, this module can work with chords using VCV style polyphony as long as there is only one pitch per polyphonic channel.
+
+The upper octave is produced by fully rectifying the input, which works well with sine and triangle waveforms. For saw waveforms it produces a triangle output in the same octave, and square waveforms hardly produce any output at all.
+
 
 
 
