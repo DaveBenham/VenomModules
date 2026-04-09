@@ -2069,6 +2069,7 @@ Oscilloscope traces showing the waveforms produced for each octave using differe
 
 For each input and mode combination, the original waveform is shown in red to the left, and to the right are the four resultant waveforms:  
 yellow = +1, red = 0, green = -1, blue = -2
+
 ![Octaver example output waveforms image](doc/OctaverWaveforms.png)
 
 ### Standard Venom Context Menus
