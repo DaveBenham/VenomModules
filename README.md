@@ -1,7 +1,7 @@
 # Venom
 Venom modules version 2.15.0 for VCV Rack 2 are copyright 2023, 2024, 2025, 2026 Dave Benham and licensed under GNU General Public License version 3.
 
-This is the documentation for the free Venom modules. Checkout [Venom Premium site](https://github.com/DaveBenham/VenomPremium/blob/main/README.md) for documenation about commercial Venom modules.
+This is the documentation for the free Venom modules. Checkout the [Venom Premium site](https://github.com/DaveBenham/VenomPremium/blob/main/README.md) for documenation about commercial Venom modules.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
