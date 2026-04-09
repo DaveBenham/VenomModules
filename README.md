@@ -25,7 +25,7 @@ Venom modules version 2.15.0 for VCV Rack 2 are copyright 2023, 2024, 2025, 2026
 |----|----|----|----|----|
 |![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Mouse Pad module image](doc/MousePad.png)|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Multimode Filter module image](doc/SVF.png)|
 
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[OCTAVER](#octaver)|[PAN 3D](#pan-3d)|[POLY<br />CLONE](#poly-clone)|
+|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[](#octaver)|[PAN 3D](#pan-3d)|[POLY<br />CLONE](#poly-clone)|
 |----|----|----|----|----|
 |![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Octaver module image](doc/Octaver.png)|![Pan 3D module image](doc/Pan3D.png)|![Poly Clone module image](doc/PolyClone.png)|
 
@@ -2029,7 +2029,7 @@ Controls the amount of oversampling for controlling digital aliasing.
 The default x2 oversampling is adequate for almost all applications. If working with very high frequencies then x4 or x8 might be appropriate.
 
 ### Mix controls
-Each mix component has a large knob plus a CV input with small attenuverter knob. The large knob sets the base amount ranging from 0% to 100%. The CV is scaled at 10% per volt, and is inverted and/or attenuated by the small attenuverter knob. The scaled CV is added to the base knob to establish the final effective amount.
+Each mix component has a large knob plus a CV input with small attenuverter knob. The large knob sets the base amount ranging from 0% to 100%. The bipolar CV is scaled at 10% per volt, and is inverted and/or attenuated by the small attenuverter knob. The final effective amount is the sum of the scaled CV plus the base knob, clamped to a value between 0% and 100%.
 
 #### +1 (Octave +1 mix) knob and CV input
 Controls the amount of one octave up in the final mix.
@@ -2054,6 +2054,9 @@ The method for producing the -2 octave depends on the current mode.
 - **Square** - The -1 octave passes through a second flip flop and slew is applied.
 
 ### DRIVE knob and CV input
+Controls the amount of gain applied to the final mix. The large knob establishes the base gain ranging from 0 (off) to 10 (x10). The CV is scaled one for one and inverted and/or attenuated by the small attenuverter knob. The final effective gain is the sum of the scaled CV plus the base knob, clamped to a value between 0 and 10.
+
+High gain levels result in saturation via the tanh limiter at the output.
 
 ### IN input
 The input is AC coupled to make sure the input is bipolar. This is a requirement of the algorithms used to produce the octaves.
@@ -2061,6 +2064,12 @@ The input is AC coupled to make sure the input is bipolar. This is a requirement
 ### OUT output
 The final output is limited to +/-6 V via a saturating tanh function.
 
+### Example octave waveforms
+Oscilloscope traces showing the waveforms produced for each octave using different modes and inputs.
+
+For each input and mode combination, the original waveform is shown in red to the left, and to the right are the four resultant waveforms:  
+yellow = +1, red = 0, green = -1, blue = -2
+![Octaver example output waveforms image](doc/OctaverWaveforms.png)
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
