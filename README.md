@@ -2044,14 +2044,14 @@ Controls the amount of one octave down in the final mix.
 
 The method for producing the -1 octave depends on the current mode.
 - **Inversion** - A comparator determines the zero crossing points to establish unit wave cycles. Alternating cycles are inverted to create the sub-octave.
-- **Square** - A comparator converts the input into a pulse wave, and a flip flop subdivides the frequency by a factor of two. Slew is applied to round out the sound a bit, filtering out some of the higher harmonics of a square wave.
+- **Square** - A comparator converts the input into a pulse wave, and a flip flop subdivides the frequency by a factor of two. Slew is applied to round out the sound a bit, filtering out some of the higher harmonics of a square wave. An envelope follower for the input coupled with a VCA controls the -1 octave volume to match the input before applying the mix amount.
 
 #### -2 (Octave -2 mix) knob and CV input
 Controls the amount of two octaves down in the final mix.
 
 The method for producing the -2 octave depends on the current mode.
 - **Inversion** - Alternating cycles of the -1 octave are inverted and the result is summed with the original -1 octave.
-- **Square** - The -1 octave passes through a second flip flop and slew is applied.
+- **Square** - The -1 octave passes through a second flip flop and slew is applied. An envelope follower for the input coupled with a VCA controls the -2 octave volume to match the input before applying the mix amount.
 
 ### DRIVE knob and CV input
 Controls the amount of gain applied to the final mix. The large knob establishes the base gain ranging from 0 (off) to 10 (x10). The CV is scaled one for one and inverted and/or attenuated by the small attenuverter knob. The final effective gain is the sum of the scaled CV plus the base knob, clamped to a value between 0 and 10.
