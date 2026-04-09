@@ -25,7 +25,7 @@ Venom modules version 2.15.0 for VCV Rack 2 are copyright 2023, 2024, 2025, 2026
 |----|----|----|----|----|
 |![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Mouse Pad module image](doc/MousePad.png)|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Multimode Filter module image](doc/SVF.png)|
 
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[](#octaver)|[PAN 3D](#pan-3d)|[POLY<br />CLONE](#poly-clone)|
+|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[Octaver](#octaver)|[PAN 3D](#pan-3d)|[POLY<br />CLONE](#poly-clone)|
 |----|----|----|----|----|
 |![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Octaver module image](doc/Octaver.png)|![Pan 3D module image](doc/Pan3D.png)|![Poly Clone module image](doc/PolyClone.png)|
 
