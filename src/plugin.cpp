@@ -52,11 +52,14 @@ void init(Plugin* p) {
   p->addModel(modelVenomOscillator);
   p->addModel(modelVenomNORS_IQ);
   p->addModel(modelVenomNORSIQChord2Scale);
+  p->addModel(modelVenomNullCable);
   p->addModel(modelVenomOctaver);
   p->addModel(modelVenomPan3D);
   p->addModel(modelVenomPolyClone);
   p->addModel(modelVenomPolyFade);
+  p->addModel(modelVenomPolyMute);
   p->addModel(modelVenomPolyOffset);
+  p->addModel(modelVenomPolyPrune);
   p->addModel(modelVenomPolySHASR);
   p->addModel(modelVenomPolyScale);
   p->addModel(modelVenomPolyUnison);

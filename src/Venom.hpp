@@ -684,6 +684,14 @@ struct RedBlueLight : TBase {
 };
 
 template <typename TBase = GrayModuleLightWidget>
+struct WhiteRedLight : TBase {
+  WhiteRedLight() {
+    this->addBaseColor(SCHEME_WHITE);
+    this->addBaseColor(SCHEME_RED);
+  }
+};
+
+template <typename TBase = GrayModuleLightWidget>
 struct WhiteYellowRedLight : TBase {
   WhiteYellowRedLight() {
     this->addBaseColor(SCHEME_WHITE);

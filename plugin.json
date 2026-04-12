@@ -411,6 +411,18 @@
       ]
     },
     {
+      "slug": "NullCable",
+      "name": "Null Cable",
+      "description": "Mute a cable by setting it to 0 channels via button or CV",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#null-cable",
+      "tags": [
+        "Controller",
+        "Switch",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
       "slug": "Octaver",
       "name": "Octaver",
       "description": "An old school octave effect in the style of the Pearl OC-7 and Boss OC-2 analog pedals",
@@ -455,10 +467,31 @@
       ]
     },
     {
+      "slug": "PolyMute",
+      "name": "Poly Mute",
+      "description": "Mute individual channels of a polyphonic input via buttons or CV",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-mute",
+      "tags": [
+        "Polyphonic",
+        "Switch",
+        "Utility"
+      ]
+    },
+    {
       "slug": "PolyOffset",
       "name": "Poly Offset",
       "description": "Provides an offset control for each channel of a polyphonic signal",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-offset",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "PolyPrune",
+      "name": "Poly Prune",
+      "description": "Remove selected channels and/or sort channels from a polyphonic input",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#poly-prune",
       "tags": [
         "Polyphonic",
         "Utility"
