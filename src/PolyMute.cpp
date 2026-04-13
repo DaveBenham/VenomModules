@@ -168,12 +168,12 @@ struct PolyMuteWidget : VenomWidget {
     setVenomPanel("PolyMute");
 
     for (int i=0; i<8; i++) {
-      addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteRedLight<>>>>(Vec(20.5f, 44.5f+i*27.f), module, PolyMute::MUTE_PARAM+i, PolyMute::MUTE_LIGHT+i*2));
-      addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteRedLight<>>>>(Vec(54.5f, 44.5f+i*27.f), module, PolyMute::MUTE_PARAM+i+8, PolyMute::MUTE_LIGHT+(i+8)*2));
+      addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteRedLight<>>>>(Vec(20.5f, 40.5f+i*27.f), module, PolyMute::MUTE_PARAM+i, PolyMute::MUTE_LIGHT+i*2));
+      addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteRedLight<>>>>(Vec(54.5f, 40.5f+i*27.f), module, PolyMute::MUTE_PARAM+i+8, PolyMute::MUTE_LIGHT+(i+8)*2));
     }
-    addParam(createLockableParamCentered<SoftSwitch>(Vec(12.5f, 269.5f), module, PolyMute::SOFT_PARAM));
-    addParam(createLockableParamCentered<ModeSwitch>(Vec(62.5f, 269.5f), module, PolyMute::MODE_PARAM));
-    addInput(createInputCentered<PolyPort>(Vec(37.5f, 269.5f), module, PolyMute::GATES_INPUT));
+    addParam(createLockableParamCentered<SoftSwitch>(Vec(12.5f, 266.5f), module, PolyMute::SOFT_PARAM));
+    addParam(createLockableParamCentered<ModeSwitch>(Vec(62.5f, 266.5f), module, PolyMute::MODE_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(37.5f, 266.5f), module, PolyMute::GATES_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(20.5f, 303.5f), module, PolyMute::POLY1_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(54.5f, 303.5f), module, PolyMute::POLY2_INPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(20.5f, 341.f), module, PolyMute::POLY1_OUTPUT));

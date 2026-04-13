@@ -4,18 +4,21 @@
 ### New Modules
 - Merge 4x2
 - Merge Split
+- Null Cable
 - Octaver
+- Poly Mute
+- Poly Prune
 - Rhythm Explorer CV Expander
 - Split 4x2
 
 ### Enhancements
-- Entire plugin
-  - Give consistent appearance to all LED lights
-  - Improve rendering of square switches
 - XM-OP
   - Add context menu options for exponential level response and post level feedback so as to better replicate Bogaudio FM-OP sound
 - Rhythm Explorer
   - External seed of 10 V forces use of internal random seed
+- Entire plugin
+  - Give consistent appearance to all LED lights
+  - Improve rendering of square switches
 
 ### Bug Fixes
 - The Trig button on the Poly Sample & Hold Analog Shift Register was not working unless the top trigger input was patched
