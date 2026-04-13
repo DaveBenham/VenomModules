@@ -30,6 +30,21 @@ struct PolyPrune : VenomModule {
     LIGHTS_LEN
   };
   
+  struct CountQuantity : ParamQuantity {
+    std::string getDisplayValueString() override {
+      int val = static_cast<int>(getValue());
+      return val ? ParamQuantity::getDisplayValueString() : "All";
+    }
+    void setDisplayValueString(std::string str) override {
+      std::transform(str.begin(), str.end(), str.begin(),
+                     [](unsigned char c){ return std::tolower(c); });
+      if (str == "all")
+        ParamQuantity::setDisplayValueString("0");
+      else
+        ParamQuantity::setDisplayValueString(str);
+    }
+  };
+
   PolyPrune() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     
@@ -37,7 +52,7 @@ struct PolyPrune : VenomModule {
     configSwitch<FixedSwitchQuantity>(SORT_PARAM, 0.f, 6.f, 0.f, "Sort", {"Off", "Pre ascending", "Pre descending", "Mid ascending", "Mid descending", "Post ascending", "Post descending"});
     configParam(START_PARAM, 1.f, 16.f, 1.f, "Start");
     configInput(START_INPUT, "Start");
-    configParam(COUNT_PARAM, -16.f, 16.f, 0.f, "Count");
+    configParam<CountQuantity>(COUNT_PARAM, -16.f, 16.f, 0.f, "Count");
     configInput(COUNT_INPUT, "Count");
     configInput(POLY_INPUT, "Poly");
     configOutput(POLY_OUTPUT, "Poly");
