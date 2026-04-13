@@ -2366,6 +2366,8 @@ All outputs are monophonic 0 volts when Poly Fade is bypassed.
 
 If Poly Mute is bypassed then the poly inputs are passed unchanged to the outputs.
 
+[Return to Table Of Contents](#venom)
+
 ## POLY OFFSET
 ![Poly Offset module image](doc/PolyOffset.png)  
 Provides an offset control for each channel of a polyphonic signal. For each polyphonic output channel, the channel's knob voltage is added to the input voltage to get the final output voltage.
@@ -2433,6 +2435,8 @@ If Poly Offset is bypassed then the input is passed unchanged to the output.
 ### Bypass
 
 If Poly Prune is bypassed then the poly input is passed unchanged to the output.
+
+[Return to Table Of Contents](#venom)
 
 ## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
 ![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
