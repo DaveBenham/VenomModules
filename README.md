@@ -27,29 +27,29 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|----|
 |![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Mouse Pad module image](doc/MousePad.png)|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Multimode Filter module image](doc/SVF.png)|
 
-|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[OCTAVER](#octaver)|[PAN 3D](#pan-3d)|[POLY<br />CLONE](#poly-clone)|
-|----|----|----|----|----|
-|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Octaver module image](doc/Octaver.png)|![Pan 3D module image](doc/Pan3D.png)|![Poly Clone module image](doc/PolyClone.png)|
-
-|[POLY FADE](#poly-fade)|[POLY<br />OFFSET](#poly-offset)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[QUAD VC<br />POLARIZER](#quad-vc-polarizer)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|
-|----|----|----|----|----|----|----|----|----|
-|![Poly Fade module image](doc/PolyFade.png)|![Poly Offset module image](doc/PolyOffset.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|
-
-|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|[RHYTHM EXPLORER<br />CV EXPANDER](#rhythm-explorer-cv-expander)|[SHAPED<br />VCA](#shaped-vca)|
-|----|----|----|----|
-|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![Rhythm Explorer CV Expander module image](doc/REXCV.png)|![SHAPED VCA module image](doc/ShapedVCA.png)|
-
-|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4x2](#split-4x2)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|
-|----|----|----|----|----|----|----|
-|![SLEW module image](doc/Slew.png)|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![Split 4x2 module image](doc/Split4x2.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|
-
-|[VCO UNIT](#vco-unit)|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WAVE<br />MANGLER](#wave-mangler)|[WAVE<br />MULTIPLIER](#wave-multiplier)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|
+|[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[NULL<br />CABLE](#null-cable)|[OCTAVER](#octaver)|[PAN 3D](#pan-3d)|[POLY<br />CLONE](#poly-clone)|
 |----|----|----|----|----|----|
-|![VCO Unit module image](doc/VCOUnit.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WAVE MANGLER module image](doc/WaveMangler.png)|![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|
+|![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Null Cable module image](doc/NullCable.png)|![Octaver module image](doc/Octaver.png)|![Pan 3D module image](doc/Pan3D.png)|![Poly Clone module image](doc/PolyClone.png)|
 
-|[WINCOMP](#wincomp)|[WINCOMP 2 + LOGIC](#wincomp-2--logic)|[XM-OP](#xm-op)|
-|----|----|----|
-|![WINCOMP module image](doc/WinComp.PNG)|![WinComp 2 + Logic module image](doc/Compare2.png)|![XM-OP module image](doc/XM_OP.png)|
+|[POLY FADE](#poly-fade)|[POLY MUTE](#poly-mute)|[POLY<br />OFFSET](#poly-offset)|[POLY PRUNE](#poly-prune)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[QUAD VC<br />POLARIZER](#quad-vc-polarizer)|
+|----|----|----|----|----|----|----|----|----|
+|![Poly Fade module image](doc/PolyFade.png)|![Poly Mute module image](doc/PolyMute.png)|![Poly Offset module image](doc/PolyOffset.png)|![Poly Prune module image](doc/PolyPrune.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)|
+
+|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
+|----|----|----|----|
+|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
+
+|[RHYTHM EXPLORER<br />CV EXPANDER](#rhythm-explorer-cv-expander)|[SHAPED<br />VCA](#shaped-vca)|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4x2](#split-4x2)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|
+|----|----|----|----|----|----|----|----|
+|![Rhythm Explorer CV Expander module image](doc/REXCV.png)|![SHAPED VCA module image](doc/ShapedVCA.png)|![SLEW module image](doc/Slew.png)|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![Split 4x2 module image](doc/Split4x2.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|
+
+|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WAVE<br />MANGLER](#wave-mangler)|
+|----|----|----|----|----|
+|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WAVE MANGLER module image](doc/WaveMangler.png)|
+
+|[WAVE<br />MULTIPLIER](#wave-multiplier)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|[WINCOMP 2 + LOGIC](#wincomp-2--logic)|[XM-OP](#xm-op)|
+|----|----|----|----|----|
+|![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|![WinComp 2 + Logic module image](doc/Compare2.png)|![XM-OP module image](doc/XM_OP.png)|
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -2004,6 +2004,18 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 
 [Return to Table Of Contents](#venom)
 
+## NULL CABLE
+![Null Cable module image](doc/NullCable.png)  
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All poly inputs are forwarded to the poly outputs if Null Cable is bypassed.
+
+[Return to Table Of Contents](#venom)
+
 ## OCTAVER
 ![Octaver module image](doc/Octaver.png)  
 An old school octave effect in the style of the Pearl OC-7 and Boss OC-2 analog effect pedals. Feed in a monophonic signal with a regular periodic waveform and it can generate a mix consisting of the original input plus 1 octave up, 1 octave down, and 2 octaves down. Just like the old pedals, an input mix of multiple pitches will lead to problems with tracking. 
@@ -2344,6 +2356,15 @@ All outputs are monophonic 0 volts when Poly Fade is bypassed.
 
 [Return to Table Of Contents](#venom)
 
+## POLY MUTE
+![Poly Mute module image](doc/PolyMute.png)  
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly Mute is bypassed then the poly inputs are passed unchanged to the outputs.
 
 ## POLY OFFSET
 ![Poly Offset module image](doc/PolyOffset.png)  
@@ -2402,6 +2423,16 @@ The number of polyphonic channels at the output is displayed in the LED panel. T
 If Poly Offset is bypassed then the input is passed unchanged to the output.
 
 [Return to Table Of Contents](#venom)
+
+## POLY PRUNE
+![Poly Prune module image](doc/PolyPrune.png)  
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+If Poly Prune is bypassed then the poly input is passed unchanged to the output.
 
 ## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
 ![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
