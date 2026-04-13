@@ -87,13 +87,13 @@ struct NullCable : VenomModule {
       }
       buttonVal[i] = newButtonVal;
       if (state[i]) {
-        outputs[SIGNAL_OUTPUT+i].channels = 16;
         int cnt = inputs[SIGNAL_INPUT+i].getChannels();
-        for (int c=0; c<cnt; c++)
-          outputs[SIGNAL_OUTPUT+i].setVoltage(inputs[SIGNAL_INPUT+i].getVoltage(c),c);
+        outputs[SIGNAL_OUTPUT+i].channels = cnt;
+        outputs[SIGNAL_OUTPUT+i].writeVoltages(inputs[SIGNAL_INPUT+i].getVoltages());
         outputs[SIGNAL_OUTPUT+i].setChannels(cnt);
       }
       else {
+        outputs[SIGNAL_OUTPUT+i].clearVoltages();
         outputs[SIGNAL_OUTPUT+i].channels = 0;
       }
     }

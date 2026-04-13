@@ -2,6 +2,7 @@
 // Licensed under GNU GPLv3
 
 #include "Venom.hpp"
+#include <algorithm>
 
 #define LIGHT_OFF 0.02f
 
@@ -29,6 +30,18 @@ struct PolyPrune : VenomModule {
   enum LightId {
     LIGHTS_LEN
   };
+  
+  bool selState[16]{};
+  int selected = 1,
+      start = 1,
+      effCnt = 1;
+  
+  #define PREASC   1
+  #define PREDESC  2
+  #define MIDASC   3
+  #define MIDDESC  4
+  #define POSTASC  5
+  #define POSTDESC 6
   
   struct CountQuantity : ParamQuantity {
     std::string getDisplayValueString() override {
@@ -61,6 +74,66 @@ struct PolyPrune : VenomModule {
   
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+
+    float in[16]{},
+          mid[16]{};
+    int sort = params[SORT_PARAM].getValue(),
+        inCnt = inputs[POLY_INPUT].getChannels(),
+        midCnt = 0;
+    
+    inputs[POLY_INPUT].readVoltages(in);
+    if (sort == PREASC)
+      std::sort(in, in+inCnt);
+    if (sort == PREDESC)
+      std::sort(in, in+inCnt, std::greater<float>());
+
+    for (int i=0; i<16; i++) {
+      float sel = inputs[SELECT_INPUT].getNormalPolyVoltage(10.f, i);
+      if (sel >= 2.f)
+        selState[i] = true;
+      if (sel <= 0.2f)
+        selState[i] = false;
+    }
+
+    for (int i=0; i<inCnt; i++) {
+      if (selState[i])
+        mid[midCnt++] = in[i];
+    }
+    if (sort == MIDASC)
+      std::sort(mid, mid+midCnt);
+    if (sort == MIDDESC)
+      std::sort(mid, mid+midCnt, std::greater<float>());
+    if (!midCnt)
+      midCnt = 1;
+    selected = midCnt;
+
+    start = clamp(params[START_PARAM].getValue() + std::round(inputs[START_INPUT].getVoltage()*2.f), 1.f, 16.f);
+    if (start > midCnt)
+      start = midCnt;
+    int cnt = clamp(params[COUNT_PARAM].getValue() + std::round(inputs[COUNT_INPUT].getVoltage()*2.f), -16.f, 16.f);
+    effCnt = cnt;
+    if (!cnt)
+      cnt = midCnt;
+    int dir = cnt<0 ? -1 : 1;
+    cnt = cnt * dir;
+    if (cnt > midCnt) {
+      cnt = midCnt;
+      effCnt = cnt * dir;
+    }
+    float *out = outputs[POLY_OUTPUT].getVoltages();
+    for (int i=0, pos=start-1; i<cnt; i++, pos+=dir) {
+      if (pos < 0)
+        pos = midCnt-1;
+      if (pos >= midCnt)
+        pos = 0;
+      out[i] = mid[pos];
+    }
+
+    if (sort == POSTASC)
+      std::sort(out, out+cnt);
+    if (sort == POSTDESC)
+      std::sort(out, out+cnt, std::greater<float>());
+    outputs[POLY_OUTPUT].setChannels(cnt);
   }
   
 };
@@ -94,6 +167,15 @@ struct PolyPruneWidget : VenomWidget {
 
   }
   
+  void appendContextMenu(Menu *menu) override {
+    PolyPrune *module = static_cast<PolyPrune*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createMenuItem("Selected", std::to_string(module->selected)));
+    menu->addChild(createMenuItem("Effective start", std::to_string(module->start)));
+    menu->addChild(createMenuItem("Effective count", module->effCnt ? std::to_string(module->effCnt) : "All"));
+    VenomWidget::appendContextMenu(menu);
+  }  
+
 };
 
 }
