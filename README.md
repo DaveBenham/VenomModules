@@ -31,7 +31,7 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|----|----|
 |![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)|![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)|![Null Cable module image](doc/NullCable.png)|![Octaver module image](doc/Octaver.png)|![Pan 3D module image](doc/Pan3D.png)|![Poly Clone module image](doc/PolyClone.png)|
 
-|[POLY FADE](#poly-fade)|[](#poly-mute)|[POLY<br />OFFSET](#poly-offset)|[POLY<br />PRUNE](#poly-prune)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[QUAD VC<br />POLARIZER](#quad-vc-polarizer)|
+|[POLY FADE](#poly-fade)|[POLY MUTE](#poly-mute)|[POLY<br />OFFSET](#poly-offset)|[POLY<br />PRUNE](#poly-prune)|[POLY<br />SAMPLE & HOLD<br />ANALOG SHIFT<br />REGISTER](#poly-sample--hold-analog-shift-register)|[POLY<br />SCALE](#poly-scale)|[POLY<br />UNISON](#poly-unison)|[PUSH 5](#push-5)|[QUAD VC<br />POLARIZER](#quad-vc-polarizer)|
 |----|----|----|----|----|----|----|----|----|
 |![Poly Fade module image](doc/PolyFade.png)|![ module image](doc/PolyMute.png)|![Poly Offset module image](doc/PolyOffset.png)|![Poly Prune module image](doc/PolyPrune.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)|
 
