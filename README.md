@@ -2020,6 +2020,8 @@ The behavior of the Gate button and Gate CV input depends on the value of the Ga
 |Pass|Passes output|Nulls output|Toggles state|Inverts state while held|
 |Toggle|Toggles state|No change|Toggles state|Toggles state|
 
+CV gates are Schmitt triggers that go high at 2V and go low at 0.2V.
+
 Note that the output will always be a null cable (0 channels) if there is no input.
 
 ### Standard Venom Context Menus
