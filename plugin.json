@@ -413,7 +413,7 @@
     {
       "slug": "NullCable",
       "name": "Null Cable",
-      "description": "Mute a cable by setting it to 0 channels via button or CV",
+      "description": "Mute a cable by setting it to 0 channels via manual or CV control",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#null-cable",
       "tags": [
         "Controller",
