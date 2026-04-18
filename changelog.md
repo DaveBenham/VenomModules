@@ -1,5 +1,5 @@
 # Venom Modules Changelog
-## 2.15.0 (????-??-??)
+## 2.15.0 (2026-04-18)
 
 ### New Modules
 - Merge 4x2
