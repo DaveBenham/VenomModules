@@ -316,8 +316,8 @@ struct BernoulliSwitchWidget : VenomWidget {
     setModule(module);
     setVenomPanel("BernoulliSwitch");
 
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(5.0, 18.75)), module, BernoulliSwitch::NO_SWAP_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(20.431, 18.75)), module, BernoulliSwitch::SWAP_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(mm2px(Vec(5.0, 18.75)), module, BernoulliSwitch::NO_SWAP_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(mm2px(Vec(20.431, 18.75)), module, BernoulliSwitch::SWAP_LIGHT));
 
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(12.7155, 18.75)), module, BernoulliSwitch::PROB_PARAM));
     addParam(createLockableLightParamCentered<VCVLightButtonLockable<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(6.5, 31.5)), module, BernoulliSwitch::TRIG_PARAM, BernoulliSwitch::TRIG_LIGHT));
@@ -337,8 +337,8 @@ struct BernoulliSwitchWidget : VenomWidget {
     addInput(createInputCentered<PolyPort>(mm2px(Vec(18.134, 116.0)), module, BernoulliSwitch::PROB_INPUT));
     addParam(createLockableParamCentered<NormalSwitch>(Vec(5.1615,325.3265), module, BernoulliSwitch::NORMAL_PARAM));
 
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(mm2px(Vec(12.7155, 83.9)), module, BernoulliSwitch::POLY_SENSE_ALL_LIGHT));
-    addChild(createLightCentered<SmallSimpleLight<RedBlueLight<>>>(mm2px(Vec(12.7155, 98.35)), module, BernoulliSwitch::AUDIO_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(mm2px(Vec(12.7155, 83.9)), module, BernoulliSwitch::POLY_SENSE_ALL_LIGHT));
+    addChild(createLightCentered<SmallLight<RedBlueLight<>>>(mm2px(Vec(12.7155, 98.35)), module, BernoulliSwitch::AUDIO_LIGHT));
   }
 
   void appendContextMenu(Menu* menu) override {

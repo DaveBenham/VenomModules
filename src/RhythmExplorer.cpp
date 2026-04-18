@@ -48,24 +48,6 @@ static const std::vector<std::string> POLY_MODE_LABELS = {
   "Offbeat"
 };
 
-/*
-static const int GATE_LENGTH [14] = { //Assuming 24 PPQN
-  48,
-  24,
-  12,
-  6,
-  3,
-  32,
-  16,
-  8,
-  4,
-  2,
-  72,
-  36,
-  18,
-  9
-};
-*/
 static const int ppqn_div[3]{4,2,1};
 
 static const int GATE_LENGTH [15] = { //Assuming 96 PPQN
@@ -167,6 +149,7 @@ struct RhythmExplorer : VenomModule {
   int ppqn = 0;
   int clockWidth = 0;
   int gateWidth = 0;
+  bool fixedBarDiv = true;
 
   //Non Persistant State
   bool isUni;
@@ -277,12 +260,37 @@ struct RhythmExplorer : VenomModule {
     lightDivider.setDivision(32);
     getSeed();
     initialize();
+    setBarUnit();
   }
   
   void setPPQN(int val) {
     ppqn = val;
     getInputInfo(CLOCK_INPUT)->name = val==2 ? "96 PPQN Clock" : (val ? "48 PPQN Clock" : "24 PPQN Clock");
-  }  
+    setBarUnit();
+  }
+  
+  void setBarUnit(void) {
+    ParamQuantity *q = paramQuantities[BAR_LENGTH_PARAM];
+    PortInfo *i = getInputInfo(BAR_LENGTH_INPUT);
+    if (fixedBarDiv){
+      q->name = "Bar 1/4 Count";
+      i->name = "Bar 1/4 Count CV";
+    }
+    else switch (ppqn){
+      case 0:
+        q->name = "Bar 1/4 Count";
+        i->name = "Bar 1/4 Count CV";
+        break;
+      case 1:
+        q->name = "Bar 1/8 Count";
+        i->name = "Bar 1/8 Count CV";
+        break;
+      case 2:
+        q->name = "Bar 1/16 Count";
+        i->name = "Bar 1/16 Count CV";
+        break;
+    }
+  }
 
   void onReset(const ResetEvent& e) override {
     ParamQuantity* q;
@@ -330,6 +338,7 @@ struct RhythmExplorer : VenomModule {
     json_object_set_new(rootJ, "clockWidth", json_integer(clockWidth));
     json_object_set_new(rootJ, "gateWidth", json_integer(gateWidth));
     json_object_set_new(rootJ, "resetTiming", json_integer(resetTiming));
+    json_object_set_new(rootJ, "fixedBarDiv", json_boolean(fixedBarDiv));
     return rootJ;
   }
 
@@ -357,6 +366,9 @@ struct RhythmExplorer : VenomModule {
     val = json_object_get(rootJ, "resetTiming");
     if (val)
       resetTiming = json_integer_value(val);
+    val = json_object_get(rootJ, "fixedBarDiv");
+    fixedBarDiv = val ? json_is_true(val) : false;
+    setBarUnit();
     reseedRng();
   }
 
@@ -370,8 +382,12 @@ struct RhythmExplorer : VenomModule {
   }
 
   void getSeed(){
-    internalSeed = inputs[SEED_INPUT].isConnected() ? rack::math::clamp(inputs[SEED_INPUT].getVoltage(), 0.f, 10.f) : rack::math::clamp(rack::random::uniform() * 10.f, 1e-19f, 10.f);
-    if (internalSeed < 1e-19f)
+    float minSeed = 1e-19f,
+          maxSeed = 10.f - 1e-6f;
+    internalSeed = rack::math::clamp(inputs[SEED_INPUT].getVoltage(), 0.f, 10.f);
+    if (internalSeed > maxSeed || !inputs[SEED_INPUT].isConnected())
+      internalSeed =  rack::math::clamp(rack::random::uniform() * 10.f, minSeed, maxSeed);
+    if (internalSeed < minSeed)
       internalSeed = 0.f;
     seedArmed = true;
   }
@@ -441,6 +457,33 @@ struct RhythmExplorer : VenomModule {
   }
 
   void process(const ProcessArgs& args) override {
+    Module* expanderCandidate = getRightExpander().module;
+    Module* rightExpander = expanderCandidate
+                         && !expanderCandidate->isBypassed()
+                         && expanderCandidate->model == modelVenomREXCV
+                         && !expanderCandidate->params[6].getValue()
+                          ? expanderCandidate
+                          : NULL;
+    expanderCandidate = getLeftExpander().module;
+    Module* leftExpander = expanderCandidate
+                        && !expanderCandidate->isBypassed()
+                        && expanderCandidate->model == modelVenomREXCV
+                        && expanderCandidate->params[6].getValue()
+                         ? expanderCandidate
+                         : NULL;
+
+    float rightCv1Range = rightExpander ? rightExpander->params[0].getValue()*2.32830629e-10f : 1.f,
+          rightCv1Offset = rightExpander ? rightExpander->params[1].getValue() : 0.f,
+          rightCv2Range = rightExpander ? rightExpander->params[2].getValue()*2.32830629e-10f : 1.f,
+          rightCv2Offset = rightExpander ? rightExpander->params[3].getValue() : 0.f,
+          rightCv3Range = rightExpander ? rightExpander->params[4].getValue()*2.32830629e-10f : 1.f,
+          rightCv3Offset = rightExpander ? rightExpander->params[5].getValue() : 0.f,
+          leftCv1Range = leftExpander ? leftExpander->params[0].getValue()*2.32830629e-10f : 1.f,
+          leftCv1Offset = leftExpander ? leftExpander->params[1].getValue() : 0.f,
+          leftCv2Range = leftExpander ? leftExpander->params[2].getValue()*2.32830629e-10f : 1.f,
+          leftCv2Offset = leftExpander ? leftExpander->params[3].getValue() : 0.f,
+          leftCv3Range = leftExpander ? leftExpander->params[4].getValue()*2.32830629e-10f : 1.f,
+          leftCv3Offset = leftExpander ? leftExpander->params[5].getValue() : 0.f;
 
     // Density polarity
     if ((params[POLAR_PARAM].getValue()==0) != isUni){
@@ -568,7 +611,7 @@ struct RhythmExplorer : VenomModule {
         newPhrase = true;
       }
       else {
-        if (currentPulse % 24 == 0)
+        if (currentPulse % (fixedBarDiv ? 96/ppqn_div[ppqn] : 24) == 0)
           currentCycle++;
         if (currentCycle >= maxBar){
           newBar = true;
@@ -659,6 +702,15 @@ struct RhythmExplorer : VenomModule {
             0.f, 10.f
           );
 
+          float leftCv[3],
+                rightCv[3];
+          if (leftExpander)
+            for (int c=0; c<3; c++)
+              leftCv[c] = (rng() >> 32);
+          if (rightExpander)
+            for (int c=0; c<3; c++)
+              rightCv[c] = (rng() >> 32);
+
           if (rndFloat < threshold) {
             if ( !params[MUTE_CHANNEL_PARAM + si].getValue() && !params[MUTE_POLY_PARAM].getValue() && (channelMode == ALL_MODE || (channelMode == LINEAR_MODE && !linearChannelShadow) || (channelMode == OFFBEAT_MODE && !offbeatShadow))){
               linearChannelShadow = true;
@@ -666,11 +718,22 @@ struct RhythmExplorer : VenomModule {
               outputs[GATE_POLY_OUTPUT].setVoltage(10.f, si);
               lights[DENSITY_LIGHT + si].setBrightness(1.f);
               densityLightOn[si] = true;
+              if (leftExpander) {
+                leftExpander->outputs[0+si].setVoltage(leftExpander->inputs[0].getNormalPolyVoltage(leftCv[0]*leftCv1Range + leftCv1Offset, si));
+                leftExpander->outputs[8+si].setVoltage(leftExpander->inputs[1].getNormalPolyVoltage(leftCv[1]*leftCv2Range + leftCv2Offset, si));
+                leftExpander->outputs[16+si].setVoltage(leftExpander->inputs[2].getNormalPolyVoltage(leftCv[2]*leftCv3Range + leftCv3Offset, si));
+              }
+              if (rightExpander) {
+                rightExpander->outputs[0+si].setVoltage(rightExpander->inputs[0].getNormalPolyVoltage(rightCv[0]*rightCv1Range + rightCv1Offset, si));
+                rightExpander->outputs[8+si].setVoltage(rightExpander->inputs[1].getNormalPolyVoltage(rightCv[1]*rightCv2Range + rightCv2Offset, si));
+                rightExpander->outputs[16+si].setVoltage(rightExpander->inputs[2].getNormalPolyVoltage(rightCv[2]*rightCv3Range + rightCv3Offset, si));
+              }
             }
             if (!params[MUTE_CHANNEL_PARAM + si].getValue() && !params[MUTE_POLY_PARAM].getValue() && (globalMode == ALL_MODE || (globalMode == LINEAR_MODE && !linearGlobalShadow) || (globalMode == OFFBEAT_MODE && !offbeatShadow))){
               linearGlobalShadow = true;
               outGateCount[outChannel]++;
             }
+              
           }
           offbeatShadow = true;
         }
@@ -962,6 +1025,27 @@ struct RhythmExplorerWidget : VenomWidget {
       [=]() {return module->resetTiming;},
       [=](int i) {module->resetTiming = i;}
     ));
+    
+    menu->addChild(createBoolMenuItem("Fixed 1/4 bar division", "",
+      [=]() {
+        return module->fixedBarDiv;
+      },
+      [=](bool val) {
+        module->fixedBarDiv = val;
+        module->setBarUnit();
+      }
+    ));
+
+    Module* expander = module->rightExpander.module;
+    if (expander && expander->model == modelVenomREXCV && !expander->params[6].getValue())
+      menu->addChild(createMenuLabel("Right Rhythm Explorer CV expander connected"));
+    else
+      menu->addChild(createMenuItem("Add right Rhythm Explorer CV expander", "", [this](){addExpander(modelVenomREXCV,this);}));
+    expander = module->leftExpander.module;
+    if (expander && expander->model == modelVenomREXCV && expander->params[6].getValue())
+      menu->addChild(createMenuLabel("Left Rhythm Explorer CV expander connected"));
+    else
+      menu->addChild(createMenuItem("Add left Rhythm Explorer CV expander", "", [this](){addExpander(modelVenomREXCV,this,true)->params[6].setValue(1);}));
 
     VenomWidget::appendContextMenu(menu);
   }

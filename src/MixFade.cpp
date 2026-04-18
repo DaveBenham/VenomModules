@@ -35,7 +35,7 @@ struct MixFadeWidget : MixExpanderWidget {
     setModule(module);
     setVenomPanel("MixFade");
 
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.23f,  42.295f), module, MixModule::FADE_TIME_PARAM+0));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.23f,  73.035f), module, MixModule::FADE_TIME_PARAM+1));
     addParam(createLockableParamCentered<RoundTinyBlackKnobLockable>(Vec(12.23f, 103.775f), module, MixModule::FADE_TIME_PARAM+2));

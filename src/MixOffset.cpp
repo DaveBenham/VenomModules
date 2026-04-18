@@ -32,7 +32,7 @@ struct MixOffsetWidget : MixExpanderWidget {
     setModule(module);
     setVenomPanel("MixOffset");
 
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f,  42.295f), module, MixModule::PRE_OFFSET_PARAM+0));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f,  73.035f), module, MixModule::PRE_OFFSET_PARAM+1));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 103.775f), module, MixModule::PRE_OFFSET_PARAM+2));

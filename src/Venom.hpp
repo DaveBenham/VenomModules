@@ -280,7 +280,7 @@ struct VenomModule : Module {
     }
   }
 
-  void process(const ProcessArgs& args) override {
+  void initializeParams() {
     if (drawn && extProcNeeded){
       for (int i=0; i<getNumParams(); i++){
         ParamExtension* e = &paramExtensions[i];
@@ -295,6 +295,15 @@ struct VenomModule : Module {
       paramsInitialized = true;
       extProcNeeded = false;
     }
+  }  
+
+  void process(const ProcessArgs& args) override {
+    initializeParams();
+  }
+  
+  void processBypass(const ProcessArgs& args) override {
+    initializeParams();
+    Module::processBypass(args);
   }
   
   virtual void initialPostDrawnProcess(){}
@@ -495,16 +504,17 @@ struct VenomWidget : ModuleWidget {
     Widget::step();
   }
   
-  void addExpander( Model* model, ModuleWidget* parentModWidget, bool left = false ) {
+  Module*  addExpander( Model* model, ModuleWidget* parentModWidget, bool left = false ) {
     Module* module = model->createModule();
     APP->engine->addModule(module);
     ModuleWidget* modWidget = model->createModuleWidget(module);
-    APP->scene->rack->setModulePosForce( modWidget, Vec( parentModWidget->box.pos.x + (left ? -modWidget->box.size.x : parentModWidget->box.size.x), parentModWidget->box.pos.y));
+    APP->scene->rack->setModulePosForce( modWidget, Vec( parentModWidget->box.pos.x + (left ? 0.f : parentModWidget->box.size.x), parentModWidget->box.pos.y));
     APP->scene->rack->addModule(modWidget);
     history::ModuleAdd* h = new history::ModuleAdd;
     h->name = "create "+model->name;
     h->setModule(modWidget);
     APP->history->push(h);
+    return module;
   }  
 
 };
@@ -674,6 +684,14 @@ struct RedBlueLight : TBase {
 };
 
 template <typename TBase = GrayModuleLightWidget>
+struct WhiteRedLight : TBase {
+  WhiteRedLight() {
+    this->addBaseColor(SCHEME_WHITE);
+    this->addBaseColor(SCHEME_RED);
+  }
+};
+
+template <typename TBase = GrayModuleLightWidget>
 struct WhiteYellowRedLight : TBase {
   WhiteYellowRedLight() {
     this->addBaseColor(SCHEME_WHITE);
@@ -705,6 +723,10 @@ struct VCVLightSliderLockable : LightSlider<VCVSliderLockable, VCVSliderLight<TL
 struct GlowingSvgSwitch : app::SvgSwitch {
   GlowingSvgSwitch(){
     shadow->opacity = 0.0;
+  }
+  void 	draw (const DrawArgs &args) override {
+    fb->oversample = APP->window->pixelRatio<2.0 ? 2.0 : 1.0;
+    app::SvgSwitch::draw(args);
   }
   void drawLayer(const DrawArgs& args, int layer) override {
     if (layer==1) {

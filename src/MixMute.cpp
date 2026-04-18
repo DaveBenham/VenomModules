@@ -36,7 +36,7 @@ struct MixMuteWidget : MixExpanderWidget {
     setModule(module);
     setVenomPanel("MixMute");
 
-    addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(5.f, 22.f), module, MixModule::EXP_LIGHT));
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f,  42.295f), module, MixModule::MUTE_PARAM+0, MixModule::MUTE_LIGHT+0));
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f,  73.035f), module, MixModule::MUTE_PARAM+1, MixModule::MUTE_LIGHT+1));
     addParam(createLockableLightParamCentered<VCVLightBezelLatchLockable<MediumSimpleLight<RedLight>>>(Vec(22.5f, 103.775f), module, MixModule::MUTE_PARAM+2, MixModule::MUTE_LIGHT+2));

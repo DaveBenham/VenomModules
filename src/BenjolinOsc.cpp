@@ -187,8 +187,8 @@ struct BenjolinOsc : BenjolinModule {
       *pwmOut = *tri2>*tri1 ? 5.f : -5.f;
       trig = clockTrig.processEvent( clockConnected ? *clockIn : *pul2*normScale, unipolarClock?0.1f:-1.f, 1.f);
       if (trig>0 || (trig && dbl)){
-        float ptrn = chaos ? 0.5f : params[PATTERN_PARAM].getValue();
-        unsigned char data = (ptrn>=*tri1 || ptrn>=10.f) ^ (chaos ? ((asr&32)>>5)^((asr&64)>>6) : (asr&128)>>7);
+        float ptrn = chaos ? 0.f : params[PATTERN_PARAM].getValue();
+        unsigned char data = (ptrn>*tri1 || ptrn>=1.f) ^ (chaos ? ((asr&32)>>5)^((asr&64)>>6) : (asr&128)>>7);
         asr = (asr<<1)|data;
         xorVal = asr&1 ? 5.f : -5.f;
         rung = (((asr&dacBit1)>>dacShift1)+((asr&dacBit2)>>dacShift2)+((asr&dacBit3)>>dacShift3)) * 1.428571f - 5.f;
@@ -381,7 +381,7 @@ struct BenjolinOscWidget : VenomWidget {
       int i;
       float x;
       for (i=0, x=93.066f; i<8; i++, x+=7.959f){
-        addChild(createLightCentered<SmallSimpleLight<YellowLight>>(Vec(x,90.137f), module, BenjolinOsc::RUNGLER_LIGHT+i));
+        addChild(createLightCentered<SmallLight<YellowLight>>(Vec(x,90.137f), module, BenjolinOsc::RUNGLER_LIGHT+i));
       }
     }
   }

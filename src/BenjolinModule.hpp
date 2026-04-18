@@ -226,7 +226,7 @@ struct BenjolinVoltsExpander : BenjolinModule {
     }
     configParam(VOLTS_RANGE_PARAM, 0.f, 10.f, 10.f, "Output range", " V");
     configParam(VOLTS_OFFSET_PARAM, -10.f, 10.f, 0.f, "Output offset", " V");
-    configOutput(VOLTS_OUTPUT,"");
+    configOutput(VOLTS_OUTPUT,"Final");
   }
 
   void process(const ProcessArgs& args) override {

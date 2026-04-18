@@ -93,7 +93,10 @@ struct XM_OP : VenomModule {
   DCBlockFilter_4 xmodDcBlockFilter[4]{},
                   fdbkDcBlockFilter[4]{};
 
-  bool quantize = true, first=true;
+  bool quantize = true,
+       first = true,
+       expLvl = false,
+       postLvlFdbk = false;
   
   int wave = 0,
       xmType = 0,
@@ -367,6 +370,8 @@ struct XM_OP : VenomModule {
               vcoOut{};
       computeVal(level, levelEnv, envOut, levelParam, levelCVAmt, LEVEL_INPUT, c);
       level = clamp(level);
+      if (expLvl)
+        level = pow(level,6);
       computeVal(depth, depthEnv, envOut, depthParam, depthCVAmt, DEPTH_INPUT, c);
       computeVal(fdbk, fdbkEnv, envOut, fdbkParam, fdbkCVAmt, FDBK_INPUT, c);
       if (quantize)
@@ -450,7 +455,7 @@ struct XM_OP : VenomModule {
           vcoOut = crossfade( vcoOut, vcoOut * clamp(ifelse(fdbk<0.f, -prevVcoOut[s], prevVcoOut[s])+5.f, 0.f, 100.f)/10.f, clamp(fabs(fdbk)));
         if (oversample>1)
           vcoOut = downSample[s].process(vcoOut);
-        prevVcoOut[s] = saveVcoOut;
+        prevVcoOut[s] = postLvlFdbk ? saveVcoOut * level : saveVcoOut;
       }
       vcoOut *= level;
       gate[s] = newGate;
@@ -465,12 +470,19 @@ struct XM_OP : VenomModule {
 
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
+    json_object_set_new(rootJ, "expLvl", json_boolean(expLvl));
+    json_object_set_new(rootJ, "PostLvlFdbk", json_boolean(postLvlFdbk));
     json_object_set_new(rootJ, "cvEnvAvail", json_boolean(true));
     return rootJ;
   }
 
   void dataFromJson(json_t* rootJ) override {
     VenomModule::dataFromJson(rootJ);
+    json_t *jval;
+    if ((jval = json_object_get(rootJ, "expLvl")))
+      expLvl = json_boolean_value(jval);
+    if ((jval = json_object_get(rootJ, "postLvlFdbk")))
+      postLvlFdbk = json_boolean_value(jval);
     int val;
     if (!json_object_get(rootJ, "cvEnvAvail")){
       if ((val=params[XM_TYPE_PARAM].getValue()))
@@ -624,6 +636,13 @@ struct XM_OPWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(127.5f,339.5f), module, XM_OP::OSC_OUTPUT));
   }
 
+  void appendContextMenu(Menu* menu) override {
+    XM_OP* module = dynamic_cast<XM_OP*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolPtrMenuItem("Exponential level response", "", &module->expLvl));
+    menu->addChild(createBoolPtrMenuItem("Post level feedback", "", &module->postLvlFdbk));
+    VenomWidget::appendContextMenu(menu);
+  }
 };
 
 }

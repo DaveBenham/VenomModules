@@ -25,7 +25,7 @@ tiny knob   17 *
 Sqr button   24 x 24
 bezel button 21
 light button 18
-small button 11
+small button 9
 
 
 188 display  35 x 24
