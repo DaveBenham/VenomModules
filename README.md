@@ -1274,6 +1274,8 @@ At most 16 channels can be merged, starting at the top, and working down. A glow
 
 All outputs are monophonic 0V if Merge 4x2 is bypassed.
 
+[Return to Table Of Contents](#venom)
+
 ## MERGE SPLIT
 ![Merge Split module image](doc/MergeSplit.png)  
 Merge Split is a compact and versatile polyphonic utility that can merge up to 4 monophonic or polyphonic inputs into one polyphonic output, and also split a single polyphonic input into any combination of monophonic and polyphonic outputs.
@@ -1294,6 +1296,8 @@ There is a module context menu option to restore resplit mode for all four split
 ### Bypass
 
 All outputs are monophonic 0V if Merge Split is bypassed.
+
+[Return to Table Of Contents](#venom)
 
 ## MIX 4
 ![Mix 4 module image](doc/Mix4.png)  
@@ -3825,6 +3829,8 @@ A glowing red LED next to an input port indicates there is at least one polyphon
 ### Bypass
 
 All outputs are monophonic 0V if Split 4x2 is bypassed.
+
+[Return to Table Of Contents](#venom)
 
 ## THRU
 ![THRU module image](doc/Thru.png)  
