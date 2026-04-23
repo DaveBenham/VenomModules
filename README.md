@@ -1564,11 +1564,11 @@ The Tog (toggle) button changes behavior. The first combination press activates,
 
 Both X and Y have 4 controls to configure the output.
 
-The Scale knobs amplify, attenuate and/or invert the mouse sensitivity. At 100% both the X and Y have a 10V range.
+The Scale knobs amplify, attenuate and/or invert the mouse sensitivity. At 1 both the X and Y have a 10V range.
 
 The Origin knobs determine what part of the VCV Rack window corresponds to 0V for X and Y. Values of 0%, 0% correspond to the lower left corner of the window. Values of 100%, 100% correspond to the the upper right corner. So a value of 50%, 50% corresponds to the center of the window.
 
-The Absolute buttons control whether the output is absolute, or relative to the mouse position at the moment of activation.
+The Absolute buttons control whether the output is absolute, or relative to the mouse position at the moment of activation. If enabled then the Origin knobs establish the origin. If not enabled then the Origin knobs are ignored.
 
 The Return buttons control whether the outputs return to 0 upon release of the activation keys, or if the last value is held until the next activation.
 
