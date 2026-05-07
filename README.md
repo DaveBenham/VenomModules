@@ -2675,6 +2675,8 @@ The number of polyphonic channels that are sampled and held at the output depend
 If you are using oversampling and you do not require the Trigger button, then consider patching from the bottom and work your way up. For example, if you only need a 4 step shift register, then patch the trigger and data signals to the 7th row. If you patch the top row, then all 10 rows are triggered, and the module needs to do more work and consumes more CPU. The CPU usage can be dramatically different when oversampling is involved.
 
 #### Polyphony behavior
+The polyphonic channel count for each output is the maximum channel count found across both inputs from that same row. If an input is not patched than the polyphony count may be determined by a normalled value from the row above. Remember that the normalled Data input is dependent on whether the Trig input on that row is patched or not.
+
 If the Trig input is monophonic, and the Data input is polyphonic, then all Data channels will be sampled simultaneously upon receipt of a trigger.
 
 If the Trig input is polyphonic, and the Data input is monophonic, then each channel will sample the input when the channel receives a trigger. If normaled to the random number generator, then each channel will receive its own random value.
