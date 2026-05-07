@@ -21,6 +21,7 @@ extern Model* modelVenomBenjolinVoltsExpander;
 extern Model* modelVenomBernoulliSwitch;
 extern Model* modelVenomBernoulliSwitchExpander;
 extern Model* modelVenomBlocker;
+extern Model* modelVenomBoundedVCO;
 extern Model* modelVenomBypass;
 extern Model* modelVenomCloneMerge;
 extern Model* modelVenomCompare2;

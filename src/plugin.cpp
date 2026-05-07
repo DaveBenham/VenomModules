@@ -25,6 +25,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomBernoulliSwitch);
   p->addModel(modelVenomBernoulliSwitchExpander);
   p->addModel(modelVenomBlocker);
+  p->addModel(modelVenomBoundedVCO);
   p->addModel(modelVenomBypass);
   p->addModel(modelVenomCloneMerge);
   p->addModel(modelVenomCompare2);

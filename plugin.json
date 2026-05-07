@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.15.0",
+  "version": "2.16.dev1",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -129,6 +129,17 @@
       "tags": [
         "Blank",
         "Utility"
+      ]
+    },
+    {
+      "slug": "BoundedVCO",
+      "name": "Bounded VCO",
+      "description": "An implementation of Peter Blasser's Bound/Bounce oscillation that constrains an oscillator with constant slopes between an upper and lower bound",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#blocker",
+      "tags": [
+        "Low-frequency oscillator",
+        "Oscillator",
+        "Polyphonic"
       ]
     },
     {
