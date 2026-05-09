@@ -168,8 +168,8 @@ struct BoundedVCO : VenomModule {
               float t = (oldTarget[i] - tri[s][i])/(delta[i]*slope[i] + oldTarget[i] - target[i]);
               tri[s][i] += (t*delta[i] - (1.f-t)*delta2[i])*slope[i];
               followMin[s][i] = followMin[s][i] ? 0.f : 1.f;
-//              if ((followMin[s][i] && tri[s][i]>hi[i]) || (followMin[s][i]==0.f && tri[s][i]<lo[i]))
-//                tri[s][i] = target[i];
+              if ((followMin[s][i] && tri[s][i]>hi[i]) || (followMin[s][i]==0.f && tri[s][i]<lo[i]))
+                tri[s][i] = target[i];
             }
           }
         }
