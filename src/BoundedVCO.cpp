@@ -41,7 +41,9 @@ struct BoundedVCO : VenomModule {
   
   using float_4 = simd::float_4;
   float_4 tri[4]{},
-          followMin[4]{};
+          followMin[4]{},
+          oldLo[4]{},
+          oldHi[4]{};
   
   bool slow = false,
        swap = false;
@@ -148,11 +150,30 @@ struct BoundedVCO : VenomModule {
         followMin[s] = ifelse(lo>=hi, 1.f, followMin[s]);
         followMin[s] = ifelse((lo<hi)&(tri[s]<=lo), 0.f, followMin[s]);
         float_4 target = ifelse(followMin[s]>0, lo, hi),
+                oldTarget = ifelse(followMin[s]>0, oldLo[s], oldHi[s]),
                 diff = target - tri[s],
-                slope = ifelse(diff>0.f, 1.f, -1.f);
+                slope = ifelse(diff>0.f, 1.f, -1.f),
+                delta2 = ifelse(slope>0.f, fallDelta, riseDelta);
         diff = abs(diff);
         delta = ifelse(slope>0.f, riseDelta, fallDelta);
-        tri[s] = ifelse(diff>delta, tri[s]+delta*slope, target);
+
+        int end = std::min(channels-c, 4);
+        for (int i=0; i<end; i++) {
+          if (delta[i] <= diff[i])
+            tri[s][i] += delta[i]*slope[i];
+          else {
+            if (followMin[s][i]==1.f && lo[i] >= hi[i])
+              tri[s][i] = lo[i];
+            else {
+              float t = (oldTarget[i] - tri[s][i])/(delta[i]*slope[i] + oldTarget[i] - target[i]);
+              tri[s][i] += (t*delta[i] - (1.f-t)*delta2[i])*slope[i];
+              followMin[s][i] = followMin[s][i] ? 0.f : 1.f;
+//              if ((followMin[s][i] && tri[s][i]>hi[i]) || (followMin[s][i]==0.f && tri[s][i]<lo[i]))
+//                tri[s][i] = target[i];
+            }
+          }
+        }
+        
         followMin[s] = ifelse(tri[s]>=hi, 1.f, followMin[s]);
         followMin[s] = ifelse(lo>=hi, 1.f, followMin[s]);
         followMin[s] = ifelse((lo<hi)&(tri[s]<=lo), 0.f, followMin[s]);
@@ -164,6 +185,8 @@ struct BoundedVCO : VenomModule {
           triOut = tri[s];
           pulseOut = slope*5.f;
         }
+        oldLo[s] = lo;
+        oldHi[s] = hi;
       }
       outputs[TRI_OUTPUT].setVoltageSimd(triOut, c);
       outputs[PULSE_OUTPUT].setVoltageSimd(pulseOut, c);
