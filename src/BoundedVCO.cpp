@@ -143,8 +143,9 @@ struct BoundedVCO : VenomModule {
         }
         float_4 riseRatio = clamp(params[SKEW_PARAM].getValue() + in[SKEW_CV_INPUT] * params[SKEW_CV_PARAM].getValue(), 0.01f, 0.99f),
                 fallRatio = 1.f - riseRatio,
-                delta = dsp::exp2_taylor5(params[FREQ_PARAM].getValue() + in[FREQ_CV_INPUT] * params[FREQ_CV_PARAM].getValue()) * deltaK,
-                riseDelta = delta / riseRatio,
+                delta = dsp::exp2_taylor5(params[FREQ_PARAM].getValue() + in[FREQ_CV_INPUT] * params[FREQ_CV_PARAM].getValue()) * deltaK;
+        delta = ifelse(delta<1e-6f, 1e-6f, delta);
+        float_4 riseDelta = delta / riseRatio,
                 fallDelta = delta / fallRatio;
         followMin[s] = ifelse(tri[s]>=hi, 1.f, followMin[s]);
         followMin[s] = ifelse(lo>=hi, 1.f, followMin[s]);
