@@ -133,14 +133,15 @@ struct BoundedVCO : VenomModule {
             }
           }
         }
-        float_4 lo = params[FLOOR_PARAM].getValue() + in[FLOOR_CV_INPUT] * params[FLOOR_CV_PARAM].getValue(),
-                hi = params[CEILING_PARAM].getValue() + in[CEILING_CV_INPUT] * params[CEILING_CV_PARAM].getValue();
+        float_4 lo = simd::clamp(params[FLOOR_PARAM].getValue() + in[FLOOR_CV_INPUT] * params[FLOOR_CV_PARAM].getValue(), -12.f, 12.f),
+                hi = simd::clamp(params[CEILING_PARAM].getValue() + in[CEILING_CV_INPUT] * params[CEILING_CV_PARAM].getValue(), -12.f, 12.f),
+                truLo = ifelse(lo<=hi, lo, hi),
+                truHi = ifelse(hi>=lo, hi, lo);
         if (swap) {
-          float_4 loTemp = ifelse(lo<=hi, lo, hi),
-                  hiTemp = ifelse(lo>=hi, lo, hi);
-          lo = loTemp;
-          hi = hiTemp;
+          lo = truLo;
+          hi = truHi;
         }
+
         float_4 riseRatio = clamp(params[SKEW_PARAM].getValue() + in[SKEW_CV_INPUT] * params[SKEW_CV_PARAM].getValue(), 0.01f, 0.99f),
                 fallRatio = 1.f - riseRatio,
                 delta = dsp::exp2_taylor5(params[FREQ_PARAM].getValue() + in[FREQ_CV_INPUT] * params[FREQ_CV_PARAM].getValue()) * deltaK;
@@ -151,6 +152,7 @@ struct BoundedVCO : VenomModule {
         followMin[s] = ifelse(lo>=hi, 1.f, followMin[s]);
         followMin[s] = ifelse((lo<hi)&(tri[s]<=lo), 0.f, followMin[s]);
         float_4 target = ifelse(followMin[s]>0, lo, hi),
+                target2 = ifelse(followMin[s]>0, hi, lo),
                 oldTarget = ifelse(followMin[s]>0, oldLo[s], oldHi[s]),
                 diff = target - tri[s],
                 slope = ifelse(diff>0.f, 1.f, -1.f),
@@ -162,22 +164,31 @@ struct BoundedVCO : VenomModule {
         for (int i=0; i<end; i++) {
           if (delta[i] <= diff[i])
             tri[s][i] += delta[i]*slope[i];
-          else {
-            if (followMin[s][i]==1.f && lo[i] >= hi[i])
+          else if (followMin[s][i]==1.f && lo[i] >= hi[i])
               tri[s][i] = lo[i];
-            else {
-              float t = (oldTarget[i] - tri[s][i])/(delta[i]*slope[i] + oldTarget[i] - target[i]);
-              tri[s][i] += (t*delta[i] - (1.f-t)*delta2[i])*slope[i];
+          else {
+            float t = (oldTarget[i] - tri[s][i])/(delta[i]*slope[i] + oldTarget[i] - target[i]);
+            tri[s][i] += (t*delta[i] - (1.f-t)*delta2[i])*slope[i];
+            if ((followMin[s][i]==0.f && tri[s][i]<lo[i]) || (followMin[s][i] && tri[s][i]>hi[i]))
+              tri[s][i] = target2[i];
+            else
               followMin[s][i] = followMin[s][i] ? 0.f : 1.f;
-              if ((followMin[s][i] && tri[s][i]<lo[i]) || (followMin[s][i]==0.f && tri[s][i]>hi[i]))
-                tri[s][i] = target[i];
-            }
           }
         }
-        
+        tri[s] = clamp(tri[s], -12.f, 12.f);
+
         followMin[s] = ifelse(tri[s]>=hi, 1.f, followMin[s]);
         followMin[s] = ifelse(lo>=hi, 1.f, followMin[s]);
         followMin[s] = ifelse((lo<hi)&(tri[s]<=lo), 0.f, followMin[s]);
+
+        for (int i=0; i<4; i++) {
+          if (std::isnan(tri[s][i])) {
+            tri[s][i] = 0.f;
+            followMin[s][i] = 0.f;
+            slope[i] = 0.f;
+          }
+        }
+
         if (oversample>1) {
           triOut = downSample[TRI_OUTPUT][s].process(tri[s]);
           pulseOut = downSample[PULSE_OUTPUT][s].process(slope*5.f);
