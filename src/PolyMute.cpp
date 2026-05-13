@@ -39,6 +39,7 @@ struct PolyMute : VenomModule {
   #define BLOCK 0
   #define PASS 1
   #define TOGGLE 2
+  #define EXCLUSIVE 3
 
   int channelsParam = 0,
       channels = 0;
@@ -60,7 +61,7 @@ struct PolyMute : VenomModule {
       fade[i].setRiseFall(100.f, 100.f);
     }
     configSwitch<FixedSwitchQuantity>(SOFT_PARAM, 0.f, 1.f, 0.f, "Soft switching", {"Off", "On"});
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 2.f, 0.f, "Gate mode", {"Mute", "Pass", "Toggle"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 3.f, 0.f, "Gate mode", {"Mute", "Pass", "Toggle", "Exclusive pass"});
     configInput(GATES_INPUT, "Channel gates");
     configInput(POLY1_INPUT, "Poly 1");
     configInput(POLY2_INPUT, "Poly 2");
@@ -83,7 +84,7 @@ struct PolyMute : VenomModule {
     bool soft = params[SOFT_PARAM].getValue();
     for (int i=0; i<16; i++) {
       bool newButtonVal = params[MUTE_PARAM+i].getValue();
-      if (inputs[GATES_INPUT].isConnected()) {
+      if (inputs[GATES_INPUT].isConnected() || mode==EXCLUSIVE) {
         bool newCvVal = cvVal[i];
         if (inputs[GATES_INPUT].getPolyVoltage(i)>=2.0f)
           newCvVal = true;
@@ -101,6 +102,12 @@ struct PolyMute : VenomModule {
               state[i] = !state[i];
             if (newButtonVal != buttonVal[i] && newButtonVal)
               state[i] = !state[i];
+            break;
+          case EXCLUSIVE:
+            if ((newCvVal != cvVal[i] && newCvVal) || (newButtonVal != buttonVal[i] && newButtonVal)) {
+              for (int j=0; j<16; j++)
+                state[j] = (i==j);
+            }
             break;
         }
         cvVal[i] = newCvVal;
@@ -160,6 +167,7 @@ struct PolyMuteWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallBlueButtonSwitch.svg")));
     }
   };
 
