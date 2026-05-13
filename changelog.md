@@ -1,6 +1,14 @@
 # Venom Modules Changelog
-## 2.15.0 (2026-04-18)
 
+## 2.16.0 (2026-??-??)
+### New Modules
+- Bounded VCO
+
+### Enhancements
+- Poly Mute
+  - Add "Exclusive pass" (radio button) Gate Mode option
+
+## 2.15.0 (2026-04-18)
 ### New Modules
 - Merge 4x2
 - Merge Split
