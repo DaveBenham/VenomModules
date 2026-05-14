@@ -2513,9 +2513,11 @@ Selects which channels to preserve from the polyphonic input. A high gate on a c
 
 Gates are controlled by Schmitt triggers that go high at 2V and go low at 0.2V.
 
-A monophonic input will be replicated to match the number of channels in the input.
+A monophonic Select input will be replicated to match the number of channels in the main input.
 
-A polyphonic Select input with fewer channels than the main input will assume 0V (low gate) for the missing channels. Extra channels will be ignored.
+A polyphonic Select input with fewer channels than the main input will assume 0V (low gate) for the missing channels.
+
+Extra Select channels that exceed the main channel count will be ignored.
 
 The Select Gates input is normalled to 10V, so this stage will preserve all input channels if the port is not patched.
 
