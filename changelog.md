@@ -3,6 +3,7 @@
 ## 2.16.0 (2026-??-??)
 ### New Modules
 - Bounded VCO
+- DASE (Dynamic Amplifying Shaping Envelope)
 
 ### Enhancements
 - Poly Mute

@@ -173,6 +173,18 @@
       ]
     },
     {
+      "slug": "DASE",
+      "name": "Dynamic Amplifying Shaping Envelope",
+      "description": "A novel Attack/Decay envelope generator that also functions as an unusual VCA and waveshaper",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#dynamic-amplifying-shaping-envelope",
+      "tags": [
+        "Envelope generator",
+        "Polyphonic",
+        "Voltage-controlled amplifier",
+        "Waveshaper"
+      ]
+    },
+    {
       "slug": "HQ",
       "name": "HQ - Harmonic Quantizer",
       "description": "Computes a selected harmonic or subharmonic partial relative to a root V/Oct, or quantizes input V/Oct to the nearest partial relative to the root",

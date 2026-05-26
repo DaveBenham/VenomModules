@@ -30,6 +30,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomCloneMerge);
   p->addModel(modelVenomCompare2);
   p->addModel(modelVenomCrossFade3D);
+  p->addModel(modelVenomDASE);
   p->addModel(modelVenomHQ);
   p->addModel(modelVenomKnob5);
   p->addModel(modelVenomLinearBeats);

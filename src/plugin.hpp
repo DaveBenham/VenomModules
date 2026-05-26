@@ -26,6 +26,7 @@ extern Model* modelVenomBypass;
 extern Model* modelVenomCloneMerge;
 extern Model* modelVenomCompare2;
 extern Model* modelVenomCrossFade3D;
+extern Model* modelVenomDASE;
 extern Model* modelVenomHQ;
 extern Model* modelVenomKnob5;
 extern Model* modelVenomLinearBeats;
