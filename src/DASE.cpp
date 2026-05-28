@@ -51,7 +51,8 @@ struct DASE : VenomModule {
   
   using float_4 = simd::float_4;
   int oversample = 0;
-  float sampleRate = 0;
+  float sampleRate = 0,
+        maxRptDelta = 0;
   int oversampleValues[6]{1,2,4,8,16,32};
   bool sync = false;
   OversampleFilter_4 upSample[4]{}, 
@@ -60,7 +61,8 @@ struct DASE : VenomModule {
   dsp::TSchmittTrigger<float_4> trigger[4]{};
   float_4 envPhase[4]{},
           envActive[4]{},
-          rptPhase[4]{};
+          rptPhase[4]{},
+          oldRpt[4]{};
 
   DASE() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -123,6 +125,7 @@ struct DASE : VenomModule {
     // update DC Block configuration
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
+      maxRptDelta = 100.f / sampleRate;
       for (int i=0; i<4; i++){
         dcBlockFilter[i].init(oversample, sampleRate);
       }
@@ -147,11 +150,18 @@ struct DASE : VenomModule {
           respAmt = params[RESP_CV_PARAM].getValue(),
           rptDelta = std::max(pow(2.f, params[RATE_PARAM].getValue() + inputs[RATE_CV_PARAM].getVoltage() * params[RATE_CV_PARAM].getValue()) * 2.f / sampleRate, 1e-6),
           rptAtk = clamp(params[SHAPE_PARAM].getValue() + inputs[SHAPE_CV_INPUT].getVoltage() * params[SHAPE_CV_PARAM].getValue()),
-          depth = clamp(params[DEPTH_PARAM].getValue() + inputs[DEPTH_CV_INPUT].getVoltage() * params[DEPTH_CV_PARAM].getValue());
+          depth = clamp(params[DEPTH_PARAM].getValue() + inputs[DEPTH_CV_INPUT].getVoltage() * params[DEPTH_CV_PARAM].getValue(), -1.f, 1.f);
     float_4 rpt{};
     if (!sync) {
        rptPhase[0] = fmin(rptPhase[0] + rptDelta, 1.f);
-       rpt = (rptPhase[0][0]<rptAtk ? rptPhase[0]/rptAtk : ((1.f-rptAtk)<=1e-6f ? float_4::zero() : (1.f-rptPhase[0])/(1.f-rptAtk))) * depth;
+       rpt = (rptPhase[0][0]<rptAtk ? rptPhase[0]/rptAtk : ((1.f-rptAtk)<=1e-6f ? float_4::zero() : (1.f-rptPhase[0])/(1.f-rptAtk)));
+       float rptDelta = rpt[0]-oldRpt[0][0],
+             sgn = rptDelta < 0.f ? -1.f : 1.f;
+       rptDelta = fabs(rptDelta);
+       if (rptDelta > maxRptDelta)
+         rpt = oldRpt[0] + maxRptDelta * sgn;
+       oldRpt[0] = rpt;
+       rpt = rpt * depth;
     }
     // channel loop
     for (int s=0, c=0; c<channels; s++, c+=4){
@@ -164,7 +174,12 @@ struct DASE : VenomModule {
       if (sync) {
         rptPhase[s] = ifelse(newTrig, 0.f, rptPhase[s]);
         rptPhase[s] = fmin(rptPhase[s] + rptDelta, 1.f);
-        rpt = ifelse(rptPhase[s]<rptAtk, rptPhase[s]/rptAtk, (1.f-rptPhase[s])/(1.f-rptAtk)) * depth;
+        rpt = ifelse(rptPhase[s]<rptAtk, rptPhase[s]/rptAtk, (1.f-rptPhase[s])/(1.f-rptAtk));
+        float_4 rptDelta = rpt - oldRpt[s],
+                sgn = ifelse(rptDelta<0.f, -1.f, 1.f);
+        rpt = ifelse(rptDelta>maxRptDelta, oldRpt[s] + maxRptDelta * sgn, rpt);
+        oldRpt[s] = rpt;
+        rpt = rpt * depth;
       }
       float_4 mainIn = inputs[MAIN_INPUT].getPolyVoltageSimd<float_4>(c),
               envOut = 0.f,
@@ -188,8 +203,9 @@ struct DASE : VenomModule {
       outputs[MAIN_OUTPUT].setVoltageSimd(envOut*5.f, c);
       envPhase[s] = ifelse(envPhase[s]>=1.f, 0.f, envPhase[s]);
       envActive[s] = ifelse(envPhase[s]>0.f, 1.f, 0.f);
-      if (sync || s==0)
+      if (sync || s==0) {
         rptPhase[s] = ifelse(rptPhase[s]>=1.f, 0.f, rptPhase[s]);
+      }
     } // end channel loop
     // set output channel count
     outputs[MAIN_OUTPUT].setChannels(channels);
