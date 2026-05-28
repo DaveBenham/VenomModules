@@ -148,7 +148,7 @@ struct DASE : VenomModule {
           lvlAmt = params[LEVEL_CV_PARAM].getValue(),
           respParam = params[RESP_PARAM].getValue(),
           respAmt = params[RESP_CV_PARAM].getValue(),
-          rptDelta = std::max({pow(2.f, params[RATE_PARAM].getValue() + inputs[RATE_CV_PARAM].getVoltage() * params[RATE_CV_PARAM].getValue()) * 2.f / sampleRate, 1e-6}),
+          rptDelta = std::max(static_cast<float>(pow(2.f, params[RATE_PARAM].getValue() + inputs[RATE_CV_PARAM].getVoltage() * params[RATE_CV_PARAM].getValue())) * 2.f / sampleRate, 1e-6f),
           rptAtk = clamp(params[SHAPE_PARAM].getValue() + inputs[SHAPE_CV_INPUT].getVoltage() * params[SHAPE_CV_PARAM].getValue()),
           depth = clamp(params[DEPTH_PARAM].getValue() + inputs[DEPTH_CV_INPUT].getVoltage() * params[DEPTH_CV_PARAM].getValue(), -1.f, 1.f) * 0.67f;
     float_4 rpt{};
