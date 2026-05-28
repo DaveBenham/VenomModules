@@ -175,7 +175,7 @@
     {
       "slug": "DASE",
       "name": "Dynamic Amplifying Shaping Envelope",
-      "description": "A novel Attack/Decay envelope generator that also functions as an unusual VCA and waveshaper",
+      "description": "A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate phase distortion",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#dynamic-amplifying-shaping-envelope",
       "tags": [
         "Envelope generator",

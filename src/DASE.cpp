@@ -4,7 +4,6 @@
 #include "Venom.hpp"
 #include "Filter.hpp"
 #include "math.hpp"
-#include <dsp/digital.hpp>
 
 namespace Venom {
 
