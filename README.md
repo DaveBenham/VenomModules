@@ -15,13 +15,13 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|----|----|
 |![AD/ASR Envelope Generator module image](doc/AD_ASR.png)|![Auxilliary Clone Expander module image](doc/AuxClone.png)|![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)|![Benjolin Oscillator module image](doc/BenjolinOsc.png)|![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)|![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)|
 
-|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[CROSS FADE 3D](#cross-fade-3d)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|
+|[BERNOULLI<br />SWITCH](#bernoulli-switch)|[BERNOULLI<br />SWITCH<br />EXPANDER](#bernoulli-switch-expander)|[BLOCKER](#blocker)|[BOUNDED<br />VCO](#bounded-vco)|[BYPASS<br />MODULE](#bypass-module)|[CLONE<br />MERGE](#clone-merge)|[CROSS FADE 3D](#cross-fade-3d)|[DYNAMIC<br />AMPLIFYING<br />SHAPING<br />ENVELOPE](#dynamic-amplifying-shaping-envelope)|
 |----|----|----|----|----|----|----|----|
-|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Cross Fade 3D module image](doc/CrossFade3D.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|
+|![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Blocker module image](doc/BoundedVCO.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Cross Fade 3D module image](doc/CrossFade3D.png)|![DASE module image](doc/DASE.png)|
 
-|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|[MERGE<br />4x2](#merge-4x2)|[MERGE<br />SPLIT](#merge-split)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
-|----|----|----|----|----|----|----|
-|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|![Merge 4x2 module image](doc/Merge4x2.png)|![Merge Split module image](doc/MergeSplit.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
+|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LOGIC](#logic)|[MERGE<br />4x2](#merge-4x2)|[MERGE<br />SPLIT](#merge-split)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
+|----|----|----|----|----|----|----|----|----|
+|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Logic module image](doc/Logic.png)|![Merge 4x2 module image](doc/Merge4x2.png)|![Merge Split module image](doc/MergeSplit.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
 
 |[MIX EXPANDERS](#mix-expanders)|[MOUSE<br />PAD](#mouse-pad)|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[MULTIMODE FILTER](#multimode-filter)|
 |----|----|----|----|----|
@@ -845,6 +845,14 @@ Blocker uses virtually no CPU, so it also works well as a 1hp blank.
 
 [Return to Table Of Contents](#venom)
 
+
+## BOUNDED VCO
+![Bounded VCO image](doc/BoundedVCO.png)  
+An implementation of Peter Blasser's Bound/Bounce oscillation that constrains an oscillator with constant slopes between an upper and lower bound.
+
+[Return to Table Of Contents](#venom)
+
+
 ## BYPASS MODULE
 ![Bypass module image](doc/Bypass.png)  
 Bypass (disable) one or more modules at the end of patched cables via CV control or a manual button press.
@@ -996,6 +1004,14 @@ The final output level can be attenuated with the Level control. This may be esp
 The output is constant monophonic 0V if the module is bypassed.
 
 [Return to Table Of Contents](#venom)
+
+
+## DYNAMIC AMPLIFYING SHAPING ENVELOPE
+![DASE image](doc/DASE.png)  
+A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate phase distortion.
+
+[Return to Table Of Contents](#venom)
+
 
 ## HARMONIC QUANTIZER
 ![Harmonic Quantizer module image](doc/HQ.PNG)  
