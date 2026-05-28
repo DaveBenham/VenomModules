@@ -848,7 +848,9 @@ Blocker uses virtually no CPU, so it also works well as a 1hp blank.
 
 ## BOUNDED VCO
 ![Bounded VCO image](doc/BoundedVCO.png)  
-An implementation of Peter Blasser's Bound/Bounce oscillation that constrains an oscillator with constant slopes between an upper and lower bound.
+An implementation of Peter Blasser's Bound/Bounce oscillation that constrains an oscillator with variable slopes between variable upper and lower bounds. This concept was used in his Ciat-Lonbarde Sidrax, Tetrax, and Quadrax organs, as well as the Ieaskul F. Mobenthey Fourses, Denum, and Swoop Eurorack modules.
+
+There are two ways to control the frequency of a Bounds/Bounce oscillation that have an inverse relationship. The frequency can be increased by either increasing the absolute value of the Bounce slopes or decreasing the distance between the upper and lower Bounds. Of course changing the distance between the bounds also changes the oscillation amplitude.
 
 [Return to Table Of Contents](#venom)
 
