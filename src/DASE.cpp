@@ -53,7 +53,8 @@ struct DASE : VenomModule {
   float sampleRate = 0,
         maxRptDelta = 0;
   int oversampleValues[6]{1,2,4,8,16,32};
-  bool sync = false;
+  bool sync = false,
+       dcOut = false;
   OversampleFilter_4 upSample[4]{}, 
                      downSample[4]{};
   DCBlockFilter_4 dcBlockFilter[4]{};
@@ -184,7 +185,7 @@ struct DASE : VenomModule {
       float_4 mainIn = inputs[MAIN_INPUT].getPolyVoltageSimd<float_4>(c),
               envOut = 0.f,
               lvl = lvlParam + inputs[LEVEL_CV_INPUT].getPolyVoltageSimd<float_4>(c) * lvlAmt,
-              shape = clamp(respParam + inputs[RESP_CV_INPUT].getPolyVoltageSimd<float_4>(c) * respAmt) * 0.9f;
+              shape = clamp(respParam + inputs[RESP_CV_INPUT].getPolyVoltageSimd<float_4>(c) * respAmt, -1.f, 1.f) * 0.9f;
       // oversample loop
       for (int o=0; o<oversample; o++) {
         // upsample inputs
@@ -194,7 +195,8 @@ struct DASE : VenomModule {
         float_4 atk = clamp(baseAtk + mainIn*lvl + rpt[sync ? s : 0]);
         envOut = ifelse(envPhase[s]<atk, envPhase[s]/atk, ifelse((1.f-atk)<=1e-6f, 0.f, (1.f-envPhase[s])/(1.f-atk)))*envActive[s];
         envOut = normSigmoid(envOut, shape); 
-        envOut = dcBlockFilter[s].process(envOut);
+        if (!dcOut)
+          envOut = dcBlockFilter[s].process(envOut);
         // downsample output
         if (oversample > 1)
           envOut = downSample[s].process(envOut);
@@ -254,6 +256,13 @@ struct DASEWidget : VenomWidget {
     addInput(createInputCentered<PolyPort>(Vec(20.5f, 341.5f), module, DASE::TRIG_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(52.5f, 341.5f), module, DASE::MAIN_INPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(84.5f, 341.5f), module, DASE::MAIN_OUTPUT));
+  }
+
+  void appendContextMenu(Menu* menu) override {
+    DASE* module = dynamic_cast<DASE*>(this->module);
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createBoolPtrMenuItem("DC coupled output", "", &module->dcOut));
+    VenomWidget::appendContextMenu(menu);
   }
 
 };
