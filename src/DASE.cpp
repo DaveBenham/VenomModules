@@ -49,7 +49,8 @@ struct DASE : VenomModule {
   };
   
   using float_4 = simd::float_4;
-  int oversample = 0;
+  int   retrigger = 0,
+        oversample = 0;
   float sampleRate = 0,
         maxRptDelta = 0;
   int oversampleValues[6]{1,2,4,8,16,32};
@@ -60,6 +61,7 @@ struct DASE : VenomModule {
   DCBlockFilter_4 dcBlockFilter[4]{};
   dsp::TSchmittTrigger<float_4> trigger[4]{};
   float_4 envPhase[4]{},
+          retrigPhase[4]{},
           envActive[4]{},
           rptPhase[4]{},
           oldRpt[4]{};
@@ -166,11 +168,12 @@ struct DASE : VenomModule {
     // channel loop
     for (int s=0, c=0; c<channels; s++, c+=4){
       float_4 envDelta = fmax( 1.f / (pow(2.f, lenParam + inputs[LEN_CV_INPUT].getPolyVoltageSimd<float_4>(c) * lenAmt) * sampleRate), 1e-6f),
-              newTrig = trigger[s].process(inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c), 0.2f, 2.f),
+              newTrig = trigger[s].process(inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c), 0.2f, 2.f) & ((retrigger<2 ? float_4::mask() : float_4::zero()) | (envActive[s]==0.f)),
               baseAtk = clamp(atkParam + inputs[ATK_CV_INPUT].getPolyVoltageSimd<float_4>(c) * atkAmt);
       envActive[s] = ifelse(newTrig, 1.f, envActive[s]);
-      envPhase[s] = ifelse(newTrig, 0.f, envPhase[s]);
+      envPhase[s] = ifelse(newTrig, retrigger ? float_4::zero() : retrigPhase[s]*baseAtk, envPhase[s]);
       envPhase[s] = fmin(envPhase[s] + envDelta * envActive[s], 1.f);
+      retrigPhase[s] = ifelse(envPhase[s]<baseAtk, envPhase[s]/baseAtk, ifelse((1.f-baseAtk)<=1e-6f, 0.f, (1.f-envPhase[s])/(1.f-baseAtk)))*envActive[s];
       if (sync) {
         rptPhase[s] = ifelse(newTrig, 0.f, rptPhase[s]);
         oldRpt[s] = ifelse(newTrig, 0.f, oldRpt[s]);
@@ -262,6 +265,11 @@ struct DASEWidget : VenomWidget {
     DASE* module = dynamic_cast<DASE*>(this->module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("DC coupled output", "", &module->dcOut));
+    menu->addChild(createIndexPtrSubmenuItem(
+      "Retrigger",
+      {"From current", "From 0", "Off"},
+      &module->retrigger
+    ));
     VenomWidget::appendContextMenu(menu);
   }
 
