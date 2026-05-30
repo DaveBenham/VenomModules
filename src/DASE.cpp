@@ -18,8 +18,10 @@ struct DASE : VenomModule {
     ATK_CV_PARAM,
     LEVEL_CV_PARAM,
     RESP_CV_PARAM,
+    RETRIG_PARAM,
     SYNC_PARAM,
     OVER_PARAM,
+    DC_PARAM,
     RATE_PARAM,
     DEPTH_PARAM,
     SHAPE_PARAM,
@@ -49,13 +51,11 @@ struct DASE : VenomModule {
   };
   
   using float_4 = simd::float_4;
-  int   retrigger = 0,
-        oversample = 0;
+  int oversample = 0;
   float sampleRate = 0,
         maxRptDelta = 0;
   int oversampleValues[6]{1,2,4,8,16,32};
-  bool sync = false,
-       dcOut = false;
+  bool sync = false;
   OversampleFilter_4 upSample[4]{}, 
                      downSample[4]{};
   DCBlockFilter_4 dcBlockFilter[4]{};
@@ -85,8 +85,10 @@ struct DASE : VenomModule {
     configParam(RESP_CV_PARAM, -0.1f, 0.1f, 0.f, "Output response CV amount", "%", 0, 1000, 0);
     configInput(RESP_CV_INPUT, "Output response CV");
 
+    configSwitch<FixedSwitchQuantity>(RETRIG_PARAM, 0.f, 2.f, 0.f, "Retrigger", {"From current", "From zero", "Disabled"});
     configSwitch<FixedSwitchQuantity>(SYNC_PARAM, 0.f, 1.f, 0.f, "Repeat sync", {"Off", "On"});
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 0.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
+    configSwitch<FixedSwitchQuantity>(DC_PARAM, 0.f, 1.f, 0.f, "DC coupled output", {"Off", "On"});
 
     configParam(RATE_PARAM, -4.f, 4.f, 0.f, "Repeat rate", " BPM", 2.f, 120.f, 0.f);
     configParam(RATE_CV_PARAM, -1.f, 1.f, 0.f, "Repeate rate CV amount", "%", 0, 100, 0);
@@ -142,6 +144,8 @@ struct DASE : VenomModule {
       if (sync)
         rptPhase[0] = 0.f;
     }
+    int retrigger = params[RETRIG_PARAM].getValue();
+    bool dcOut = static_cast<bool>(params[DC_PARAM].getValue());
     float lenParam = params[LEN_PARAM].getValue(),
           lenAmt = params[LEN_CV_PARAM].getValue(),
           atkParam = params[ATK_PARAM].getValue(),
@@ -223,8 +227,16 @@ struct DASE : VenomModule {
 
 struct DASEWidget : VenomWidget {
 
-  struct SyncSwitch : GlowingSvgSwitchLockable {
-    SyncSwitch() {
+  struct RetrigSwitch : GlowingSvgSwitchLockable {
+    RetrigSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+    }
+  };
+
+  struct OffOnSwitch : GlowingSvgSwitchLockable {
+    OffOnSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
     }
@@ -254,23 +266,13 @@ struct DASEWidget : VenomWidget {
         addInput(createInputCentered<MonoPort>(Vec(84.5f, 222.5f+i*38.f), module, DASE::RATE_CV_INPUT+i));
       }
     }
-    addParam(createLockableParamCentered<SyncSwitch>(Vec(14.5f, 187.5f), module, DASE::SYNC_PARAM));
-    addParam(createLockableParamCentered<OverSwitch>(Vec(62.5f, 187.5f), module, DASE::OVER_PARAM));
+    addParam(createLockableParamCentered<RetrigSwitch>(Vec(16.5f, 192.f), module, DASE::RETRIG_PARAM));
+    addParam(createLockableParamCentered<OffOnSwitch>(Vec(40.5f, 192.f), module, DASE::SYNC_PARAM));
+    addParam(createLockableParamCentered<OverSwitch>(Vec(64.5f, 192.f), module, DASE::OVER_PARAM));
+    addParam(createLockableParamCentered<OffOnSwitch>(Vec(88.5f, 192.f), module, DASE::DC_PARAM));
     addInput(createInputCentered<PolyPort>(Vec(20.5f, 341.5f), module, DASE::TRIG_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(52.5f, 341.5f), module, DASE::MAIN_INPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(84.5f, 341.5f), module, DASE::MAIN_OUTPUT));
-  }
-
-  void appendContextMenu(Menu* menu) override {
-    DASE* module = dynamic_cast<DASE*>(this->module);
-    menu->addChild(new MenuSeparator);
-    menu->addChild(createBoolPtrMenuItem("DC coupled output", "", &module->dcOut));
-    menu->addChild(createIndexPtrSubmenuItem(
-      "Retrigger",
-      {"From current", "From 0", "Off"},
-      &module->retrigger
-    ));
-    VenomWidget::appendContextMenu(menu);
   }
 
 };
