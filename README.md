@@ -49,7 +49,7 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 
 |[WAVE<br />MULTIPLIER](#wave-multiplier)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|[WINCOMP 2 + LOGIC](#wincomp-2--logic)|[XM-OP](#xm-op)|
 |----|----|----|----|----|
-|![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|![WinComp 2 + Logic module image](doc/Compare2.png)|![XM-OP module image](doc/XM_OP.png)|
+|![IPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|![WinComp 2 + Logic module image](doc/Compare2.png)|![XM-OP module image](doc/XM_OP.png)|
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
@@ -4600,7 +4600,7 @@ The Wave Multiplier can be divided into three vertical sections
 
 Sets the base frequency voltage of all four LFO oscillators using a volt per octave scale.
 
-### V/Oct knob
+### V/Oct input
 
 CV input for the base frequency voltage of all four oscillators. The CV is summed with the Master voltage.
 
