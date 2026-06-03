@@ -219,7 +219,7 @@ struct DASE : VenomModule {
           envOut = downSample[s].process(envOut);
       } // end oversample loop
       // write output
-      outputs[MAIN_OUTPUT].setVoltageSimd(envOut*5.f, c);
+      outputs[MAIN_OUTPUT].setVoltageSimd(envOut*10.f, c);
       envPhase[s] = ifelse(envPhase[s]>=1.f, 0.f, envPhase[s]);
       envActive[s] = ifelse((envPhase[s]<=0.f) & (newTrig==float_4::zero()), 0.f, 1.f);
       if (sync) {
