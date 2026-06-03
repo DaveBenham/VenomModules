@@ -175,8 +175,8 @@ struct DASE : VenomModule {
               newTrig = trigger[s].process(inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c), 0.2f, 2.f) & ((retrigger<2 ? float_4::mask() : float_4::zero()) | (envActive[s]==0.f)),
               baseAtk = clamp(atkParam + inputs[ATK_CV_INPUT].getPolyVoltageSimd<float_4>(c) * atkAmt);
       envActive[s] = ifelse(newTrig, 1.f, envActive[s]);
-      envPhase[s] = ifelse(newTrig, retrigger ? float_4::zero() : retrigPhase[s]*baseAtk, envPhase[s]);
       envPhase[s] = fmin(envPhase[s] + envDelta * envActive[s], 1.f);
+      envPhase[s] = ifelse(newTrig, retrigger ? float_4::zero() : retrigPhase[s]*baseAtk, envPhase[s]);
       retrigPhase[s] = ifelse(envPhase[s]<baseAtk, envPhase[s]/baseAtk, ifelse((1.f-baseAtk)<=1e-6f, 0.f, (1.f-envPhase[s])/(1.f-baseAtk)))*envActive[s];
       if (sync) {
         rptPhase[s] = ifelse(newTrig, 0.f, rptPhase[s]);
@@ -200,7 +200,7 @@ struct DASE : VenomModule {
           mainIn = upSample[s].process(o ? float_4::zero() : mainIn*oversample);
         }
         float_4 atk = clamp(baseAtk + mainIn*lvl + rpt[sync ? s : 0]);
-        envOut = ifelse(envPhase[s]<atk, envPhase[s]/atk, ifelse((1.f-atk)<=1e-6f, 0.f, (1.f-envPhase[s])/(1.f-atk)))*envActive[s];
+        envOut = ifelse((envPhase[s]==0.f) & (retrigger?float_4::mask():float_4::zero()), 0.f, ifelse(envPhase[s]<atk, envPhase[s]/atk, ifelse((1.f-atk)<=1e-6f, 0.f, (1.f-envPhase[s])/(1.f-atk))))*envActive[s];
         envOut = normSigmoid(envOut, shape); 
         if (!dcOut)
           envOut = dcBlockFilter[s].process(envOut);
@@ -211,7 +211,7 @@ struct DASE : VenomModule {
       // write output
       outputs[MAIN_OUTPUT].setVoltageSimd(envOut*5.f, c);
       envPhase[s] = ifelse(envPhase[s]>=1.f, 0.f, envPhase[s]);
-      envActive[s] = ifelse(envPhase[s]>0.f, 1.f, 0.f);
+      envActive[s] = ifelse((envPhase[s]<=0.f) & (newTrig==float_4::zero()), 0.f, 1.f);
       if (sync) {
         rptPhase[s] = ifelse(rptPhase[s]>=1.f, 0.f, rptPhase[s]);
       }
