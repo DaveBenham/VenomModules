@@ -4618,7 +4618,7 @@ The Wave Multiplier can be divided into three vertical sections
 
 Sets the base frequency voltage of all four LFO oscillators using a volt per octave scale.
 
-### V/Oct knob
+### V/Oct input
 
 CV input for the base frequency voltage of all four oscillators. The CV is summed with the Master voltage.
 
