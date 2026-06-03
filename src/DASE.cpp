@@ -74,9 +74,9 @@ struct DASE : VenomModule {
     configParam(LEN_CV_PARAM, -1.f, 1.f, 0.f, "Envelope length CV amount", "%", 0, 100, 0);
     configInput(LEN_CV_INPUT, "Envelope length CV");
 
-    configParam(ATK_PARAM, 0.f, 1.f, 0.f, "Attack ratio", "%", 0, 100, 0);
-    configParam(ATK_CV_PARAM, -0.1f, 0.1f, 0.f, "Attack ratio CV amount", "%", 0, 1000, 0);
-    configInput(ATK_CV_INPUT, "Attack ratio CV");
+    configParam(ATK_PARAM, 0.f, 1.f, 0.f, "Envelope attack ratio", "%", 0, 100, 0);
+    configParam(ATK_CV_PARAM, -0.1f, 0.1f, 0.f, "Envelope attack ratio CV amount", "%", 0, 1000, 0);
+    configInput(ATK_CV_INPUT, "Envelope attack ratio CV");
 
     configParam(LEVEL_PARAM, 0.f, 0.1f, 0.1f, "Input level", "%", 0, 1000, 0);
     configParam(LEVEL_CV_PARAM, -0.01f, 0.01f, 0.f, "Input level CV amount", "%", 0, 10000, 0);
@@ -99,9 +99,9 @@ struct DASE : VenomModule {
     configParam(DEPTH_CV_PARAM, -0.1f, 0.1f, 0.f, "Repeat level CV amount", "%", 0, 1000, 0);
     configInput(DEPTH_CV_INPUT, "Repeat level CV");
 
-    configParam(SHAPE_PARAM, 0.f, 1.f, 0.f, "Repeat shape", "");
-    configParam(SHAPE_CV_PARAM, -0.1f, 0.1f, 0.f, "Repeat shape CV amount", "%", 0, 1000, 0);
-    configInput(SHAPE_CV_INPUT, "Repeat shape CV");
+    configParam(SHAPE_PARAM, 0.f, 1.f, 0.f, "Repeat attack ratio", "");
+    configParam(SHAPE_CV_PARAM, -0.1f, 0.1f, 0.f, "Repeat attack ratio CV amount", "%", 0, 1000, 0);
+    configInput(SHAPE_CV_INPUT, "Repeat attack ratio CV");
 
     configInput(TRIG_INPUT, "Trigger");
     configInput(MAIN_INPUT, "Main");
