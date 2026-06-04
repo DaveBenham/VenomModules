@@ -99,7 +99,7 @@ struct DASE : VenomModule {
     configParam(DEPTH_CV_PARAM, -0.1f, 0.1f, 0.f, "Repeat level CV amount", "%", 0, 1000, 0);
     configInput(DEPTH_CV_INPUT, "Repeat level CV");
 
-    configParam(SHAPE_PARAM, 0.f, 1.f, 0.f, "Repeat attack ratio", "");
+    configParam(SHAPE_PARAM, 0.f, 1.f, 0.f, "Repeat attack ratio", "%", 0, 100, 0);
     configParam(SHAPE_CV_PARAM, -0.1f, 0.1f, 0.f, "Repeat attack ratio CV amount", "%", 0, 1000, 0);
     configInput(SHAPE_CV_INPUT, "Repeat attack ratio CV");
 
@@ -134,12 +134,16 @@ struct DASE : VenomModule {
       for (int i=0; i<4; i++){
         dcBlockFilter[i].init(oversample, sampleRate);
       }
-      if (sampleRate < 193000)
+      if (sampleRate < 49000)
         undersample = 1;
-      else if (sampleRate < 385000)
+      else if (sampleRate < 97000)
         undersample = 2;
-      else
+      else if (sampleRate < 193000)
         undersample = 4;
+      else if (sampleRate < 385000)
+        undersample = 8;
+      else
+        undersample = 16;
     }
     // get channel count
     int channels = std::max({1, inputs[TRIG_INPUT].getChannels(), inputs[MAIN_INPUT].getChannels()});
@@ -177,6 +181,7 @@ struct DASE : VenomModule {
        rpt = rpt * depth;
     }
     bool compEnv = ((args.frame % undersample) == 0);
+    float_4 compEnv4 = compEnv ? float_4::mask() : float_4::zero();
     // channel loop
     for (int s=0, c=0; c<channels; s++, c+=4){
       float_4 envDelta = 0.f,
@@ -221,7 +226,7 @@ struct DASE : VenomModule {
       // write output
       outputs[MAIN_OUTPUT].setVoltageSimd(envOut*10.f, c);
       envPhase[s] = ifelse(envPhase[s]>=1.f, 0.f, envPhase[s]);
-      envActive[s] = ifelse((envPhase[s]<=0.f) & (newTrig==float_4::zero()), 0.f, 1.f);
+      envActive[s] = ifelse(compEnv4 & (envPhase[s]<=0.f) & (newTrig==float_4::zero()), 0.f, envActive[s]);
       if (sync) {
         rptPhase[s] = ifelse(rptPhase[s]>=1.f, 0.f, rptPhase[s]);
       }
