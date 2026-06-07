@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.16.dev3",
+  "version": "2.16.dev4",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -224,6 +224,25 @@
       "tags": [
         "Logic",
         "Expander"
+      ]
+    },
+    {
+      "slug": "LinearMerge",
+      "name": "Linear Merge",
+      "description": "Merge multiple pairs of gate/CV pairs into a single monophonic stream of gates with CV",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#linear-merge",
+      "tags": [
+        "Utility"
+      ]
+    },
+    {
+      "slug": "LinearMergeExpander",
+      "name": "Linear Merge Expander",
+      "description": "Adds another channel of CV to Linear Merge",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#linear-merge-expander",
+      "tags": [
+        "Expander",
+        "Utility"
       ]
     },
     {
@@ -678,6 +697,27 @@
       "description": "Compact and versatile polyphonic split utility",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
       "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "SpreadMerge",
+      "name": "Spread Merge",
+      "description": "Spread each gate/CV pair across multiple polyphonic channels and merge all into a single poly output",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#spread-merge",
+      "tags": [
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "SpreadMergeExpander",
+      "name": "Spread Merge Expander",
+      "description": "Add another CV channel to Spread Merge",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#spread-merge-expander",
+      "tags": [
+        "Expander",
         "Polyphonic",
         "Utility"
       ]
