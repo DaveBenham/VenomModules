@@ -78,14 +78,22 @@ struct LinearMergeExpanderWidget : VenomWidget {
     addOutput(createOutputCentered<MonoPort>(Vec(22.5f, 338.5f), module, LinearMergeExpander::CV_OUTPUT));
   }
 
-/*
   void step() override {
     VenomWidget::step();
-    if(this->module) {
-      LinearMergeExpander* mod = static_cast<LinearMergeExpander*>(this->module);
+    if (this->module) {
+      bool connected = false;
+      for (Module *leftMod = this->module->getLeftExpander().module; leftMod; leftMod = leftMod->getLeftExpander().module) {
+        if (leftMod->model == modelVenomLinearMerge){
+          connected = true;
+          break;
+        }
+        if (leftMod->model != modelVenomLinearMergeExpander)
+          break;
+      }
+      this->module->lights[0].setBrightness(connected);  
     }
   }
-*/
+
 };
 
 }
