@@ -27,10 +27,18 @@ struct SpreadMerge : VenomModule {
     LIGHTS_LEN
   };
   
+  int spread = 0,
+      ins = 0,
+      channels = 0,
+      cur[8]{};
+  bool gate[8]{},
+       trig[8]{};
+  dsp::TSchmittTrigger<float> trigger[8];
+  
+  
   SpreadMerge() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-
-    configSwitch<FixedSwitchQuantity>(COUNT_PARAM, 0.f, 6.f, 0.f, "Spread channel count", {"2", "3", "4", "5", "6", "7", "8"});
+    configSwitch<FixedSwitchQuantity>(COUNT_PARAM, 0.f, 7.f, 0.f, "Spread channel count", {"Maximize", "2", "3", "4", "5", "6", "7", "8"});
     configLight(ERR_LIGHT, "Error indicator");
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 1.f, 0.f, "CV mode", {"Sample & Hold", "Track & Hold"});
     for (int i=0; i<8; i++) {
@@ -44,8 +52,62 @@ struct SpreadMerge : VenomModule {
     configOutput(CV_OUTPUT, "CV");
   }
   
+  void resetEverything() {
+    for (int i=0; i<8; i++) {
+      gate[i] = trig[i] = trigger[i].process(0.f);
+      cur[i] = 0;
+    }
+    outputs[GATE_OUTPUT].setChannels(0);
+    outputs[CV_OUTPUT].setChannels(0);
+    Module *exp = getRightExpander().module;
+    while (exp && exp->model == modelVenomSpreadMergeExpander) {
+      if (!exp->isBypassed())
+        exp->outputs[CV_OUTPUT].setChannels(0);
+      exp = exp->getRightExpander().module;
+    }
+  }
+  
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
+    ins = 7;
+    while (!inputs[GATE_INPUT+ins].isConnected())
+      ins--;
+    ins++;
+    int cnt = params[COUNT_PARAM].getValue()+1;
+    if (cnt == 1) // use Maximum available
+      cnt = ins ? 16 / ins : 0;
+    channels = cnt * ins;
+    lights[ERR_LIGHT].setBrightness(channels>16);
+    if (channels > 16)
+      channels = ins = cnt = 0;
+    if (cnt != spread)
+      resetEverything();
+    spread = cnt;
+    for (int i=0; i<ins; i++) {
+      trig[i] = trigger[i].process(inputs[GATE_INPUT+i].getVoltage(), 0.2f, 2.f);
+      outputs[GATE_OUTPUT].setVoltage(trigger[i].isHigh() ? 10.f : 0.f, i*spread + cur[i]);
+      if (gate[i] && !trigger[i].isHigh())
+        cur[i] = (cur[i]+1)%spread;
+      gate[i] = trigger[i].isHigh();
+      if (gate[i] && (trig[i] || params[MODE_PARAM].getValue()))
+        outputs[CV_OUTPUT].setVoltage(inputs[CV_INPUT+i].getVoltage(), i*spread + cur[i]);
+    }
+    outputs[GATE_OUTPUT].setChannels(channels);
+    outputs[CV_OUTPUT].setChannels(channels);
+    Module *exp = getRightExpander().module;
+    while (exp && exp->model == modelVenomSpreadMergeExpander) {
+      if (!exp->isBypassed()) {
+        for (int i=0; i<ins; i++)
+          if (gate[i] && (trig[i] || exp->params[MODE_PARAM].getValue()))
+            exp->outputs[CV_OUTPUT].setVoltage(exp->inputs[CV_INPUT+i].getVoltage(), i*spread + cur[i]);
+        exp->outputs[CV_OUTPUT].setChannels(channels);
+      }
+      exp = exp->getRightExpander().module;
+    }
+  }
+
+  void onBypass	(const BypassEvent &e) override {
+    resetEverything();
   }
 
 };
@@ -61,6 +123,7 @@ struct SpreadMergeWidget : VenomWidget {
 
   struct CountSwitch : GlowingSvgSwitchLockable {
     CountSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/select_Max.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/cnt_2.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/cnt_3.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/cnt_4.svg")));
@@ -86,14 +149,12 @@ struct SpreadMergeWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(55.f, 338.5f), module, SpreadMerge::CV_OUTPUT));
   }
 
-/*
-  void step() override {
-    VenomWidget::step();
-    if(this->module) {
-      SpreadMerge* mod = static_cast<SpreadMerge*>(this->module);
-    }
+  void appendContextMenu(Menu* menu) override {
+    menu->addChild(new MenuSeparator);
+    menu->addChild(createMenuItem("Add CV Expander", "", [this](){addExpander(modelVenomSpreadMergeExpander,this);}));
+    VenomWidget::appendContextMenu(menu);
   }
-*/
+
 };
 
 }

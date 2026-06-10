@@ -24,6 +24,8 @@ struct SpreadMergeExpander : VenomModule {
     LIGHTS_LEN
   };
   
+  float cv[8][8]{};
+  
   SpreadMergeExpander() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
@@ -76,14 +78,21 @@ struct SpreadMergeExpanderWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(22.5f, 338.5f), module, SpreadMergeExpander::CV_OUTPUT));
   }
 
-/*
   void step() override {
     VenomWidget::step();
-    if(this->module) {
-      SpreadMergeExpander* mod = static_cast<SpreadMergeExpander*>(this->module);
+    if (this->module) {
+      bool connected = false;
+      for (Module *leftMod = this->module->getLeftExpander().module; leftMod; leftMod = leftMod->getLeftExpander().module) {
+        if (leftMod->model == modelVenomSpreadMerge){
+          connected = true;
+          break;
+        }
+        if (leftMod->model != modelVenomSpreadMergeExpander)
+          break;
+      }
+      this->module->lights[0].setBrightness(connected);  
     }
   }
-*/
 };
 
 }
