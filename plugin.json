@@ -229,7 +229,7 @@
     {
       "slug": "LinearMerge",
       "name": "Linear Merge",
-      "description": "Merge multiple pairs of gate/CV pairs into a single monophonic stream of gates with CV",
+      "description": "Merge multiple sets of monophonic gate/CV pairs into a single monophonic stream of gates with associated CV",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#linear-merge",
       "tags": [
         "Utility"
@@ -704,7 +704,7 @@
     {
       "slug": "SpreadMerge",
       "name": "Spread Merge",
-      "description": "Spread each gate/CV pair across multiple polyphonic channels and merge all into a single poly output",
+      "description": "Spread each monophonic gate/CV pair across multiple polyphonic channels and merge all into a single poly output",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#spread-merge",
       "tags": [
         "Polyphonic",
