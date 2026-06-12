@@ -69,6 +69,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomPolyUnison);
   p->addModel(modelVenomPush5);
   p->addModel(modelVenomQuadVCPolarizer);
+  p->addModel(modelVenomRatio);
   p->addModel(modelVenomRecurse);
   p->addModel(modelVenomRecurseStereo);
   p->addModel(modelVenomReformation);

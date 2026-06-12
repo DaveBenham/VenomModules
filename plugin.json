@@ -598,6 +598,16 @@
       ]
     },
     {
+      "slug": "Ratio",
+      "name": "Ratio",
+      "description": "Computes V/Oct CV for an integral ratio",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#ratio",
+      "tags": [
+        "Polyphonic",
+        "Quantizer"
+      ]
+    },
+    {
       "slug": "Recurse",
       "name": "Recurse",
       "description": "Recursively process an input via Send/Return, with built in scaling and offset cababilities",
