@@ -19,13 +19,13 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|----|----|----|----|----|
 |![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Blocker module image](doc/BoundedVCO.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Cross Fade 3D module image](doc/CrossFade3D.png)|![DASE module image](doc/DASE.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|
 
-|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LINEAR<br />MERGE](#linear-merge)|[LINEAR<br />MERGE<br />EXPANDER](#linear-merge-expander)|[LOGIC](#logic)|[MERGE<br />4x2](#merge-4x2)|[MERGE<br />SPLIT](#merge-split)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|
-|----|----|----|----|----|----|----|----|----|----|
-|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Linear Merge module image](doc/LinearMerge.png)|![Linear Merge module image](doc/LinearMergeExpander.png)|![Logic module image](doc/Logic.png)|![Merge 4x2 module image](doc/Merge4x2.png)|![Merge Split module image](doc/MergeSplit.png)|![Mix 4 module image](doc/Mix4.png)|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|
+|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LINEAR<br />MERGE](#linear-merge)|[LINEAR<br />MERGE<br />EXPANDER](#linear-merge-expander)|[LOGIC](#logic)|[MERGE<br />4x2](#merge-4x2)|[MERGE<br />SPLIT](#merge-split)|[MIX 4](#mix-4)|
+|----|----|----|----|----|----|----|----|----|
+|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Linear Merge module image](doc/LinearMerge.png)|![Linear Merge module image](doc/LinearMergeExpander.png)|![Logic module image](doc/Logic.png)|![Merge 4x2 module image](doc/Merge4x2.png)|![Merge Split module image](doc/MergeSplit.png)|![Mix 4 module image](doc/Mix4.png)|
 
-|[MIX EXPANDERS](#mix-expanders)|[MOUSE<br />PAD](#mouse-pad)|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[MULTIMODE FILTER](#multimode-filter)|
-|----|----|----|----|----|
-|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Mouse Pad module image](doc/MousePad.png)|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Multimode Filter module image](doc/SVF.png)|
+|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|[MOUSE<br />PAD](#mouse-pad)|[MULTI<br />MERGE](#multi-merge)|[MULTI<br />SPLIT](#multi-split)|[MULTIMODE FILTER](#multimode-filter)|
+|----|----|----|----|----|----|
+|![Mix 4 Stereo module image](doc/Mix4Stereo.png)|![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)|![Mouse Pad module image](doc/MousePad.png)|![Multi Merge module image](doc/MultiMerge.png)|![Multi Split module image](doc/MultiSplit.png)|![Multimode Filter module image](doc/SVF.png)|
 
 |[NON-OCTAVE REPEATING SCALE<br />INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)|[NORSIQ<br />CHORD<br />TO<br />SCALE](#norsiq-chord-to-scale)|[NULL<br />CABLE](#null-cable)|[OCTAVER](#octaver)|[PAN 3D](#pan-3d)|[POLY<br />CLONE](#poly-clone)|
 |----|----|----|----|----|----|
@@ -39,17 +39,17 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|
 |![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
-|[RHYTHM<br />EXPLORER<br />CV EXPANDER](#rhythm-explorer-cv-expander)|[SHAPED<br />VCA](#shaped-vca)|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4x2](#split-4x2)|[SPREAD<br />MERGE](#spread-merge)|[SPREAD<br />MERGE<br />EXPANDER](#spread-merge-expander)|[THRU](#thru)|[VCA MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|
-|----|----|----|----|----|----|----|----|----|----|
-|![Rhythm Explorer CV Expander module image](doc/REXCV.png)|![SHAPED VCA module image](doc/ShapedVCA.png)|![SLEW module image](doc/Slew.png)|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![Split 4x2 module image](doc/Split4x2.png)|![Spread Merge module image](doc/SpreadMerge.png)|![Spread Merge Expander module image](doc/SpreadMergeExpander.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|
+|[RHYTHM<br />EXPLORER<br />CV EXPANDER](#rhythm-explorer-cv-expander)|[SHAPED<br />VCA](#shaped-vca)|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4x2](#split-4x2)|[SPREAD<br />MERGE](#spread-merge)|[SPREAD<br />MERGE<br />EXPANDER](#spread-merge-expander)|[THRU](#thru)|[VCA<br />MIX 4](#vca-mix-4)|
+|----|----|----|----|----|----|----|----|----|
+|![Rhythm Explorer CV Expander module image](doc/REXCV.png)|![SHAPED VCA module image](doc/ShapedVCA.png)|![SLEW module image](doc/Slew.png)|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![Split 4x2 module image](doc/Split4x2.png)|![Spread Merge module image](doc/SpreadMerge.png)|![Spread Merge Expander module image](doc/SpreadMergeExpander.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|
 
-|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WAVE<br />MANGLER](#wave-mangler)|
+|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|
 |----|----|----|----|----|
-|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|![WAVE MANGLER module image](doc/WaveMangler.png)|
+|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|![VCO Lab module image](doc/Oscillator.png)|![VCO Unit module image](doc/VCOUnit.png)|![VENOM BLANK module image](doc/VenomBlank.PNG)|![WAVE FOLDER module image](doc/WaveFolder.png)|
 
-|[WAVE<br />MULTIPLIER](#wave-multiplier)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|[WINCOMP 2 + LOGIC](#wincomp-2--logic)|[XM-OP](#xm-op)|
-|----|----|----|----|----|
-|![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|![WinComp 2 + Logic module image](doc/Compare2.png)|![XM-OP module image](doc/XM_OP.png)|
+|[WAVE<br />MANGLER](#wave-mangler)|[WAVE<br />MULTIPLIER](#wave-multiplier)|[WIDGET<br />MENU<br />EXTENDER](#widget-menu-extender)|[WINCOMP](#wincomp)|[WINCOMP 2 + LOGIC](#wincomp-2--logic)|[XM-OP](#xm-op)|
+|----|----|----|----|----|----|
+|![WAVE MANGLER module image](doc/WaveMangler.png)|![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|![WinComp 2 + Logic module image](doc/Compare2.png)|![XM-OP module image](doc/XM_OP.png)|
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.

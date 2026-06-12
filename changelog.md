@@ -4,6 +4,10 @@
 ### New Modules
 - Bounded VCO
 - DASE (Dynamic Amplifying Shaping Envelope)
+- Linear Merge
+- Linear Merge Expander
+- Spread Merge
+- Spread Merge Expander
 
 ### Enhancements
 - Poly Mute
