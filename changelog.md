@@ -6,6 +6,7 @@
 - DASE (Dynamic Amplifying Shaping Envelope)
 - Linear Merge
 - Linear Merge Expander
+- Ratio
 - Spread Merge
 - Spread Merge Expander
 

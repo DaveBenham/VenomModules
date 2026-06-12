@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.16.dev4",
+  "version": "2.16.dev5",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -175,7 +175,7 @@
     {
       "slug": "DASE",
       "name": "Dynamic Amplifying Shaping Envelope",
-      "description": "A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate phase distortion",
+      "description": "A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate envelope modulation",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#dynamic-amplifying-shaping-envelope",
       "tags": [
         "Envelope generator",
@@ -600,7 +600,7 @@
     {
       "slug": "Ratio",
       "name": "Ratio",
-      "description": "Computes V/Oct CV for an integral ratio",
+      "description": "Computes V/Oct CV for an integral ratio interval",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#ratio",
       "tags": [
         "Polyphonic",
