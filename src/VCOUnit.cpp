@@ -29,6 +29,7 @@ struct VCOUnit : VenomModule {
     OFFSET_AMT_PARAM,
     LEVEL_PARAM,
     LEVEL_AMT_PARAM,
+    REV_GATE_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -73,7 +74,7 @@ struct VCOUnit : VenomModule {
   float lvlScale = 0.1f;
   float shpScale = 0.2f;
   float syncHi = 2.0f, syncLo = 0.2f;
-  bool softSync = false;
+  bool softSync = false; // true if soft sync connected
   bool alternate = false;
   bool disableDPW = false;
   bool aliasSuppress = false;
@@ -88,7 +89,8 @@ struct VCOUnit : VenomModule {
   bool linDCCouple = false;
   bool linNoThru0 = false;
   dsp::SchmittTrigger syncTrig[16], revTrig[16];
-  float modeFreq[2][3] = {{dsp::FREQ_C4, 2.f, 100.f},{dsp::FREQ_C4, 120.f, 100.f}}, biasFreq = 0.02f;
+  float modeFreq[2][3] = {{dsp::FREQ_C4, 2.f, 100.f},{dsp::FREQ_C4, 120.f, 100.f}}, 
+        biasFreq = 0.02f;
   int currentMode = -1;
   int mode = 0;
   int wave = 0;
@@ -157,10 +159,10 @@ struct VCOUnit : VenomModule {
       VCOUnit* mod = reinterpret_cast<VCOUnit*>(this->module);
       float freq = 0.f;
       if (mod->mode < 2)
-        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue()) * mod->modeFreq[mod->lfoAsBPM][mod->mode];
+        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue());
       else
         freq = mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
-      return freq;
+      return freq * mod->modeFreq[mod->lfoAsBPM][mod->mode];
     }
     void setDisplayValue(float v) override {
       VCOUnit* mod = reinterpret_cast<VCOUnit*>(this->module);
@@ -196,6 +198,7 @@ struct VCOUnit : VenomModule {
     configInput(SYNC_INPUT, "Hard Sync");
     configLight(SYNC_LIGHT, "Hard Sync oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configInput(REV_INPUT, "Soft sync");
+    configSwitch<FixedSwitchQuantity>(REV_GATE_PARAM, 0.f, 1.f, 0.f, "Soft sync mode", {"Trigger changes current direction", "Low gate forward, high gate reverse"});
     configLight(REV_LIGHT, "Soft sync oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configInput(VOCT_INPUT, "V/Oct");
     configOutput(OUTPUT, "VCO");
@@ -249,7 +252,7 @@ struct VCOUnit : VenomModule {
     if (shortCircuit)
       return;
     if (!paramExtensions[OVER_PARAM].locked)
-      params[OVER_PARAM].setValue(modeDefaultOver[mode]);
+    params[OVER_PARAM].setValue(modeDefaultOver[mode]);
     paramQuantities[OVER_PARAM]->defaultValue = modeDefaultOver[mode];
     paramExtensions[OVER_PARAM].factoryDflt = modeDefaultOver[mode];
     once = (currentMode>2);
@@ -376,7 +379,7 @@ struct VCOUnit : VenomModule {
     int simdCnt = (channels+3)/4;
     
     float_4 expIn{}, linIn{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn{}, syncIn{}, freq[4]{},
-            shapeIn{}, phaseIn{}, offsetIn{}, levelIn{}, out[4]{}, wavePhasor{}, sawPhasor{}, offsetSawPhasor{};
+            shapeIn{}, phaseIn{}, offsetIn{}, levelIn{}, out[4]{}, wavePhasor{}, wavePhase{}, sawPhasor{}, offsetSawPhasor{};
     float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
     float k =  1000.f * args.sampleTime / oversample;
     float_4 basePhaseDelta{}, lowFreq{}, denInv{};
@@ -386,24 +389,22 @@ struct VCOUnit : VenomModule {
       paramQuantities[FREQ_PARAM]->name = alternate ? "Bias" : "Frequency";
       paramQuantities[OCTAVE_PARAM]->name = alternate ? "Linear FM range" : "Octave";
       inputInfos[VOCT_INPUT]->name = alternate ? "Bias" : "V/Oct";
-      paramQuantities[EXP_PARAM]->name = alternate ? "Unused" : "Exponential FM";
-      inputInfos[EXP_INPUT]->name = alternate ? "Unused" : "Exponential FM";
-      inputInfos[EXP_DEPTH_INPUT]->name = alternate ? "Unused" : "Exponential FM depth";
 
       paramExtensions[FREQ_PARAM].factoryName = paramQuantities[FREQ_PARAM]->name;
       paramExtensions[OCTAVE_PARAM].factoryName = paramQuantities[OCTAVE_PARAM]->name;
       inputExtensions[VOCT_INPUT].factoryName = inputInfos[VOCT_INPUT]->name;
-      paramExtensions[EXP_PARAM].factoryName = paramQuantities[EXP_PARAM]->name;
-      inputExtensions[EXP_INPUT].factoryName = inputInfos[EXP_INPUT]->name;
-      inputExtensions[EXP_DEPTH_INPUT].factoryName = inputInfos[EXP_DEPTH_INPUT]->name;
     }
     
-    if (softSync != inputs[REV_INPUT].isConnected()) {
+    if (softSync != inputs[REV_INPUT].isConnected()) { // force forward if soft sync disconnected
       if (softSync) {
-        for (int i=0; i<4; i++) phasorDir[i] = 1.f;
+        for (int i=0; i<4; i++) 
+          phasorDir[i] = 1.f;
+        for (int i=0; i<16; i++)
+          revTrig[i].process(0.f);
       }
       softSync = !softSync;
     }
+    bool revGate = params[REV_GATE_PARAM].getValue() && softSync;
     
     int shapeMode = static_cast<int>(params[SHAPE_MODE_PARAM].getValue());
     bool procOver[INPUTS_LEN]{};
@@ -415,11 +416,9 @@ struct VCOUnit : VenomModule {
         float_4 level{};
         // Main Phasor
         if (!o) {
-          if (!alternate) {
-            if (s==0 || inputs[EXP_DEPTH_INPUT].isPolyphonic()) {
-              expDepthIn[s] = simd::clamp( inputs[EXP_DEPTH_INPUT].getNormalPolyVoltageSimd<float_4>(5.f,c)/5.f, -1.f, 1.f);
-            } else expDepthIn[s] = expDepthIn[0];
-          }
+          if (s==0 || inputs[EXP_DEPTH_INPUT].isPolyphonic()) {
+            expDepthIn[s] = simd::clamp( inputs[EXP_DEPTH_INPUT].getNormalPolyVoltageSimd<float_4>(5.f,c)/5.f, -1.f, 1.f);
+          } else expDepthIn[s] = expDepthIn[0];
           if (s==0 || inputs[LIN_DEPTH_INPUT].isPolyphonic()) {
             linDepthIn[s] = simd::clamp( inputs[LIN_DEPTH_INPUT].getNormalPolyVoltageSimd<float_4>(5.f,c)/5.f, -1.f, 1.f);
           } else linDepthIn[s] = linDepthIn[0];
@@ -427,15 +426,13 @@ struct VCOUnit : VenomModule {
             vOctIn[s] = inputs[VOCT_INPUT].getPolyVoltageSimd<float_4>(c);
           } else vOctIn[s] = vOctIn[0];
         }
-        if (!alternate) {
-          if (s==0 || inputs[EXP_INPUT].isPolyphonic()) {
-            expIn = (o && !disableOver[EXP_INPUT]) ? float_4::zero() : inputs[EXP_INPUT].getPolyVoltageSimd<float_4>(c);
-            if (procOver[EXP_INPUT]){
-              if (o==0) expIn *= oversample;
-              expIn = expUpSample[s].process(expIn);
-            }
-          } // else preserve prior expIn value
-        }
+        if (s==0 || inputs[EXP_INPUT].isPolyphonic()) {
+          expIn = (o && !disableOver[EXP_INPUT]) ? float_4::zero() : inputs[EXP_INPUT].getPolyVoltageSimd<float_4>(c);
+          if (procOver[EXP_INPUT]){
+            if (o==0) expIn *= oversample;
+            expIn = expUpSample[s].process(expIn);
+          }
+        } // else preserve prior expIn value
         if (s==0 || inputs[LIN_INPUT].isPolyphonic()) {
           linIn = (o && !disableOver[LIN_INPUT]) ? float_4::zero() : inputs[LIN_INPUT].getPolyVoltageSimd<float_4>(c);
           if (procOver[LIN_INPUT]){
@@ -446,7 +443,7 @@ struct VCOUnit : VenomModule {
         if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
           linIn = linDcBlockFilter[s].process(linIn);
         float_4 rev{};
-        if (inputs[REV_INPUT].isConnected()) {
+        if (softSync) {
           if (s==0 || inputs[REV_INPUT].isPolyphonic()) {
             revIn = (o && !disableOver[REV_INPUT]) ? float_4::zero() : inputs[REV_INPUT].getPolyVoltageSimd<float_4>(c);
             if (procOver[REV_INPUT]){
@@ -477,11 +474,20 @@ struct VCOUnit : VenomModule {
           if (linNoThru0)
             freq[s] = simd::ifelse(freq[s]<float_4::zero(), float_4::zero(), freq[s]);
         } else {
-          freq[s] = (vOctParm + vOctIn[s])*biasFreq + linIn*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
+          freq[s] = dsp::exp2_taylor5(expIn*expDepthIn[s]*params[EXP_PARAM].getValue())*(vOctParm + vOctIn[s])*biasFreq + linIn*linDepthIn[s]*params[LIN_PARAM].getValue()*((params[OCTAVE_PARAM].getValue()+4.f)*3.f+1.f);
         }
         freq[s] *= modeFreq[0][mode];
-        phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
-        phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
+        float_4 syncStart = 0.f;
+        if (revGate) {
+          for (int i=0; i<4; i++) {
+            phasorDir[s][i] = revTrig[c+i].isHigh() ? -1.f : 1.f;
+            syncStart[i] = revTrig[c+i].isHigh() ? 1000.f : 0.f;
+          }
+        }
+        else {
+          phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
+          phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
+        }
         basePhaseDelta = freq[s] * phasorDir[s] * k;
         phasor[s] += basePhaseDelta;
         if (aliasSuppress) {
@@ -495,7 +501,7 @@ struct VCOUnit : VenomModule {
         if (once)
           onceActive[s] = simd::ifelse(tempPhasor != phasor[s], float_4::zero(), onceActive[s]);
         phasor[s] = tempPhasor;
-        phasor[s] = simd::ifelse(sync>0.f, float_4::zero(), phasor[s]);
+        phasor[s] = simd::ifelse(sync>0.f, syncStart, phasor[s]);
         if (once)
           onceActive[s] = simd::ifelse(sync>float_4::zero(), 1.f, onceActive[s]);
         if (gated){
@@ -638,8 +644,9 @@ struct VCOUnit : VenomModule {
             break;
           case 2: // SQR
             shapeMode %= 3;
-            wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
-            wavePhasor = simd::fmod(wavePhasor, 1000.f);
+            wavePhase = phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f;
+            wavePhasor = phasor[s] + wavePhase*250.f;
+            wavePhasor = ifelse((sync>0.f) & (wavePhase==0.f), wavePhasor, simd::fmod(wavePhasor, 1000.f));
             wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
             if (shapeMode==2) { // morph tri <--> sqr <--> saw
               out[s] = simd::ifelse(wavePhasor<500.f, 5.f, -5.f) * (1.f - simd::abs(shape)); // square component
@@ -664,8 +671,9 @@ struct VCOUnit : VenomModule {
             }
             break;
           default: // 3 SAW
-            wavePhasor = phasor[s] + (phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f)*250.f;
-            wavePhasor = simd::fmod(wavePhasor, 1000.f);
+            wavePhase = phaseIn*params[PHASE_AMT_PARAM].getValue() + params[PHASE_PARAM].getValue()*2.f;
+            wavePhasor = phasor[s] + wavePhase*250.f;
+            wavePhasor = ifelse((sync>0.f) & (wavePhase==0.f), wavePhasor, simd::fmod(wavePhasor, 1000.f));
             wavePhasor = simd::ifelse(wavePhasor<0.f, wavePhasor+1000.f, wavePhasor);
             wavePhasor *= 0.001f;
             if (aliasSuppress && shapeMode < 3) {
@@ -966,6 +974,7 @@ struct VCOUnitWidget : VenomWidget {
     addInput(createOverInputCentered<OverPort>(Vec(24.f, 293.5f), module, VCOUnit::SYNC_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(37.5f, 282.f), module, VCOUnit::SYNC_LIGHT));
     addInput(createOverInputCentered<OverPort>(Vec(67.5f, 293.5f), module, VCOUnit::REV_INPUT));
+    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(84.f,268.5f), module, VCOUnit::REV_GATE_PARAM));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(81.f, 282.f), module, VCOUnit::REV_LIGHT));
 
     addInput(createInputCentered<PolyPort>(Vec(24.f, 341.5f), module, VCOUnit::VOCT_INPUT));

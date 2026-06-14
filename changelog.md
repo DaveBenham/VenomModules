@@ -13,6 +13,12 @@
 ### Enhancements
 - Poly Mute
   - Add "Exclusive pass" (radio button) Gate Mode option
+- VCO Lab and VCO Unit
+  - Exponential FM no longer disabled when in 0 Hz carrier mode. Only has effect if bias is non-zero.
+  - New Soft Sync gate mode. If enabled then high gate is reverse, low gate is forward, and hard sync no longer resets direction to forward.
+
+### Bug Fixes
+- Fixed Bias frequency display in VCO Lab and VCO Unit. Used to be off by factor of 100
 
 ## 2.15.0 (2026-04-18)
 ### New Modules
