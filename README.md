@@ -4077,7 +4077,7 @@ This color coded button controls the overall mode of the oscillator
 - **Retriggered LFO one shot** (pink)
 - **Gated LFO one shot** (purple)
 
-In 0 Hz carrier mode the oscillator is stalled, and requires linear FM input or phase CV input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color).
+In 0 Hz carrier mode the oscillator is stalled if there is no bias, and requires linear FM input or phase CV input to produce a signal. Some of the controls and inputs have alternate behavior in this mode (labeled in an alternate color). Exponential FM has no effect unless the bias is non-zero.
 
 Phase distortion synthesis can be explored via the 0 Hz carrier mode. Setting the phase input attenuator to 40% will cause a 10V phasor change to exactly produce one wave cycle. The smoothest results will be achieved if all anti-aliasing is disabled for both the driving phasor, as well as the VCO Lab in 0 Hz carrier mode. For VCO Lab this means turning oversampling off, and disabling DPW anti-alias suppression.
 
@@ -4142,7 +4142,7 @@ Below are the knob ranges by mode when the Octave is at 0. Note that the Octave 
 |---|---|---|---|
 |Audio frequency|16.352 Hz (C0)|261.63 Hz (C4)|4186 Hz (C8)|
 |Low frequency|0.125 Hz<br />(7.5 BPM)|2 Hz<br />(120 BPM)|32 Hz<br />(1920 BPM)|
-|0 Hz carrier bias|-0.08 Hz|0 Hz|0.08 Hz|
+|0 Hz carrier bias|-8 Hz|0 Hz|8 Hz|
 
 When in 0 Hz carrier mode, a 0 Hz bias produces a static linear FM sound. A non 0 bias provides a rhythmic motion to the sound - the higher the bias magnitude, the faster the rhythm.
 
@@ -4152,28 +4152,24 @@ When in audio or low frequency mode, the Octave knob adds or subtracts octaves t
 When in 0 Hz carrier mode the knob sets the range for the linear FM depth. Low frequency modulation requires a smaller range, and higher frequency modulation a higher range to achieve the same degree of FM "folding"
 
 ### Soft Sync input
-The soft Sync reverses the waveforms upon the leading edge of an incomming trigger.
+The small unlabeled button to the right of the Soft Sync label controls the mode of soft sync.
+- **Trigger mode** ***(off, default)*** - The leading edge of an incoming trigger reverses the current direction of the waveform. A hard sync always resets the direction to forward. 
+- **Gate mode** ***(yellow)*** - A high gate puts the waveform in reverse mode. A low gate puts the waveform in forward mode. A hard sync never changes the direction.
 
-The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point.
+The trigger and gate detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point.
 
 This port supports oversampling that can be disabled via the port context menu.
 
 ### Exp FM (Exponential frequency modulation) knob
 This knob sets the depth of exponential frequency modulation.
 
-This knob is disabled when in 0 Hz Carrier mode.
-
 ### Exp FM (Exponential frequency modulation) input
 This input is for exponential FM CV.
-
-This input is disabled when in 0 Hz Carrier mode.
 
 This port supports oversampling that can be disabled via the port context menu.
 
 ### Exp FM (Exponential frequency modulationi) Depth input
 This bipolar input can attenuate the Exp FM depth. A value of 10V represents 100%, and -10V inverts the depth at 100%.
-
-This input is disabled when in 0 Hz Carrier mode.
 
 This port does not support oversampling.
 
@@ -4197,7 +4193,7 @@ This port does not support oversampling.
 ### V/Oct / Bias input
 When in Audio or Low Frequency mode this input modulates the oscillator frequency at a scale of 1 volt per octave.
 
-When in 0 Hz Carrier mode the input modulates the linear Bias at 0.02 Hz per volt.
+When in 0 Hz Carrier mode the input modulates the linear Bias at 2 Hz per volt.
 
 This port does not support oversampling.
 
