@@ -35,9 +35,9 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|----|----|----|----|----|
 |![Poly Fade module image](doc/PolyFade.png)|![ module image](doc/PolyMute.png)|![Poly Offset module image](doc/PolyOffset.png)|![Poly Prune module image](doc/PolyPrune.png)|![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)|![Poly Scale module image](doc/PolyScale.png)|![Poly Unison module image](doc/PolyUnison.PNG)|![Push 5 module image](doc/Push5.png)|![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)|
 
-|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
-|----|----|----|----|
-|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
+|[RATIO](#ratio)|[RECURSE](#recurse)|[RECURSE<br />STEREO](#recurse-stereo)|[REFORMATION](#reformation)|[RHYTHM EXPLORER](#rhythm-explorer)|
+|----|----|----|----|----|
+|![Ratio module image](doc/Ratio.png)|![RECURSE module image](doc/Recurse.PNG)|![RECURSE STEREO module image](doc/RecurseStereo.PNG)|![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|
 
 |[RHYTHM<br />EXPLORER<br />CV EXPANDER](#rhythm-explorer-cv-expander)|[SHAPED<br />VCA](#shaped-vca)|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4x2](#split-4x2)|[SPREAD<br />MERGE](#spread-merge)|[SPREAD<br />MERGE<br />EXPANDER](#spread-merge-expander)|[THRU](#thru)|[VCA<br />MIX 4](#vca-mix-4)|
 |----|----|----|----|----|----|----|----|----|
@@ -2957,6 +2957,13 @@ Optional clipping applied to the output
 ### Bypass
 
 All outputs are monophonic 0V when Quad VC Polarizer is bypassed.
+
+[Return to Table Of Contents](#venom)
+
+
+## RATIO
+![Ratio module image](doc/Ratio.PNG)  
+Computes V/Oct CV for an integral ratio interval.
 
 [Return to Table Of Contents](#venom)
 
