@@ -43,7 +43,7 @@ struct LinearMerge : VenomModule {
   LinearMerge() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 1.f, 0.f, "CV mode", {"Sample & Hold", "Track & Hold"});
-    configSwitch<FixedSwitchQuantity>(SELECT_PARAM, 0.f, 5.f, 0.f, "CV selection", {"First", "Last", "Minimum", "Maximum", "Average", "Sum"});
+    configSwitch<FixedSwitchQuantity>(SELECT_PARAM, 0.f, 5.f, 0.f, "CV selection", {"First channel", "Last channel", "Minimum CV", "Maximum CV", "Average CV", "Sum CV"});
     for (int i=0; i<8; i++) {
       std::string istr = std::to_string(i+1);
       std::string nm = "Gate " + istr;

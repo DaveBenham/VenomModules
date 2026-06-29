@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="45"
+   height="380"
+   viewBox="0 0 45 380"
+   version="1.1"
+   id="svg100"
+   sodipodi:docname="EnvelopeHoldLabels_Coal.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata104">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="1"
+     gridtolerance="1"
+     guidetolerance="1"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     id="namedview102"
+     showgrid="false"
+     inkscape:zoom="2.2342105"
+     inkscape:cx="144.1225"
+     inkscape:cy="124.65253"
+     inkscape:window-x="1592"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4"
+     inkscape:pagecheckerboard="0"
+     units="px"
+     inkscape:showpageshadow="false"
+     showguides="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1285"
+       visible="true"
+       dotted="false"
+       snapvisiblegridlinesonly="true"
+       enabled="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs7">
+    <rect
+       x="85"
+       y="10"
+       width="51.058132"
+       height="25"
+       id="rect29906" />
+    <linearGradient
+       id="a8e142bb-541b-4903-be63-d5d069028a5d"
+       x1="22.5"
+       x2="22.5"
+       y2="380"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#ebebeb"
+         id="stop2" />
+      <stop
+         offset="1"
+         stop-color="#e1e1e1"
+         id="stop4" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Faceplate"
+     style="display:inline" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Brand"
+     style="display:inline" />
+  <g
+     id="f45e0130-37b7-4f8b-95b3-6408baa23eb1"
+     data-name="components"
+     style="display:inline"
+     inkscape:groupmode="layer"
+     inkscape:label="Solid">
+    <g
+       aria-label="LEVEL"
+       id="text104244-6-9-9"
+       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#ede7dc;fill-opacity:1"
+       transform="translate(-90.158245)">
+      <path
+         d="m 100.03711,97.496559 v -5.679687 h 1.15625 v 4.714843 h 2.875 v 0.964844 z"
+         id="path118233"
+         style="fill:#ede7dc;fill-opacity:1" />
+      <path
+         d="m 104.89258,97.496559 v -5.726562 h 4.24609 v 0.96875 h -3.08984 v 1.269531 h 2.875 v 0.964844 h -2.875 v 1.558593 h 3.19922 v 0.964844 z"
+         id="path118235"
+         style="fill:#ede7dc;fill-opacity:1" />
+      <path
+         d="m 111.68945,97.496559 -2.04687,-5.726562 h 1.2539 l 1.44922,4.238281 1.40235,-4.238281 h 1.22656 l -2.05078,5.726562 z"
+         id="path118237"
+         style="fill:#ede7dc;fill-opacity:1" />
+      <path
+         d="m 115.56445,97.496559 v -5.726562 h 4.2461 v 0.96875 h -3.08985 v 1.269531 h 2.875 v 0.964844 h -2.875 v 1.558593 h 3.19922 v 0.964844 z"
+         id="path118239"
+         style="fill:#ede7dc;fill-opacity:1" />
+      <path
+         d="m 120.93164,97.496559 v -5.679687 h 1.15625 v 4.714843 h 2.875 v 0.964844 z"
+         id="path118241"
+         style="fill:#ede7dc;fill-opacity:1" />
+    </g>
+    <g
+       aria-label="TIME"
+       id="text104244-6-9-9-7"
+       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#ede7dc;fill-opacity:1"
+       transform="translate(-90.158245)">
+      <path
+         d="m 104.92969,207.99622 v -4.75782 h -1.69922 v -0.96875 h 4.55078 v 0.96875 h -1.69531 v 4.75782 z"
+         id="path118266"
+         style="fill:#ede7dc;fill-opacity:1" />
+      <path
+         d="m 108.49219,207.99622 v -5.72657 h 1.15625 v 5.72657 z"
+         id="path118268"
+         style="fill:#ede7dc;fill-opacity:1" />
+      <path
+         d="m 110.73438,207.99622 v -5.72657 h 1.73046 l 1.03907,3.90625 1.02734,-3.90625 h 1.73438 v 5.72657 h -1.07422 v -4.50782 l -1.13672,4.50782 h -1.11328 l -1.13282,-4.50782 v 4.50782 z"
+         id="path118270"
+         style="fill:#ede7dc;fill-opacity:1" />
+      <path
+         d="m 117.41406,207.99622 v -5.72657 h 4.2461 v 0.96875 h -3.08985 v 1.26953 h 2.875 v 0.96485 h -2.875 v 1.55859 h 3.19922 v 0.96485 z"
+         id="path118272"
+         style="fill:#ede7dc;fill-opacity:1" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Dynamic Solid"
+     style="display:inline" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Reverse Solid"
+     style="display:inline" />
+  <text
+     xml:space="preserve"
+     id="text29904"
+     style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;white-space:pre;shape-inside:url(#rect29906)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Widgets"
+     style="display:inline" />
+</svg>

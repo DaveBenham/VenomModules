@@ -219,6 +219,43 @@ struct VenomModule : Module {
     }
   };
 
+  void setParamFactoryName(int id, std::string nm) {
+    ParamQuantity *q = paramQuantities[id];
+    ParamExtension *e = &paramExtensions[id];
+    if (q->name == e->factoryName)
+      q->name = nm;
+    e->factoryName = nm;
+    if (e->nameLink > 0) {
+      PortInfo *li = e->inputLink ? inputInfos[e->nameLink] : outputInfos[e->nameLink];
+      PortExtension *le = e->inputLink ? &inputExtensions[e->nameLink] : &outputExtensions[e->nameLink];
+      if (li->name == le->factoryName)
+        li->name = nm;
+      le->factoryName = nm;
+    }
+  }
+
+  void setPortFactoryName(int id, std::string nm, bool isOutput=false) {
+    PortInfo *i = isOutput ? outputInfos[id] : inputInfos[id];
+    PortExtension *e = isOutput ? &outputExtensions[id] : &inputExtensions[id];
+    if (i->name == e->factoryName)
+      i->name = nm;
+    e->factoryName = nm;
+    if (e->nameLink > 0) {
+      ParamQuantity *lq = paramQuantities[e->nameLink];
+      ParamExtension *le = &paramExtensions[e->nameLink];
+      if (lq->name == le->factoryName)
+        lq->name = nm;
+      le->factoryName = nm;
+    }
+    if (e->portNameLink > 0) {
+      PortInfo *li = isOutput ? inputInfos[e->portNameLink] : outputInfos[e->portNameLink];
+      PortExtension *le = isOutput ? &inputExtensions[e->portNameLink] : &outputExtensions[e->portNameLink];
+      if (li->name == le->factoryName)
+        li->name = nm;
+      le->factoryName = nm;
+    }
+  }
+
   void setLock(bool val, int id) {
     ParamExtension* e = &paramExtensions[id];
     if (e->lockable && e->locked != val){
@@ -401,6 +438,7 @@ struct VenomModule : Module {
 
 struct VenomWidget : ModuleWidget {
   std::string moduleName;
+  int currentTheme = 0;
   void draw(const DrawArgs & args) override {
     ModuleWidget::draw(args);
     if (module) static_cast<VenomModule*>(this->module)->drawn = true;
@@ -501,6 +539,7 @@ struct VenomWidget : ModuleWidget {
         ));
       }
     }
+    currentTheme = module && module->currentTheme ? module->currentTheme - 1 : (settings::preferDarkPanels ? getDefaultDarkTheme() : getDefaultTheme());
     Widget::step();
   }
   

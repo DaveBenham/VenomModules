@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="45"
+   height="380"
+   viewBox="0 0 45 380"
+   version="1.1"
+   id="svg100"
+   sodipodi:docname="EnvelopeMoveLabels_Ivory.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata104">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="1"
+     gridtolerance="1"
+     guidetolerance="1"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     id="namedview102"
+     showgrid="false"
+     inkscape:zoom="2.2342105"
+     inkscape:cx="144.1225"
+     inkscape:cy="124.65253"
+     inkscape:window-x="1592"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4"
+     inkscape:pagecheckerboard="0"
+     units="px"
+     inkscape:showpageshadow="false"
+     showguides="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1285"
+       visible="true"
+       dotted="false"
+       snapvisiblegridlinesonly="true"
+       enabled="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs7">
+    <rect
+       x="85"
+       y="10"
+       width="51.058132"
+       height="25"
+       id="rect29906" />
+    <linearGradient
+       id="a8e142bb-541b-4903-be63-d5d069028a5d"
+       x1="22.5"
+       x2="22.5"
+       y2="380"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#ebebeb"
+         id="stop2" />
+      <stop
+         offset="1"
+         stop-color="#e1e1e1"
+         id="stop4" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Faceplate"
+     style="display:inline" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Brand"
+     style="display:inline" />
+  <g
+     id="f45e0130-37b7-4f8b-95b3-6408baa23eb1"
+     data-name="components"
+     style="display:inline"
+     inkscape:groupmode="layer"
+     inkscape:label="Solid">
+    <g
+       aria-label="TIME"
+       id="text104244-6-9"
+       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#252525"
+       transform="translate(-45.158245)">
+      <path
+         d="m 59.929687,97.496559 v -4.757812 h -1.699218 v -0.96875 h 4.550781 v 0.96875 h -1.695313 v 4.757812 z"
+         id="path118224" />
+      <path
+         d="m 63.492187,97.496559 v -5.726562 h 1.15625 v 5.726562 z"
+         id="path118226" />
+      <path
+         d="m 65.734375,97.496559 v -5.726562 h 1.730469 l 1.039062,3.90625 1.027344,-3.90625 h 1.734375 v 5.726562 h -1.074219 v -4.507812 l -1.136719,4.507812 h -1.113281 l -1.132812,-4.507812 v 4.507812 z"
+         id="path118228" />
+      <path
+         d="m 72.414062,97.496559 v -5.726562 h 4.246094 v 0.96875 h -3.089844 v 1.269531 h 2.875 v 0.964844 h -2.875 v 1.558593 h 3.199219 v 0.964844 z"
+         id="path118230" />
+    </g>
+    <g
+       aria-label="SHAPE"
+       id="text104244-6-9-4"
+       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#252525"
+       transform="translate(-45.158245)">
+      <path
+         d="m 54.0625,206.13293 1.125,-0.10937 q 0.101562,0.56641 0.410156,0.83203 0.3125,0.26563 0.839844,0.26563 0.558594,0 0.839844,-0.23438 0.285156,-0.23828 0.285156,-0.55469 0,-0.20312 -0.121094,-0.34375 -0.117187,-0.14453 -0.414062,-0.25 -0.203125,-0.0703 -0.925782,-0.25 -0.929687,-0.23047 -1.304687,-0.5664 -0.527344,-0.47266 -0.527344,-1.15235 0,-0.4375 0.246094,-0.8164 0.25,-0.38282 0.714844,-0.58203 0.46875,-0.19922 1.128906,-0.19922 1.078125,0 1.621094,0.47265 0.546875,0.47266 0.574218,1.26172 l -1.15625,0.0508 q -0.07422,-0.4414 -0.320312,-0.63281 -0.242188,-0.19531 -0.730469,-0.19531 -0.503906,0 -0.789062,0.20703 -0.183594,0.13281 -0.183594,0.35547 0,0.20312 0.171875,0.34765 0.21875,0.1836 1.0625,0.38282 0.84375,0.19922 1.246094,0.41406 0.40625,0.21094 0.632812,0.58203 0.230469,0.36719 0.230469,0.91016 0,0.49218 -0.273438,0.92187 -0.273437,0.42969 -0.773437,0.64063 -0.5,0.20703 -1.246094,0.20703 -1.085937,0 -1.667969,-0.5 -0.582031,-0.50391 -0.695312,-1.46485 z"
+         id="path118255" />
+      <path
+         d="m 59.695312,207.99622 v -5.72657 h 1.15625 v 2.25391 h 2.265625 v -2.25391 h 1.15625 v 5.72657 h -1.15625 v -2.50391 h -2.265625 v 2.50391 z"
+         id="path118257" />
+      <path
+         d="M 70.632812,207.99622 H 69.375 l -0.5,-1.30079 h -2.289063 l -0.472656,1.30079 h -1.226562 l 2.230468,-5.72657 h 1.222657 z m -2.128906,-2.26563 -0.789062,-2.125 -0.773438,2.125 z"
+         id="path118259" />
+      <path
+         d="m 71.246094,207.99622 v -5.72657 h 1.855468 q 1.054688,0 1.375,0.0859 0.492188,0.12891 0.824219,0.5625 0.332031,0.42969 0.332031,1.11328 0,0.52735 -0.191406,0.88672 -0.191406,0.35938 -0.488281,0.56641 -0.292969,0.20312 -0.597656,0.26953 -0.414063,0.082 -1.199219,0.082 h -0.753906 v 2.16016 z m 1.15625,-4.75782 v 1.625 h 0.632812 q 0.683594,0 0.914063,-0.0898 0.230468,-0.0898 0.359375,-0.28125 0.132812,-0.19141 0.132812,-0.44531 0,-0.3125 -0.183594,-0.51563 -0.183593,-0.20312 -0.464843,-0.2539 -0.207032,-0.0391 -0.832032,-0.0391 z"
+         id="path118261" />
+      <path
+         d="m 76.582031,207.99622 v -5.72657 h 4.246094 v 0.96875 h -3.089844 v 1.26953 h 2.875 v 0.96485 h -2.875 v 1.55859 H 80.9375 v 0.96485 z"
+         id="path118263" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Dynamic Solid"
+     style="display:inline" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Reverse Solid"
+     style="display:inline" />
+  <text
+     xml:space="preserve"
+     id="text29904"
+     style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;white-space:pre;shape-inside:url(#rect29906)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Widgets"
+     style="display:inline" />
+</svg>
