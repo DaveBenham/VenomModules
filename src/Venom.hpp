@@ -219,38 +219,38 @@ struct VenomModule : Module {
     }
   };
 
-  void setParamFactoryName(int id, std::string nm) {
+  void setParamFactoryName(int id, std::string nm, bool forceName=false) {
     ParamQuantity *q = paramQuantities[id];
     ParamExtension *e = &paramExtensions[id];
-    if (q->name == e->factoryName)
+    if (forceName || q->name == e->factoryName)
       q->name = nm;
     e->factoryName = nm;
     if (e->nameLink > 0) {
       PortInfo *li = e->inputLink ? inputInfos[e->nameLink] : outputInfos[e->nameLink];
       PortExtension *le = e->inputLink ? &inputExtensions[e->nameLink] : &outputExtensions[e->nameLink];
-      if (li->name == le->factoryName)
+      if (forceName || li->name == le->factoryName)
         li->name = nm;
       le->factoryName = nm;
     }
   }
 
-  void setPortFactoryName(int id, std::string nm, bool isOutput=false) {
+  void setPortFactoryName(int id, std::string nm, bool isOutput=false, bool forceName=false) {
     PortInfo *i = isOutput ? outputInfos[id] : inputInfos[id];
     PortExtension *e = isOutput ? &outputExtensions[id] : &inputExtensions[id];
-    if (i->name == e->factoryName)
+    if (forceName || i->name == e->factoryName)
       i->name = nm;
     e->factoryName = nm;
     if (e->nameLink > 0) {
       ParamQuantity *lq = paramQuantities[e->nameLink];
       ParamExtension *le = &paramExtensions[e->nameLink];
-      if (lq->name == le->factoryName)
+      if (forceName || lq->name == le->factoryName)
         lq->name = nm;
       le->factoryName = nm;
     }
     if (e->portNameLink > 0) {
       PortInfo *li = isOutput ? inputInfos[e->portNameLink] : outputInfos[e->portNameLink];
       PortExtension *le = isOutput ? &inputExtensions[e->portNameLink] : &outputExtensions[e->portNameLink];
-      if (li->name == le->factoryName)
+      if (forceName || li->name == le->factoryName)
         li->name = nm;
       le->factoryName = nm;
     }
