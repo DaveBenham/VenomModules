@@ -1,5 +1,4 @@
 #include "Venom.hpp"
-#include "math.hpp"
 
 namespace Venom {
   
@@ -8,7 +7,10 @@ struct EnvelopeModule : VenomModule {
   enum ParamId {
     SLOW_PARAM,
     FROM0_PARAM,
+    GATE_MODE_PARAM,
+    RETRIG_MODE_PARAM,
     GATE_IN_PARAM,
+    RETRIG_PARAM,
     ENUMS(ACTION_PARAM,4),
     ENUMS(MODE_PARAM,4),
     ENUMS(A_PARAM,4),
@@ -19,6 +21,7 @@ struct EnvelopeModule : VenomModule {
   };
   enum InputId {
     GATE_INPUT,
+    RETRIG_INPUT,
     ENUMS(A_CV_INPUT,4),
     ENUMS(B_CV_INPUT,4),
     INPUTS_LEN
@@ -31,9 +34,8 @@ struct EnvelopeModule : VenomModule {
     OUTPUTS_LEN
   };
   enum LightId {
-    SLOW_LIGHT,
-    FROM0_LIGHT,
     GATE_IN_LIGHT,
+    RETRIG_LIGHT,
     IDLE_LIGHT,
     ENUMS(UP_LIGHT,4),
     ENUMS(DOWN_LIGHT,4),
@@ -68,7 +70,8 @@ struct EnvelopeModule : VenomModule {
   };
 
   bool up[4]{},
-       down[4]{};
+       down[4]{},
+       reset = false;
   EnvelopeModule *expander = NULL;
 
   struct BQuantity : ParamQuantity {

@@ -34,9 +34,9 @@ struct EnvelopeExpander : EnvelopeModule {
 
 struct EnvelopeExpanderWidget : EnvelopeModuleWidget {
   int stage = 0,
-      action = -1;
-  bool connected = false,
-       slow = false;
+      action = -1,
+      slow = 0;
+  bool connected = false;
 
   EnvelopeExpanderWidget(EnvelopeExpander* module) {
     setModule(module);
@@ -63,7 +63,7 @@ struct EnvelopeExpanderWidget : EnvelopeModuleWidget {
     
     if (this->module){
       EnvelopeExpander* mod = static_cast<EnvelopeExpander*>(this->module);
-      bool newSlow = false;
+      int newSlow = 0;
 
       // test connection
       bool newConnected = false;
@@ -106,7 +106,7 @@ struct EnvelopeExpanderWidget : EnvelopeModuleWidget {
             mod->setPortFactoryName(EnvelopeModule::B_CV_EXP_INPUT, prefix + " move shape CV", false, true);
             aq->unit = " s";
             aq->displayBase = 10.f;
-            aq->displayMultiplier = slow ? 10.f : 1.f;
+            aq->displayMultiplier = slow==2 ? 100.f : slow ? 10.f : 1.f;
             aq->displayOffset = 0.f;
             bq->unit = "";
             bq->displayBase = 0.f;
@@ -126,7 +126,7 @@ struct EnvelopeExpanderWidget : EnvelopeModuleWidget {
             aq->displayOffset = 75.f;
             bq->unit = " s";
             bq->displayBase = 10.f;
-            bq->displayMultiplier = slow ? 10.f : 1.f;
+            bq->displayMultiplier = slow==2 ? 100.f : slow ? 10.f : 1.f;
             bq->displayOffset = 0.f;
             break;
           case 2: // SUST
