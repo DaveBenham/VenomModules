@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.16.dev6",
+  "version": "2.16.dev7",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -192,8 +192,8 @@
       "tags": [
         "Envelope Generator",
         "Low-frequency oscillator",
-        "Oscillator",
-        "Polyphonic"
+        "Polyphonic",
+        "Sequencer"
       ]
     },
     {
@@ -205,8 +205,8 @@
         "Envelope Generator",
         "Expander",
         "Low-frequency oscillator",
-        "Oscillator",
-        "Polyphonic"
+        "Polyphonic",
+        "Sequencer"
       ]
     },
     {

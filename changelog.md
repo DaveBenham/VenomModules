@@ -21,6 +21,7 @@
 
 ### Bug Fixes
 - Fixed Bias frequency display in VCO Lab and VCO Unit. Used to be off by factor of 100
+- Removed Bay module string manipulation (label propagation) from audio thread
 
 ## 2.15.0 (2026-04-18)
 ### New Modules

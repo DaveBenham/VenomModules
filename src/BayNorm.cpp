@@ -14,7 +14,6 @@ struct BayNorm : BayOutputModule {
       configOutput(POLY_OUTPUT+i, defaultPortName[i]);
       modName = "Bay Norm";
     }
-    clockDivider.setDivision(32);
   }
 
   void process(const ProcessArgs& args) override {
