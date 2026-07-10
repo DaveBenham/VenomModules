@@ -25,8 +25,7 @@ struct Envelope : EnvelopeModule {
        block = false;
   dsp::SchmittTrigger gateTrig[16],
                       retrigTrig[16];
-  dsp::BooleanTrigger gateButtonTrig[16],
-                      retrigButtonTrig;
+  dsp::BooleanTrigger retrigButtonTrig;
   dsp::ClockDivider lightDivider;
 
   Envelope() {
@@ -181,7 +180,8 @@ struct Envelope : EnvelopeModule {
       }
     }
     else {
-      bool buttonRetrig = retrigButtonTrig.process(params[RETRIG_PARAM].getValue());
+      bool buttonRetrig = retrigButtonTrig.process(params[RETRIG_PARAM].getValue()),
+           from0 = params[FROM0_PARAM].getValue();
       int retrigMode = params[RETRIG_MODE_PARAM].getValue();
       double timeFactor = timeFactors[static_cast<int>(params[SLOW_PARAM].getValue())] * args.sampleRate;
       for (int c=0; c<channels; c++) {
@@ -191,10 +191,8 @@ struct Envelope : EnvelopeModule {
         }
         bool cvRetrig = retrigMode==0 ? retrigTrig[c].process(inputs[RETRIG_INPUT].getPolyVoltage(c), 0.2f, 2.f) :
                         (retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig)==(retrigMode==1?1:-1)),
-             buttonTrig = gateButtonTrig[c].process(buttonRetrig || cvRetrig ? false : static_cast<bool>(params[GATE_IN_PARAM].getValue())),
-             cvTrig = gateTrig[c].process(buttonRetrig || cvRetrig ? 0.f : inputs[GATE_INPUT].getPolyVoltage(c), 0.2f, 2.f),
-             trig = buttonTrig || cvTrig,
-             gate = gateButtonTrig[c].isHigh() || gateTrig[c].isHigh();
+             trig = gateTrig[c].process(buttonRetrig || cvRetrig ? 0.f : params[GATE_IN_PARAM].getValue()*10.f + inputs[GATE_INPUT].getPolyVoltage(c), 0.2f, 2.f),
+             gate = gateTrig[c].isHigh();
         oldRetrig = inputs[RETRIG_INPUT].getPolyVoltage(c);
         int action = stage[c]==-1 ? 0 : stages[stage[c]].action,
             mode = stage[c]==-1 ? 1 : stages[stage[c]].mode;
@@ -221,23 +219,25 @@ struct Envelope : EnvelopeModule {
                   }
                   else
                     start[c] = 0.f;
-                  if (start[c] < trgt) {
-                    if (crnt < start[c])
-                      start[c] = crnt;
-                    else if (crnt >= trgt )
-                      phase[c] = 1.;
-                    else
-                      phase[c] = static_cast<double>(crnt - start[c]) / static_cast<double>(trgt - start[c]);
-                  }
-                  else {
-                    if (crnt > start[c])
-                      start[c] = crnt;
-                    else if (crnt <= trgt || start[c]==trgt)
-                      phase[c] = 1.;
-                    else
-                      phase[c] = static_cast<double>(crnt - start[c]) / static_cast<double>(trgt - start[c]);
-                  }
-                  phase[c] = invNormSigmoid(phase[c], shape);
+                  if (stage[c]>0 || !from0) {
+                    if (start[c] < trgt) {
+                      if (crnt < start[c])
+                        start[c] = crnt;
+                      else if (crnt >= trgt )
+                        phase[c] = 1.;
+                      else
+                        phase[c] = static_cast<double>(crnt - start[c]) / static_cast<double>(trgt - start[c]);
+                    }
+                    else {
+                      if (crnt > start[c])
+                        start[c] = crnt;
+                      else if (crnt <= trgt || start[c]==trgt)
+                        phase[c] = 1.;
+                      else
+                        phase[c] = static_cast<double>(crnt - start[c]) / static_cast<double>(trgt - start[c]);
+                    }
+                    phase[c] = invNormSigmoid(phase[c], shape);
+                  }  
                 }
                 phase[c] += 1./(std::pow(10., static_cast<double>(aParam(stage[c]))) * timeFactor * std::pow(2., static_cast<double>(aCV(stage[c], c))*10.));
                 if (phase[c] > 1.)
