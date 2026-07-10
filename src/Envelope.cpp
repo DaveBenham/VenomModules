@@ -11,6 +11,7 @@ struct Envelope : EnvelopeModule {
   struct Stage {
     EnvelopeModule *mod = NULL;
     int action = -1;
+    int mode = 0;
   };
   Stage stages[20]{};
   int stageCnt = 4,
@@ -18,7 +19,8 @@ struct Envelope : EnvelopeModule {
       stage[16]{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
   double phase[16],
          timeFactors[3]{1.,10.,100.};
-  float oldRetrig = 0.f;
+  float oldRetrig = 0.f,
+        start[16]{}; // for move only
   bool reset = false,
        block = false;
   dsp::SchmittTrigger gateTrig[16],
@@ -80,7 +82,7 @@ struct Envelope : EnvelopeModule {
   }
   
   int nextUngated(int stage) {
-    while (++stage<stageCnt && ((stage<4 && params[MODE_PARAM+stage].getValue()==2.f) || (stage>=4 && stages[stage].mod->params[MODE_EXP_PARAM].getValue()==2.f)));
+    while (++stage<stageCnt && stages[stage].mode==2);
     return stage>=stageCnt ? -1 : stage;
   }
   
@@ -121,6 +123,7 @@ struct Envelope : EnvelopeModule {
       }
       if (nextAction==2)
         params[MODE_PARAM+i].setValue(2);
+      stages[i].mode = params[MODE_PARAM+i].getValue();
       nextAction = i<3 ? params[ACTION_PARAM+i+1].getValue() : (expander ? expander->params[ACTION_EXP_PARAM].getValue() : 0);
       up[i] = (stages[i].action==0 && nextAction==0) ? hi : false;
       down[i] = (stages[i].action==0 && nextAction==0) ? !hi : false;
@@ -144,6 +147,7 @@ struct Envelope : EnvelopeModule {
       }
       if (nextAction==2)
         curExpander->params[MODE_EXP_PARAM].setValue(2);
+      stages[newStageCnt].mode = curExpander->params[MODE_EXP_PARAM].getValue();
       nextAction = curExpander->expander ? curExpander->expander->params[ACTION_EXP_PARAM].getValue() : 0;
       curExpander->up[0] = (stages[newStageCnt].action==0 && nextAction==0) ? hi : false;
       curExpander->down[0] = (stages[newStageCnt].action==0 && nextAction==0) ? !hi : false;
@@ -151,6 +155,8 @@ struct Envelope : EnvelopeModule {
       curExpander = curExpander->expander;
       newStageCnt++;
     }
+    if (stageCnt != newStageCnt)
+      reset = true;
     while (stageCnt > newStageCnt) {
       stages[--stageCnt].mod = NULL;
       stages[stageCnt].action = -1;
@@ -171,7 +177,7 @@ struct Envelope : EnvelopeModule {
       for (int i=4; i<stageCnt; i++) {
         stages[i].mod->outputs[GATE_EXP_OUTPUT].setVoltage(0.f);
         stages[i].mod->outputs[GATE_EXP_OUTPUT].setChannels(1);
-        stages[i].mod->lights[GATE_LIGHT].setBrightness(0);
+        stages[i].mod->lights[GATE_EXP_LIGHT].setBrightness(0);
       }
     }
     else {
@@ -179,19 +185,19 @@ struct Envelope : EnvelopeModule {
       int retrigMode = params[RETRIG_MODE_PARAM].getValue();
       double timeFactor = timeFactors[static_cast<int>(params[SLOW_PARAM].getValue())] * args.sampleRate;
       for (int c=0; c<channels; c++) {
+        if (reset) {
+          stage[c] = -1;
+          phase[c] = 0.;
+        }
         bool cvRetrig = retrigMode==0 ? retrigTrig[c].process(inputs[RETRIG_INPUT].getPolyVoltage(c), 0.2f, 2.f) :
                         (retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig)==(retrigMode==1?1:-1)),
              buttonTrig = gateButtonTrig[c].process(buttonRetrig || cvRetrig ? false : static_cast<bool>(params[GATE_IN_PARAM].getValue())),
              cvTrig = gateTrig[c].process(buttonRetrig || cvRetrig ? 0.f : inputs[GATE_INPUT].getPolyVoltage(c), 0.2f, 2.f),
              trig = buttonTrig || cvTrig,
              gate = gateButtonTrig[c].isHigh() || gateTrig[c].isHigh();
-        int mode = stage[c]==-1 ? 1 : stage[c]<4 ? params[MODE_PARAM+stage[c]].getValue() : stages[stage[c]].mod->params[MODE_EXP_PARAM].getValue();
         oldRetrig = inputs[RETRIG_INPUT].getPolyVoltage(c);
-        if (reset) {
-          stage[c] = -1;
-          phase[c] = 0.;
-        }
-        int action = stage[c]==-1 ? 0 : stages[stage[c]].action;
+        int action = stage[c]==-1 ? 0 : stages[stage[c]].action,
+            mode = stage[c]==-1 ? 1 : stages[stage[c]].mode;
         if (stage[c] == -1) { // idle on entry
           outputs[IDLE_OUTPUT].setVoltage(10.f, c);
           outputs[ENV_OUTPUT].setVoltage(0.f, c);
@@ -200,6 +206,54 @@ struct Envelope : EnvelopeModule {
           outputs[IDLE_OUTPUT].setVoltage(0.f, c);
           switch (action) {
             case 0: // move
+              {
+                float trgt = (stage[c]<4 ? up[stage[c]] : stages[stage[c]].mod->up[0]) ? 10.f :
+                             (stage[c]<4 ? down[stage[c]] : stages[stage[c]].mod->down[0]) ? 0.f :
+                             clamp((aParam(stage[c]+1)+3.f)*0.25f + aCV(stage[c]+1, c)) * 10.f;
+                float shape = clamp((bParam(stage[c]) * 0.5f + 0.5) + bCV(stage[c], c), -1.f, 1.f) * 0.95f;
+                if (phase[c] == 0.) {
+                  float crnt = outputs[ENV_OUTPUT].getVoltage(c);
+                  if (stage[c]>0) {
+                    int prv = stage[c]-1;
+                    start[c] = stages[prv].action>0 ?
+                      clamp((aParam(prv)+3.f)*0.25f + aCV(prv, c)) * 10.f :
+                      (prv<4 ? up[prv] : stages[prv].mod->up[0]) ? 10.f : 0.f;
+                  }
+                  else
+                    start[c] = 0.f;
+                  if (start[c] < trgt) {
+                    if (crnt < start[c])
+                      start[c] = crnt;
+                    else if (crnt >= trgt )
+                      phase[c] = 1.;
+                    else
+                      phase[c] = static_cast<double>(crnt - start[c]) / static_cast<double>(trgt - start[c]);
+                  }
+                  else {
+                    if (crnt > start[c])
+                      start[c] = crnt;
+                    else if (crnt <= trgt || start[c]==trgt)
+                      phase[c] = 1.;
+                    else
+                      phase[c] = static_cast<double>(crnt - start[c]) / static_cast<double>(trgt - start[c]);
+                  }
+                  phase[c] = invNormSigmoid(phase[c], shape);
+                }
+                phase[c] += 1./(std::pow(10., static_cast<double>(aParam(stage[c]))) * timeFactor * std::pow(2., static_cast<double>(aCV(stage[c], c))*10.));
+                if (phase[c] > 1.)
+                  phase[c] = 1.;
+                outputs[ENV_OUTPUT].setVoltage(normSigmoid(phase[c], shape)*(trgt - start[c]) + start[c], c);
+                if (mode==2 && !gate) {
+                  phase[c] = 0.;
+                  stage[c] = nextUngated(stage[c]);
+                }
+                else if (phase[c] >= 1.) {
+                  phase[c] = 0.;
+                  start[c] = -1.f;
+                  if (++stage[c] >= stageCnt)
+                    stage[c] = -1;
+                }
+              }
               break;
             case 1: // hold
               outputs[ENV_OUTPUT].setVoltage(clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f, c);
@@ -218,13 +272,14 @@ struct Envelope : EnvelopeModule {
               break;
             case 2: // sustain
               {
-                float drift = (std::pow(10., bParam(stage[c])) * 0.1 + bCV(stage[c], c)) * args.sampleTime;
                 int nextStage = nextUngated(stage[c]);
-                if (drift<0.00001f || phase[c]==0.)
+                double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))) + bCV(stage[c], c);
+                if (drift<0.001f || phase[c]==0.)
                   outputs[ENV_OUTPUT].setVoltage(clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f, c);
                 else {
                   float cur = outputs[ENV_OUTPUT].getVoltage(c);
                   float nextTarget = target(nextStage, c);
+                  drift *= args.sampleTime;
                   if (nextTarget > cur) {
                     cur += drift;
                     if (cur > nextTarget)
@@ -419,7 +474,7 @@ struct EnvelopeWidget : EnvelopeModuleWidget {
               aq->displayOffset = 75.f;
               bq->unit = " V/s";
               bq->displayBase = 10.f;
-              bq->displayMultiplier = 0.1f;
+              bq->displayMultiplier = 1.f;
               bq->displayOffset = 0.f;
               break;
           }
