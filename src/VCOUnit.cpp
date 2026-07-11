@@ -781,7 +781,8 @@ struct VCOUnit : VenomModule {
     json_object_set_new(rootJ, "overParam", json_integer(params[OVER_PARAM].getValue()));
     json_object_set_new(rootJ, "clampLevel", json_boolean(clampLevel));
     json_object_set_new(rootJ, "disableDPW", json_boolean(disableDPW));
-    json_object_set_new(rootJ, "syncAt0", json_boolean(syncLo<0.f));
+    // json_object_set_new(rootJ, "syncAt0", json_boolean(syncLo<0.f)); deprecated
+    json_object_set_new(rootJ, "syncLo", json_real(syncLo));
     json_object_set_new(rootJ, "shapeModeParam", json_integer(params[SHAPE_MODE_PARAM].getValue()));
     json_object_set_new(rootJ, "lfoAsBPM", json_boolean(lfoAsBPM));
     return rootJ;
@@ -824,9 +825,13 @@ struct VCOUnit : VenomModule {
     if ((val = json_object_get(rootJ, "clampLevel"))) {
       clampLevel = json_boolean_value(val);
     }
-    if ((val = json_object_get(rootJ, "syncAt0"))) {
+    if ((val = json_object_get(rootJ, "syncAt0"))) {  // for backward compatability
       syncHi = json_boolean_value(val) ? 0.f : 2.f;
       syncLo = json_boolean_value(val) ? -2.f : 0.2f;
+    }
+    if ((val = json_object_get(rootJ, "syncLo"))) {
+      syncLo = json_real_value(val);
+      syncHi = syncLo>1.f ? 2.f : syncLo<-1.f ? 0.f : 0.001f;
     }
     setWave();
     if ((val = json_object_get(rootJ, "shapeModeParam"))) {
@@ -1054,11 +1059,11 @@ struct VCOUnitWidget : VenomWidget {
     ));    
     menu->addChild(createIndexSubmenuItem(
       "Sync trigger threshold",
-      {"High 2V, Low 0.2V", "High 0V, Low -2V"},
-      [=]() {return module->syncLo<0.f ? 1 : 0;},
+      {"High 2V, Low 0.2V", "High 0V, Low -2V", "High 0.001V, Low -0.001V"},
+      [=]() {return module->syncLo>0.f ? 0 : module->syncLo<-1.f ? 1 : 2;},
       [=](int val) {
-        module->syncHi = val ? 0.f : 2.f;
-        module->syncLo = val ? -2.f : 0.2f;
+        module->syncHi = val==0 ? 2.f : val==1 ? 0.f : 0.001f;
+        module->syncLo = val==0 ? 0.2f : val==1 ? -2.f : -0.001f;
       }
     ));
     menu->addChild(createIndexSubmenuItem(
