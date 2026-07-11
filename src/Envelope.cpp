@@ -208,7 +208,7 @@ struct Envelope : EnvelopeModule {
                 float trgt = (stage[c]<4 ? up[stage[c]] : stages[stage[c]].mod->up[0]) ? 10.f :
                              (stage[c]<4 ? down[stage[c]] : stages[stage[c]].mod->down[0]) ? 0.f :
                              clamp((aParam(stage[c]+1)+3.f)*0.25f + aCV(stage[c]+1, c)) * 10.f;
-                float shape = clamp((bParam(stage[c]) * 0.5f + 0.5) + bCV(stage[c], c), -1.f, 1.f) * 0.95f;
+                float shape = clamp((bParam(stage[c]) * 0.5f + 0.5) + bCV(stage[c], c)*2, -1.f, 1.f) * 0.95f;
                 if (phase[c] == 0.) {
                   float crnt = outputs[ENV_OUTPUT].getVoltage(c);
                   if (stage[c]>0) {
