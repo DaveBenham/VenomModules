@@ -18,6 +18,7 @@
 - VCO Lab and VCO Unit
   - Exponential FM no longer disabled when in 0 Hz carrier mode. Only has effect if bias is non-zero.
   - New Soft Sync gate mode. If enabled then high gate is reverse, low gate is forward, and hard sync no longer resets direction to forward.
+  - New sync threshold option with miniscule 0.1 mV hysteresis centered about 0 V.
 
 ### Bug Fixes
 - Fixed Bias frequency display in VCO Lab and VCO Unit. Used to be off by factor of 100
