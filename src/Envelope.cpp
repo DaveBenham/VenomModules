@@ -18,6 +18,7 @@ struct Envelope : EnvelopeModule {
       oldChannels = 0,
       stage[16]{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
   double phase[16],
+         driftVoltage[16],
          timeFactors[3]{1.,10.,100.};
   float oldRetrig = 0.f,
         start[16]{}; // for move only
@@ -45,8 +46,8 @@ struct Envelope : EnvelopeModule {
     configOutput(ENV_OUTPUT, "Envelope");
 
     for (int i=0; i<4; i++) {
-      std::string prefix = "Stage " + std::to_string(i);
-      configLight(UP_LIGHT+i, "Stage 1 10V target indicator");
+      std::string prefix = "Stage " + std::to_string(i+1);
+      configLight(UP_LIGHT+i, prefix + " 10V target indicator");
       configSwitch<FixedSwitchQuantity>(ACTION_PARAM+i, 0.f, 2.f, 0.f, prefix+" action", {"Move", "Hold", "Sustain"});
       configLight(DOWN_LIGHT+i, prefix+" 0V target indicator");
       configSwitch<FixedSwitchQuantity>(MODE_PARAM+i, 0.f, 2.f, 0.f, prefix+" mode", {"Full", "Retriggerable Full", "Gate"});
@@ -274,23 +275,24 @@ struct Envelope : EnvelopeModule {
               {
                 int nextStage = nextUngated(stage[c]);
                 double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))) + bCV(stage[c], c);
-                if (drift<0.001f || phase[c]==0.)
-                  outputs[ENV_OUTPUT].setVoltage(clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f, c);
+                if (drift<=0.001 || phase[c]==0.) {
+                  driftVoltage[stage[c]] = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f;
+                  outputs[ENV_OUTPUT].setVoltage(driftVoltage[stage[c]], c);
+                }
                 else {
-                  float cur = outputs[ENV_OUTPUT].getVoltage(c);
-                  float nextTarget = target(nextStage, c);
+                  double nextTarget = target(nextStage, c);
                   drift *= args.sampleTime;
-                  if (nextTarget > cur) {
-                    cur += drift;
-                    if (cur > nextTarget)
-                      cur = nextTarget;
+                  if (nextTarget > driftVoltage[stage[c]]) {
+                    driftVoltage[stage[c]] += drift;
+                    if (driftVoltage[stage[c]] > nextTarget)
+                      driftVoltage[stage[c]] = nextTarget;
                   }
-                  if (nextTarget < cur) {
-                    cur -= drift;
-                    if (cur < nextTarget)
-                      cur = nextTarget;
+                  if (nextTarget < driftVoltage[stage[c]]) {
+                    driftVoltage[stage[c]] -= drift;
+                    if (driftVoltage[stage[c]] < nextTarget)
+                      driftVoltage[stage[c]] = nextTarget;
                   }
-                  outputs[ENV_OUTPUT].setVoltage(cur, c); 
+                  outputs[ENV_OUTPUT].setVoltage(driftVoltage[stage[c]], c); 
                 }
                 if (gate)
                   phase[c]=0.5;
