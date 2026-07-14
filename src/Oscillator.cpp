@@ -1225,7 +1225,7 @@ struct Oscillator : VenomModule {
     }
     if ((val = json_object_get(rootJ, "syncLo"))) {
       syncLo = json_real_value(val);
-      syncHi = syncLo>1.f ? 2.f : syncLo<-1.f ? 0.f : 0.001f;
+      syncHi = syncLo>1.f ? 2.f : syncLo<-1.f ? 0.f : 0.00005f;
     }
     val = json_object_get(rootJ, "disableDPW");
     disableDPW = val ? json_boolean_value(val) : true;
@@ -1501,11 +1501,11 @@ struct OscillatorWidget : VenomWidget {
     ));    
     menu->addChild(createIndexSubmenuItem(
       "Sync trigger threshold",
-      {"High 2V, Low 0.2V", "High 0V, Low -2V", "High 0.001V, Low -0.001V"},
+      {"High 2V, Low 0.2V", "High 0V, Low -2V", "High 50uV, Low -50uV"},
       [=]() {return module->syncLo>0.f ? 0 : module->syncLo<-1.f ? 1 : 2;},
       [=](int val) {
-        module->syncHi = val==0 ? 2.f : val==1 ? 0.f : 0.001f;
-        module->syncLo = val==0 ? 0.2f : val==1 ? -2.f : -0.001f;
+        module->syncHi = val==0 ? 2.f : val==1 ? 0.f : 0.00005f;
+        module->syncLo = val==0 ? 0.2f : val==1 ? -2.f : -0.00005f;
       }
     ));
     menu->addChild(createIndexSubmenuItem(
