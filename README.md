@@ -1014,13 +1014,13 @@ The output is constant monophonic 0V if the module is bypassed.
 
 ## DYNAMIC AMPLIFYING SHAPING ENVELOPE
 ![DASE image](doc/DASE.png)  
-A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate phase distortion.
+A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate modulation of the envelope shape.
 
 [Return to Table Of Contents](#venom)
 
 ## ENVELOPE FACTORY plus EXPANDER
 ![ENVELOPE FACTORY module image](doc/Envelope.png) &nbsp;![ENVELOPE STAGE EXPANDER module image](doc/EnvelopeExpander.png)  
-
+A highly configurable and extensible envelope generator that can have as many as 20 stages with expanders.
 
 [Return to Table Of Contents](#venom)
 
