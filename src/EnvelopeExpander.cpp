@@ -142,7 +142,7 @@ struct EnvelopeExpanderWidget : EnvelopeModuleWidget {
             aq->displayOffset = 75.f;
             bq->unit = " V/s";
             bq->displayBase = 10.f;
-            bq->displayMultiplier = 1.f;
+            bq->displayMultiplier = 10.f;
             bq->displayOffset = 0.f;
             break;
         }

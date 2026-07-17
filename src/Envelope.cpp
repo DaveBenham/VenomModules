@@ -18,9 +18,10 @@ struct Envelope : EnvelopeModule {
       oldChannels = 0,
       stage[16]{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
   double phase[16],
-         driftVoltage[16],
+         driftVoltage[16], // for sustain only
          timeFactors[3]{1.,10.,100.};
   float oldRetrig = 0.f,
+        multiplier[16]{}, // for move only
         start[16]{}; // for move only
   bool reset = false,
        block = false;
@@ -211,6 +212,7 @@ struct Envelope : EnvelopeModule {
                              clamp((aParam(stage[c]+1)+3.f)*0.25f + aCV(stage[c]+1, c)) * 10.f;
                 float shape = clamp((bParam(stage[c]) * 0.5f + 0.5) + bCV(stage[c], c)*2, -1.f, 1.f) * 0.95f;
                 if (phase[c] == 0.) {
+                  multiplier[c] = 1.f;
                   float crnt = outputs[ENV_OUTPUT].getVoltage(c);
                   if (stage[c]>0) {
                     int prv = stage[c]-1;
@@ -222,28 +224,32 @@ struct Envelope : EnvelopeModule {
                     start[c] = 0.f;
                   if (stage[c]>0 || !from0) {
                     if (start[c] < trgt) {
-                      if (crnt < start[c])
+                      if (crnt < start[c]) {
+                        multiplier[c] = (trgt - crnt) / (trgt - start[c]);
                         start[c] = crnt;
+                      }
                       else if (crnt >= trgt )
                         phase[c] = 1.;
                       else
                         phase[c] = static_cast<double>(crnt - start[c]) / static_cast<double>(trgt - start[c]);
                     }
                     else {
-                      if (crnt > start[c])
+                      if (crnt > start[c] && start[c] > trgt) {
+                        multiplier[c] = (trgt - crnt) / (trgt - start[c]);
                         start[c] = crnt;
+                      }
                       else if (crnt <= trgt || start[c]==trgt)
                         phase[c] = 1.;
                       else
                         phase[c] = static_cast<double>(crnt - start[c]) / static_cast<double>(trgt - start[c]);
                     }
-                    phase[c] = invNormSigmoid(phase[c], shape);
+                    phase[c] = invNormSigmoid(phase[c], trgt>start[c]?-shape:shape);
                   }  
                 }
-                phase[c] += 1./(std::pow(10., static_cast<double>(aParam(stage[c]))) * timeFactor * std::pow(2., static_cast<double>(aCV(stage[c], c))*10.));
+                phase[c] += 1./(std::pow(10., static_cast<double>(aParam(stage[c]))) * timeFactor * multiplier[c] * std::pow(2., static_cast<double>(aCV(stage[c], c))*10.));
                 if (phase[c] > 1.)
                   phase[c] = 1.;
-                outputs[ENV_OUTPUT].setVoltage(normSigmoid(phase[c], shape)*(trgt - start[c]) + start[c], c);
+                outputs[ENV_OUTPUT].setVoltage(normSigmoid(phase[c], trgt>start[c]?-shape:shape)*(trgt - start[c]) + start[c], c);
                 if (mode==2 && !gate) {
                   phase[c] = 0.;
                   stage[c] = nextUngated(stage[c]);
@@ -257,42 +263,52 @@ struct Envelope : EnvelopeModule {
               }
               break;
             case 1: // hold
-              outputs[ENV_OUTPUT].setVoltage(clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f, c);
-              if (mode==2 && !gate) {
-                phase[c] = 0.;
-                stage[c] = nextUngated(stage[c]);
-              }
-              else {
-                phase[c] += bParam(stage[c])==-3 ? 1.f : 1/(std::pow(10., bParam(stage[c])) * timeFactor * std::pow(2., bCV(stage[c], c)*10.f));
-                if (phase[c] >= 1.) {
+              {
+                float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f;
+                if (from0 || v || stage[c])
+                  outputs[ENV_OUTPUT].setVoltage(v, c);
+                if (mode==2 && !gate) {
                   phase[c] = 0.;
-                  if (++stage[c] >= stageCnt)
-                    stage[c] = -1;
+                  stage[c] = nextUngated(stage[c]);
+                }
+                else {
+                  phase[c] += bParam(stage[c])==-3 ? 1.f : 1/(std::pow(10., bParam(stage[c])) * timeFactor * std::pow(2., bCV(stage[c], c)*10.f));
+                  if (phase[c] >= 1.) {
+                    phase[c] = 0.;
+                    if (++stage[c] >= stageCnt)
+                      stage[c] = -1;
+                  }
                 }
               }
               break;
             case 2: // sustain
               {
                 int nextStage = nextUngated(stage[c]);
-                double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))) + bCV(stage[c], c);
-                if (drift<=0.001 || phase[c]==0.) {
-                  driftVoltage[stage[c]] = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f;
-                  outputs[ENV_OUTPUT].setVoltage(driftVoltage[stage[c]], c);
+                double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))*10.f) + bCV(stage[c], c);
+                if (phase[c]==0.) {
+                  float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f;
+                  driftVoltage[c] = (from0 || v || stage[c]) ? v : outputs[ENV_OUTPUT].getVoltage(c);
+                }
+                if (drift<=0.01) {
+                  float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f;
+                  if (from0 || v || stage[c])
+                    driftVoltage[c] = v;
+                  outputs[ENV_OUTPUT].setVoltage(driftVoltage[c], c);
                 }
                 else {
                   double nextTarget = target(nextStage, c);
                   drift *= args.sampleTime;
-                  if (nextTarget > driftVoltage[stage[c]]) {
-                    driftVoltage[stage[c]] += drift;
-                    if (driftVoltage[stage[c]] > nextTarget)
-                      driftVoltage[stage[c]] = nextTarget;
+                  if (nextTarget > driftVoltage[c]) {
+                    driftVoltage[c] += drift;
+                    if (driftVoltage[c] > nextTarget)
+                      driftVoltage[c] = nextTarget;
                   }
-                  if (nextTarget < driftVoltage[stage[c]]) {
-                    driftVoltage[stage[c]] -= drift;
-                    if (driftVoltage[stage[c]] < nextTarget)
-                      driftVoltage[stage[c]] = nextTarget;
+                  if (nextTarget < driftVoltage[c]) {
+                    driftVoltage[c] -= drift;
+                    if (driftVoltage[c] < nextTarget)
+                      driftVoltage[c] = nextTarget;
                   }
-                  outputs[ENV_OUTPUT].setVoltage(driftVoltage[stage[c]], c); 
+                  outputs[ENV_OUTPUT].setVoltage(driftVoltage[c], c); 
                 }
                 if (gate)
                   phase[c]=0.5;
@@ -476,7 +492,7 @@ struct EnvelopeWidget : EnvelopeModuleWidget {
               aq->displayOffset = 75.f;
               bq->unit = " V/s";
               bq->displayBase = 10.f;
-              bq->displayMultiplier = 1.f;
+              bq->displayMultiplier = 10.f;
               bq->displayOffset = 0.f;
               break;
           }
