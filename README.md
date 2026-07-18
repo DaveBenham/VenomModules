@@ -1028,6 +1028,8 @@ Sets the range of all stage time knobs
 - **Slow** ***(Yellow)***: 0.01 sec - 100 sec
 - **Glacial** ***(Orange)***: 0.1 sec - 1000 sec (16.667 min)
 
+Of course stage times can be extended either direction through CV modulation.
+
 ### Gate Mode button
 Controls how the manual Gate button behaves
 - **Momentary** ***(Off, default)***: The Gate button remains high for as long as the button is held
@@ -1043,6 +1045,7 @@ Controls how Retrigger CV input is interpretted
 - **Schmitt trigger** ***(Off, default)***: Retriggers on the leading edge of a high gate. The input goes high when rising above 2V, and low when falling below 0.2V.
 - **CV change start** ***(Yellow)***: Retriggers the instant a change is detected
 - **CV change end** ***(Blue)***: Retriggers when the input stops changing
+
 The CV change modes are generally used with quantized V/Oct input so a new envelope is retriggered every time the pitch changes. The pitch CV could have glide applied, in which case the different modes specify whether the retrigger is fired at the beginning or end of the glide. If there is no glide then the two CV change modes give identical results.
 
 ### GATE button and CV input
@@ -1075,7 +1078,58 @@ The final envelope with a resting voltage of 0V that typically ascends to 10V be
 [Return to Table Of Contents](#venom)
 
 ### *Stage controls*
-Every stage
+Each stage has identical controls, inputs, and outputs.
+
+### ACTION square button
+Controls what action the stage performs. The configuration and labeling of the other stage controls are automatically adjusted whenever the Action is changed.
+
+- **Move** - The envelope rises or falls from the starting voltage to the target voltage. The target voltage is specified by the following Hold or Sustain stage Level. If not followed by a Hold or Sustain, then the target alternates between 10V and 0V. The first Move not followed by a Hold/Sustain targets 10V, the next one 0V, then 10V, then 0V, etc. The LEDs above and below the Action button indicate which target is active for these Move stages. The upper LED glowing yellow indicates 10V, and the lower LED glowing yellow indicates 0V.
+- **Hold** - The envelope holds the specified level constant for a fixed amount of time.
+- **Sustain** - The envelope holds the specified level constant for as long as the triggering Gate remains high.
+
+### MODE square button
+Controls whether the stage length is impacted by the main Gate, and whether the envelope can be retriggered during the stage.
+
+- **Full** - The stage always runs to completion. Retrigger is not allowed.
+- **RTrg** - The stage always runs to completion unless the envelope is retriggered.
+- **Gate** - The stage is gated, meaning the stage runs to completion unless the main Gate goes low. This is the only mode available to the Sustain stage. When the main Gate goes low the envelope immediately proceeds to the next stage that is not Gated, or else terminates if none exists.
+
+### *Variable knobs and CV inputs*
+The function of the remaining knobs and inputs changes depending on the chosen stage Action.
+
+### Move top controls: Time knob, CV input and attenuverter
+Specifies the length of the Move action. Each positive volt of attenuverted CV doubles the length of the stage, and each negative volt halves the length of the stage.
+
+Note that the time is for a normal full Move stage. Retriggered envelopes starting with Move can result in a shortened Move, and ungated Move after a Gate release can result in shortened or extended Moves. In such circumstances, the time will be lengthened or shortened proportionally depending on the actual Level at the time the Move starts.
+
+### Move bottom controls: Shape knob, CV input and attenuverter
+The knob specifies the shape of the stage, with the noon value of 0 representing linear. Counter-clockwise rotation specifies concave up curvature, with -1 being the most curvature. Clockwise rotation specifies concave down curvature, with 1 being the most curvature.
+
+The shape CV is scaled at 0.2 per Volt such that a 10V peak to peak input can cover the entire shape range from -1 to 1.
+
+### Hold top controls: Level knob, CV input and attenuverter
+Specifies the Level of the Hold action, with 0% representing 0V, and 100% representing 10V.
+
+The attenuverted CV is summed directly with the knob value, and the result is clamped to a value between 0 and 10 volts inclusive.
+
+### Hold bottom controls: Time knob, CV input and attenuverter
+Specifies how long the Hold level is held constant before progressing to the next stage.
+
+The knob has an exponential scale, which normally would not allow for a length of 0. However, the minimum (fully counter-clockwise) value is interpreted as 0.
+
+Each positive volt of attenuverted CV doubles the length, and each negative volt halves the length. Any effective length <= 0.001 sec is treated as 0.
+
+Note that a length of 0 is not truly zero - instead the stage will last exactly one sample.
+
+### Sustain top controls: Level knob, CV input and attenuverter
+Specifies the Level of the Sustain action, with 0% representing 0V, and 100% representing 10V.
+
+The attenuverted CV is summed directly with the knob value, and the result is clamped to a value between 0 and 10 volts inclusive.
+
+### Sustain bottom controls: Drift knob, CV and attenuverter
+Specifies the rate at which the Sustain output will drift toward the target voltage of the next ungated stage. The knob ranges from 0 to 100 V/sec. The drift is always linear. If the target voltage is reached, then it will hold the target value throughout the rest of the Sustain stage.
+
+The attenuverted CV is scaled linearly and summed with the knob value to establish the effective drift value. Any drift value <= 0.01 V/sec is treated as 0 (no drift).
 
 ### Automatic termination of envelopes
 Any active envelope will instantly be terminated and the envelope generator will return to an idle state if any of the following occur
