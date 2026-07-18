@@ -1095,7 +1095,7 @@ Controls whether the stage length is impacted by the main Gate, and whether the 
 - **Gate** - The stage is gated, meaning the stage runs to completion unless the main Gate goes low. This is the only mode available to the Sustain stage. When the main Gate goes low the envelope immediately proceeds to the next stage that is not Gated, or else terminates if none exists.
 
 ### *Variable knobs and CV inputs*
-The function of the remaining knobs and inputs changes depending on the chosen stage Action.
+The functions of the remaining knobs and inputs change depending on the chosen stage Action.
 
 ### Move top controls: Time knob, CV input and attenuverter
 Specifies the length of the Move action. Each positive volt of attenuverted CV doubles the length of the stage, and each negative volt halves the length of the stage.
@@ -1106,6 +1106,8 @@ Note that the time is for a normal full Move stage. Retriggered envelopes starti
 The knob specifies the shape of the stage, with the noon value of 0 representing linear. Counter-clockwise rotation specifies concave up curvature, with -1 being the most curvature. Clockwise rotation specifies concave down curvature, with 1 being the most curvature.
 
 The shape CV is scaled at 0.2 per Volt such that a 10V peak to peak input can cover the entire shape range from -1 to 1.
+
+Unlike some other envelope generators, changing the shape of a stage does not alter the length of the stage.
 
 ### Hold top controls: Level knob, CV input and attenuverter
 Specifies the Level of the Hold action, with 0% representing 0V, and 100% representing 10V.
@@ -1130,6 +1132,11 @@ The attenuverted CV is summed directly with the knob value, and the result is cl
 Specifies the rate at which the Sustain output will drift toward the target voltage of the next ungated stage. The knob ranges from 0 to 100 V/sec. The drift is always linear. If the target voltage is reached, then it will hold the target value throughout the rest of the Sustain stage.
 
 The attenuverted CV is scaled linearly and summed with the knob value to establish the effective drift value. Any drift value <= 0.01 V/sec is treated as 0 (no drift).
+
+### Gate output and LED indicator
+The stage gate output is high at 10V for as long as the stage is active, otherwise it is 0V.
+
+The LED light above the port glows yellow when the stage is active.
 
 ### Automatic termination of envelopes
 Any active envelope will instantly be terminated and the envelope generator will return to an idle state if any of the following occur
