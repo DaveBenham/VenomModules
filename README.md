@@ -1020,10 +1020,76 @@ A novel Attack/Decay envelope generator that functions as an unusual VCA and wav
 
 ## ENVELOPE FACTORY plus EXPANDER
 ![ENVELOPE FACTORY module image](doc/Envelope.png) &nbsp;![ENVELOPE STAGE EXPANDER module image](doc/EnvelopeExpander.png)  
-A highly configurable and extensible envelope generator that can have as many as 20 stages with expanders.
+A highly configurable and extensible polyphonic envelope generator that can have as many as 20 stages via expanders.
+
+### Slow (Knob time range) button
+Sets the range of all stage time knobs
+- **Fast** ***(Off, default)***: 0.001 sec - 10 sec
+- **Slow** ***(Yellow)***: 0.01 sec - 100 sec
+- **Glacial** ***(Orange)***: 0.1 sec - 1000 sec (16.667 min)
+
+### Gate Mode button
+Controls how the manual Gate button behaves
+- **Momentary** ***(Off, default)***: The Gate button remains high for as long as the button is held
+- **Toggle** ***(Yellow)***: Each press of the Gate button changes the state of the button
+
+### Retrig From 0 button
+Controls whether a retriggered envelope starts from 0
+- **Off** ***(Off, default)***: A retriggered envelope starts from the current voltage rather than 0
+- **On** ***(Yellow)***: Retriggered envelopes always start from 0
+
+### Retrig Mode button
+Controls how Retrigger CV input is interpretted
+- **Schmitt trigger** ***(Off, default)***: Retriggers on the leading edge of a high gate. The input goes high when rising above 2V, and low when falling below 0.2V.
+- **CV change start** ***(Yellow)***: Retriggers the instant a change is detected
+- **CV change end** ***(Blue)***: Retriggers when the input stops changing
+The CV change modes are generally used with quantized V/Oct input so a new envelope is retriggered every time the pitch changes. The pitch CV could have glide applied, in which case the different modes specify whether the retrigger is fired at the beginning or end of the glide. If there is no glide then the two CV change modes give identical results.
+
+### GATE button and CV input
+An envelope is triggered when the Gate input rises above 2V. The gate returns to a low state when the input falls below 0.2V.
+
+The button works by adding 10V to the CV input when the button is high.
+
+### RETRIGGER button and CV input
+This is used to enable retriggering of an envelope while the main Gate input remains high. The label is a bit misleading in that this does not retrigger an envelope directly, but rather momentarily mutes the main Gate input for one sample. So the Retrigger can only have effect when the main Gate is high.
+
+The button always retriggers the instant it is pressed.
+
+The CV behavior depends on the setting of the Retrig Mode button.
+
+When configuring an envelope with retrig, it can be useful to set the manual Gate button to Toggle mode so you can set the gate high, giving you a chance to press the Retrig button.
+
+### IDLE (Idle gate) output and LED light
+The Idle output gate is always high at 10V when the generator is idle, and low at 0V when an envelope is in progress. This output can be patched to the Gate (or Retrig input with Gate toggled high) to create a looping envelope.
+
+The LED light above the port glows yellow when the Idle gate is high.
+
+### INV (Inverse envelope) output
+
+An inverted form of the final envelope with a resting voltage of 10V that typically descends to 0V before returning to 10V. It is defined as 10V - ENV.
+
+### ENV (Envelope) output
+
+The final envelope with a resting voltage of 0V that typically ascends to 10V before returning to 0V.
 
 [Return to Table Of Contents](#venom)
 
+### *Stage controls*
+Every stage
+
+### Automatic termination of envelopes
+Any active envelope will instantly be terminated and the envelope generator will return to an idle state if any of the following occur
+- Any stage is reconfigured to perform a different Action
+- A stage expander is added or deleted
+- The order of stage expanders is shuffled, even if the shuffled stages are configured to have the same action
+- The Envelope Factory or any stage expander is bypassed
+
+### Standard Venom Context Menus
+[Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+All outputs are monophonic 0V if Envelope Factory or any of its expanders are bypassed.
 
 ## HARMONIC QUANTIZER
 ![Harmonic Quantizer module image](doc/HQ.PNG)  
