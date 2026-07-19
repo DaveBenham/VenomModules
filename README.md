@@ -1020,18 +1020,18 @@ A novel Attack/Decay envelope generator that functions as an unusual VCA and wav
 
 ## ENVELOPE FACTORY plus EXPANDER
 ![ENVELOPE FACTORY module image](doc/Envelope.png) &nbsp;![ENVELOPE STAGE EXPANDER module image](doc/EnvelopeExpander.png)  
-A highly configurable and extensible polyphonic envelope generator that can have as many as 20 stages via expanders.
+A highly configurable and extensible polyphonic envelope generator.
 
-Envelopes start and end at 0V, with a range between 0 and 10V inclusive. If an envelope ends at a non-zero voltage, then the envelope output instantly drops to 0 when the envelope completes.
+The Envelope Factory module has four stages. Up to 16 stages may be added by placing one or more Envelope Stage Expanders to the right of the Envelope Factory, giving a maximum stage count of 20. The LED in the upper left corner of each expander glows yellow when the expander has successfully connected to the Envelope Factory parent. The Envelope Factory module context menu has an option to add an expander to the right.
 
-Each envelope consists of 4 or more stages. Each stage can be configured independently to perform one of three actions:
+Each stage can be configured independently to perform one of three actions:
 - Rise or fall from a start voltage to a target voltage over a fixed time interval
 - Hold a constant voltage for a time interval
 - Sustain a constant voltage for as long as the triggering gate remains high. Optionally a Sustain stage can drift toward the target of the next stage.
 
 With these basic building blocks, a tremendous variety of envelope types may be constructed.
 
-The Envelope Factory module has four stages. Up to 16 stages may be added by placing one or more Envelope Stage Expanders to the right of the Envelope Factory, giving a maximum stage count of 20. The LED in the upper left corner of each expander glows yellow when the expander has successfully connected to the Envelope Factory parent. The Envelope Factory module context menu has an option to add an expander to the right.
+Envelopes start and end at 0V, with a range between 0 and 10V inclusive. If an envelope ends at a non-zero voltage, then the envelope output instantly drops to 0 when the envelope completes.
 
 ### Polyphony
 All input and output ports are polyphonic. The total number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels substitute 0V for any missing channels.
@@ -1050,6 +1050,14 @@ By using very short stage lengths, the looping envelope can be run at audio rate
 In addition, all CV inputs can be driven at audio rates.
 
 Envelope Factory does not have any provision for oversampling, so audio rate outputs will be prone to digital aliasing.
+
+### Default configuration and a factory preset
+
+The default configuration of a newly placed Envelope Factory has four identical Move stages, which is not very useful. I wanted the default to be an ADSR envelope, but VCV does not have a mechanism to define a factory default preset.
+
+Envelope Factory is distributed with one "ADSR - ADBDR" factory preset. I recommend loading it and saving this as your user default.
+
+If the Sustain Drift is kept at 0, then the preset acts like a typical Attack Decay Sustain Release (ADSR) envelope. If the Drift is non-zero then the preset acts like an Attack Decay Break Decay2 Release (ADBDR) envelope. This is more like a physical piano where the note slowly decays while the sustain pedal is held down, and quickly decays once the sustain pedal is released.
 
 ### *Global controls*
 
