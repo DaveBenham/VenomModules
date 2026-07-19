@@ -1057,7 +1057,9 @@ The default configuration of a newly placed Envelope Factory has four identical 
 
 Envelope Factory is distributed with one "ADSR - ADBDR" factory preset. I recommend loading it and saving this as your user default.
 
-If the Sustain Drift is kept at 0, then the preset acts like a typical Attack Decay Sustain Release (ADSR) envelope. If the Drift is non-zero then the preset acts like an Attack Decay Break Decay2 Release (ADBDR) envelope. This is more like a physical piano where the note slowly decays while the sustain pedal is held down, and quickly decays once the sustain pedal is released.
+If the Sustain Drift is kept at 0, then the preset acts like a typical Attack Decay Sustain Release (ADSR) envelope. The first Move stage is the Attack, the second Move stage the Decay, the third Sustain stage as itself, and the fourth Move stage is the final Release.
+
+If the Drift is non-zero then the preset acts like an Attack Decay Break Decay2 Release (ADBDR) envelope. The Sustain stage defines both the Break point, as well as the Sustain's Decay2 rate. This is more like a physical piano where the note slowly decays while the sustain pedal is held down, and quickly decays once the sustain pedal is released.
 
 ### *Global controls*
 
