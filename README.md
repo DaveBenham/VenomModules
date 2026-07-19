@@ -1028,7 +1028,7 @@ Sets the range of all stage Time knobs
 - **Slow** ***(Yellow)***: 0.01 sec - 100 sec
 - **Glacial** ***(Orange)***: 0.1 sec - 1000 sec (16.667 min)
 
-Of course stage times can be extended either direction through CV modulation.
+Stage times can be lengthened or shortened beyond the knob limits through CV modulation.
 
 ### Gate Mode button
 Controls how the manual Gate button behaves
@@ -1065,7 +1065,7 @@ When configuring an envelope with retrig, it can be useful to set the manual Gat
 ### IDLE (Idle gate) output and LED light
 The Idle output gate is always high at 10V when the generator is idle, and low at 0V when an envelope is in progress. This output can be patched to the Gate (or Retrig input with Gate toggled high) to create a looping envelope.
 
-The LED light above the port glows yellow when the Idle gate is high.
+The LED light above the port glows yellow when the Idle gate is high. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are idle.
 
 ### INV (Inverse envelope) output
 
@@ -1146,7 +1146,7 @@ The attenuverted CV is scaled linearly and summed with the knob value to establi
 ### GATE output and LED light
 The stage gate output is high at 10V for as long as the stage is active, otherwise it is 0V.
 
-The LED light above the port glows yellow when the stage is active.
+The LED light above the port glows yellow when the stage is active. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are in that stage.
 
 ### Automatic termination of envelopes
 All active envelopes will instantly be terminated and the envelope generator will return to an idle state if any of the following occur
