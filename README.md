@@ -1075,8 +1075,6 @@ An inverted form of the final envelope with a resting voltage of 10V that typica
 
 The final envelope with a resting voltage of 0V that typically ascends to 10V before returning to 0V.
 
-[Return to Table Of Contents](#venom)
-
 ### *Stage controls*
 Each stage has identical controls, inputs, and outputs.
 
@@ -1161,6 +1159,9 @@ All active envelopes will instantly be terminated and the envelope generator wil
 ### Bypass
 
 All outputs are monophonic 0V if Envelope Factory or any of its expanders are bypassed.
+
+[Return to Table Of Contents](#venom)
+
 
 ## HARMONIC QUANTIZER
 ![Harmonic Quantizer module image](doc/HQ.PNG)  
