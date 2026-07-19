@@ -1022,7 +1022,38 @@ A novel Attack/Decay envelope generator that functions as an unusual VCA and wav
 ![ENVELOPE FACTORY module image](doc/Envelope.png) &nbsp;![ENVELOPE STAGE EXPANDER module image](doc/EnvelopeExpander.png)  
 A highly configurable and extensible polyphonic envelope generator that can have as many as 20 stages via expanders.
 
-### Slow (Knob time range) button
+Envelopes start and end at 0V, with a range between 0 and 10V inclusive. If an envelope ends at a non-zero voltage, then the envelope output instantly drops to 0 when the envelope completes.
+
+Each envelope consists of 4 or more stages. Each stage can be configured independently to perform one of three actions:
+- Rise or fall from a start voltage to a target voltage over a fixed time interval
+- Hold a constant voltage for a time interval
+- Sustain a constant voltage for as long as the triggering gate remains high. Optionally a Sustain stage can drift toward the target of the next stage.
+
+With these basic building blocks, a tremendous variety of envelope types may be constructed.
+
+The Envelope Factory module has four stages. Up to 16 stages may be added by placing one or more Envelope Stage Expanders to the right of the Envelope Factory, giving a maximum stage count of 20. The LED in the upper left corner of each expander glows yellow when the expander has successfully connected to the Envelope Factory parent. The Envelope Factory module context menu has an option to add an expander to the right.
+
+### Polyphony
+All input and output ports are polyphonic. The total number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels substitute 0V for any missing channels.
+
+### Looping envelopes
+Envelope Factory can function as an LFO by using the Idle gate output to trigger the envelope. When the envelope completes the Idle gate will go high which will retrigger the envelope.
+
+There are two possible configurations for a looping envelope
+- Endless loop: Patch the Idle output to the Gate input.
+- Gated loop: Patch the Idle output to the Retrigger input. The envelope will loop as long as the Gate input is held high. This will only work as an LFO if the envelope does not have a Sustain stage.
+
+By patching the same control voltage to all stage time inputs and setting the attenuverters to -100%, you get volt per octave control over the LFO frequency.
+
+By using very short stage lengths, the looping envelope can be run at audio rates. However, the accuracy of stage timing is limited by the VCV sample rate, so the oscillator will not quite respond 1 V/Oct. Each stage timing can be off by as much as 1 sample, and this small error can become very significant at audio rates, especially as the pitch rises.
+
+In addition, all CV inputs can be driven at audio rates.
+
+Envelope Factory does not have any provision for oversampling, so audio rate outputs will be prone to digital aliasing.
+
+### *Global controls*
+
+### Slow (Knob time range) small button
 Sets the range of all stage Time knobs
 - **Fast** ***(Off, default)***: 0.001 sec - 10 sec
 - **Slow** ***(Yellow)***: 0.01 sec - 100 sec
@@ -1030,17 +1061,17 @@ Sets the range of all stage Time knobs
 
 Stage times can be lengthened or shortened beyond the knob limits through CV modulation.
 
-### Gate Mode button
+### Gate Mode small button
 Controls how the manual Gate button behaves
 - **Momentary** ***(Off, default)***: The Gate button remains high for as long as the button is held
 - **Toggle** ***(Yellow)***: Each press of the Gate button changes the state of the button
 
-### Retrig From 0 button
+### Retrig From 0 small button
 Controls whether a retriggered envelope starts from 0
 - **Off** ***(Off, default)***: A retriggered envelope starts from the current voltage rather than 0
 - **On** ***(Yellow)***: Retriggered envelopes always start from 0
 
-### Retrig Mode button
+### Retrig Mode small button
 Controls how Retrigger CV input is interpretted
 - **Schmitt trigger** ***(Off, default)***: Retriggers on the leading edge of a high gate. The input goes high when rising above 2V, and low when falling below 0.2V.
 - **CV change start** ***(Yellow)***: Retriggers the instant a change is detected
@@ -1076,7 +1107,7 @@ An inverted form of the final envelope with a resting voltage of 10V that typica
 The final envelope with a resting voltage of 0V that typically ascends to 10V before returning to 0V.
 
 ### *Stage controls*
-Each stage has identical controls, inputs, and outputs.
+Each envelope stage has identical controls, inputs, and outputs.
 
 ### ACTION square button
 Controls what action the stage performs. The configuration and labeling of the other stage controls are automatically adjusted whenever the Action is changed.
