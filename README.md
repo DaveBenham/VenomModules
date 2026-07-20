@@ -1130,7 +1130,7 @@ Controls what action the stage performs. The configuration and labeling of the o
 Controls whether the stage length is impacted by the main Gate, and whether the envelope can be retriggered during the stage.
 
 - **Full** - The stage always runs to completion and then the envelope advances to the next stage. Retrigger is not allowed.
-- **RTrg (Retriggerable Full)** - The stage runs to completion and then the envelope advances to the next stage. However, the stage can be terminated prematurely by retriggering a new envelope.
+- **RTrg (Retriggerable Full)** - The stage runs to completion and then the envelope advances to the next stage. However, the stage can be terminated prematurely by retriggering a new envelope. A retrigger happens when the Gate goes low before or during the stage, and then goes high during the RTrg stage.
 - **Gate (Gated)** - The stage is gated, meaning the stage runs to completion unless the main Gate goes low. This is the only mode available to the Sustain stage. When the main Gate goes low the envelope immediately proceeds to the next stage that is not Gated, or else terminates if none exists.
 
 ### *Variable knobs and CV inputs*
