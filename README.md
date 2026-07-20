@@ -3151,8 +3151,8 @@ All outputs are monophonic 0V when Quad VC Polarizer is bypassed.
 
 
 ## RATIO
-![Ratio module image](doc/Ratio.PNG)  
-Computes V/Oct CV for an integral ratio interval.
+![Ratio module image](doc/Ratio.png)  
+Computes V/Oct CV for musical ratios using integral numerators and denominators.
 
 [Return to Table Of Contents](#venom)
 
