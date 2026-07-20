@@ -70,7 +70,7 @@ struct SpreadMerge : VenomModule {
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
     ins = 7;
-    while (!inputs[GATE_INPUT+ins].isConnected())
+    while (ins>=0 && !inputs[GATE_INPUT+ins].isConnected())
       ins--;
     ins++;
     int cnt = params[COUNT_PARAM].getValue()+1;
