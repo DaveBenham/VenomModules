@@ -19,7 +19,7 @@ struct Envelope : EnvelopeModule {
       stage[16]{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
   double phase[16],
          driftVoltage[16], // for sustain only
-         timeFactors[3]{1.,10.,100.};
+         timeFactors[4]{1.,10.,100.,1000.};
   float oldRetrig = 0.f,
         multiplier[16]{}, // for move only
         start[16]{}; // for move only
@@ -33,7 +33,7 @@ struct Envelope : EnvelopeModule {
   Envelope() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
-    configSwitch<FixedSwitchQuantity>(SLOW_PARAM, 0.f, 2.f, 0.f, "Knob time range", {"Fast 0.001 - 10 s", "Slow 0.01 - 100 s", "Glacial 0.1 - 1000 s"});
+    configSwitch<FixedSwitchQuantity>(SLOW_PARAM, 0.f, 3.f, 0.f, "Knob time range", {"Fast 0.001 - 10 s", "Slow 0.01 - 100 s", "Crawl 0.1 - 1000 s", "Glacial 1 - 10000 s"});
     configSwitch<FixedSwitchQuantity>(FROM0_PARAM, 0.f, 1.f, 0.f, "Retrigger from 0", {"Off", "On"});
     configSwitch<FixedSwitchQuantity>(GATE_MODE_PARAM, 0.f, 1.f, 0.f, "Manual gate mode", {"Momentary", "Toggle"});
     configSwitch<FixedSwitchQuantity>(RETRIG_MODE_PARAM, 0.f, 2.f, 0.f, "Retrigger input mode", {"Schmitt trigger leading edge", "CV change start", "CV change end"});
@@ -371,6 +371,7 @@ struct EnvelopeWidget : EnvelopeModuleWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOrangeButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
     }
   };
 
@@ -456,7 +457,7 @@ struct EnvelopeWidget : EnvelopeModuleWidget {
               mod->setPortFactoryName(EnvelopeModule::B_CV_INPUT+i, prefix + " move shape CV", false, true);
               aq->unit = " s";
               aq->displayBase = 10.f;
-              aq->displayMultiplier = newSlow==2 ? 100.f : newSlow ? 10.f : 1.f;
+              aq->displayMultiplier = newSlow==3 ? 1000.f : newSlow==2 ? 100.f : newSlow ? 10.f : 1.f;
               aq->displayOffset = 0.f;
               bq->unit = "";
               bq->displayBase = 0.f;
@@ -476,7 +477,7 @@ struct EnvelopeWidget : EnvelopeModuleWidget {
               aq->displayOffset = 75.f;
               bq->unit = " s";
               bq->displayBase = 10.f;
-              bq->displayMultiplier = newSlow==2 ? 100.f : newSlow ? 10.f : 1.f;
+              bq->displayMultiplier = newSlow==3 ? 1000.f : newSlow==2 ? 100.f : newSlow ? 10.f : 1.f;
               bq->displayOffset = 0.f;
               break;
             case 2: // SUST

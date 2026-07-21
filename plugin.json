@@ -625,7 +625,7 @@
     {
       "slug": "Ratio",
       "name": "Ratio",
-      "description": "Computes V/Oct CV for an integral ratio interval",
+      "description": "Computes V/Oct CV for musical ratios using integral numerators and denominators",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#ratio",
       "tags": [
         "Polyphonic",
