@@ -1033,6 +1033,8 @@ With these basic building blocks, a tremendous variety of envelope types may be 
 
 Envelopes start and end at 0V, with a range between 0 and 10V inclusive. If an envelope ends at a non-zero voltage, then the envelope output instantly drops to 0 when the envelope completes.
 
+Without any CV modulation, each envelope stage can be as short as 1 msec, or as long as 2.78 hours. With CV modulation the stage lengths can be shortened or lengthened even more.
+
 ### Polyphony
 All input and output ports are polyphonic. The total number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels substitute 0V for any missing channels.
 
@@ -1067,7 +1069,8 @@ If the Drift is non-zero then the preset acts like an Attack Decay Break Decay2 
 Sets the range of all stage Time knobs
 - **Fast** ***(Off, default)***: 0.001 sec - 10 sec
 - **Slow** ***(Yellow)***: 0.01 sec - 100 sec
-- **Glacial** ***(Orange)***: 0.1 sec - 1000 sec (16.667 min)
+- **Crawl** ***(Orange)***: 0.1 sec - 1000 sec (16.667 min)
+- **Glacial** ***(Red)***: 1 sec - 10000 sec (2.78 hr)
 
 Stage times can be lengthened or shortened beyond the knob limits through CV modulation.
 
