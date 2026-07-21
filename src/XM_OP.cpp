@@ -96,7 +96,8 @@ struct XM_OP : VenomModule {
   bool quantize = true,
        first = true,
        expLvl = false,
-       postLvlFdbk = false;
+       postLvlFdbk = false,
+       highDepth = false;
   
   int wave = 0,
       xmType = 0,
@@ -367,12 +368,14 @@ struct XM_OP : VenomModule {
               level{},
               depth{},
               fdbk{},
-              vcoOut{};
+              vcoOut{},
+              fmpmDepth{};
       computeVal(level, levelEnv, envOut, levelParam, levelCVAmt, LEVEL_INPUT, c);
       level = clamp(level);
       if (expLvl)
         level = pow(level,6);
       computeVal(depth, depthEnv, envOut, depthParam, depthCVAmt, DEPTH_INPUT, c);
+      fmpmDepth = depth * (highDepth ? 5.f : 1.f);
       computeVal(fdbk, fdbkEnv, envOut, fdbkParam, fdbkCVAmt, FDBK_INPUT, c);
       if (quantize)
         baseFreq += log2(fmax(round(multParam + rmod*10.f*multCVAmt), 1.f) / fmax(round(divParam + rmod*10.f*divCVAmt), 1.f));
@@ -384,9 +387,9 @@ struct XM_OP : VenomModule {
           xmod = upSample[s].process(o ? 0.f : xmod*oversample);
         float_4 freq = baseFreq;
         if (xmodType == 0) // FM AC coupled
-          freq += xmodDcBlockFilter[s].process(xmod) * depth;
+          freq += xmodDcBlockFilter[s].process(xmod) * fmpmDepth;
         if (xmodType == 1) // FM DC coupled
-          freq += xmod * depth;
+          freq += xmod * fmpmDepth;
         if (fdbkType == 0) // FM AC coupled
           freq += fdbkDcBlockFilter[s].process(prevVcoOut[s]) * fdbk;
         if (fdbkType == 1) // FM DC coupled
@@ -410,7 +413,7 @@ struct XM_OP : VenomModule {
                 sawPhasor{},
                 offsetSawPhasor{};
         if (xmodType == 2) // PM
-          wavePhasor += xmod * depth * 250.f;
+          wavePhasor += xmod * fmpmDepth * 250.f;
         if (fdbkType == 2) // PM
           wavePhasor += prevVcoOut[s] * fdbk * 62.5f;
         wavePhasor = simd::fmod(wavePhasor, 1000.f);
@@ -473,6 +476,7 @@ struct XM_OP : VenomModule {
     json_object_set_new(rootJ, "expLvl", json_boolean(expLvl));
     json_object_set_new(rootJ, "PostLvlFdbk", json_boolean(postLvlFdbk));
     json_object_set_new(rootJ, "cvEnvAvail", json_boolean(true));
+    json_object_set_new(rootJ, "highDepth", json_boolean(highDepth));
     return rootJ;
   }
 
@@ -483,6 +487,8 @@ struct XM_OP : VenomModule {
       expLvl = json_boolean_value(jval);
     if ((jval = json_object_get(rootJ, "postLvlFdbk")))
       postLvlFdbk = json_boolean_value(jval);
+    if ((jval = json_object_get(rootJ, "highDepth")))
+      highDepth = json_boolean_value(jval);
     int val;
     if (!json_object_get(rootJ, "cvEnvAvail")){
       if ((val=params[XM_TYPE_PARAM].getValue()))
@@ -641,6 +647,7 @@ struct XM_OPWidget : VenomWidget {
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("Exponential level response", "", &module->expLvl));
     menu->addChild(createBoolPtrMenuItem("Post level feedback", "", &module->postLvlFdbk));
+    menu->addChild(createBoolPtrMenuItem("High XM depth for FM & PM", "", &module->highDepth));
     VenomWidget::appendContextMenu(menu);
   }
 };
