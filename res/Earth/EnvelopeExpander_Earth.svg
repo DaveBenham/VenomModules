@@ -89,8 +89,7 @@
     <g
        id="aea613ef-74be-49bf-be45-c0734aee674b"
        data-name="FND BG"
-       style="fill:#423932;fill-opacity:1;stroke-width:1.91485"
-       transform="translate(-0.15824533)">
+       style="fill:#423932;fill-opacity:1;stroke-width:1.91485">
       <rect
          width="45"
          height="380"
@@ -108,7 +107,7 @@
      style="display:inline">
     <g
        id="g42796"
-       transform="matrix(0.30458296,0,0,0.30458296,-0.72069523,-12.68508)"
+       transform="matrix(0.30458296,0,0,0.30458296,-0.5624499,-12.68508)"
        style="fill:#ff0000">
       <g
          aria-label="enom"
@@ -153,7 +152,8 @@
     <g
        aria-label="ENV"
        id="text93457"
-       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#d2ac95;fill-opacity:1">
+       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#d2ac95;fill-opacity:1"
+       transform="translate(0.1582455)">
       <path
          d="M 14.412067,9.4533062 V 3.7267437 h 4.246094 v 0.96875 h -3.089844 v 1.2695312 h 2.875 v 0.9648438 h -2.875 v 1.5585937 h 3.199219 v 0.9648438 z"
          id="path116899"
@@ -168,8 +168,8 @@
          style="fill:#d2ac95;fill-opacity:1" />
     </g>
     <rect
-       x="7.1018195"
-       y="312"
+       x="7.2600651"
+       y="311.5"
        width="30.47987"
        height="45.999996"
        rx="3.0260944"
@@ -179,44 +179,25 @@
        ry="3.0260942" />
     <path
        style="color:#000000;fill:#d2ac95;fill-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:1.5;-inkscape-stroke:none"
-       d="m 21.841797,225 v 0.5 h 1 V 225 Z m 0,2.5 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 1.5 h 1 v -1.5 z"
+       d="m 22,225 v 0.5 h 1 V 225 Z m 0,2.5 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 1.5 h 1 v -1.5 z"
        id="path108398-0" />
     <path
        style="color:#000000;fill:#d2ac95;fill-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:1.5;-inkscape-stroke:none"
-       d="m 21.841797,114.5 v 0.5 h 1 v -0.5 z m 0,2.5 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 1.5 h 1 V 149 Z"
+       d="m 22,114.5 v 0.5 h 1 v -0.5 z m 0,2.5 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 2 h 1 v -2 z m 0,4 v 1.5 h 1 V 149 Z"
        id="path108398-34" />
     <path
        style="color:#000000;fill:#d2ac95;fill-opacity:1;-inkscape-stroke:none"
-       d="m 21.841797,261 v 33.5 h 1 V 261 Z"
+       d="m 22,261 v 33.5 h 1 V 261 Z"
        id="path108398-1-9" />
     <path
        style="color:#000000;fill:#d2ac95;fill-opacity:1;-inkscape-stroke:none"
-       d="M 21.841797,150.5 V 184 h 1 v -33.5 z"
+       d="M 22,150.5 V 184 h 1 v -33.5 z"
        id="path108398-1-0" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;fill:#d2ac95;fill-opacity:1"
-       x="22.455036"
-       y="97.496559"
-       id="text104244-6-9-95"><tspan
-         sodipodi:role="line"
-         id="tspan107468-6"
-         x="22.455036"
-         y="97.496559">TIME</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;fill:#d2ac95;fill-opacity:1"
-       x="22.396442"
-       y="207.99622"
-       id="text104244-6-9-95-0"><tspan
-         sodipodi:role="line"
-         id="tspan107771"
-         x="22.396442"
-         y="207.99622">SHAPE</tspan></text>
     <g
        aria-label="STAGE"
        id="text93457-9"
-       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#d2ac95;fill-opacity:1">
+       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#d2ac95;fill-opacity:1"
+       transform="translate(0.158245)">
       <path
          d="m 9.203083,15.266783 1.125,-0.109375 q 0.101563,0.566406 0.410156,0.832031 0.3125,0.265625 0.839844,0.265625 0.558594,0 0.839844,-0.234375 0.285156,-0.238281 0.285156,-0.554687 0,-0.203125 -0.121094,-0.34375 -0.117187,-0.144532 -0.414062,-0.25 -0.203125,-0.07031 -0.925781,-0.25 -0.929688,-0.230469 -1.304688,-0.566407 -0.5273437,-0.472656 -0.5273437,-1.152343 0,-0.4375 0.2460937,-0.816407 0.25,-0.382812 0.714844,-0.582031 0.46875,-0.199219 1.128906,-0.199219 1.078125,0 1.621094,0.472657 0.546875,0.472656 0.574219,1.261718 l -1.15625,0.05078 q -0.07422,-0.441407 -0.320313,-0.632813 -0.242187,-0.195312 -0.730469,-0.195312 -0.503906,0 -0.789062,0.207031 -0.183594,0.132812 -0.183594,0.355469 0,0.203125 0.171875,0.347656 0.21875,0.183594 1.0625,0.382812 0.84375,0.199219 1.246094,0.414063 0.40625,0.210937 0.632812,0.582031 0.230469,0.367188 0.230469,0.910156 0,0.492188 -0.273437,0.921875 -0.273438,0.429688 -0.773438,0.640625 -0.5,0.207032 -1.246094,0.207032 -1.085937,0 -1.6679685,-0.5 Q 9.3163643,16.22772 9.203083,15.266783 Z"
          id="path116906"
@@ -251,7 +232,28 @@
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="Dynamic Solid"
-     style="display:inline" />
+     style="display:none">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;fill:#252525;fill-opacity:1"
+       x="22.613281"
+       y="97.496559"
+       id="text104244-6-9-95"><tspan
+         sodipodi:role="line"
+         id="tspan107468-6"
+         x="22.613281"
+         y="97.496559">TIME</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;fill:#252525;fill-opacity:1"
+       x="22.554688"
+       y="207.99622"
+       id="text104244-6-9-95-0"><tspan
+         sodipodi:role="line"
+         id="tspan107771"
+         x="22.554688"
+         y="207.99622">SHAPE</tspan></text>
+  </g>
   <g
      inkscape:groupmode="layer"
      id="layer2"
@@ -260,7 +262,8 @@
     <g
        aria-label="GATE"
        id="text104244-6-9-9-7-2"
-       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#423932;fill-opacity:1">
+       style="font-weight:bold;font-size:8px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:none;text-align:center;text-anchor:middle;display:inline;fill:#423932;fill-opacity:1"
+       transform="translate(0.158245,-8)">
       <path
          d="m 14.781208,325.79691 v -0.96485 h 2.492188 v 2.28125 q -0.363282,0.35156 -1.054688,0.6211 -0.6875,0.26562 -1.394531,0.26562 -0.898438,0 -1.566406,-0.375 -0.667969,-0.37891 -1.003907,-1.07812 -0.335937,-0.70313 -0.335937,-1.52735 0,-0.89453 0.375,-1.58984 0.375,-0.69531 1.097656,-1.06641 0.550781,-0.28515 1.371094,-0.28515 1.066406,0 1.664062,0.44921 0.601563,0.44532 0.773438,1.23438 l -1.148438,0.21484 q -0.121093,-0.42187 -0.457031,-0.66406 -0.332031,-0.24609 -0.832031,-0.24609 -0.757813,0 -1.207031,0.48047 -0.445313,0.48046 -0.445313,1.42578 0,1.01953 0.453125,1.53125 0.453125,0.50781 1.1875,0.50781 0.363281,0 0.726563,-0.14063 0.367187,-0.14453 0.628906,-0.34765 v -0.72656 z"
          id="path116890"
@@ -291,26 +294,26 @@
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94925;stroke-opacity:1"
        id="path1065-7-10-9-8"
-       cx="22.341755"
+       cx="22.5"
        cy="184.00018"
        r="10.525375" />
     <ellipse
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94924;stroke-opacity:1"
        id="path1065-7-10-9-1"
-       cx="22.341755"
+       cx="22.5"
        cy="114.50018"
        rx="13.025373"
        ry="13.02538" />
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.8645;stroke-opacity:1"
        id="path1065-7-2-5-5-3"
-       cx="22.341755"
+       cx="22.5"
        cy="150.50018"
        r="10.06775" />
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94925;stroke-opacity:1"
        id="path1065-72-0"
-       cx="22.341755"
+       cx="22.5"
        cy="342.5"
        r="10.525375" />
     <rect
@@ -318,7 +321,7 @@
        id="rect6025-8-3-1"
        width="24.000002"
        height="24"
-       x="10.341754"
+       x="10.499999"
        y="28"
        ry="5.3710246"
        rx="5.3710246" />
@@ -327,39 +330,39 @@
        id="rect6025-8-3-1-5"
        width="24.000002"
        height="24"
-       x="10.341754"
+       x="10.499999"
        y="61"
        ry="5.3710246"
        rx="5.3710246" />
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94925;stroke-opacity:1"
        id="path1065-7-10-9-8-0"
-       cx="22.341755"
+       cx="22.5"
        cy="294.49985"
        r="10.525375" />
     <ellipse
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94924;stroke-opacity:1"
        id="path1065-7-10-9-1-7"
-       cx="22.341755"
+       cx="22.5"
        cy="224.99983"
        rx="13.025373"
        ry="13.02538" />
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.8645;stroke-opacity:1"
        id="path1065-7-2-5-5-3-4"
-       cx="22.341755"
+       cx="22.5"
        cy="260.99985"
        r="10.06775" />
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94925;stroke-opacity:1"
        id="path1065-72-2-0-9-3-9"
-       cx="22.341755"
-       cy="317"
+       cx="32.5"
+       cy="326.5"
        r="2.0253749" />
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94925;stroke-opacity:1"
        id="path1065-72-2-0-9-3-90-1-7"
-       cx="22.341755"
+       cx="22.5"
        cy="23.5"
        r="2.0253749" />
     <circle
@@ -371,8 +374,12 @@
     <circle
        style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94925;stroke-opacity:1"
        id="path1065-72-2-0-9-3-90-1-2"
-       cx="22.341755"
+       cx="22.5"
        cy="56.5"
        r="2.0253749" />
+    <path
+       id="path1065-72-2-0-9-3-90-1-1-6-0-1-0"
+       style="display:inline;fill:#ff0000;stroke:#ff0000;stroke-width:1.94925"
+       d="M 16.525375,326.5 A 3.5253751,3.5253751 0 0 1 13,330.02538 3.5253751,3.5253751 0 0 1 9.474625,326.5 3.5253751,3.5253751 0 0 1 13,322.97462 3.5253751,3.5253751 0 0 1 16.525375,326.5 Z" />
   </g>
 </svg>

@@ -20,7 +20,8 @@ struct Envelope : EnvelopeModule {
   double phase[16],
          driftVoltage[16], // for sustain only
          timeFactors[4]{1.,10.,100.,1000.};
-  float oldRetrig = 0.f,
+  float env[16]{},
+        oldRetrig = 0.f,
         multiplier[16]{}, // for move only
         start[16]{}; // for move only
   bool reset = false,
@@ -28,11 +29,17 @@ struct Envelope : EnvelopeModule {
   dsp::SchmittTrigger gateTrig[16],
                       retrigTrig[16];
   dsp::BooleanTrigger retrigButtonTrig;
+  dsp::PulseGenerator outTrig[16];                      
   dsp::ClockDivider lightDivider;
 
   Envelope() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
+    configInput(VOCT_INPUT, "V/Oct");
+    configParam(AMP_PARAM, -1.f, 1.f, 1.f, "Amplitude", "%", 0.f, 100.f, 0.f);
+    configParam(OFF_PARAM, -1.f, 1.f, 0.f, "Offset", "%", 0.f, 100.f, 0.f);
+    configInput(AMP_INPUT, "Amplitude");
+    configInput(OFF_INPUT, "Offset");
     configSwitch<FixedSwitchQuantity>(SLOW_PARAM, 0.f, 3.f, 0.f, "Knob time range", {"Fast 0.001 - 10 s", "Slow 0.01 - 100 s", "Crawl 0.1 - 1000 s", "Glacial 1 - 10000 s"});
     configSwitch<FixedSwitchQuantity>(FROM0_PARAM, 0.f, 1.f, 0.f, "Retrigger from 0", {"Off", "On"});
     configSwitch<FixedSwitchQuantity>(GATE_MODE_PARAM, 0.f, 1.f, 0.f, "Manual gate mode", {"Momentary", "Toggle"});
@@ -41,10 +48,11 @@ struct Envelope : EnvelopeModule {
     configSwitch<FixedSwitchQuantity>(RETRIG_PARAM, 0.f, 1.f, 0.f, "Manual retrigger", {"Low", "High"});
     configInput(GATE_INPUT, "Gate");
     configInput(RETRIG_INPUT, "Retrigger");
+    configOutput(TRIGS_OUTPUT, "Stage triggers");
     configLight(IDLE_LIGHT, "Idle indicator");
     configOutput(IDLE_OUTPUT, "Idle gate");
-    configOutput(INV_OUTPUT, "Inverse envelope");
     configOutput(ENV_OUTPUT, "Envelope");
+    configOutput(INV_OUTPUT, "Inverse envelope");
 
     for (int i=0; i<4; i++) {
       std::string prefix = "Stage " + std::to_string(i+1);
@@ -58,6 +66,7 @@ struct Envelope : EnvelopeModule {
       configParam<BQuantity>(B_PARAM+i, -3.f, 1.f, -1.f, prefix+" move shape", "", 0.f, 0.5f, 0.5f);
       configParam(B_CV_PARAM+i, -0.1f, 0.1f, 0.f, prefix+" move shape CV", "%", 0.f, 1000.f, 0.f);
       configInput(B_CV_INPUT+i, prefix+" move shape CV");
+      configSwitch<FixedSwitchQuantity>(TRIG_PARAM+i, 0.f, 1.f, 1.f, prefix+" trigger output", {"Off", "On"});
       configLight(GATE_LIGHT+i, prefix+" gate indicator");
       configOutput(GATE_OUTPUT+i, prefix+" gate");
     }
@@ -91,12 +100,12 @@ struct Envelope : EnvelopeModule {
     if (stage == -1)
       return 0.f;
     if (stages[stage].action)
-      return clamp((aParam(stage)+3.f)*0.25f + aCV(stage, c)) * 10.f;
+      return clamp((aParam(stage)+3.f)*0.25f + aCV(stage, c));
     if (stage<4 && (up[stage] || down[stage]))
-      return up[stage] ? 10.f : 0.f;
+      return up[stage] ? 1.f : 0.f;
     if (stage>=4 && (stages[stage].mod->up[0] || stages[stage].mod->down[0]))
-      return stages[stage].mod->up[0] ? 10.f : 0.f;
-    return clamp((aParam(stage+1)+3.f)*0.25f + aCV(stage+1, c)) * 10.f;
+      return stages[stage].mod->up[0] ? 1.f : 0.f;
+    return clamp((aParam(stage+1)+3.f)*0.25f + aCV(stage+1, c));
   }
   
   float gateRatio(float *v, int c) {
@@ -166,8 +175,12 @@ struct Envelope : EnvelopeModule {
     while (oldChannels > channels) {
       gateTrig[--oldChannels].process(0);
       retrigTrig[oldChannels].process(0);
+      env[oldChannels] = 0.f;
+      outTrig[oldChannels].reset();
     }
     if (block) {
+      for (int c=0; c<16; c++)
+        env[c] = 0.f;
       for (int i=0; i<OUTPUTS_LEN; i++) {
         outputs[i].setVoltage(0.f);
         outputs[i].setChannels(1);
@@ -190,6 +203,8 @@ struct Envelope : EnvelopeModule {
         if (reset) {
           stage[c] = -1;
           phase[c] = 0.;
+          env[c] = 0.f;
+          outTrig[c].reset();
         }
         bool cvRetrig = retrigMode==0 ? retrigTrig[c].process(inputs[RETRIG_INPUT].getPolyVoltage(c), 0.2f, 2.f) :
                         (retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig)==(retrigMode==1?1:-1)),
@@ -198,27 +213,30 @@ struct Envelope : EnvelopeModule {
         oldRetrig = inputs[RETRIG_INPUT].getPolyVoltage(c);
         int action = stage[c]==-1 ? 0 : stages[stage[c]].action,
             mode = stage[c]==-1 ? 1 : stages[stage[c]].mode;
+        outTrig[c].process(args.sampleTime);    
         if (stage[c] == -1) { // idle on entry
           outputs[IDLE_OUTPUT].setVoltage(10.f, c);
-          outputs[ENV_OUTPUT].setVoltage(0.f, c);
+          env[c] = 0.f;
         }  
         else {
+          if (phase[c] == 0. && (stage[c]<4 ? params[TRIG_PARAM+stage[c]].getValue() : stages[stage[c]].mod->params[TRIG_EXP_PARAM].getValue()))
+            outTrig[c].trigger();
           outputs[IDLE_OUTPUT].setVoltage(0.f, c);
           switch (action) {
             case 0: // move
               {
-                float trgt = (stage[c]<4 ? up[stage[c]] : stages[stage[c]].mod->up[0]) ? 10.f :
+                float trgt = (stage[c]<4 ? up[stage[c]] : stages[stage[c]].mod->up[0]) ? 1.f :
                              (stage[c]<4 ? down[stage[c]] : stages[stage[c]].mod->down[0]) ? 0.f :
-                             clamp((aParam(stage[c]+1)+3.f)*0.25f + aCV(stage[c]+1, c)) * 10.f;
+                             clamp((aParam(stage[c]+1)+3.f)*0.25f + aCV(stage[c]+1, c));
                 float shape = clamp((bParam(stage[c]) * 0.5f + 0.5) + bCV(stage[c], c)*2, -1.f, 1.f) * 0.95f;
                 if (phase[c] == 0.) {
                   multiplier[c] = 1.f;
-                  float crnt = outputs[ENV_OUTPUT].getVoltage(c);
+                  float crnt = env[c];
                   if (stage[c]>0) {
                     int prv = stage[c]-1;
                     start[c] = stages[prv].action>0 ?
-                      clamp((aParam(prv)+3.f)*0.25f + aCV(prv, c)) * 10.f :
-                      (prv<4 ? up[prv] : stages[prv].mod->up[0]) ? 10.f : 0.f;
+                      clamp((aParam(prv)+3.f)*0.25f + aCV(prv, c)) :
+                      (prv<4 ? up[prv] : stages[prv].mod->up[0]) ? 1.f : 0.f;
                   }
                   else
                     start[c] = 0.f;
@@ -246,10 +264,10 @@ struct Envelope : EnvelopeModule {
                     phase[c] = invNormSigmoid(phase[c], trgt>start[c]?-shape:shape);
                   }  
                 }
-                phase[c] += 1./(std::pow(10., static_cast<double>(aParam(stage[c]))) * timeFactor * multiplier[c] * std::pow(2., static_cast<double>(aCV(stage[c], c))*10.));
+                phase[c] += 1./(std::pow(10., aParam(stage[c])) * timeFactor * multiplier[c] * std::pow(2., aCV(stage[c], c)*10. - inputs[VOCT_INPUT].getPolyVoltage(c)));
                 if (phase[c] > 1.)
                   phase[c] = 1.;
-                outputs[ENV_OUTPUT].setVoltage(normSigmoid(phase[c], trgt>start[c]?-shape:shape)*(trgt - start[c]) + start[c], c);
+                env[c] = normSigmoid(phase[c], trgt>start[c]?-shape:shape)*(trgt - start[c]) + start[c];
                 if (mode==2 && !gate) {
                   phase[c] = 0.;
                   stage[c] = nextUngated(stage[c]);
@@ -264,15 +282,15 @@ struct Envelope : EnvelopeModule {
               break;
             case 1: // hold
               {
-                float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f;
+                float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c));
                 if (from0 || v || stage[c])
-                  outputs[ENV_OUTPUT].setVoltage(v, c);
+                  env[c] = v;
                 if (mode==2 && !gate) {
                   phase[c] = 0.;
                   stage[c] = nextUngated(stage[c]);
                 }
                 else {
-                  phase[c] += bParam(stage[c])==-3 ? 1.f : 1/(std::pow(10., bParam(stage[c])) * timeFactor * std::pow(2., bCV(stage[c], c)*10.f));
+                  phase[c] += bParam(stage[c])==-3 ? 1. : 1./(std::pow(10., bParam(stage[c])) * timeFactor * std::pow(2., bCV(stage[c], c)*10.f - inputs[VOCT_INPUT].getPolyVoltage(c)));
                   if (phase[c] >= 1.) {
                     phase[c] = 0.;
                     if (++stage[c] >= stageCnt)
@@ -284,16 +302,16 @@ struct Envelope : EnvelopeModule {
             case 2: // sustain
               {
                 int nextStage = nextUngated(stage[c]);
-                double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))*10.f) + bCV(stage[c], c);
+                double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))) + bCV(stage[c], c)*0.1f;
                 if (phase[c]==0.) {
-                  float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f;
-                  driftVoltage[c] = (from0 || v || stage[c]) ? v : outputs[ENV_OUTPUT].getVoltage(c);
+                  float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c));
+                  driftVoltage[c] = (from0 || v || stage[c]) ? v : env[c];
                 }
-                if (drift<=0.01) {
-                  float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c)) * 10.f;
+                if (drift<=0.001) {
+                  float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c));
                   if (from0 || v || stage[c])
                     driftVoltage[c] = v;
-                  outputs[ENV_OUTPUT].setVoltage(driftVoltage[c], c);
+                  env[c] = driftVoltage[c];
                 }
                 else {
                   double nextTarget = target(nextStage, c);
@@ -308,7 +326,7 @@ struct Envelope : EnvelopeModule {
                     if (driftVoltage[c] < nextTarget)
                       driftVoltage[c] = nextTarget;
                   }
-                  outputs[ENV_OUTPUT].setVoltage(driftVoltage[c], c); 
+                  env[c] = driftVoltage[c];
                 }
                 if (gate)
                   phase[c]=0.5;
@@ -324,7 +342,11 @@ struct Envelope : EnvelopeModule {
           stage[c] = 0;
           phase[c] = 0.;
         }
-        outputs[INV_OUTPUT].setVoltage(10.f - outputs[ENV_OUTPUT].getVoltage(c), c);
+        float amp = clamp(inputs[AMP_INPUT].getNormalPolyVoltage(10.f, c) * params[AMP_PARAM].getValue(), -10.f, 10.f);
+        float off = clamp(inputs[OFF_INPUT].getNormalPolyVoltage(10.f, c) * params[OFF_PARAM].getValue(), -10.f, 10.f);
+        outputs[ENV_OUTPUT].setVoltage(env[c] * amp + off, c);
+        outputs[INV_OUTPUT].setVoltage((1.f - env[c]) * amp + off, c);
+        outputs[TRIGS_OUTPUT].setVoltage(outTrig[c].remaining>0.f ? 10.f : 0.f, c);
         for (int i=0; i<4; i++)
           outputs[GATE_OUTPUT+i].setVoltage(stage[c]==i ? 10.f : 0.f, c);
         for (int i=4; i<stageCnt; i++)
@@ -394,33 +416,40 @@ struct EnvelopeWidget : EnvelopeModuleWidget {
     setModule(module);
     setVenomPanel("Envelope");
 
-    addParam(createLockableParamCentered<SlowSwitch>(Vec(17.5f, 111.5f), module, EnvelopeModule::SLOW_PARAM));
-    addParam(createLockableParamCentered<OnOffSwitch>(Vec(47.5f, 111.5f), module, EnvelopeModule::FROM0_PARAM));
-    addParam(createLockableParamCentered<OnOffSwitch>(Vec(17.5f, 145.5f), module, EnvelopeModule::GATE_MODE_PARAM));
-    addParam(createLockableParamCentered<TriSwitch>(Vec(47.5f, 145.5f), module, EnvelopeModule::RETRIG_MODE_PARAM));
-    manualGate = createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(17.5,179.5f), module, EnvelopeModule::GATE_IN_PARAM, EnvelopeModule::GATE_IN_LIGHT);
+    addInput(createInputCentered<PolyPort>(Vec(22.f, 62.5f), module, EnvelopeModule::VOCT_INPUT));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.f, 106.5f), module, EnvelopeModule::AMP_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(52.f, 106.5f), module, EnvelopeModule::OFF_PARAM));
+    addInput(createInputCentered<PolyPort>(Vec(22.f, 135.5f), module, EnvelopeModule::AMP_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(52.f, 135.5f), module, EnvelopeModule::OFF_INPUT));
+    addParam(createLockableParamCentered<SlowSwitch>(Vec(22.f, 171.5f), module, EnvelopeModule::SLOW_PARAM));
+    addParam(createLockableParamCentered<OnOffSwitch>(Vec(52.f, 171.5f), module, EnvelopeModule::FROM0_PARAM));
+    addParam(createLockableParamCentered<OnOffSwitch>(Vec(22.f, 199.5f), module, EnvelopeModule::GATE_MODE_PARAM));
+    addParam(createLockableParamCentered<TriSwitch>(Vec(52.f, 199.5f), module, EnvelopeModule::RETRIG_MODE_PARAM));
+    manualGate = createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(22.,227.5f), module, EnvelopeModule::GATE_IN_PARAM, EnvelopeModule::GATE_IN_LIGHT);
     addParam(manualGate);
-    addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(47.5,179.5f), module, EnvelopeModule::RETRIG_PARAM, EnvelopeModule::RETRIG_LIGHT));
-    addInput(createInputCentered<PolyPort>(Vec(17.5f, 212.5f), module, EnvelopeModule::GATE_INPUT));
-    addInput(createInputCentered<PolyPort>(Vec(47.5f, 212.5f), module, EnvelopeModule::RETRIG_INPUT));
-    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(32.5f,241.f), module, EnvelopeModule::IDLE_LIGHT));
-    addOutput(createOutputCentered<PolyPort>(Vec(32.5, 266.5f), module, EnvelopeModule::IDLE_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(32.5, 304.5f), module, EnvelopeModule::INV_OUTPUT));
-    addOutput(createOutputCentered<PolyPort>(Vec(32.5, 342.5f), module, EnvelopeModule::ENV_OUTPUT));
+    addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(52.,227.5f), module, EnvelopeModule::RETRIG_PARAM, EnvelopeModule::RETRIG_LIGHT));
+    addInput(createInputCentered<PolyPort>(Vec(22.f, 256.5f), module, EnvelopeModule::GATE_INPUT));
+    addInput(createInputCentered<PolyPort>(Vec(52.f, 256.5f), module, EnvelopeModule::RETRIG_INPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.f, 304.5f), module, EnvelopeModule::TRIGS_OUTPUT));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(52.f,287.5f), module, EnvelopeModule::IDLE_LIGHT));
+    addOutput(createOutputCentered<PolyPort>(Vec(52.f, 304.5f), module, EnvelopeModule::IDLE_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(22.f, 342.5f), module, EnvelopeModule::ENV_OUTPUT));
+    addOutput(createOutputCentered<PolyPort>(Vec(52.f, 342.5f), module, EnvelopeModule::INV_OUTPUT));
     for (int i=0; i<4; i++) {
-      addChild((labelWidget[i] = new LabelWidget(Vec(60.f+i*45, 0.f))));
-      addChild(createLightCentered<SmallLight<YellowLight>>(Vec(82.5f+i*45, 23.5f), module, EnvelopeModule::UP_LIGHT+i));
-      addParam(createLockableParamCentered<ActionSwitch>(Vec(82.5f+i*45, 40.f), module, EnvelopeModule::ACTION_PARAM+i));
-      addChild(createLightCentered<SmallLight<YellowLight>>(Vec(82.5f+i*45, 56.5f), module, EnvelopeModule::DOWN_LIGHT+i));
-      addParam(createLockableParamCentered<ModeSwitch>(Vec(82.5f+i*45, 73.f), module, EnvelopeModule::MODE_PARAM+i));
-      addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(82.5f+i*45, 114.5f), module, EnvelopeModule::A_PARAM+i));
-      addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(82.5f+i*45, 150.5f), module, EnvelopeModule::A_CV_PARAM+i));
-      addInput(createInputCentered<PolyPort>(Vec(82.5f+i*45, 184.f), module, EnvelopeModule::A_CV_INPUT+i));
-      addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(82.5f+i*45, 225.f), module, EnvelopeModule::B_PARAM+i));
-      addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(82.5f+i*45, 261.f), module, EnvelopeModule::B_CV_PARAM+i));
-      addInput(createInputCentered<PolyPort>(Vec(82.5f+i*45, 294.5f), module, EnvelopeModule::B_CV_INPUT+i));
-      addChild(createLightCentered<SmallLight<YellowLight>>(Vec(82.5f+i*45, 317.f), module, EnvelopeModule::GATE_LIGHT+i));
-      addOutput(createOutputCentered<PolyPort>(Vec(82.5f+i*45, 342.5f), module, EnvelopeModule::GATE_OUTPUT+i));
+      addChild((labelWidget[i] = new LabelWidget(Vec(75.f+i*45, 0.f))));
+      addChild(createLightCentered<SmallLight<YellowLight>>(Vec(97.5f+i*45, 23.5f), module, EnvelopeModule::UP_LIGHT+i));
+      addParam(createLockableParamCentered<ActionSwitch>(Vec(97.5f+i*45, 40.f), module, EnvelopeModule::ACTION_PARAM+i));
+      addChild(createLightCentered<SmallLight<YellowLight>>(Vec(97.5f+i*45, 56.5f), module, EnvelopeModule::DOWN_LIGHT+i));
+      addParam(createLockableParamCentered<ModeSwitch>(Vec(97.5f+i*45, 73.f), module, EnvelopeModule::MODE_PARAM+i));
+      addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(97.5f+i*45, 114.5f), module, EnvelopeModule::A_PARAM+i));
+      addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(97.5f+i*45, 150.5f), module, EnvelopeModule::A_CV_PARAM+i));
+      addInput(createInputCentered<PolyPort>(Vec(97.5f+i*45, 184.f), module, EnvelopeModule::A_CV_INPUT+i));
+      addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(97.5f+i*45, 225.f), module, EnvelopeModule::B_PARAM+i));
+      addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(97.5f+i*45, 261.f), module, EnvelopeModule::B_CV_PARAM+i));
+      addInput(createInputCentered<PolyPort>(Vec(97.5f+i*45, 294.5f), module, EnvelopeModule::B_CV_INPUT+i));
+      addParam(createLockableParamCentered<OnOffSwitch>(Vec(88.f+i*45, 326.5f), module, EnvelopeModule::TRIG_PARAM+i));
+      addChild(createLightCentered<SmallLight<YellowLight>>(Vec(107.5f+i*45, 326.5f), module, EnvelopeModule::GATE_LIGHT+i));
+      addOutput(createOutputCentered<PolyPort>(Vec(97.5f+i*45, 342.5f), module, EnvelopeModule::GATE_OUTPUT+i));
     }
   }
 
@@ -491,9 +520,9 @@ struct EnvelopeWidget : EnvelopeModuleWidget {
               aq->displayBase = 0.f;
               aq->displayMultiplier = 25.f;
               aq->displayOffset = 75.f;
-              bq->unit = " V/s";
+              bq->unit = " %/s";
               bq->displayBase = 10.f;
-              bq->displayMultiplier = 10.f;
+              bq->displayMultiplier = 100.f;
               bq->displayOffset = 0.f;
               break;
           }

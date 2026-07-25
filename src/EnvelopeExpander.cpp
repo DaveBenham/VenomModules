@@ -20,6 +20,7 @@ struct EnvelopeExpander : EnvelopeModule {
     configParam<BQuantity>(B_EXP_PARAM, -3.f, 1.f, -1.f, "Stage n move shape", "", 0.f, 0.5f, 0.5f);
     configParam(B_CV_EXP_PARAM, -0.1f, 0.1f, 0.f, "Stage n move shape CV", "%", 0.f, 1000.f, 0.f);
     configInput(B_CV_EXP_INPUT, "Stage n move shape CV");
+    configSwitch<FixedSwitchQuantity>(TRIG_EXP_PARAM, 0.f, 1.f, 1.f, "Stage n trigger output", {"Off", "On"});
     configLight(GATE_EXP_LIGHT, "Stage n gate indicator");
     configOutput(GATE_EXP_OUTPUT, "Stage n gate");
   }
@@ -27,7 +28,6 @@ struct EnvelopeExpander : EnvelopeModule {
 
   void process(const ProcessArgs& args) override {
     EnvelopeModule::process(args);
-
   }
   
 };
@@ -37,6 +37,13 @@ struct EnvelopeExpanderWidget : EnvelopeModuleWidget {
       action = -1,
       slow = 0;
   bool connected = false;
+
+  struct OnOffSwitch : GlowingSvgSwitchLockable {
+    OnOffSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+    }
+  };
 
   EnvelopeExpanderWidget(EnvelopeExpander* module) {
     setModule(module);
@@ -54,7 +61,8 @@ struct EnvelopeExpanderWidget : EnvelopeModuleWidget {
     addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(22.5f, 225.f), module, EnvelopeExpander::B_EXP_PARAM));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 261.f), module, EnvelopeExpander::B_CV_EXP_PARAM));
     addInput(createInputCentered<PolyPort>(Vec(22.5f, 294.5f), module, EnvelopeExpander::B_CV_EXP_INPUT));
-    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(22.5f, 317.f), module, EnvelopeExpander::GATE_EXP_LIGHT));
+    addParam(createLockableParamCentered<OnOffSwitch>(Vec(13.f, 326.5f), module, EnvelopeExpander::TRIG_EXP_PARAM));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(32.5f, 326.5f), module, EnvelopeExpander::GATE_EXP_LIGHT));
     addOutput(createOutputCentered<PolyPort>(Vec(22.5f, 342.5f), module, EnvelopeExpander::GATE_EXP_OUTPUT));
   }
 
@@ -140,12 +148,13 @@ struct EnvelopeExpanderWidget : EnvelopeModuleWidget {
             aq->displayBase = 0.f;
             aq->displayMultiplier = 25.f;
             aq->displayOffset = 75.f;
-            bq->unit = " V/s";
+            bq->unit = " %/s";
             bq->displayBase = 10.f;
-            bq->displayMultiplier = 10.f;
+            bq->displayMultiplier = 100.f;
             bq->displayOffset = 0.f;
             break;
         }
+        mod->setParamFactoryName(EnvelopeModule::TRIG_EXP_PARAM, prefix + " trigger output", true);
         mod->lightInfos[EnvelopeModule::GATE_EXP_LIGHT]->name = prefix + " gate indicator";
         mod->setPortFactoryName(EnvelopeModule::GATE_EXP_OUTPUT, prefix + " gate", true, true);
       }

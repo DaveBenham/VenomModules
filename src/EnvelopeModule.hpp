@@ -5,6 +5,8 @@ namespace Venom {
 struct EnvelopeModule : VenomModule {
 
   enum ParamId {
+    AMP_PARAM,
+    OFF_PARAM,
     SLOW_PARAM,
     FROM0_PARAM,
     GATE_MODE_PARAM,
@@ -17,9 +19,13 @@ struct EnvelopeModule : VenomModule {
     ENUMS(A_CV_PARAM,4),
     ENUMS(B_PARAM,4),
     ENUMS(B_CV_PARAM,4),
+    ENUMS(TRIG_PARAM,4),
     PARAMS_LEN
   };
   enum InputId {
+    VOCT_INPUT,
+    AMP_INPUT,
+    OFF_INPUT,
     GATE_INPUT,
     RETRIG_INPUT,
     ENUMS(A_CV_INPUT,4),
@@ -27,9 +33,10 @@ struct EnvelopeModule : VenomModule {
     INPUTS_LEN
   };
   enum OutputId {
+    TRIGS_OUTPUT,
     IDLE_OUTPUT,
-    INV_OUTPUT,
     ENV_OUTPUT,
+    INV_OUTPUT,
     ENUMS(GATE_OUTPUT,4),
     OUTPUTS_LEN
   };
@@ -50,6 +57,7 @@ struct EnvelopeModule : VenomModule {
     A_CV_EXP_PARAM,
     B_EXP_PARAM,
     B_CV_EXP_PARAM,
+    TRIG_EXP_PARAM,
     EXP_PARAMS_LEN
   };
   enum ExpInputId {
