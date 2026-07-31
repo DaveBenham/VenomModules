@@ -63,8 +63,8 @@ struct PolyMute : VenomModule {
     configSwitch<FixedSwitchQuantity>(SOFT_PARAM, 0.f, 1.f, 0.f, "Soft switching", {"Off", "On"});
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 3.f, 0.f, "Gate mode", {"Mute", "Pass", "Toggle", "Exclusive pass"});
     configInput(GATES_INPUT, "Channel gates");
-    configInput(POLY1_INPUT, "Poly 1");
-    configInput(POLY2_INPUT, "Poly 2");
+    configInput(POLY1_INPUT, "Poly 1")->description = "Normalled to 10V";
+    configInput(POLY2_INPUT, "Poly 2")->description = "Normalled to 10V";
     configOutput(POLY1_OUTPUT, "Poly 1");
     configOutput(POLY2_OUTPUT, "Poly 2");
     configBypass(POLY1_INPUT, POLY1_OUTPUT);

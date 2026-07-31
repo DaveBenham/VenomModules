@@ -81,12 +81,12 @@ struct Compare2 : VenomModule {
     
     configInput(SHIFT1_INPUT, "Shift 1");
     configInput(SIZE1_INPUT, "Size 1");
-    configInput(SIZE2_INPUT, "Size 2");
-    configInput(SHIFT2_INPUT, "Shift 2");
+    configInput(SIZE2_INPUT, "Size 2")->description = "Normalled to Size 1 input";
+    configInput(SHIFT2_INPUT, "Shift 2")->description = "Normalled to Shift 1 input";
 
     configSwitch<FixedSwitchQuantity>(RANGE_PARAM, 0.f, 5.f, 2.f, "Output range", {"0-1V", "0-5V", "0-10V", "+/- 1V", "+/- 5V", "+/- 10V"});
     configInput(IN1_INPUT, "In 1");
-    configInput(IN2_INPUT, "In 2");
+    configInput(IN2_INPUT, "In 2")->description = "Normalled to In 1 input";
     configSwitch<FixedSwitchQuantity>(OVER_PARAM, 0.f, 5.f, 0.f, "Oversample", {"Off", "x2", "x4", "x8", "x16", "x32"});
 
     configOut(GTR1_OUTPUT,"In 1 greater");

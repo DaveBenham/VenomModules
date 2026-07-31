@@ -61,7 +61,7 @@ struct PolyPrune : VenomModule {
   PolyPrune() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     
-    configInput(SELECT_INPUT, "Select gates");
+    configInput(SELECT_INPUT, "Select gates")->description = "Normalled to 10V";
     configSwitch<FixedSwitchQuantity>(SORT_PARAM, 0.f, 6.f, 0.f, "Sort", {"Off", "Input ascending", "Input descending", "Selection ascending", "Selection descending", "Output ascending", "Output descending"});
     configParam(START_PARAM, 1.f, 16.f, 1.f, "Start");
     configInput(START_INPUT, "Start");

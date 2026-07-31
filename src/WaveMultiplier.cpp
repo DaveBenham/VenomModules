@@ -83,7 +83,7 @@ struct WaveMultiplier : VenomModule {
       std::string iStr = std::to_string(i+1);
       configParam(FREQ_PARAM+i, -1.f, 1.f, freqDflt[i], "LFO " + iStr + " frequency offset");
       configOutput(MOD_OUTPUT+i, "LFO " + iStr);
-      configInput(SHIFT_INPUT+i, "Shift threshold CV " + iStr);
+      configInput(SHIFT_INPUT+i, "Shift threshold CV " + iStr)->description = "Normalled to LFO " + iStr + " output";
       configParam(SHIFT_CV_PARAM+i, 0.f, 1.f, 1.f, "Shift threshold CV amount " + iStr, "%", 0, 100, 0);
       configParam(SHIFT_PARAM+i, -5.f, 5.f, 0.f, "Shift threshold " + iStr, " V");
       configOutput(PULSE_OUTPUT+i, "Pulse " + iStr);
