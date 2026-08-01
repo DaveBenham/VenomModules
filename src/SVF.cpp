@@ -106,7 +106,7 @@ struct SVF : VenomModule {
     float maxFreq = 0;
     float getDisplayValue() override {
       if (displayBase == 2.f) {
-        float rtn = pow(2.f, getValue()*2.5f + 1.f) * displayMultiplier;
+        float rtn = dsp::exp2_taylor5(getValue()*2.5f + 1.f) * displayMultiplier;
         return rtn>maxFreq ? maxFreq : rtn;
       }
       else
@@ -394,16 +394,16 @@ struct SVF : VenomModule {
       if (inputMode)
         stereoIn = dcBlockFilter[STEREOIN][s].process(stereoIn);
       stereoIn *= 10.f;
-      freq = pow(2.f, freqParam + voctIn + freqIn*freqCVAmt + spreadParam + spreadIn*spreadCVAmt) * rangeFreq[range];
+      freq = dsp::exp2_taylor5(freqParam + voctIn + freqIn*freqCVAmt + spreadParam + spreadIn*spreadCVAmt) * rangeFreq[range];
       freq = ifelse(freq>maxFreq, maxFreq, freq);
       res = clamp(resParam + resIn * resCVAmt) * 4.5f;
       drive = clamp(driveParam + driveIn * driveCVAmt, minGain, 10.f);
-      fdbkAmt = clamp(pow(2.f, fdbkParam + fdbkIn*fdbkCVAmt));
+      fdbkAmt = clamp(dsp::exp2_taylor5(fdbkParam + fdbkIn*fdbkCVAmt));
       fdbkAmt = ifelse(fdbkAmt<0.001f, 0.f, fdbkAmt);
       if (range==0)
         fdbkAmt *= 0.5;
       f = 2.f * sin(sampleTimePi * freq);
-      q = (slope==0) ? 1.f / pow(2.f, res) : 1.f;
+      q = (slope==0) ? 1.f / dsp::exp2_taylor5(res) : 1.f;
       if (outConnected[MORPH]){
         morphBRatio = clamp(morphParam + morphIn*morphCVAmt);
         if (mode==1){
@@ -424,7 +424,7 @@ struct SVF : VenomModule {
         low = state[LOW][s] = state[LOW][s] + f * state[BAND][s];
         for (int i=0; i<slope; i++){ // slope loop
           if (i==slope-1)
-            q = 1.f / pow(2.f, res);
+            q = 1.f / dsp::exp2_taylor5(res);
           int b=LOW;
           if (outConnected[b] || outConnected[MORPH]){
             stereo = low;

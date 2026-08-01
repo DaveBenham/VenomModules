@@ -80,8 +80,8 @@ struct XM_OP : VenomModule {
       syncRtrgMode = 0;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
   OversampleFilter_4 upSample[4]{}, downSample[4]{};
-  float const minTime = pow(2.f,-12.f);
-  float const maxTime = pow(2.f,7.5f);
+  float const minTime = dsp::exp2_taylor5(-12.f);
+  float const maxTime = dsp::exp2_taylor5(7.5f);
   float_4 envPhasor[4]{},
           stage[4]{},
           relStart[4]{},
@@ -337,9 +337,9 @@ struct XM_OP : VenomModule {
       float_4 rmod = inputs[RMOD_INPUT].getPolyVoltageSimd<float_4>(c),
               smod = inputs[SMOD_INPUT].getPolyVoltageSimd<float_4>(c),
               susLevel = clamp(susParam + smod*susCVAmt),
-              delta = ifelse(stage[s]==1.f, args.sampleTime / clamp(pow(2.f, smod*atkCVAmt + atkParam), minTime, maxTime),
-                        ifelse(stage[s]==2.f, args.sampleTime / clamp(pow(2.f, smod*decCVAmt + decParam), minTime, maxTime),
-                          ifelse(stage[s]==4.f, args.sampleTime / clamp(pow(2.f, smod*relCVAmt + relParam), minTime, maxTime), 0.f)));
+              delta = ifelse(stage[s]==1.f, args.sampleTime / clamp(dsp::exp2_taylor5(smod*atkCVAmt + atkParam), minTime, maxTime),
+                        ifelse(stage[s]==2.f, args.sampleTime / clamp(dsp::exp2_taylor5(smod*decCVAmt + decParam), minTime, maxTime),
+                          ifelse(stage[s]==4.f, args.sampleTime / clamp(dsp::exp2_taylor5(smod*relCVAmt + relParam), minTime, maxTime), 0.f)));
       envPhasor[s] = clamp(envPhasor[s]+delta);
       float_4 curve = normSigmoid(envPhasor[s], shape),
               envOut = ifelse(stage[s]<=1.f, curve,

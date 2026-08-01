@@ -185,31 +185,6 @@
       ]
     },
     {
-      "slug": "Envelope",
-      "name": "Envelope Factory",
-      "description": "Highly configurable and extensible multi-stage envelope generator with stage gates and looping capabilities",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#envelope-factory",
-      "tags": [
-        "Envelope Generator",
-        "Low-frequency oscillator",
-        "Polyphonic",
-        "Sequencer"
-      ]
-    },
-    {
-      "slug": "EnvelopeExpander",
-      "name": "Envelope Stage Expander",
-      "description": "Adds a stage to the Stage Factory",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#envelope-stage-expander",
-      "tags": [
-        "Envelope Generator",
-        "Expander",
-        "Low-frequency oscillator",
-        "Polyphonic",
-        "Sequencer"
-      ]
-    },
-    {
       "slug": "HQ",
       "name": "HQ - Harmonic Quantizer",
       "description": "Computes a selected harmonic or subharmonic partial relative to a root V/Oct, or quantizes input V/Oct to the nearest partial relative to the root",

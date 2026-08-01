@@ -58,7 +58,8 @@ struct AD_ASR : VenomModule {
         case 3:
           offset = 8.f;
       }
-      return pow(2.f, module->params[paramId].getValue() + offset);
+//      return pow(2.f, module->params[paramId].getValue() + offset);
+      return dsp::exp2_taylor5(module->params[paramId].getValue() + offset);
     }
     void setDisplayValue(float v) override {
       int speedParam = static_cast<int>(module->params[SPEED_PARAM].getValue());
@@ -96,10 +97,10 @@ struct AD_ASR : VenomModule {
   float mode = 0.f,
         blockRetrigStage = 1.f;
 
-  const float normMinTime = pow(2.f, -12.f),
-              normMaxTime = pow(2.f, 7.5f),
-              slowMinTime = pow(2.f, -5.f),
-              slowMaxTime = pow(2.f, 11.5f);
+  const float normMinTime = dsp::exp2_taylor5(-12.f),
+              normMaxTime = dsp::exp2_taylor5(7.5f),
+              slowMinTime = dsp::exp2_taylor5(-5.f),
+              slowMaxTime = dsp::exp2_taylor5(11.5f);
 
   float_4 loop{};
 
@@ -306,8 +307,8 @@ struct AD_ASR : VenomModule {
       gateCVNewState = ifelse(gateCVVal<0.2f, 0.f, gateCVNewState);
       float_4 gateCVTrig = ifelse(gateCVNewState > gateCVState[s], 1.f, 0.f);
       // compute current stage deltas
-      float_4 riseDelta = args.sampleTime * undersample / clamp(pow(2.f, inputs[RISE_CV_INPUT].getPolyVoltageSimd<float_4>(c)*riseCVAmt + riseParm), minTime, maxTime);
-      float_4 fallDelta = -args.sampleTime * undersample / clamp(pow(2.f, inputs[FALL_CV_INPUT].getPolyVoltageSimd<float_4>(c)*fallCVAmt + fallParm), minTime, maxTime);
+      float_4 riseDelta = args.sampleTime * undersample / clamp(dsp::exp2_taylor5(inputs[RISE_CV_INPUT].getPolyVoltageSimd<float_4>(c)*riseCVAmt + riseParm), minTime, maxTime);
+      float_4 fallDelta = -args.sampleTime * undersample / clamp(dsp::exp2_taylor5(inputs[FALL_CV_INPUT].getPolyVoltageSimd<float_4>(c)*fallCVAmt + fallParm), minTime, maxTime);
       float_4 delta{};
       delta = ifelse(stage[s]==1.f, riseDelta, delta);
       delta = ifelse(stage[s]==3.f, fallDelta, delta);

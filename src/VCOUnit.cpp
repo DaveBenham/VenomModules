@@ -159,7 +159,7 @@ struct VCOUnit : VenomModule {
       VCOUnit* mod = reinterpret_cast<VCOUnit*>(this->module);
       float freq = 0.f;
       if (mod->mode < 2)
-        freq = pow(2.f, mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue());
+        freq = dsp::exp2_taylor5(mod->params[FREQ_PARAM].getValue() + mod->params[OCTAVE_PARAM].getValue());
       else
         freq = mod->params[FREQ_PARAM].getValue() * mod->biasFreq;
       return freq * mod->modeFreq[mod->lfoAsBPM][mod->mode];
