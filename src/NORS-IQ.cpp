@@ -84,7 +84,7 @@ struct NORS_IQ : VenomModule {
     char buf[sz];
     switch (static_cast<int>(params[INTVL_UNIT_PARAM].getValue())) {
       case RATIO_UNIT:
-        snprintf(buf, sz, display ? "%g:1" : "%g", pow(2.f, val));
+        snprintf(buf, sz, display ? "%g:1" : "%g", dsp::exp2_taylor5(val));
         break;
       case CENT_UNIT:
         snprintf(buf, sz, display ? "%g \u00A2" : "%g", val*1200.f);
@@ -132,7 +132,7 @@ struct NORS_IQ : VenomModule {
     char buf[sz];
     switch (static_cast<int>(params[ROOT_UNIT_PARAM].getValue())) {
       case HZ_UNIT:
-        snprintf(buf, sz, display ? "%g Hz" : "%g", pow(2.f, val + log2(dsp::FREQ_C4)));
+        snprintf(buf, sz, display ? "%g Hz" : "%g", dsp::exp2_taylor5(val + static_cast<float>(log2(dsp::FREQ_C4))));
         break;
       case CENT_UNIT:
         snprintf(buf, sz, display ? "%g \u00A2" : "%g", val*1200.f);
