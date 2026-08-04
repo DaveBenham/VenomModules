@@ -31,8 +31,8 @@ void init(Plugin* p) {
   p->addModel(modelVenomCompare2);
   p->addModel(modelVenomCrossFade3D);
   p->addModel(modelVenomDASE);
-  p->addModel(modelVenomEnvelope);
-  p->addModel(modelVenomEnvelopeExpander);
+  p->addModel(modelVenomEnvelopeFactory);
+//  p->addModel(modelVenomEnvelopeExpander);
   p->addModel(modelVenomHQ);
   p->addModel(modelVenomKnob5);
   p->addModel(modelVenomLinearBeats);
