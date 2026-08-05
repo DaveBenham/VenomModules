@@ -19,9 +19,9 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|----|----|----|----|
 |![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Blocker module image](doc/BoundedVCO.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Cross Fade 3D module image](doc/CrossFade3D.png)|![DASE module image](doc/DASE.png)|
 
-|[ENVELOPE FACTORY<br />plus EXPANDER](#envelope-factory-plus-expander)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LINEAR<br />MERGE](#linear-merge)|[LINEAR<br />MERGE<br />EXPANDER](#linear-merge-expander)|
+|[ENVELOPE FACTORY](#envelope-factory)|[HARMONIC<br />QUANTIZER](#harmonic-quantizer)|[KNOB 5](#knob-5)|[LINEAR<br />BEATS](#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](#linear-beats-expander)|[LINEAR<br />MERGE](#linear-merge)|[LINEAR<br />MERGE<br />EXPANDER](#linear-merge-expander)|
 |----|----|----|----|----|----|----|
-|![Envelope Factory module image](doc/Envelope.png) &nbsp;![Envelope Stage Expander module image](doc/EnvelopeExpander.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Linear Merge module image](doc/LinearMerge.png)|![Linear Merge module image](doc/LinearMergeExpander.png)|
+|![Envelope Factory module image](doc/EnvelopeFactory.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Linear Merge module image](doc/LinearMerge.png)|![Linear Merge module image](doc/LinearMergeExpander.png)|
 
 |[LOGIC](#logic)|[MERGE<br />4x2](#merge-4x2)|[MERGE<br />SPLIT](#merge-split)|[MIX 4](#mix-4)|[MIX 4<br />STEREO](#mix-4-stereo)|[MIX EXPANDERS](#mix-expanders)|
 |----|----|----|----|----|----|
@@ -1018,11 +1018,11 @@ A novel Attack/Decay envelope generator that functions as an unusual VCA and wav
 
 [Return to Table Of Contents](#venom)
 
-## ENVELOPE FACTORY plus EXPANDER
-![ENVELOPE FACTORY module image](doc/Envelope.png) &nbsp;![ENVELOPE STAGE EXPANDER module image](doc/EnvelopeExpander.png)  
+## ENVELOPE FACTORY
+![ENVELOPE FACTORY module image](doc/EnvelopeFactory.png)  
 A highly configurable and extensible polyphonic envelope generator.
 
-The Envelope Factory module has four stages. Up to 16 stages may be added by placing one or more Envelope Stage Expanders to the right of the Envelope Factory, giving a maximum stage count of 20. The LED in the upper left corner of each expander glows yellow when the expander has successfully connected to the Envelope Factory parent. The Envelope Factory module context menu has an option to add an expander to the right.
+By default the Envelope Factory has four stages, but a module context menu "Stage count" option lets you select any count from 1 to 20. The module automatically expands or contracts to match the selected stage count. Modules to the right are automatically pushed right as needed when expanding. Cables attached to removed stages are automatically deleted.
 
 Each stage can be configured independently to perform one of three actions:
 - Rise or fall from a start voltage to a target voltage over a fixed time interval
@@ -1053,17 +1053,28 @@ In addition, all CV inputs can be driven at audio rates.
 
 Envelope Factory does not have any provision for oversampling, so audio rate outputs will be prone to digital aliasing.
 
-### Default configuration and a factory preset
+### Default configuration
 
-The default configuration of a newly placed Envelope Factory has four identical Move stages, which is not very useful. I wanted the default to be an ADSR envelope, but VCV does not have a mechanism to define a factory default preset.
+The factory default for a newly placed Envelope Factory has four stages that are configured to function as either an ADSR or ADBDR envelope.
 
-Envelope Factory is distributed with one "ADSR - ADBDR" factory preset. I recommend loading it and saving this as your user default.
+If the Sustain Drift is kept at 0, then the default configuration behaves like a typical Attack Decay Sustain Release (ADSR) envelope. The first Move stage is the Attack, the second Move stage the Decay, the third Sustain stage as itself, and the fourth Move stage is the final Release.
 
-If the Sustain Drift is kept at 0, then the preset acts like a typical Attack Decay Sustain Release (ADSR) envelope. The first Move stage is the Attack, the second Move stage the Decay, the third Sustain stage as itself, and the fourth Move stage is the final Release.
-
-If the Drift is non-zero then the preset acts like an Attack Decay Break Decay2 Release (ADBDR) envelope. The Sustain stage defines both the Break point, as well as the Sustain's Decay2 rate. This is more like a physical piano where the note slowly decays while the sustain pedal is held down, and quickly decays once the sustain pedal is released.
+If the Drift is non-zero then the default configuration acts like an Attack Decay Break Decay2 Release (ADBDR) envelope. The Sustain stage defines both the Break point, as well as the Sustain's Decay2 rate. This is more like a physical piano where the note slowly decays while the sustain pedal is held down, and quickly decays once the sustain pedal is released.
 
 ### *Global controls*
+
+### V/OCT (Volt per octave) input
+CV at this input modulates all timed stages identically. Each positive volt doubles the rate (halves the time). Each negative volt halves the rate (doubles the time). This input is particularly useful when the envelope is configured to loop, thus creating an LFO with typical V/Oct control over the rate.
+
+### AMP (Amplitude) knob and CV input
+Determines the magnitude of the final envelope. The input is attenuated and/or inverted by the knob to determine the effective 100% voltage. The knob attenuverter defaults to 100%, and the input is normalled to 10 volts, so if not patched, the envelope ranges between 0 and 10 volts (disregarding any offset).
+
+The effective amplitude is clamped to a value between -10 and 10 volts.
+
+### OFF (Offset) knob and CV input
+Determines any offset that is added to the final envelope after the amplitude is applied. The input is attenuated and/or inverted by the knob to determine the effective offset. The knob attenuverter defaults to 0%, so by default no offset is applied.
+
+The effective offset is clamped to a value between -10 and 10 volts.
 
 ### Slow (Knob time range) small button
 Sets the range of all stage Time knobs
@@ -1106,18 +1117,21 @@ The CV behavior depends on the setting of the Retrig Mode button.
 
 When configuring an envelope with retrig, it can be useful to set the manual Gate button to Toggle mode so you can set the gate high, giving you a chance to press the Retrig button.
 
+### STAGE TRIGS (Stage triggers) output
+This output can produce a 1 msec trigger at the start of each stage. The small button above and to the left of each stage Gate output controls whether the stage generates a trigger or not. This output is especially useful if you want to use Envelope Factory as a timed sequencer. Note that consecutive triggers can merge into a single extended trigger when a stage is shorter than 1 msec.
+
 ### IDLE (Idle gate) output and LED light
 The Idle output gate is always high at 10V when the generator is idle, and low at 0V when an envelope is in progress. This output can be patched to the Gate (or Retrig input with Gate toggled high) to create a looping envelope.
 
 The LED light above the port glows yellow when the Idle gate is high. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are idle.
 
-### INV (Inverse envelope) output
-
-An inverted form of the final envelope with a resting voltage of 10V that typically descends to 0V before returning to 10V. It is defined as 10V - ENV.
-
 ### ENV (Envelope) output
 
 The final envelope with a resting voltage of 0V that typically ascends to 10V before returning to 0V.
+
+### INV (Inverse envelope) output
+
+An inverted form of the final envelope with a resting voltage of 10V that typically descends to 0V before returning to 10V. It is defined as 10V - ENV.
 
 ### *Stage controls*
 Each envelope stage has identical controls, inputs, and outputs.
@@ -1181,21 +1195,22 @@ Typically a Sustain stage is preceded by a Move stage, in which case the envelop
 If the first envelope stage is a Sustain at Level 0, and the envelope is retriggered, and Retrig From 0 is off, then Sustain preserves the voltage at the time of retrigger instead of jumping to 0.
 
 ### Sustain bottom controls: Drift knob, CV and attenuverter
-Specifies the rate at which the Sustain output will drift toward the target voltage of the next ungated stage. The knob ranges from 0 to 100 V/sec. The drift is always linear. If the target voltage is reached, then it will hold the target value throughout the rest of the Sustain stage.
+Specifies the rate at which the Sustain output will drift toward the target voltage of the next ungated stage. The knob ranges from 0 to 1000 %/sec. The drift is always linear. If the target voltage is reached, then it will hold the target value throughout the rest of the Sustain stage.
 
-The attenuverted CV is scaled linearly and summed with the knob value to establish the effective drift value. Any drift value <= 0.01 V/sec is treated as 0 (no drift).
+The attenuverted CV is scaled at 10% per volt and summed with the knob value to establish the effective drift value. If the effective drift is 0 then the Sustain will hold the sustain level indefinitely.
 
-### GATE output and LED light
+### GATE output, trigger button, and LED light
 The stage gate output is high at 10V for as long as the stage is active, otherwise it is 0V.
 
-The LED light above the port glows yellow when the stage is active. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are in that stage.
+The small unlabeled button above and to the left of the port controls whether the onset of the stage produces a 1 msec trigger at the Gate Trigs output.
+
+The LED light above and to the right of the port glows yellow when the stage is active. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are in that stage.
 
 ### Automatic termination of envelopes
-All active envelopes will instantly be terminated and the envelope generator will return to an idle state if any of the following occur
+All active envelopes will instantly be terminated and the envelope generator will return to an idle state if any of the following occur:
 - Any stage is reconfigured to perform a different Action
-- A stage expander is added or deleted
-- The order of stage expanders is shuffled, even if the shuffled stages are configured to have the same action
-- The Envelope Factory or any stage expander is bypassed
+- The number of stages is changed
+- The Envelope Factory is bypassed
 
 ### Standard Venom Context Menus
 [Venom Themes](#themes), [Custom Names](#custom-names), and [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
