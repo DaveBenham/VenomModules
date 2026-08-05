@@ -5,7 +5,6 @@
 - Bounded VCO
 - DASE (Dynamic Amplifying Shaping Envelope)
 - Envelope Factory
-- Envelope Stage Expander
 - Linear Merge
 - Linear Merge Expander
 - Ratio
