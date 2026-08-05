@@ -308,12 +308,12 @@ struct EnvelopeFactory : VenomModule {
           case 2: // sustain
             {
               int nextStage = nextUngated(stage[c]);
-              double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))) + bCV(stage[c], c)*0.1f;
+              double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))) + bCV(stage[c], c);
               if (phase[c]==0.) {
                 float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c));
                 driftVoltage[c] = (from0 || v || stage[c]) ? v : env[c];
               }
-              if (drift<=0.001) {
+              if (drift<=0.000001) {
                 float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c));
                 if (from0 || v || stage[c])
                   driftVoltage[c] = v;
