@@ -498,6 +498,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
   
   StageWidget *stages[MAX_STAGES];
   LabelWidget *nameLabel = new LabelWidget;
+  SvgPanel *borderPanel = new SvgPanel;
 
   struct ActionSwitch : GlowingSvgSwitchLockable {
     ActionSwitch() {
@@ -563,7 +564,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(22.f, 342.5f), module, EnvelopeFactory::ENV_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(52.f, 342.5f), module, EnvelopeFactory::INV_OUTPUT));
     for (int i=0; i<(module ? MAX_STAGES : 4); i++) {
-      StageWidget *stg = new StageWidget(Vec(75.f+i*45, 0.f));
+      StageWidget *stg = new StageWidget(Vec(74.1f+i*45, 0.f));
       stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(22.5f, 23.5f), module, EnvelopeFactory::UP_LIGHT+i));
       stg->addChild(createLockableParamCentered<ActionSwitch>(Vec(22.5f, 40.f), module, EnvelopeFactory::ACTION_PARAM+i));
       stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(22.5f, 56.5f), module, EnvelopeFactory::DOWN_LIGHT+i));
@@ -583,8 +584,13 @@ struct EnvelopeFactoryWidget : VenomWidget {
       addChild(stg);
     }
     addChild(nameLabel);
-    if (!module)
+    borderPanel->sw->setSvg(Svg::load(asset::plugin(pluginInstance,"res/emptyPanel.svg")));
+    addChild(borderPanel);
+    if (!module){
       setSize(Vec(255,380));
+      borderPanel->box.size = box.size;
+      borderPanel->panelBorder->box.size = box.size;
+    }
   }
 
   void appendContextMenu(Menu* menu) override {
@@ -604,11 +610,9 @@ struct EnvelopeFactoryWidget : VenomWidget {
     ));
     VenomWidget::appendContextMenu(menu);
   }
-  
+
   void draw(const DrawArgs &args) override {
-    SvgPanel *panel = static_cast<SvgPanel*>(getPanel());
-    panel->box.size = box.size;
-    panel->panelBorder->box.size = box.size;
+    static_cast<SvgPanel*>(getPanel())->panelBorder->hide();
     VenomWidget::draw(args);
   }
 
@@ -628,29 +632,34 @@ struct EnvelopeFactoryWidget : VenomWidget {
         manualGate->latch = !manualGate->latch;
       }
       int newSlow = mod->params[EnvelopeFactory::SLOW_PARAM].getValue();
-      while (stageCnt > mod->stageCnt) { // hide stages and delete cables
-        stages[--stageCnt]->hide();
-        PortWidget *port = getInput(EnvelopeFactory::A_CV_INPUT+stageCnt);
-        if (port)
-          APP->scene->rack->clearCablesOnPort(port);
-        port = getInput(EnvelopeFactory::B_CV_INPUT+stageCnt);
-        if (port)
-          APP->scene->rack->clearCablesOnPort(port);
-        port = getOutput(EnvelopeFactory::GATE_OUTPUT+stageCnt);
-        if (port)
-          APP->scene->rack->clearCablesOnPort(port);
-      }
-      if (stageCnt < mod->stageCnt) { // shift neighbors right and show stages
-        std::vector<ModuleWidget*> mods = APP->scene->rack->getModules();
-        mods.erase( std::remove_if( mods.begin(), mods.end(), [this](ModuleWidget* mw){
-          return mw==this || std::abs(mw->box.pos.y-this->box.pos.y)>10.f || mw->box.pos.x+mw->box.size.x<=this->box.pos.x;
-        }), mods.end());
-        std::sort(mods.begin(), mods.end(), [](ModuleWidget *a, ModuleWidget *b){return a->box.pos.x < b->box.pos.x;});
-        moveRecursive(mods, 0, box.pos.x + 75.f + mod->stageCnt*45.f);
-        while (stageCnt < mod->stageCnt)
-          stages[stageCnt++]->show();
-      }
-      setSize(Vec(75+mod->stageCnt*45, 380));
+      if (stageCnt != mod->stageCnt) {
+        while (stageCnt > mod->stageCnt) { // hide stages and delete cables
+          stages[--stageCnt]->hide();
+          PortWidget *port = getInput(EnvelopeFactory::A_CV_INPUT+stageCnt);
+          if (port)
+            APP->scene->rack->clearCablesOnPort(port);
+          port = getInput(EnvelopeFactory::B_CV_INPUT+stageCnt);
+          if (port)
+            APP->scene->rack->clearCablesOnPort(port);
+          port = getOutput(EnvelopeFactory::GATE_OUTPUT+stageCnt);
+          if (port)
+            APP->scene->rack->clearCablesOnPort(port);
+        }
+        if (stageCnt < mod->stageCnt) { // shift neighbors right and show stages
+          std::vector<ModuleWidget*> mods = APP->scene->rack->getModules();
+          mods.erase( std::remove_if( mods.begin(), mods.end(), [this](ModuleWidget* mw){
+            return mw==this || std::abs(mw->box.pos.y-this->box.pos.y)>10.f || mw->box.pos.x+mw->box.size.x<=this->box.pos.x;
+          }), mods.end());
+          std::sort(mods.begin(), mods.end(), [](ModuleWidget *a, ModuleWidget *b){return a->box.pos.x < b->box.pos.x;});
+          moveRecursive(mods, 0, box.pos.x + 75.f + mod->stageCnt*45.f);
+          while (stageCnt < mod->stageCnt)
+            stages[stageCnt++]->show();
+        }
+        setSize(Vec(75+mod->stageCnt*45, 380));
+        borderPanel->box.size = box.size;
+        borderPanel->panelBorder->box.size = box.size;
+        borderPanel->fb->setDirty();
+      }  
       for (int i=0; i<mod->stageCnt; i++) { // reconfigure A and B
         int newAction = mod->params[EnvelopeFactory::ACTION_PARAM+i].getValue();
         if (newAction!=stages[i]->action || newSlow!=slow) {
