@@ -426,6 +426,35 @@ struct EnvelopeFactoryWidget : VenomWidget {
       lightTheme = getDefaultTheme(),
       darkTheme = getDefaultDarkTheme();
   VCVLightBezelLockable<MediumSimpleLight<WhiteLight>> *manualGate = NULL;
+  
+  struct LabelWidget : FramebufferWidget {
+    std::string labelNames[2] {"EnvFactoryLabel", "EnvelopeFactoryLabel"};
+    SvgWidget *sw;
+    int currentTheme = -1;
+    int currentName = -1;
+
+    LabelWidget() {
+      box.pos = Vec(0.f,0.f);
+      sw = new SvgWidget;
+      addChild(sw);
+    }
+    
+    void setLabel(int theme, int cnt) {
+      if (theme!=currentTheme || (cnt>1?1:0)!=currentName) {
+        currentTheme = theme;
+        currentName = cnt>1 ? 1 : 0;
+        sw->setSvg(Svg::load(asset::plugin(pluginInstance,faceplatePath(labelNames[currentName], themes[theme]))));
+        box.size = sw->box.size;
+        setDirty();
+      }
+      box.pos = Vec((75.f + cnt*45.f - box.size.x)/2.f, 0.f);
+    }
+
+    void  draw (const DrawArgs &args) override {
+      oversample = APP->window->pixelRatio<2.0 ? 2.0 : 1.0;
+      FramebufferWidget::draw(args);
+    }
+  };
 
   struct StagePlateWidget : FramebufferWidget {
     std::string plateNames[3] {"EnvelopeStageMove", "EnvelopeStageHold", "EnvelopeStageSust"};
@@ -468,6 +497,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
   };
   
   StageWidget *stages[MAX_STAGES];
+  LabelWidget *nameLabel = new LabelWidget;
 
   struct ActionSwitch : GlowingSvgSwitchLockable {
     ActionSwitch() {
@@ -532,7 +562,6 @@ struct EnvelopeFactoryWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(52.f, 304.5f), module, EnvelopeFactory::IDLE_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(22.f, 342.5f), module, EnvelopeFactory::ENV_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(52.f, 342.5f), module, EnvelopeFactory::INV_OUTPUT));
-
     for (int i=0; i<(module ? MAX_STAGES : 4); i++) {
       StageWidget *stg = new StageWidget(Vec(75.f+i*45, 0.f));
       stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(22.5f, 23.5f), module, EnvelopeFactory::UP_LIGHT+i));
@@ -553,6 +582,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
       stages[i] = stg;
       addChild(stg);
     }
+    addChild(nameLabel);
     if (!module)
       setSize(Vec(255,380));
   }
@@ -582,6 +612,13 @@ struct EnvelopeFactoryWidget : VenomWidget {
     VenomWidget::draw(args);
   }
 
+  void moveRecursive(const std::vector<ModuleWidget*>& vec, size_t index, float x) {
+    if (index >= vec.size() || vec[index]->box.pos.x >= x)
+      return;
+    moveRecursive(vec, index+1, x + vec[index]->box.size.x);
+    vec[index]->setPosition(Vec(x, vec[index]->box.pos.y));
+  }
+
   void step() override {
     VenomWidget::step();
     if(this->module) {
@@ -604,19 +641,12 @@ struct EnvelopeFactoryWidget : VenomWidget {
           APP->scene->rack->clearCablesOnPort(port);
       }
       if (stageCnt < mod->stageCnt) { // shift neighbors right and show stages
-        float rt = box.pos.x + box.size.x,
-              newRt = rt + (mod->stageCnt-stageCnt)*45.f,
-              closeX = newRt,
-              y = box.pos.y;
-        ModuleWidget *nearestMod = NULL;
-        for (ModuleWidget *mw : APP->scene->rack->getModules()) {
-          if (std::abs(mw->box.pos.y - y)<10.f && mw->box.pos.x>=rt && mw->box.pos.x<closeX) {
-            closeX = mw->box.pos.x;
-            nearestMod = mw;
-          }
-        }
-        if (nearestMod)
-          APP->scene->rack->setModulePosForce(nearestMod, Vec(newRt, nearestMod->box.pos.y));
+        std::vector<ModuleWidget*> mods = APP->scene->rack->getModules();
+        mods.erase( std::remove_if( mods.begin(), mods.end(), [this](ModuleWidget* mw){
+          return mw==this || std::abs(mw->box.pos.y-this->box.pos.y)>10.f || mw->box.pos.x+mw->box.size.x<=this->box.pos.x;
+        }), mods.end());
+        std::sort(mods.begin(), mods.end(), [](ModuleWidget *a, ModuleWidget *b){return a->box.pos.x < b->box.pos.x;});
+        moveRecursive(mods, 0, box.pos.x + 75.f + mod->stageCnt*45.f);
         while (stageCnt < mod->stageCnt)
           stages[stageCnt++]->show();
       }
@@ -684,12 +714,14 @@ struct EnvelopeFactoryWidget : VenomWidget {
         mod->lights[EnvelopeFactory::UP_LIGHT+i].setBrightness(mod->stages[i].up);
         mod->lights[EnvelopeFactory::DOWN_LIGHT+i].setBrightness(mod->stages[i].down);
       }
+      nameLabel->setLabel(currentTheme, stageCnt);
       slow = newSlow;
       mod->lights[EnvelopeFactory::GATE_IN_LIGHT].setBrightness(mod->params[EnvelopeFactory::GATE_IN_PARAM].getValue());
       mod->lights[EnvelopeFactory::RETRIG_LIGHT].setBrightness(mod->params[EnvelopeFactory::RETRIG_PARAM].getValue());
     }
     else for (int i=0; i<4; i++) {
       stages[i]->plate->setPlate(settings::preferDarkPanels ? darkTheme : lightTheme, 0);
+      nameLabel->setLabel(settings::preferDarkPanels ? darkTheme : lightTheme, 4);
     }
   }
 
