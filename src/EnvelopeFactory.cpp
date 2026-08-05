@@ -490,7 +490,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
     
     StageWidget(Vec pos) {
       box.pos = pos;
-      box.size = Vec(45.f,380.f);
+      box.size = Vec(45.9f,380.f);
       plate = new StagePlateWidget;
       addChild(plate);
     }
@@ -565,19 +565,19 @@ struct EnvelopeFactoryWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(52.f, 342.5f), module, EnvelopeFactory::INV_OUTPUT));
     for (int i=0; i<(module ? MAX_STAGES : 4); i++) {
       StageWidget *stg = new StageWidget(Vec(74.1f+i*45, 0.f));
-      stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(22.5f, 23.5f), module, EnvelopeFactory::UP_LIGHT+i));
-      stg->addChild(createLockableParamCentered<ActionSwitch>(Vec(22.5f, 40.f), module, EnvelopeFactory::ACTION_PARAM+i));
-      stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(22.5f, 56.5f), module, EnvelopeFactory::DOWN_LIGHT+i));
-      stg->addChild(createLockableParamCentered<ModeSwitch>(Vec(22.5f, 73.f), module, EnvelopeFactory::MODE_PARAM+i));
-      stg->addChild(createLockableParamCentered<RoundBlackKnobLockable>(Vec(22.5f, 114.5f), module, EnvelopeFactory::A_PARAM+i));
-      stg->addChild(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 150.5f), module, EnvelopeFactory::A_CV_PARAM+i));
-      stg->addChild(createInputCentered<PolyPort>(Vec(22.5f, 184.f), module, EnvelopeFactory::A_CV_INPUT+i));
-      stg->addChild(createLockableParamCentered<RoundBlackKnobLockable>(Vec(22.5f, 225.f), module, EnvelopeFactory::B_PARAM+i));
-      stg->addChild(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(22.5f, 261.f), module, EnvelopeFactory::B_CV_PARAM+i));
-      stg->addChild(createInputCentered<PolyPort>(Vec(22.5f, 294.5f), module, EnvelopeFactory::B_CV_INPUT+i));
-      stg->addChild(createLockableParamCentered<OnOffSwitch>(Vec(13.f, 326.5f), module, EnvelopeFactory::TRIG_PARAM+i));
-      stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(32.5f, 326.5f), module, EnvelopeFactory::GATE_LIGHT+i));
-      stg->addChild(createOutputCentered<PolyPort>(Vec(22.5f, 342.5f), module, EnvelopeFactory::GATE_OUTPUT+i));
+      stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(23.4f, 23.5f), module, EnvelopeFactory::UP_LIGHT+i));
+      stg->addChild(createLockableParamCentered<ActionSwitch>(Vec(23.4f, 40.f), module, EnvelopeFactory::ACTION_PARAM+i));
+      stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(23.4f, 56.5f), module, EnvelopeFactory::DOWN_LIGHT+i));
+      stg->addChild(createLockableParamCentered<ModeSwitch>(Vec(23.4f, 73.f), module, EnvelopeFactory::MODE_PARAM+i));
+      stg->addChild(createLockableParamCentered<RoundBlackKnobLockable>(Vec(23.4f, 114.5f), module, EnvelopeFactory::A_PARAM+i));
+      stg->addChild(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(23.4f, 150.5f), module, EnvelopeFactory::A_CV_PARAM+i));
+      stg->addChild(createInputCentered<PolyPort>(Vec(23.4f, 184.f), module, EnvelopeFactory::A_CV_INPUT+i));
+      stg->addChild(createLockableParamCentered<RoundBlackKnobLockable>(Vec(23.4f, 225.f), module, EnvelopeFactory::B_PARAM+i));
+      stg->addChild(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(23.4f, 261.f), module, EnvelopeFactory::B_CV_PARAM+i));
+      stg->addChild(createInputCentered<PolyPort>(Vec(23.4f, 294.5f), module, EnvelopeFactory::B_CV_INPUT+i));
+      stg->addChild(createLockableParamCentered<OnOffSwitch>(Vec(13.9f, 326.5f), module, EnvelopeFactory::TRIG_PARAM+i));
+      stg->addChild(createLightCentered<SmallLight<YellowLight>>(Vec(33.4f, 326.5f), module, EnvelopeFactory::GATE_LIGHT+i));
+      stg->addChild(createOutputCentered<PolyPort>(Vec(23.4f, 342.5f), module, EnvelopeFactory::GATE_OUTPUT+i));
       if (module)
         stg->hide();
       stages[i] = stg;
