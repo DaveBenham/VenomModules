@@ -28,7 +28,6 @@ extern Model* modelVenomCompare2;
 extern Model* modelVenomCrossFade3D;
 extern Model* modelVenomDASE;
 extern Model* modelVenomEnvelopeFactory;
-//extern Model* modelVenomEnvelopeExpander;
 extern Model* modelVenomHQ;
 extern Model* modelVenomKnob5;
 extern Model* modelVenomLinearBeats;
