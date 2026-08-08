@@ -72,8 +72,8 @@ struct Slew : VenomModule {
     configParam(RISE_SHAPE_CV_PARAM, -1.f, 1.f, 0.f, "Rise shape CV amount", "%", 0, 100, 0);
     configParam(FALL_SHAPE_CV_PARAM, -1.f, 1.f, 0.f, "Fall shape CV amount", "%", 0, 100, 0);
     
-    configInput(RISE_SHAPE_CV_INPUT, "Rise time CV");
-    configInput(FALL_SHAPE_CV_INPUT, "Fall time CV");
+    configInput(RISE_SHAPE_CV_INPUT, "Rise shape CV");
+    configInput(FALL_SHAPE_CV_INPUT, "Fall shape CV");
 
     configInput(RAW_INPUT, "Raw");
     configInput(VOCT_INPUT, "V/Oct");

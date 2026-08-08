@@ -18,6 +18,7 @@ struct EnvelopeFactory : VenomModule {
     RETRIG_MODE_PARAM,
     GATE_IN_PARAM,
     RETRIG_PARAM,
+    IDLE_PARAM,
     ENUMS(ACTION_PARAM,MAX_STAGES),
     ENUMS(MODE_PARAM,MAX_STAGES),
     ENUMS(A_PARAM,MAX_STAGES),
@@ -74,6 +75,7 @@ struct EnvelopeFactory : VenomModule {
         curInput[16]{},
         velocity[16]{};
   bool reset = false,
+       eocPrimed = false,
        vcaMode = false,
        pendTrig[16];
   dsp::SchmittTrigger gateTrig[16],
@@ -106,6 +108,7 @@ struct EnvelopeFactory : VenomModule {
     configInput(GATE_INPUT, "Gate");
     configInput(RETRIG_INPUT, "Retrigger");
     configOutput(TRIGS_OUTPUT, "Stage triggers");
+    configSwitch<FixedSwitchQuantity>(IDLE_PARAM, 0.f, 1.f, 1.f, "EOC trigger output", {"Off", "On"});
     configLight(IDLE_LIGHT, "Idle indicator");
     configOutput(IDLE_OUTPUT, "Idle gate");
     configOutput(ENV_OUTPUT, "Envelope");
@@ -217,6 +220,7 @@ struct EnvelopeFactory : VenomModule {
         env[c] = 0.f;
         outTrig[c].reset();
         pendTrig[c] = false;
+        eocPrimed = false;
       }
       bool cvRetrig = retrigMode==0 ? retrigTrig[c].process(inputs[RETRIG_INPUT].getPolyVoltage(c), 0.2f, 2.f) :
                       (retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig[c])==(retrigMode==1?1:-1)),
@@ -231,7 +235,7 @@ struct EnvelopeFactory : VenomModule {
         }
         if (pendTrig[c])
           pendTrig[c] = gate;
-        if (pendTrig[c] && ((newInput>0)!=(curInput[c]>0))) {
+        if (pendTrig[c] && (((newInput>0.f)!=(curInput[c]>0.f)) || newInput==0.f)) {
           trig = true;
           pendTrig[c] = false;
           velocity[c] = normSigmoid(clamp(inputs[OFF_INPUT].getNormalPolyVoltage(10.f, c)/10.f), -params[OFF_PARAM].getValue()*0.97f);
@@ -244,8 +248,13 @@ struct EnvelopeFactory : VenomModule {
       if (stage[c] == -1) { // idle on entry
         outputs[IDLE_OUTPUT].setVoltage(10.f, c);
         env[c] = 0.f;
+        if (eocPrimed && params[IDLE_PARAM].getValue()) {
+          outTrig[c].trigger();
+          eocPrimed = false;
+        }
       }  
       else {
+        eocPrimed = true;
         if (phase[c] == 0. && params[TRIG_PARAM+stage[c]].getValue())
           outTrig[c].trigger();
         outputs[IDLE_OUTPUT].setVoltage(0.f, c);
@@ -301,8 +310,9 @@ struct EnvelopeFactory : VenomModule {
               else if (phase[c] >= 1.) {
                 phase[c] = 0.;
                 start[c] = -1.f;
-                if (++stage[c] >= stageCnt)
+                if (++stage[c] >= stageCnt) {
                   stage[c] = -1;
+                }
               }
             }
             break;
@@ -579,7 +589,8 @@ struct EnvelopeFactoryWidget : VenomWidget {
     addInput(createInputCentered<PolyPort>(Vec(22.f, 256.5f), module, EnvelopeFactory::GATE_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(52.f, 256.5f), module, EnvelopeFactory::RETRIG_INPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(22.f, 304.5f), module, EnvelopeFactory::TRIGS_OUTPUT));
-    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(52.f,287.5f), module, EnvelopeFactory::IDLE_LIGHT));
+    addChild(createLockableParamCentered<OnOffSwitch>(Vec(42.5f, 287.5f), module, EnvelopeFactory::IDLE_PARAM));
+    addChild(createLightCentered<SmallLight<YellowLight>>(Vec(62.f,287.5f), module, EnvelopeFactory::IDLE_LIGHT));
     addOutput(createOutputCentered<PolyPort>(Vec(52.f, 304.5f), module, EnvelopeFactory::IDLE_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(22.f, 342.5f), module, EnvelopeFactory::ENV_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(52.f, 342.5f), module, EnvelopeFactory::INV_OUTPUT));
