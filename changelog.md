@@ -10,6 +10,7 @@
 - Ratio
 - Spread Merge
 - Spread Merge Expander
+- Stereo Merge Split
 
 ### Enhancements
 - Poly Mute

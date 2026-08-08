@@ -78,6 +78,7 @@ extern Model* modelVenomSphereToXYZ;
 extern Model* modelVenomSplit4x2;
 extern Model* modelVenomSpreadMerge;
 extern Model* modelVenomSpreadMergeExpander;
+extern Model* modelVenomStereoMergeSplit;
 extern Model* modelVenomThru;
 extern Model* modelVenomVCAMix4;
 extern Model* modelVenomVCAMix4Stereo;

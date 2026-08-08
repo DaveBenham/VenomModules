@@ -273,7 +273,7 @@
       "slug": "Merge4x2",
       "name": "Merge 4x2",
       "description": "Compact and versatile polyphonic merge utility",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#merge-4x2",
       "tags": [
         "Polyphonic",
         "Utility"
@@ -283,7 +283,7 @@
       "slug": "MergeSplit",
       "name": "Merge Split",
       "description": "Compact and versatile polyphonic merge and split utility",
-      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#multi-merge",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#merge-split",
       "tags": [
         "Polyphonic",
         "Utility"
@@ -741,6 +741,16 @@
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#spread-merge-expander",
       "tags": [
         "Expander",
+        "Polyphonic",
+        "Utility"
+      ]
+    },
+    {
+      "slug": "StereoMergeSplit",
+      "name": "Stereo Merge Split",
+      "description": "Compact and versatile polyphonic merge and split utility for stereo signals",
+      "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#stereo-merge-merge",
+      "tags": [
         "Polyphonic",
         "Utility"
       ]

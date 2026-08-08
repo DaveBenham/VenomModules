@@ -82,6 +82,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomSplit4x2);
   p->addModel(modelVenomSpreadMerge);
   p->addModel(modelVenomSpreadMergeExpander);
+  p->addModel(modelVenomStereoMergeSplit);
   p->addModel(modelVenomThru);
   p->addModel(modelVenomVCAMix4);
   p->addModel(modelVenomVCAMix4Stereo);
