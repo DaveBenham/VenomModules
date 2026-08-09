@@ -253,6 +253,7 @@ struct QuadVCPolarizerWidget : VenomWidget {
   }
   
   void step() override {
+    VenomWidget::step();
     if (module) {
       if (norm != static_cast<int>(module->params[QuadVCPolarizer::NORM_PARAM].getValue())) {
         norm = static_cast<int>(module->params[QuadVCPolarizer::NORM_PARAM].getValue());
