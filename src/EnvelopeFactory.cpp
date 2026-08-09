@@ -77,7 +77,13 @@ struct EnvelopeFactory : VenomModule {
   bool reset = false,
        eocPrimed = false,
        vcaMode = false,
-       pendTrig[16];
+       pendTrig[16],
+       randTimes = true,
+       randLevels = true,
+       randDrifts = true,
+       randShapes = true,
+       randAttens = true,
+       randTrigs = true;
   dsp::SchmittTrigger gateTrig[16],
                       retrigTrig[16];
   dsp::BooleanTrigger retrigButtonTrig;
@@ -108,7 +114,7 @@ struct EnvelopeFactory : VenomModule {
     configInput(GATE_INPUT, "Gate");
     configInput(RETRIG_INPUT, "Retrigger");
     configOutput(TRIGS_OUTPUT, "Stage triggers");
-    configSwitch<FixedSwitchQuantity>(IDLE_PARAM, 0.f, 1.f, 1.f, "EOC trigger output", {"Off", "On"});
+    configSwitch<FixedSwitchQuantity>(IDLE_PARAM, 0.f, 1.f, 1.f, "EOC trigger switch", {"Off", "On"});
     configLight(IDLE_LIGHT, "Idle indicator");
     configOutput(IDLE_OUTPUT, "Idle gate");
     configOutput(ENV_OUTPUT, "Envelope");
@@ -126,7 +132,7 @@ struct EnvelopeFactory : VenomModule {
       configParam<BQuantity>(B_PARAM+i, -3.f, 1.f, -1.f, prefix+" move shape", "", 0.f, 0.5f, 0.5f);
       configParam(B_CV_PARAM+i, -0.1f, 0.1f, 0.f, prefix+" move shape CV", "%", 0.f, 1000.f, 0.f);
       configInput(B_CV_INPUT+i, prefix+" move shape CV");
-      configSwitch<FixedSwitchQuantity>(TRIG_PARAM+i, 0.f, 1.f, 1.f, prefix+" trigger output", {"Off", "On"});
+      configSwitch<FixedSwitchQuantity>(TRIG_PARAM+i, 0.f, 1.f, 0.f, prefix+" trigger switch", {"Off", "On"});
       configLight(GATE_LIGHT+i, prefix+" gate indicator");
       configOutput(GATE_OUTPUT+i, prefix+" gate");
     }
@@ -136,7 +142,12 @@ struct EnvelopeFactory : VenomModule {
     params[MODE_PARAM+2].setValue(2);
     params[B_PARAM+2].setValue(-3.f);
     params[MODE_PARAM+3].setValue(1);
-
+    for (int i=0; i<=IDLE_PARAM; i++)
+      paramQuantities[i]->randomizeEnabled = false;
+    for (int i=0; i<MAX_STAGES; i++) {
+      paramQuantities[ACTION_PARAM+i]->randomizeEnabled = false;
+      paramQuantities[MODE_PARAM+i]->randomizeEnabled = false;
+    }
     lightDivider.setDivision(32);
   }
   
@@ -402,6 +413,33 @@ struct EnvelopeFactory : VenomModule {
     reset = false;
   }
 
+  void configStageRandomize(int stage) {
+    int action = params[ACTION_PARAM+stage].getValue();
+    switch (action) {
+      case 0: // MOVE
+        paramQuantities[A_PARAM+stage]->randomizeEnabled = randTimes;
+        paramQuantities[B_PARAM+stage]->randomizeEnabled = randShapes;
+        break;
+      case 1: // HOLD
+        paramQuantities[A_PARAM+stage]->randomizeEnabled = randLevels;
+        paramQuantities[B_PARAM+stage]->randomizeEnabled = randTimes;
+        break;
+      case 2: // SUSTAIN
+        paramQuantities[A_PARAM+stage]->randomizeEnabled = randLevels;
+        paramQuantities[B_PARAM+stage]->randomizeEnabled = randDrifts;
+        break;
+    }
+    paramQuantities[A_CV_PARAM+stage]->randomizeEnabled = randAttens;
+    paramQuantities[B_CV_PARAM+stage]->randomizeEnabled = randAttens;
+    paramQuantities[TRIG_PARAM+stage]->randomizeEnabled = randTrigs;
+  }
+  
+  void configRandomize() {
+    for (int i=0; i<MAX_STAGES; i++)
+      configStageRandomize(i);
+  }
+
+
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_t* array = json_array();
@@ -415,6 +453,12 @@ struct EnvelopeFactory : VenomModule {
     json_object_set_new(rootJ, "stages", array);
     json_object_set_new(rootJ, "stageCnt", json_integer(stageCnt));
     json_object_set_new(rootJ, "vcaMode", json_boolean(vcaMode));
+    json_object_set_new(rootJ, "randTimes", json_boolean(randTimes));
+    json_object_set_new(rootJ, "randLevels", json_boolean(randLevels));
+    json_object_set_new(rootJ, "randShapes", json_boolean(randShapes));
+    json_object_set_new(rootJ, "randDrifts", json_boolean(randDrifts));
+    json_object_set_new(rootJ, "randAttens", json_boolean(randAttens));
+    json_object_set_new(rootJ, "randTrigs", json_boolean(randTrigs));
     return rootJ;
   }
   
@@ -438,8 +482,20 @@ struct EnvelopeFactory : VenomModule {
       stageCnt = json_integer_value(val);
     if ((val = json_object_get(rootJ, "vcaMode")))
       vcaMode = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "randTimes")))
+      randTimes = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "randLevels")))
+      randLevels = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "randShapes")))
+      randShapes = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "randDrifts")))
+      randDrifts = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "randAttens")))
+      randAttens = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "randTrigs")))
+      randTrigs = json_boolean_value(val);
+    configRandomize();
   }
-
   
   void onUnBypass(const UnBypassEvent &e) override {
     reset = true;
@@ -640,6 +696,14 @@ struct EnvelopeFactoryWidget : VenomWidget {
       }
     ));
     menu->addChild(createBoolPtrMenuItem("VCA mode with 0 crossing synced triggers","",&module->vcaMode));
+    menu->addChild(createSubmenuItem("Randomize configuration", "", [=](Menu* submenu) {
+      submenu->addChild(createBoolMenuItem("Stage times", "", [=](){return module->randTimes;}, [=](bool val){module->randTimes=val; module->configRandomize();}));
+      submenu->addChild(createBoolMenuItem("Stage levels", "", [=](){return module->randLevels;}, [=](bool val){module->randLevels=val; module->configRandomize();}));
+      submenu->addChild(createBoolMenuItem("Stage shapes", "", [=](){return module->randShapes;}, [=](bool val){module->randShapes=val; module->configRandomize();}));
+      submenu->addChild(createBoolMenuItem("Stage drifts", "", [=](){return module->randDrifts;}, [=](bool val){module->randDrifts=val; module->configRandomize();}));
+      submenu->addChild(createBoolMenuItem("Stage attenuverters", "", [=](){return module->randAttens;}, [=](bool val){module->randAttens=val; module->configRandomize();}));
+      submenu->addChild(createBoolMenuItem("Stage triggers", "", [=](){return module->randTrigs;}, [=](bool val){module->randTrigs=val; module->configRandomize();}));
+    }));    
     VenomWidget::appendContextMenu(menu);
   }
 
@@ -778,6 +842,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
               break;
           }
         }
+        mod->configStageRandomize(i);
         stages[i]->plate->setPlate(currentTheme, stages[i]->action);
         mod->lights[EnvelopeFactory::UP_LIGHT+i].setBrightness(mod->stages[i].up);
         mod->lights[EnvelopeFactory::DOWN_LIGHT+i].setBrightness(mod->stages[i].down);
