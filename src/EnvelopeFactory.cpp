@@ -741,11 +741,11 @@ struct EnvelopeFactoryWidget : VenomWidget {
       }
       if (vcaMode != mod->vcaMode) {
         vcaMode = mod->vcaMode;
-        mod->setParamFactoryName(EnvelopeFactory::AMP_PARAM, vcaMode ? "VCA level" : "Amplitude", true);
-        mod->setParamFactoryName(EnvelopeFactory::OFF_PARAM, vcaMode ? "Velocity response (exp<->linear<->log))" : "Offset", true);
-        mod->setPortFactoryName(EnvelopeFactory::AMP_INPUT, vcaMode ? "VCA" : "Amplitude", false, true);
-        mod->setPortFactoryName(EnvelopeFactory::OFF_INPUT, vcaMode ? "Velocity" : "Offset", false, true);
-        mod->setPortFactoryName(EnvelopeFactory::INV_OUTPUT, vcaMode ? "VCA" : "Inverse envelope", true, true);
+        mod->setParamFactoryName(EnvelopeFactory::AMP_PARAM, vcaMode ? "VCA level" : "Amplitude");
+        mod->setParamFactoryName(EnvelopeFactory::OFF_PARAM, vcaMode ? "Velocity response (exp<->linear<->log))" : "Offset");
+        mod->setPortFactoryName(EnvelopeFactory::AMP_INPUT, vcaMode ? "VCA" : "Amplitude", false);
+        mod->setPortFactoryName(EnvelopeFactory::OFF_INPUT, vcaMode ? "Velocity" : "Offset", false);
+        mod->setPortFactoryName(EnvelopeFactory::INV_OUTPUT, vcaMode ? "VCA" : "Inverse envelope", true);
         ParamQuantity *pq = mod->paramQuantities[EnvelopeFactory::AMP_PARAM];
         pq->displayMultiplier = vcaMode ? 50.f : 100.f;
         pq->displayOffset = vcaMode ? 50.f : 0.f;
@@ -793,12 +793,12 @@ struct EnvelopeFactoryWidget : VenomWidget {
           bq->action = newAction;
           switch (newAction) {
             case 0: // MOVE
-              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " move time", true);
-              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " move time CV", true);
-              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " move time CV", false, true);
-              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " move shape", true);
-              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " move shape CV", true);
-              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " move shape CV", false, true);
+              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " move time");
+              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " move time CV");
+              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " move time CV", false);
+              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " move shape");
+              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " move shape CV");
+              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " move shape CV", false);
               aq->unit = " s";
               aq->displayBase = 10.f;
               aq->displayMultiplier = newSlow==3 ? 1000.f : newSlow==2 ? 100.f : newSlow ? 10.f : 1.f;
@@ -809,12 +809,12 @@ struct EnvelopeFactoryWidget : VenomWidget {
               bq->displayOffset = 0.5f;
               break;
             case 1: // HOLD
-              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " hold level", true);
-              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " hold level CV", true);
-              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " hold level CV", false, true);
-              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " hold time", true);
-              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " hold time CV", true);
-              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " hold time CV", false, true);
+              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " hold level");
+              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " hold level CV");
+              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " hold level CV", false);
+              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " hold time");
+              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " hold time CV");
+              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " hold time CV", false);
               aq->unit = "%";
               aq->displayBase = 0.f;
               aq->displayMultiplier = 25.f;
@@ -825,12 +825,12 @@ struct EnvelopeFactoryWidget : VenomWidget {
               bq->displayOffset = 0.f;
               break;
             case 2: // SUST
-              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " sustain level", true);
-              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " sustain level CV", true);
-              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " sustain level CV", false, true);
-              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " sustain drift", true);
-              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " sustain drift CV", true);
-              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " sustain drift CV", false, true);
+              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " sustain level");
+              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " sustain level CV");
+              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " sustain level CV", false);
+              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " sustain drift");
+              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " sustain drift CV");
+              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " sustain drift CV", false);
               aq->unit = "%";
               aq->displayBase = 0.f;
               aq->displayMultiplier = 25.f;
