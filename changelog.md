@@ -23,8 +23,9 @@
   - Added "High XM depth for FM & PM" context menu option: multiplies depth by 5
 
 ### Bug Fixes
-- Fixed Bias frequency display in VCO Lab and VCO Unit. Used to be off by factor of 100
-- Removed Bay module string manipulation (label propagation) from audio thread
+- VCO LAB & VCO UNIT: Fixed Bias frequency display. Used to be off by factor of 100
+- Bay modules: Removed string manipulation (label propagation) from audio thread
+- SLEW: Fixed shape CV input names in hover text
 
 ## 2.15.0 (2026-04-18)
 ### New Modules
