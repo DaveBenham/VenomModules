@@ -93,7 +93,7 @@ struct EnvelopeFactory : VenomModule {
   struct BQuantity : ParamQuantity {
     int action = 0;
     float getDisplayValue() override {
-      return action && getValue() == -3.f ? 0.f : ParamQuantity::getDisplayValue();
+      return (action==1 || action==2) && getValue()==-3.f ? 0.f : ParamQuantity::getDisplayValue();
     }
   };
   
@@ -123,7 +123,7 @@ struct EnvelopeFactory : VenomModule {
     for (int i=0; i<MAX_STAGES; i++) {
       std::string prefix = "Stage " + std::to_string(i+1);
       configLight(UP_LIGHT+i, prefix + " 10V target indicator");
-      configSwitch<FixedSwitchQuantity>(ACTION_PARAM+i, 0.f, 2.f, 0.f, prefix+" action", {"Move", "Hold", "Sustain"});
+      configSwitch<FixedSwitchQuantity>(ACTION_PARAM+i, 0.f, 4.f, 0.f, prefix+" action", {"Move", "Hold", "Sustain", "Rise", "Fall"});
       configLight(DOWN_LIGHT+i, prefix+" 0V target indicator");
       configSwitch<FixedSwitchQuantity>(MODE_PARAM+i, 0.f, 2.f, 0.f, prefix+" mode", {"Full", "Retriggerable Full", "Gate"});
       configParam(A_PARAM+i, -3.f, 1.f, -1.f, prefix+" move time", " s", 10.f, 1.f, 0.f);
@@ -175,7 +175,7 @@ struct EnvelopeFactory : VenomModule {
   float target(int stage, int c) {
     if (stage == -1)
       return 0.f;
-    if (stages[stage].action)
+    if (stages[stage].action==1 || stages[stage].action==2)
       return clamp((aParam(stage)+3.f)*0.25f + aCV(stage, c));
     if (stages[stage].up)
       return 1.f;
@@ -209,9 +209,25 @@ struct EnvelopeFactory : VenomModule {
       if (nextAction==2)
         params[MODE_PARAM+i].setValue(2);
       nextAction = i<stageCnt-1 ? params[ACTION_PARAM+i+1].getValue() : 0;
-      stages[i].up = (stages[i].action==0 && nextAction==0) ? hi : false;
-      stages[i].down = (stages[i].action==0 && nextAction==0) ? !hi : false;
-      hi = (stages[i].action==0 && nextAction==0) ? !hi : hi;
+      switch (stages[i].action) {
+        case 0:
+          stages[i].up = (nextAction==0 || nextAction>2) ? hi : false;
+          stages[i].down = (nextAction==0 || nextAction>2) ? !hi : false;
+          hi = (stages[i].action==0 && (nextAction==0 || nextAction>2)) ? !hi : hi;
+          break;
+        case 3:
+          stages[i].up = true;
+          stages[i].down = false;
+          hi = false;
+          break;
+        case 4:
+          stages[i].up = false;
+          stages[i].down = true;
+          hi = true;
+          break;
+        default:
+          stages[i].up = stages[i].down = false;
+      }
     }
     while (oldChannels > channels) {
       gateTrig[--oldChannels].process(0);
@@ -271,21 +287,25 @@ struct EnvelopeFactory : VenomModule {
         outputs[IDLE_OUTPUT].setVoltage(0.f, c);
         switch (action) {
           case 0: // move
+          case 3: // rise
+          case 4: // fall
             {
-              float trgt = stages[stage[c]].up ? 1.f :
+              float trgt = action==3 ? 1.f :
+                           action==4 ? 0.f :
+                           stages[stage[c]].up ? 1.f :
                            stages[stage[c]].down ? 0.f :
                            clamp((aParam(stage[c]+1)+3.f)*0.25f + aCV(stage[c]+1, c));
               float shape = clamp((bParam(stage[c]) * 0.5f + 0.5) + bCV(stage[c], c)*2, -1.f, 1.f) * 0.95f;
               if (phase[c] == 0.) {
                 multiplier[c] = 1.f;
-                float crnt = env[c];
+                float crnt = action==4 && stage[c]==0 ? 1.f : env[c];
                 if (stage[c]>0) {
                   int prv = stage[c]-1;
-                  start[c] = stages[prv].action>0 ? clamp((aParam(prv)+3.f)*0.25f + aCV(prv, c)) :
+                  start[c] = (stages[prv].action==1 || stages[prv].action==2) ? clamp((aParam(prv)+3.f)*0.25f + aCV(prv, c)) :
                              stages[prv].up ? 1.f : 0.f;
                 }
                 else
-                  start[c] = 0.f;
+                  start[c] = action==4 && stage[c]==0 ? 1.f : 0.f;
                 if (stage[c]>0 || !from0) {
                   if (start[c] < trgt) {
                     if (crnt < start[c]) {
@@ -543,7 +563,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
   };
 
   struct StagePlateWidget : FramebufferWidget {
-    std::string plateNames[3] {"EnvelopeStageMove", "EnvelopeStageHold", "EnvelopeStageSust"};
+    std::string plateNames[5] {"EnvelopeStageMove", "EnvelopeStageHold", "EnvelopeStageSust"};
     SvgWidget *sw;
     int currentTheme = -1,
         currentAction = -1;
@@ -555,6 +575,8 @@ struct EnvelopeFactoryWidget : VenomWidget {
     }
     
     void setPlate(int theme, int action) {
+      if (action>2)
+        action = 0;
       if (theme!=currentTheme || action!=currentAction) {
         currentTheme = theme;
         currentAction = action;
@@ -591,6 +613,8 @@ struct EnvelopeFactoryWidget : VenomWidget {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/action_Move.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/action_Hold.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/action_Sust.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/action_Rise.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/action_Fall.svg")));
     }
   };
 
@@ -793,12 +817,15 @@ struct EnvelopeFactoryWidget : VenomWidget {
           bq->action = newAction;
           switch (newAction) {
             case 0: // MOVE
-              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " move time");
-              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " move time CV");
-              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " move time CV", false);
-              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " move shape");
-              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " move shape CV");
-              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " move shape CV", false);
+            case 3: // RISE
+            case 4: // FALL
+              prefix += (newAction==3) ? " rise " : (newAction==4) ? " fall " : " move ";
+              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + "time");
+              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + "time CV");
+              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + "time CV", false);
+              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + "shape");
+              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + "shape CV");
+              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + "shape CV", false);
               aq->unit = " s";
               aq->displayBase = 10.f;
               aq->displayMultiplier = newSlow==3 ? 1000.f : newSlow==2 ? 100.f : newSlow ? 10.f : 1.f;
@@ -809,12 +836,13 @@ struct EnvelopeFactoryWidget : VenomWidget {
               bq->displayOffset = 0.5f;
               break;
             case 1: // HOLD
-              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " hold level");
-              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " hold level CV");
-              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " hold level CV", false);
-              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " hold time");
-              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " hold time CV");
-              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " hold time CV", false);
+              prefix += " hold ";
+              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + "level");
+              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + "level CV");
+              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + "level CV", false);
+              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + "time");
+              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + "time CV");
+              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + "time CV", false);
               aq->unit = "%";
               aq->displayBase = 0.f;
               aq->displayMultiplier = 25.f;
@@ -825,12 +853,13 @@ struct EnvelopeFactoryWidget : VenomWidget {
               bq->displayOffset = 0.f;
               break;
             case 2: // SUST
-              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + " sustain level");
-              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + " sustain level CV");
-              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + " sustain level CV", false);
-              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + " sustain drift");
-              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + " sustain drift CV");
-              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + " sustain drift CV", false);
+              prefix += " sustain ";
+              mod->setParamFactoryName(EnvelopeFactory::A_PARAM+i, prefix + "level");
+              mod->setParamFactoryName(EnvelopeFactory::A_CV_PARAM+i, prefix + "level CV");
+              mod->setPortFactoryName(EnvelopeFactory::A_CV_INPUT+i, prefix + "level CV", false);
+              mod->setParamFactoryName(EnvelopeFactory::B_PARAM+i, prefix + "drift");
+              mod->setParamFactoryName(EnvelopeFactory::B_CV_PARAM+i, prefix + "drift CV");
+              mod->setPortFactoryName(EnvelopeFactory::B_CV_INPUT+i, prefix + "drift CV", false);
               aq->unit = "%";
               aq->displayBase = 0.f;
               aq->displayMultiplier = 25.f;

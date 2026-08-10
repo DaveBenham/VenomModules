@@ -1,7 +1,7 @@
 {
   "plugin": "Venom",
   "model": "EnvelopeFactory",
-  "version": "2.16.dev15",
+  "version": "2.16.dev16",
   "params": [
     {
       "value": 1.0,
@@ -40,7 +40,7 @@
       "id": 8
     },
     {
-      "value": 1.0,
+      "value": 4.0,
       "id": 9
     },
     {
@@ -48,7 +48,7 @@
       "id": 10
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 11
     },
     {
@@ -124,15 +124,15 @@
       "id": 29
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 30
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 31
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 32
     },
     {
@@ -200,7 +200,7 @@
       "id": 48
     },
     {
-      "value": 1.0,
+      "value": -1.0,
       "id": 49
     },
     {
@@ -208,7 +208,7 @@
       "id": 50
     },
     {
-      "value": -3.0,
+      "value": -1.0,
       "id": 51
     },
     {
@@ -360,7 +360,7 @@
       "id": 88
     },
     {
-      "value": -3.0,
+      "value": -1.0,
       "id": 89
     },
     {
@@ -368,7 +368,7 @@
       "id": 90
     },
     {
-      "value": -3.0,
+      "value": -1.0,
       "id": 91
     },
     {
@@ -524,79 +524,79 @@
       "id": 129
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 130
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 131
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 132
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 133
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 134
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 135
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 136
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 137
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 138
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 139
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 140
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 141
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 142
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 143
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 144
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 145
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 146
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 147
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 148
     }
   ],
@@ -639,7 +639,7 @@
     "paramName8": "EOC trigger switch",
     "paramLock9": false,
     "paramDflt9": 0.0,
-    "paramVal9": 1.0,
+    "paramVal9": 4.0,
     "paramName9": "Stage 1 action",
     "paramLock10": false,
     "paramDflt10": 0.0,
@@ -647,7 +647,7 @@
     "paramName10": "Stage 2 action",
     "paramLock11": false,
     "paramDflt11": 0.0,
-    "paramVal11": 1.0,
+    "paramVal11": 0.0,
     "paramName11": "Stage 3 action",
     "paramLock12": false,
     "paramDflt12": 0.0,
@@ -723,15 +723,15 @@
     "paramName29": "Stage 1 mode",
     "paramLock30": false,
     "paramDflt30": 0.0,
-    "paramVal30": 1.0,
+    "paramVal30": 0.0,
     "paramName30": "Stage 2 mode",
     "paramLock31": false,
     "paramDflt31": 0.0,
-    "paramVal31": 1.0,
+    "paramVal31": 0.0,
     "paramName31": "Stage 3 mode",
     "paramLock32": false,
     "paramDflt32": 0.0,
-    "paramVal32": 1.0,
+    "paramVal32": 0.0,
     "paramName32": "Stage 4 mode",
     "paramLock33": false,
     "paramDflt33": 0.0,
@@ -799,16 +799,16 @@
     "paramName48": "Stage 20 mode",
     "paramLock49": false,
     "paramDflt49": -1.0,
-    "paramVal49": 1.0,
-    "paramName49": "Stage 1 hold level",
+    "paramVal49": -1.0,
+    "paramName49": "Stage 1 fall time",
     "paramLock50": false,
     "paramDflt50": -1.0,
     "paramVal50": -1.0,
     "paramName50": "Stage 2 move time",
     "paramLock51": false,
     "paramDflt51": -1.0,
-    "paramVal51": -3.0,
-    "paramName51": "Stage 3 hold level",
+    "paramVal51": -1.0,
+    "paramName51": "Stage 3 move time",
     "paramLock52": false,
     "paramDflt52": -1.0,
     "paramVal52": -1.0,
@@ -880,7 +880,7 @@
     "paramLock69": false,
     "paramDflt69": 0.0,
     "paramVal69": 0.0,
-    "paramName69": "Stage 1 hold level CV",
+    "paramName69": "Stage 1 fall time CV",
     "paramLock70": false,
     "paramDflt70": 0.0,
     "paramVal70": 0.0,
@@ -888,7 +888,7 @@
     "paramLock71": false,
     "paramDflt71": 0.0,
     "paramVal71": 0.0,
-    "paramName71": "Stage 3 hold level CV",
+    "paramName71": "Stage 3 move time CV",
     "paramLock72": false,
     "paramDflt72": 0.0,
     "paramVal72": 0.0,
@@ -959,16 +959,16 @@
     "paramName88": "Stage 20 move time CV",
     "paramLock89": false,
     "paramDflt89": -1.0,
-    "paramVal89": -3.0,
-    "paramName89": "Stage 1 hold time",
+    "paramVal89": -1.0,
+    "paramName89": "Stage 1 fall shape",
     "paramLock90": false,
     "paramDflt90": -1.0,
     "paramVal90": -1.0,
     "paramName90": "Stage 2 move shape",
     "paramLock91": false,
     "paramDflt91": -1.0,
-    "paramVal91": -3.0,
-    "paramName91": "Stage 3 hold time",
+    "paramVal91": -1.0,
+    "paramName91": "Stage 3 move shape",
     "paramLock92": false,
     "paramDflt92": -1.0,
     "paramVal92": -1.0,
@@ -1040,7 +1040,7 @@
     "paramLock109": false,
     "paramDflt109": 0.0,
     "paramVal109": 0.0,
-    "paramName109": "Stage 1 hold time CV",
+    "paramName109": "Stage 1 fall shape CV",
     "paramLock110": false,
     "paramDflt110": 0.0,
     "paramVal110": 0.0,
@@ -1048,7 +1048,7 @@
     "paramLock111": false,
     "paramDflt111": 0.0,
     "paramVal111": 0.0,
-    "paramName111": "Stage 3 hold time CV",
+    "paramName111": "Stage 3 move shape CV",
     "paramLock112": false,
     "paramDflt112": 0.0,
     "paramVal112": 0.0,
@@ -1123,88 +1123,88 @@
     "paramName129": "Stage 1 trigger switch",
     "paramLock130": false,
     "paramDflt130": 1.0,
-    "paramVal130": 0.0,
+    "paramVal130": 1.0,
     "paramName130": "Stage 2 trigger switch",
     "paramLock131": false,
     "paramDflt131": 1.0,
-    "paramVal131": 0.0,
+    "paramVal131": 1.0,
     "paramName131": "Stage 3 trigger switch",
     "paramLock132": false,
     "paramDflt132": 1.0,
-    "paramVal132": 0.0,
+    "paramVal132": 1.0,
     "paramName132": "Stage 4 trigger switch",
     "paramLock133": false,
     "paramDflt133": 1.0,
-    "paramVal133": 0.0,
+    "paramVal133": 1.0,
     "paramName133": "Stage 5 trigger switch",
     "paramLock134": false,
     "paramDflt134": 1.0,
-    "paramVal134": 0.0,
+    "paramVal134": 1.0,
     "paramName134": "Stage 6 trigger switch",
     "paramLock135": false,
     "paramDflt135": 1.0,
-    "paramVal135": 0.0,
+    "paramVal135": 1.0,
     "paramName135": "Stage 7 trigger switch",
     "paramLock136": false,
     "paramDflt136": 1.0,
-    "paramVal136": 0.0,
+    "paramVal136": 1.0,
     "paramName136": "Stage 8 trigger switch",
     "paramLock137": false,
     "paramDflt137": 1.0,
-    "paramVal137": 0.0,
+    "paramVal137": 1.0,
     "paramName137": "Stage 9 trigger switch",
     "paramLock138": false,
     "paramDflt138": 1.0,
-    "paramVal138": 0.0,
+    "paramVal138": 1.0,
     "paramName138": "Stage 10 trigger switch",
     "paramLock139": false,
     "paramDflt139": 1.0,
-    "paramVal139": 0.0,
+    "paramVal139": 1.0,
     "paramName139": "Stage 11 trigger switch",
     "paramLock140": false,
     "paramDflt140": 1.0,
-    "paramVal140": 0.0,
+    "paramVal140": 1.0,
     "paramName140": "Stage 12 trigger switch",
     "paramLock141": false,
     "paramDflt141": 1.0,
-    "paramVal141": 0.0,
+    "paramVal141": 1.0,
     "paramName141": "Stage 13 trigger switch",
     "paramLock142": false,
     "paramDflt142": 1.0,
-    "paramVal142": 0.0,
+    "paramVal142": 1.0,
     "paramName142": "Stage 14 trigger switch",
     "paramLock143": false,
     "paramDflt143": 1.0,
-    "paramVal143": 0.0,
+    "paramVal143": 1.0,
     "paramName143": "Stage 15 trigger switch",
     "paramLock144": false,
     "paramDflt144": 1.0,
-    "paramVal144": 0.0,
+    "paramVal144": 1.0,
     "paramName144": "Stage 16 trigger switch",
     "paramLock145": false,
     "paramDflt145": 1.0,
-    "paramVal145": 0.0,
+    "paramVal145": 1.0,
     "paramName145": "Stage 17 trigger switch",
     "paramLock146": false,
     "paramDflt146": 1.0,
-    "paramVal146": 0.0,
+    "paramVal146": 1.0,
     "paramName146": "Stage 18 trigger switch",
     "paramLock147": false,
     "paramDflt147": 1.0,
-    "paramVal147": 0.0,
+    "paramVal147": 1.0,
     "paramName147": "Stage 19 trigger switch",
     "paramLock148": false,
     "paramDflt148": 1.0,
-    "paramVal148": 0.0,
+    "paramVal148": 1.0,
     "paramName148": "Stage 20 trigger switch",
     "inputName0": "V/Oct",
     "inputName1": "Amplitude",
     "inputName2": "Offset",
     "inputName3": "Gate",
     "inputName4": "Retrigger",
-    "inputName5": "Stage 1 hold level CV",
+    "inputName5": "Stage 1 fall time CV",
     "inputName6": "Stage 2 move time CV",
-    "inputName7": "Stage 3 hold level CV",
+    "inputName7": "Stage 3 move time CV",
     "inputName8": "Stage 4 move time CV",
     "inputName9": "Stage 5 move time CV",
     "inputName10": "Stage 6 move time CV",
@@ -1222,9 +1222,9 @@
     "inputName22": "Stage 18 move time CV",
     "inputName23": "Stage 19 move time CV",
     "inputName24": "Stage 20 move time CV",
-    "inputName25": "Stage 1 hold time CV",
+    "inputName25": "Stage 1 fall shape CV",
     "inputName26": "Stage 2 move shape CV",
-    "inputName27": "Stage 3 hold time CV",
+    "inputName27": "Stage 3 move shape CV",
     "inputName28": "Stage 4 move shape CV",
     "inputName29": "Stage 5 move shape CV",
     "inputName30": "Stage 6 move shape CV",
@@ -1269,19 +1269,19 @@
     "currentTheme": 0,
     "stages": [
       {
-        "action": 1,
+        "action": 4,
         "up": false,
+        "down": true
+      },
+      {
+        "action": 0,
+        "up": true,
         "down": false
       },
       {
         "action": 0,
         "up": false,
-        "down": false
-      },
-      {
-        "action": 1,
-        "up": false,
-        "down": false
+        "down": true
       },
       {
         "action": 0,
@@ -1369,7 +1369,7 @@
         "down": false
       }
     ],
-    "stageCnt": 3,
+    "stageCnt": 1,
     "vcaMode": false,
     "randTimes": true,
     "randLevels": true,

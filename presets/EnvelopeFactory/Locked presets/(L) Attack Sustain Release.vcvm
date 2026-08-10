@@ -1,7 +1,7 @@
 {
   "plugin": "Venom",
   "model": "EnvelopeFactory",
-  "version": "2.16.dev15",
+  "version": "2.16.dev16",
   "params": [
     {
       "value": 1.0,
@@ -40,7 +40,7 @@
       "id": 8
     },
     {
-      "value": 0.0,
+      "value": 3.0,
       "id": 9
     },
     {
@@ -52,7 +52,7 @@
       "id": 11
     },
     {
-      "value": 1.0,
+      "value": 0.0,
       "id": 12
     },
     {
@@ -132,7 +132,7 @@
       "id": 31
     },
     {
-      "value": 2.0,
+      "value": 0.0,
       "id": 32
     },
     {
@@ -212,7 +212,7 @@
       "id": 51
     },
     {
-      "value": -3.0,
+      "value": -1.0,
       "id": 52
     },
     {
@@ -372,7 +372,7 @@
       "id": 91
     },
     {
-      "value": -3.0,
+      "value": -1.0,
       "id": 92
     },
     {
@@ -639,7 +639,7 @@
     "paramName8": "EOC trigger switch",
     "paramLock9": true,
     "paramDflt9": 0.0,
-    "paramVal9": 0.0,
+    "paramVal9": 3.0,
     "paramName9": "Attack action",
     "paramLock10": true,
     "paramDflt10": 0.0,
@@ -649,10 +649,10 @@
     "paramDflt11": 0.0,
     "paramVal11": 0.0,
     "paramName11": "Release action",
-    "paramLock12": true,
+    "paramLock12": false,
     "paramDflt12": 0.0,
-    "paramVal12": 1.0,
-    "paramName12": "Release target action",
+    "paramVal12": 0.0,
+    "paramName12": "Stage 4 action",
     "paramLock13": false,
     "paramDflt13": 0.0,
     "paramVal13": 0.0,
@@ -729,10 +729,10 @@
     "paramDflt31": 0.0,
     "paramVal31": 1.0,
     "paramName31": "Release mode",
-    "paramLock32": true,
+    "paramLock32": false,
     "paramDflt32": 0.0,
-    "paramVal32": 2.0,
-    "paramName32": "Release target mode",
+    "paramVal32": 0.0,
+    "paramName32": "Stage 4 mode",
     "paramLock33": false,
     "paramDflt33": 0.0,
     "paramVal33": 0.0,
@@ -809,10 +809,10 @@
     "paramDflt51": -1.0,
     "paramVal51": -1.0,
     "paramName51": "Release time",
-    "paramLock52": true,
+    "paramLock52": false,
     "paramDflt52": -1.0,
-    "paramVal52": -3.0,
-    "paramName52": "Constant release target level",
+    "paramVal52": -1.0,
+    "paramName52": "Stage 4 move time",
     "paramLock53": false,
     "paramDflt53": -1.0,
     "paramVal53": -1.0,
@@ -889,10 +889,10 @@
     "paramDflt71": 0.0,
     "paramVal71": 0.0,
     "paramName71": "Release time CV",
-    "paramLock72": true,
+    "paramLock72": false,
     "paramDflt72": 0.0,
     "paramVal72": 0.0,
-    "paramName72": "Unused CV",
+    "paramName72": "Stage 4 move time CV",
     "paramLock73": false,
     "paramDflt73": 0.0,
     "paramVal73": 0.0,
@@ -969,10 +969,10 @@
     "paramDflt91": -1.0,
     "paramVal91": -1.0,
     "paramName91": "Release shape",
-    "paramLock92": true,
+    "paramLock92": false,
     "paramDflt92": -1.0,
-    "paramVal92": -3.0,
-    "paramName92": "Constant release target time",
+    "paramVal92": -1.0,
+    "paramName92": "Stage 4 move shape",
     "paramLock93": false,
     "paramDflt93": -1.0,
     "paramVal93": -1.0,
@@ -1049,10 +1049,10 @@
     "paramDflt111": 0.0,
     "paramVal111": 0.0,
     "paramName111": "Release shape CV",
-    "paramLock112": true,
+    "paramLock112": false,
     "paramDflt112": 0.0,
     "paramVal112": 0.0,
-    "paramName112": "Unused CV",
+    "paramName112": "Stage 4 move shape CV",
     "paramLock113": false,
     "paramDflt113": 0.0,
     "paramVal113": 0.0,
@@ -1129,10 +1129,10 @@
     "paramDflt131": 1.0,
     "paramVal131": 0.0,
     "paramName131": "Release trigger switch",
-    "paramLock132": true,
+    "paramLock132": false,
     "paramDflt132": 1.0,
     "paramVal132": 0.0,
-    "paramName132": "Unused switch",
+    "paramName132": "Stage 4 trigger switch",
     "paramLock133": false,
     "paramDflt133": 1.0,
     "paramVal133": 0.0,
@@ -1205,7 +1205,7 @@
     "inputName5": "Attack time CV",
     "inputName6": "Unused CV",
     "inputName7": "Release time CV",
-    "inputName8": "Unused CV",
+    "inputName8": "Stage 4 move time CV",
     "inputName9": "Stage 5 move time CV",
     "inputName10": "Stage 6 move time CV",
     "inputName11": "Stage 7 move time CV",
@@ -1225,7 +1225,7 @@
     "inputName25": "Attack shape CV",
     "inputName26": "Unused CV",
     "inputName27": "Release shape CV",
-    "inputName28": "Unused CV",
+    "inputName28": "Stage 4 move shape CV",
     "inputName29": "Stage 5 move shape CV",
     "inputName30": "Stage 6 move shape CV",
     "inputName31": "Stage 7 move shape CV",
@@ -1249,7 +1249,7 @@
     "outputName4": "Attack gate",
     "outputName5": "Sustain gate",
     "outputName6": "Release gate",
-    "outputName7": "Release end trigger",
+    "outputName7": "Stage 4 gate",
     "outputName8": "Stage 5 gate",
     "outputName9": "Stage 6 gate",
     "outputName10": "Stage 7 gate",
@@ -1269,8 +1269,8 @@
     "currentTheme": 0,
     "stages": [
       {
-        "action": 0,
-        "up": false,
+        "action": 3,
+        "up": true,
         "down": false
       },
       {
@@ -1281,12 +1281,17 @@
       {
         "action": 0,
         "up": false,
+        "down": true
+      },
+      {
+        "action": 0,
+        "up": true,
         "down": false
       },
       {
-        "action": 1,
+        "action": 0,
         "up": false,
-        "down": false
+        "down": true
       },
       {
         "action": 0,
@@ -1307,11 +1312,6 @@
         "action": 0,
         "up": false,
         "down": true
-      },
-      {
-        "action": 0,
-        "up": true,
-        "down": false
       },
       {
         "action": 0,
@@ -1369,7 +1369,7 @@
         "down": true
       }
     ],
-    "stageCnt": 4,
+    "stageCnt": 3,
     "vcaMode": false,
     "randTimes": true,
     "randLevels": true,
