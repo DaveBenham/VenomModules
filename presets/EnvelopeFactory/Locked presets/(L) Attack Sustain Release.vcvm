@@ -1,7 +1,7 @@
 {
   "plugin": "Venom",
   "model": "EnvelopeFactory",
-  "version": "2.16.dev16",
+  "version": "2.16.dev16-b8ab944",
   "params": [
     {
       "value": 1.0,
@@ -120,7 +120,7 @@
       "id": 28
     },
     {
-      "value": 1.0,
+      "value": 2.0,
       "id": 29
     },
     {
@@ -719,7 +719,7 @@
     "paramName28": "Stage 20 action",
     "paramLock29": true,
     "paramDflt29": 0.0,
-    "paramVal29": 1.0,
+    "paramVal29": 2.0,
     "paramName29": "Attack mode",
     "paramLock30": true,
     "paramDflt30": 0.0,

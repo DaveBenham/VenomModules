@@ -1,7 +1,7 @@
 {
   "plugin": "Venom",
   "model": "EnvelopeFactory",
-  "version": "2.16.dev16",
+  "version": "2.16.dev16-b8ab944",
   "params": [
     {
       "value": 1.0,
@@ -120,7 +120,7 @@
       "id": 28
     },
     {
-      "value": 0.0,
+      "value": 2.0,
       "id": 29
     },
     {
@@ -128,7 +128,7 @@
       "id": 30
     },
     {
-      "value": 0.0,
+      "value": 1.0,
       "id": 31
     },
     {
@@ -719,7 +719,7 @@
     "paramName28": "Stage 20 action",
     "paramLock29": false,
     "paramDflt29": 0.0,
-    "paramVal29": 0.0,
+    "paramVal29": 2.0,
     "paramName29": "Stage 1 mode",
     "paramLock30": false,
     "paramDflt30": 0.0,
@@ -727,7 +727,7 @@
     "paramName30": "Stage 2 mode",
     "paramLock31": false,
     "paramDflt31": 0.0,
-    "paramVal31": 0.0,
+    "paramVal31": 1.0,
     "paramName31": "Stage 3 mode",
     "paramLock32": false,
     "paramDflt32": 0.0,
