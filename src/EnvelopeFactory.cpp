@@ -77,7 +77,7 @@ struct EnvelopeFactory : VenomModule {
   bool reset = false,
        eocPrimed = false,
        vcaMode = false,
-       pendTrig[16],
+       pendTrig[16]{},
        randTimes = true,
        randLevels = true,
        randDrifts = true,
@@ -260,8 +260,6 @@ struct EnvelopeFactory : VenomModule {
           pendTrig[c] = true;
           trig = false;
         }
-        if (pendTrig[c])
-          pendTrig[c] = gate;
         if (pendTrig[c] && (((newInput>0.f)!=(curInput[c]>0.f)) || newInput==0.f)) {
           trig = true;
           pendTrig[c] = false;
