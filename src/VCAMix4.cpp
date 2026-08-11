@@ -38,6 +38,7 @@ struct VCAMix4 : MixBaseModule {
 
   int mode = -1;
   bool connected[4] = {false, false, false, false};
+  bool configLevelsNeeded = true;
   float normal = 0.f;
   float scale = 1.f;
   float offset = 0.f;
@@ -96,6 +97,26 @@ struct VCAMix4 : MixBaseModule {
     Module::onReset(e);
   }
 
+  void configLevels() {
+    if (!configLevelsNeeded)
+      return;
+    configLevelsNeeded = false;
+    ParamQuantity* q;
+    for (int i=0; i<4; i++) {
+      q = paramQuantities[LEVEL_PARAMS + i];
+      q->unit = mode <= 1 ? " dB" : !connected[i] ? " V" : mode == 2 ? "%" : "x";
+      q->displayBase = mode <= 1 ? -10.f : 0.f;
+      q->displayMultiplier = mode <= 1 ? 20.f : (mode == 2 && connected[i]) ? 100.f : (mode == 3 && connected[i]) ? 2.f : 10.f;
+      q->displayOffset = mode <= 1 ? 0.f : (mode == 2 && connected[i]) ? -100.f : (mode == 3 && connected[i]) ? -2.f : -10.f;
+    }
+    q = paramQuantities[MIX_LEVEL_PARAM];
+    q->unit = mode <= 1 ? " dB" : mode == 2 ? "%" : "x";
+    q->displayBase = mode <= 1 ? -10.f : 0.f;
+    q->displayMultiplier = mode <= 1 ? 20.f : mode == 2 ? 100.f : mode == 3 ? 2.f : 10.f;
+    q->displayOffset = mode <= 1 ? 0.f : mode == 2 ? -100.f : mode == 3 ? -2.f : -10.f;
+    q->defaultValue = mode <= 1 ? 1.f : mode == 2 ? 2.f : mode == 3 ? 1.5f : 1.1f;
+  }
+  
   void process(const ProcessArgs& args) override {
     MixBaseModule::process(args);
     if (args.sampleRate != sampleRate){
@@ -112,24 +133,12 @@ struct VCAMix4 : MixBaseModule {
         connected[3] != inputs[INPUTS + 3].isConnected()
     ){
       mode = static_cast<int>(params[MODE_PARAM].getValue());
-      ParamQuantity* q;
-      for (int i=0; i<4; i++) {
+      for (int i=0; i<4; i++)
         connected[i] = inputs[INPUTS + i].isConnected();
-        q = paramQuantities[LEVEL_PARAMS + i];
-        q->unit = mode <= 1 ? " dB" : !connected[i] ? " V" : mode == 2 ? "%" : "x";
-        q->displayBase = mode <= 1 ? -10.f : 0.f;
-        q->displayMultiplier = mode <= 1 ? 20.f : (mode == 2 && connected[i]) ? 100.f : (mode == 3 && connected[i]) ? 2.f : 10.f;
-        q->displayOffset = mode <= 1 ? 0.f : (mode == 2 && connected[i]) ? -100.f : (mode == 3 && connected[i]) ? -2.f : -10.f;
-      }
-      q = paramQuantities[MIX_LEVEL_PARAM];
-      q->unit = mode <= 1 ? " dB" : mode == 2 ? "%" : "x";
-      q->displayBase = mode <= 1 ? -10.f : 0.f;
-      q->displayMultiplier = mode <= 1 ? 20.f : mode == 2 ? 100.f : mode == 3 ? 2.f : 10.f;
-      q->displayOffset = mode <= 1 ? 0.f : mode == 2 ? -100.f : mode == 3 ? -2.f : -10.f;
-      q->defaultValue = mode <= 1 ? 1.f : mode == 2 ? 2.f : mode == 3 ? 1.5f : 1.1f;
       normal = mode <= 1 ? 0.f : mode == 2 ? 10.f : mode == 3 ? 5.f : 1.f;
       scale = mode == 4 ? 10.f : mode == 3 ? 2.f : 1.f;
       offset = mode <= 1 ? 0.f : -1.f;
+      configLevelsNeeded = true; // performed by step()
     }
     int clip = static_cast<int>(params[CLIP_PARAM].getValue());
     int dcBlock = static_cast<int>(params[DCBLOCK_PARAM].getValue());
@@ -410,6 +419,12 @@ struct VCAMix4Widget : MixBaseWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(53.671,273.240), module, VCAMix4::OUTPUTS+2));
     addOutput(createOutputCentered<PolyPort>(Vec(53.671,305.160), module, VCAMix4::OUTPUTS+3));
     addOutput(createOutputCentered<PolyPort>(Vec(53.671,340.434), module, VCAMix4::MIX_OUTPUT));
+  }
+  
+  void step() override {
+    VenomWidget::step();
+    if (module)
+      static_cast<VCAMix4*>(module)->configLevels();
   }
 
 };
