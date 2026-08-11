@@ -228,6 +228,34 @@ struct XM_OP : VenomModule {
     }
   }
 
+  void configSyncRtrgMode() {
+    switch(syncRtrgMode) {
+      case 0:
+        if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
+          inputInfos[SYNC_RTRG_INPUT]->name = "VCO sync";
+        inputExtensions[SYNC_RTRG_INPUT].factoryName = "VCO sync";
+        if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
+          inputInfos[GATE_INPUT]->name = "Envelope gate";
+        inputExtensions[GATE_INPUT].factoryName = "Envelope gate";
+        break;
+      case 1:
+        if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
+          inputInfos[SYNC_RTRG_INPUT]->name = "Envelope retrigger and VCO sync";
+        inputExtensions[SYNC_RTRG_INPUT].factoryName = "Envelope retrigger and VCO sync";
+        if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
+          inputInfos[GATE_INPUT]->name = "Envelope gate and VCO sync";
+        inputExtensions[GATE_INPUT].factoryName = "Envelope gate and VCO sync";
+        break;
+      default: //2
+        if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
+          inputInfos[SYNC_RTRG_INPUT]->name = "Envelope retrigger";
+        inputExtensions[SYNC_RTRG_INPUT].factoryName = "Envelope retrigger";
+        if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
+          inputInfos[GATE_INPUT]->name = "Envelope gate";
+        inputExtensions[GATE_INPUT].factoryName = "Envelope gate";
+    }
+  }
+
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
 
@@ -260,34 +288,7 @@ struct XM_OP : VenomModule {
     }
     oldChannels = channels;
     
-    if (params[SYNC_RTRG_MODE_PARAM].getValue() != syncRtrgMode) {
-      syncRtrgMode = params[SYNC_RTRG_MODE_PARAM].getValue();
-      switch(syncRtrgMode) {
-        case 0:
-          if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
-            inputInfos[SYNC_RTRG_INPUT]->name = "VCO sync";
-          inputExtensions[SYNC_RTRG_INPUT].factoryName = "VCO sync";
-          if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
-            inputInfos[GATE_INPUT]->name = "Envelope gate";
-          inputExtensions[GATE_INPUT].factoryName = "Envelope gate";
-          break;
-        case 1:
-          if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
-            inputInfos[SYNC_RTRG_INPUT]->name = "Envelope retrigger and VCO sync";
-          inputExtensions[SYNC_RTRG_INPUT].factoryName = "Envelope retrigger and VCO sync";
-          if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
-            inputInfos[GATE_INPUT]->name = "Envelope gate and VCO sync";
-          inputExtensions[GATE_INPUT].factoryName = "Envelope gate and VCO sync";
-          break;
-        default: //2
-          if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
-            inputInfos[SYNC_RTRG_INPUT]->name = "Envelope retrigger";
-          inputExtensions[SYNC_RTRG_INPUT].factoryName = "Envelope retrigger";
-          if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
-            inputInfos[GATE_INPUT]->name = "Envelope gate";
-          inputExtensions[GATE_INPUT].factoryName = "Envelope gate";
-      }
-    }
+    syncRtrgMode = params[SYNC_RTRG_MODE_PARAM].getValue(); // names managed in step()
 
     if (divKnob && quantize != static_cast<bool>(params[QUANT_PARAM].getValue())) {
       //make sure XM_OPWidget constructor has defined divKnob and multKnob before entering
@@ -507,6 +508,7 @@ struct XM_OP : VenomModule {
 };
 
 struct XM_OPWidget : VenomWidget {
+  int syncRtrgMode = 0;
   
   struct WaveSwitch : GlowingSvgSwitchLockable {
     WaveSwitch() {
@@ -640,6 +642,17 @@ struct XM_OPWidget : VenomWidget {
     addParam(createLockableParamCentered<EnvOutSwitch>(Vec(105.f,323.f), module, XM_OP::ENV_OUT_PARAM));
     addOutput(createOutputCentered<PolyPort>(Vec(92.5f,339.5f), module, XM_OP::ENV_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(127.5f,339.5f), module, XM_OP::OSC_OUTPUT));
+  }
+
+  void step() override {
+    VenomWidget::step();
+    if (module) {
+      XM_OP* mod = static_cast<XM_OP*>(module);
+      if (syncRtrgMode != mod->syncRtrgMode) {
+        syncRtrgMode = mod->syncRtrgMode;
+        mod->configSyncRtrgMode();
+      }
+    }
   }
 
   void appendContextMenu(Menu* menu) override {
