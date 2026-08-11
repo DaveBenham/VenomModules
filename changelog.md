@@ -26,6 +26,7 @@
 - VCO LAB & VCO UNIT: Fixed Bias frequency display. Used to be off by factor of 100
 - Bay modules: Removed string manipulation (label propagation) from audio thread
 - SLEW: Fixed shape CV input names in hover text
+- NORS_IQ: Fixed unit display for interval and scale root knobs
 
 ## 2.15.0 (2026-04-18)
 ### New Modules

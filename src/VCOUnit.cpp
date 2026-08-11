@@ -93,6 +93,7 @@ struct VCOUnit : VenomModule {
         biasFreq = 0.02f;
   int currentMode = -1;
   int mode = 0;
+  bool showBpm = false;
   int wave = 0;
   bool once = false;
   bool noRetrigger = false;
@@ -248,7 +249,7 @@ struct VCOUnit : VenomModule {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
     aliasSuppress = !(mode || disableDPW);
-    paramQuantities[FREQ_PARAM]->unit = mode==1 && lfoAsBPM ? " BPM" : " Hz";
+    showBpm = mode==1 && lfoAsBPM;
     if (shortCircuit)
       return;
     if (!paramExtensions[OVER_PARAM].locked)
@@ -267,25 +268,20 @@ struct VCOUnit : VenomModule {
     if (locked)
       setLock(false, SHAPE_MODE_PARAM);
     ParamQuantity *q = paramQuantities[SHAPE_PARAM];
-    SwitchQuantity *sq = static_cast<SwitchQuantity*>(paramQuantities[SHAPE_MODE_PARAM]);
     switch (wave) {
       case 0: // SIN
-        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW", "Limited PWM 3%-97%", "Skew"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
         break;
       case 1: // TRI
-        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR", "Limited PWM 3%-97%", "Skew"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
         break;
       case 2: // SQR
-        sq->labels = {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW", "Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW", "Limited PWM 3%-97%", "Full PWM 0%-100%"};
         q->displayMultiplier = 50.f;
         q->displayOffset = 50.f;
         break;
       case 3: // SAW
-        sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SAW <--> EVEN", "Limited PWM 3%-97%", "Full PWM 0%-100%"};
         q->displayMultiplier = 100.f;
         q->displayOffset = 0.f;
         break;
@@ -383,18 +379,8 @@ struct VCOUnit : VenomModule {
     float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
     float k =  1000.f * args.sampleTime / oversample;
     float_4 basePhaseDelta{}, lowFreq{}, denInv{};
-    
-    if (alternate != (mode==2)) {
-      alternate = !alternate;
-      paramQuantities[FREQ_PARAM]->name = alternate ? "Bias" : "Frequency";
-      paramQuantities[OCTAVE_PARAM]->name = alternate ? "Linear FM range" : "Octave";
-      inputInfos[VOCT_INPUT]->name = alternate ? "Bias" : "V/Oct";
 
-      paramExtensions[FREQ_PARAM].factoryName = paramQuantities[FREQ_PARAM]->name;
-      paramExtensions[OCTAVE_PARAM].factoryName = paramQuantities[OCTAVE_PARAM]->name;
-      inputExtensions[VOCT_INPUT].factoryName = inputInfos[VOCT_INPUT]->name;
-    }
-    
+    alternate = (mode==2);
     if (softSync != inputs[REV_INPUT].isConnected()) { // force forward if soft sync disconnected
       if (softSync) {
         for (int i=0; i<4; i++) 
@@ -843,6 +829,10 @@ struct VCOUnit : VenomModule {
 
 struct VCOUnitWidget : VenomWidget {
   
+  bool showBpm = false;
+  bool alternate = false;
+  int wave = 0;
+  
   struct ModeSwitch : GlowingSvgSwitchLockable {
     ModeSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
@@ -1013,6 +1003,37 @@ struct VCOUnitWidget : VenomWidget {
     VenomWidget::step();
     VCOUnit* mod = dynamic_cast<VCOUnit*>(this->module);
     if(mod) {
+      if (showBpm != mod->showBpm) {
+        showBpm = mod->showBpm;
+        mod->paramQuantities[VCOUnit::FREQ_PARAM]->unit = showBpm ? " BPM" : " Hz";
+      }
+      if (alternate != mod->alternate) {
+        alternate = mod->alternate;
+        mod->paramQuantities[VCOUnit::FREQ_PARAM]->name = alternate ? "Bias" : "Frequency";
+        mod->paramQuantities[VCOUnit::OCTAVE_PARAM]->name = alternate ? "Linear FM range" : "Octave";
+        mod->inputInfos[VCOUnit::VOCT_INPUT]->name = alternate ? "Bias" : "V/Oct";
+        mod->paramExtensions[VCOUnit::FREQ_PARAM].factoryName = mod->paramQuantities[VCOUnit::FREQ_PARAM]->name;
+        mod->paramExtensions[VCOUnit::OCTAVE_PARAM].factoryName = mod->paramQuantities[VCOUnit::OCTAVE_PARAM]->name;
+        mod->inputExtensions[VCOUnit::VOCT_INPUT].factoryName = mod->inputInfos[VCOUnit::VOCT_INPUT]->name;
+      }
+      if (wave != mod->wave) {
+        wave = mod->wave;
+        SwitchQuantity *sq = static_cast<SwitchQuantity*>(mod->paramQuantities[VCOUnit::SHAPE_MODE_PARAM]);
+        switch (wave) {
+          case 0: // SIN
+            sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SIN <--> SAW", "Limited PWM 3%-97%", "Skew"};
+            break;
+          case 1: // TRI
+            sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SIN <--> TRI <--> SQR", "Limited PWM 3%-97%", "Skew"};
+            break;
+          case 2: // SQR
+            sq->labels = {"Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW", "Limited PWM 3%-97%", "Full PWM 0%-100%", "Morph TRI <--> SQR <--> SAW", "Limited PWM 3%-97%", "Full PWM 0%-100%"};
+            break;
+          case 3: // SAW
+            sq->labels = {"log/exp", "J-curve", "S-curve", "Rectify", "Normalized Rectify", "Morph SQR <--> SAW <--> EVEN", "Limited PWM 3%-97%", "Full PWM 0%-100%"};
+            break;
+        }
+      }
       bool over = mod->params[VCOUnit::OVER_PARAM].getValue();
       mod->lights[VCOUnit::REV_LIGHT].setBrightness(over && !(mod->disableOver[VCOUnit::REV_INPUT]) && mod->inputs[VCOUnit::REV_INPUT].isConnected());
       mod->lights[VCOUnit::REV_LIGHT+1].setBrightness(over && mod->disableOver[VCOUnit::REV_INPUT] && mod->inputs[VCOUnit::REV_INPUT].isConnected());
