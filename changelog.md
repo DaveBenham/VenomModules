@@ -27,6 +27,15 @@
 - Bay modules: Removed string manipulation (label propagation) from audio thread
 - SLEW: Fixed shape CV input names in hover text
 - NORS_IQ: Fixed unit display for interval and scale root knobs
+- Removed allocation actions related to name and unit string manipulation from dsp thread for all modules. Affected modules:
+  - AD_ASR Envelope Generator
+  - Multimode Filter
+  - Mix modules Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+  - Non-Octave-Repeating Intervallic Quantizer
+  - VCO Lab
+  - VCO Unit
+  - XM-OP
+  - Widget Menu Extender
 
 ## 2.15.0 (2026-04-18)
 ### New Modules
