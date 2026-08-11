@@ -212,6 +212,7 @@ struct Oscillator : VenomModule {
   float modeFreq[2][3] = {{dsp::FREQ_C4, 2.f, 100.f},{dsp::FREQ_C4, 120.f, 100.f}}, biasFreq = 0.02f;
   int currentMode = -1;
   int mode = 0;
+  bool showBpm = false;
   bool once = false;
   bool noRetrigger = false;
   bool gated = false;
@@ -410,7 +411,7 @@ struct Oscillator : VenomModule {
     currentMode = static_cast<int>(params[MODE_PARAM].getValue());
     mode = currentMode>5 ? 1 : currentMode>2 ? 0 : currentMode;
     aliasSuppress = !mode && !disableDPW;
-    paramQuantities[FREQ_PARAM]->unit = mode==1 && lfoAsBPM ? " BPM" : " Hz";
+    showBpm = (mode==1 && lfoAsBPM);
     if (shortCircuit)
       return;
     if (!paramExtensions[OVER_PARAM].locked)
@@ -519,17 +520,8 @@ struct Oscillator : VenomModule {
     float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
     float k =  1000.f * args.sampleTime / oversample;
     float_4 basePhaseDelta{}, lowFreq{}, denInv{};
-    
-    if (alternate != (mode==2)) {
-      alternate = !alternate;
-      paramQuantities[FREQ_PARAM]->name = alternate ? "Bias" : "Frequency";
-      paramQuantities[OCTAVE_PARAM]->name = alternate ? "Linear FM range" : "Octave";
-      inputInfos[VOCT_INPUT]->name = alternate ? "Bias" : "V/Oct";
 
-      paramExtensions[FREQ_PARAM].factoryName = paramQuantities[FREQ_PARAM]->name;
-      paramExtensions[OCTAVE_PARAM].factoryName = paramQuantities[OCTAVE_PARAM]->name;
-      inputExtensions[VOCT_INPUT].factoryName = inputInfos[VOCT_INPUT]->name;
-    }
+    alternate = (mode==2);
     
     if (softSync != inputs[REV_INPUT].isConnected()) { // force forward if soft sync disconnected
       if (softSync) {
@@ -1244,6 +1236,9 @@ struct Oscillator : VenomModule {
 
 struct OscillatorWidget : VenomWidget {
   
+  bool showBpm = false;
+  bool alternate = false;
+
   struct ModeSwitch : GlowingSvgSwitchLockable {
     ModeSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallWhiteButtonSwitch.svg")));
@@ -1457,6 +1452,19 @@ struct OscillatorWidget : VenomWidget {
     VenomWidget::step();
     Oscillator* mod = dynamic_cast<Oscillator*>(this->module);
     if(mod) {
+      if (showBpm != mod->showBpm) {
+        showBpm = mod->showBpm;
+        mod->paramQuantities[Oscillator::FREQ_PARAM]->unit = showBpm ? " BPM" : " Hz";
+      }
+      if (alternate != mod->alternate) {
+        alternate = mod->alternate;
+        mod->paramQuantities[Oscillator::FREQ_PARAM]->name = alternate ? "Bias" : "Frequency";
+        mod->paramQuantities[Oscillator::OCTAVE_PARAM]->name = alternate ? "Linear FM range" : "Octave";
+        mod->inputInfos[Oscillator::VOCT_INPUT]->name = alternate ? "Bias" : "V/Oct";
+        mod->paramExtensions[Oscillator::FREQ_PARAM].factoryName = mod->paramQuantities[Oscillator::FREQ_PARAM]->name;
+        mod->paramExtensions[Oscillator::OCTAVE_PARAM].factoryName = mod->paramQuantities[Oscillator::OCTAVE_PARAM]->name;
+        mod->inputExtensions[Oscillator::VOCT_INPUT].factoryName = mod->inputInfos[Oscillator::VOCT_INPUT]->name;
+      }
       bool over = mod->params[Oscillator::OVER_PARAM].getValue();
       mod->lights[Oscillator::REV_LIGHT].setBrightness(over && !(mod->disableOver[Oscillator::REV_INPUT]) && mod->inputs[Oscillator::REV_INPUT].isConnected());
       mod->lights[Oscillator::REV_LIGHT+1].setBrightness(over && mod->disableOver[Oscillator::REV_INPUT] && mod->inputs[Oscillator::REV_INPUT].isConnected());
