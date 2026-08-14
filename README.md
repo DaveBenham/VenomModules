@@ -1168,9 +1168,11 @@ Each envelope stage has identical controls, inputs, and outputs.
 ### ACTION square button
 Controls what action the stage performs. The configuration and labeling of the other stage controls are automatically adjusted whenever the Action is changed.
 
-- **Move** - The envelope rises or falls from the starting voltage to the target voltage over a fixed period of time. The starting voltage is determined by the prior stage. The target voltage is specified by the following Hold or Sustain stage Level. If not followed by a Hold or Sustain, then the target alternates between 10V and 0V. The first Move not followed by a Hold/Sustain targets 10V, the next one 0V, then 10V, then 0V, etc. The LEDs above and below the Action button indicate which target is active for these Move stages. An LED glowing yellow above the button indicates a 10V target, and an LED glowing yellow below indicates 0V.
+- **Move** - The envelope rises or falls from the starting level to the target level over a fixed period of time. The starting level is the current level at the start of the stage. The target level is specified by the following Hold or Sustain stage Level. If not followed by a Hold or Sustain, then the target alternates between 100% and 0%. The first Move not followed by a Hold/Sustain targets 100%, the next one 0%, then 100%, then 0%, etc. The LEDs above and below the Action button indicate which target is active for these Move stages. An LED glowing yellow above the button indicates a 100% target, and an LED glowing yellow below indicates 0%.
 - **Hold** - The envelope holds the specified level constant for a fixed amount of time.
 - **Sustain** - The envelope holds the specified level constant for as long as the triggering Gate remains high.
+- **Rise** - Same as Move, except the envelope always rises to a target of 100%, and the upper LED will glow yellow.
+- **Fall** - Same as Move, except the envelope always falls to a target of 0%, and the lower LED will glow yellow.
 
 ### MODE square button
 Controls whether the stage length is impacted by the main Gate, and whether the envelope can be retriggered during the stage.
@@ -1182,14 +1184,14 @@ Controls whether the stage length is impacted by the main Gate, and whether the 
 ### *Variable knobs and CV inputs*
 The functions of the remaining knobs and inputs change depending on the chosen stage Action.
 
-### Move top controls: Time knob, CV input and attenuverter
+### Move/Rise/Fall top controls: Time knob, CV input and attenuverter
 Specifies the time it takes to complete the Move action. Each positive volt of attenuverted CV doubles the time, and each negative volt halves the time.
 
 Note that the time is for a normal full Move stage. Retriggered envelopes starting with Move can result in a shortened Move, and ungated Move after a Gate release can result in shortened or extended Moves. In such circumstances, the time will be lengthened or shortened proportionally depending on the actual Level at the time the Move starts.
 
 If the starting voltage is already beyond the target voltage, then the envelope instantly jumps to the target voltage and advances to the next stage.
 
-### Move bottom controls: Shape knob, CV input and attenuverter
+### Move/Rise/Fall bottom controls: Shape knob, CV input and attenuverter
 The knob specifies the shape of the stage, with the noon value of 0 representing linear. Counter-clockwise rotation specifies concave up curvature, with -1 being the most curvature. Clockwise rotation specifies concave down curvature, with 1 being the most curvature.
 
 The shape CV is scaled at 0.2 per Volt such that a 10V peak to peak input can cover the entire shape range from -1 to 1.
