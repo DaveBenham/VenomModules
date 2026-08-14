@@ -1,7 +1,7 @@
 {
   "slug": "Venom",
   "name": "Venom",
-  "version": "2.16.dev18",
+  "version": "2.16.dev19",
   "license": "GPL-3.0-or-later",
   "brand": "",
   "author": "David Benham",
@@ -187,7 +187,7 @@
     {
       "slug": "EnvelopeFactory",
       "name": "Envelope Factory",
-      "description": "Highly configurable and extensible multi-stage envelope generator with stage gates and looping capabilities",
+      "description": "Highly configurable envelope generator supporting up to 20 stages",
       "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md#envelope-factory",
       "tags": [
         "Envelope generator",

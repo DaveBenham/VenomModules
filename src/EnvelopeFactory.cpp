@@ -74,9 +74,9 @@ struct EnvelopeFactory : VenomModule {
         start[16]{}, // for move only
         curInput[16]{},
         velocity[16]{};
+  int vcaMode = 0;
   bool reset = false,
        eocPrimed = false,
-       vcaMode = false,
        pendTrig[16]{},
        randTimes = true,
        randLevels = true,
@@ -254,18 +254,22 @@ struct EnvelopeFactory : VenomModule {
            trig = gateTrig[c].process(buttonRetrig || cvRetrig ? 0.f : params[GATE_IN_PARAM].getValue()*10.f + inputs[GATE_INPUT].getPolyVoltage(c), 0.2f, 2.f),
            gate = gateTrig[c].isHigh();
       oldRetrig[c] = inputs[RETRIG_INPUT].getPolyVoltage(c);
-      if (vcaMode) { // delay trig until VCA input crosses 0
+      if (vcaMode) { 
         float newInput = inputs[AMP_INPUT].getPolyVoltage(c);
-        if (trig) {
-          pendTrig[c] = true;
-          trig = false;
-        }
-        if (pendTrig[c] && (((newInput>0.f)!=(curInput[c]>0.f)) || newInput==0.f)) {
-          trig = true;
-          pendTrig[c] = false;
+        if (vcaMode == 2) { // delay trig until VCA input crosses 0
+          if (trig) {
+            pendTrig[c] = true;
+            trig = false;
+          }
+          if (pendTrig[c] && (((newInput>0.f)!=(curInput[c]>0.f)) || newInput==0.f)) {
+            trig = true;
+            pendTrig[c] = false;
+            velocity[c] = normSigmoid(clamp(inputs[OFF_INPUT].getNormalPolyVoltage(10.f, c)/10.f), -params[OFF_PARAM].getValue()*0.97f);
+          }
+        }  
+        else
           velocity[c] = normSigmoid(clamp(inputs[OFF_INPUT].getNormalPolyVoltage(10.f, c)/10.f), -params[OFF_PARAM].getValue()*0.97f);
-        }
-        curInput[c] = newInput;
+        curInput[c] = inputs[AMP_INPUT].getPolyVoltage(c);
       }
       int action = stage[c]==-1 ? 0 : stages[stage[c]].action,
           mode = stage[c]==-1 ? 1 : params[MODE_PARAM+stage[c]].getValue();
@@ -470,7 +474,7 @@ struct EnvelopeFactory : VenomModule {
     }
     json_object_set_new(rootJ, "stages", array);
     json_object_set_new(rootJ, "stageCnt", json_integer(stageCnt));
-    json_object_set_new(rootJ, "vcaMode", json_boolean(vcaMode));
+    json_object_set_new(rootJ, "vcaType", json_integer(vcaMode));
     json_object_set_new(rootJ, "randTimes", json_boolean(randTimes));
     json_object_set_new(rootJ, "randLevels", json_boolean(randLevels));
     json_object_set_new(rootJ, "randShapes", json_boolean(randShapes));
@@ -498,8 +502,8 @@ struct EnvelopeFactory : VenomModule {
     }
     if ((val = json_object_get(rootJ, "stageCnt")))
       stageCnt = json_integer_value(val);
-    if ((val = json_object_get(rootJ, "vcaMode")))
-      vcaMode = json_boolean_value(val);
+    if ((val = json_object_get(rootJ, "vcaType")))
+      vcaMode = json_integer_value(val);
     if ((val = json_object_get(rootJ, "randTimes")))
       randTimes = json_boolean_value(val);
     if ((val = json_object_get(rootJ, "randLevels")))
@@ -523,9 +527,9 @@ struct EnvelopeFactory : VenomModule {
 };
 
 struct EnvelopeFactoryWidget : VenomWidget {
-  bool vcaMode = false,
-       resizeNeeded = false;
+  bool resizeNeeded = false;
   int slow=0,
+      vcaMode=0,
       stageCnt=0,
       lightTheme = getDefaultTheme(),
       darkTheme = getDefaultDarkTheme();
@@ -717,7 +721,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
         module->stageCnt = cnt;
       }
     ));
-    menu->addChild(createBoolPtrMenuItem("VCA mode with 0 crossing synced triggers","",&module->vcaMode));
+    menu->addChild(createIndexPtrSubmenuItem("VCA mode", {"Off","Standard VCA", "VCA with 0 crossing synced triggers"},&module->vcaMode));
     menu->addChild(createSubmenuItem("Randomize configuration", "", [=](Menu* submenu) {
       submenu->addChild(createBoolMenuItem("Stage times", "", [=](){return module->randTimes;}, [=](bool val){module->randTimes=val; module->configRandomize();}));
       submenu->addChild(createBoolMenuItem("Stage levels", "", [=](){return module->randLevels;}, [=](bool val){module->randLevels=val; module->configRandomize();}));

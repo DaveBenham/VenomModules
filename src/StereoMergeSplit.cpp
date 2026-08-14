@@ -32,6 +32,7 @@ struct StereoMergeSplit : VenomModule {
     configInput(RIGHT_INPUT, "Right polyphonic");
     configOutput(STEREO_OUTPUT, "Stereo polyphonic");
     configLight(ERROR_LIGHT, "Polyphony overflow indicator");
+    configInput(STEREO_INPUT, "Stereo polyphonic");
     configOutput(LEFT_OUTPUT, "Left polyphonic");
     configOutput(RIGHT_OUTPUT, "Right polyphonic");
   }
