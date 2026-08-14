@@ -1184,21 +1184,28 @@ Controls whether the stage length is impacted by the main Gate, and whether the 
 ### *Variable knobs and CV inputs*
 The functions of the remaining knobs and inputs change depending on the chosen stage Action.
 
-### Move/Rise/Fall top controls: Time knob, CV input and attenuverter
+**<u>Move, Rise, and Fall action controls<u/>**  
+![ENVELOPE FACTORY Move controls image](doc/EnvelopeFactory_Move.png)&nbsp;&nbsp;&nbsp;![ENVELOPE FACTORY Rise controls image](doc/EnvelopeFactory_Rise.png)&nbsp;&nbsp;&nbsp;![ENVELOPE FACTORY Fall controls image](doc/EnvelopeFactory_Fall.png)  
+Rise and Fall are speciall cases of Move, so all three use the same controls.
+
+### Time knob, CV input and attenuverter
 Specifies the time it takes to complete the Move action. Each positive volt of attenuverted CV doubles the time, and each negative volt halves the time.
 
 Note that the time is for a normal full Move stage. Retriggered envelopes starting with Move can result in a shortened Move, and ungated Move after a Gate release can result in shortened or extended Moves. In such circumstances, the time will be lengthened or shortened proportionally depending on the actual Level at the time the Move starts.
 
 If the starting voltage is already beyond the target voltage, then the envelope instantly jumps to the target voltage and advances to the next stage.
 
-### Move/Rise/Fall bottom controls: Shape knob, CV input and attenuverter
+### Shape knob, CV input and attenuverter
 The knob specifies the shape of the stage, with the noon value of 0 representing linear. Counter-clockwise rotation specifies concave up curvature, with -1 being the most curvature. Clockwise rotation specifies concave down curvature, with 1 being the most curvature.
 
 The shape CV is scaled at 0.2 per Volt such that a 10V peak to peak input can cover the entire shape range from -1 to 1.
 
 Unlike some other envelope generators, changing the shape of a stage does not alter the length of the stage.
 
-### Hold top controls: Level knob, CV input and attenuverter
+**<u>Hold action controls<u/>**  
+![ENVELOPE FACTORY Hold controls image](doc/EnvelopeFactory_Hold.png)
+
+### Level knob, CV input and attenuverter
 Specifies the Level of the Hold action, with 0% representing 0V, and 100% representing 10V.
 
 The attenuverted CV is summed directly with the knob value, and the result is clamped to a value between 0 and 10 volts inclusive.
@@ -1207,7 +1214,7 @@ Typically a Hold stage is preceded by a Move stage, in which case the envelope w
 
 If the first envelope stage is a Hold at Level 0, and the envelope is retriggered, and Retrig From 0 is off, then Hold preserves the voltage at the time of retrigger instead of jumping to 0.
 
-### Hold bottom controls: Time knob, CV input and attenuverter
+### Time knob, CV input and attenuverter
 Specifies how long the Hold level is held constant before progressing to the next stage.
 
 The knob has an exponential scale, which normally would not allow for a length of 0. However, the minimum (fully counter-clockwise) value is interpreted as 0.
@@ -1216,7 +1223,10 @@ Each positive volt of attenuverted CV doubles the time, and each negative volt h
 
 Note that a length of 0 is not truly zero - instead the stage will last exactly one sample.
 
-### Sustain top controls: Level knob, CV input and attenuverter
+**<u>Sustain action controls<u/>**  
+![ENVELOPE FACTORY Sustain controls image](doc/EnvelopeFactory_Sust.png)
+
+### Level knob, CV input and attenuverter
 Specifies the Level of the Sustain action, with 0% representing 0V, and 100% representing 10V.
 
 The attenuverted CV is summed directly with the knob value, and the result is clamped to a value between 0 and 10 volts inclusive.
@@ -1225,7 +1235,7 @@ Typically a Sustain stage is preceded by a Move stage, in which case the envelop
 
 If the first envelope stage is a Sustain at Level 0, and the envelope is retriggered, and Retrig From 0 is off, then Sustain preserves the voltage at the time of retrigger instead of jumping to 0.
 
-### Sustain bottom controls: Drift knob, CV and attenuverter
+### Drift knob, CV and attenuverter
 Specifies the rate at which the Sustain output will drift toward the target voltage of the next ungated stage. The knob ranges from 0 to 1000 %/sec. The drift is always linear. If the target voltage is reached, then it will hold the target value throughout the rest of the Sustain stage.
 
 The attenuverted CV is scaled at 10% per volt and summed with the knob value to establish the effective drift value. If the effective drift is 0 then the Sustain will hold the sustain level indefinitely.
