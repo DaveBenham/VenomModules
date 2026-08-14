@@ -1185,7 +1185,7 @@ Controls whether the stage length is impacted by the main Gate, and whether the 
 The functions of the remaining knobs and inputs change depending on the chosen stage Action.
 
 **<u>Move, Rise, and Fall action controls<u/>**  
-![ENVELOPE FACTORY Move controls image](doc/EnvelopeFactory_Move.png)&nbsp;&nbsp;&nbsp;![ENVELOPE FACTORY Rise controls image](doc/EnvelopeFactory_Rise.png)&nbsp;&nbsp;&nbsp;![ENVELOPE FACTORY Fall controls image](doc/EnvelopeFactory_Fall.png)  
+<img src="doc/EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="doc/EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="doc/EnvelopeFactory_Move.png" width="75"/>  
 Rise and Fall are speciall cases of Move, so all three use the same controls.
 
 ### Time knob, CV input and attenuverter
@@ -1203,7 +1203,7 @@ The shape CV is scaled at 0.2 per Volt such that a 10V peak to peak input can co
 Unlike some other envelope generators, changing the shape of a stage does not alter the length of the stage.
 
 **<u>Hold action controls<u/>**  
-![ENVELOPE FACTORY Hold controls image](doc/EnvelopeFactory_Hold.png)
+<img src="doc/EnvelopeFactory_Hold.png" width="75"/>
 
 ### Level knob, CV input and attenuverter
 Specifies the Level of the Hold action, with 0% representing 0V, and 100% representing 10V.
@@ -1224,7 +1224,7 @@ Each positive volt of attenuverted CV doubles the time, and each negative volt h
 Note that a length of 0 is not truly zero - instead the stage will last exactly one sample.
 
 **<u>Sustain action controls<u/>**  
-![ENVELOPE FACTORY Sustain controls image](doc/EnvelopeFactory_Sust.png)
+<img src="doc/EnvelopeFactory_Sust.png" width="75"/>)
 
 ### Level knob, CV input and attenuverter
 Specifies the Level of the Sustain action, with 0% representing 0V, and 100% representing 10V.
