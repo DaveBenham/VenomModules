@@ -1020,20 +1020,28 @@ A novel Attack/Decay envelope generator that functions as an unusual VCA and wav
 
 ## ENVELOPE FACTORY
 ![ENVELOPE FACTORY module image](doc/EnvelopeFactory.png)  
-A highly configurable and extensible polyphonic envelope generator.
+A highly configurable multi-stage polyphonic envelope generator supporting anywhere from 1 to 20 stages.
 
 By default the Envelope Factory has four stages, but a module context menu "Stage count" option lets you select any count from 1 to 20. The module automatically expands or contracts to match the selected stage count. Modules to the right are automatically pushed right as needed when expanding. Cables attached to removed stages are automatically deleted.
 
-Each stage can be configured independently to perform one of three actions:
-- Rise or fall from a start voltage to a target voltage over a fixed time interval
-- Hold a constant voltage for a time interval
-- Sustain a constant voltage for as long as the triggering gate remains high. Optionally a Sustain stage can drift toward the target of the next stage.
+Each stage can be configured independently to perform one of five actions:
+- **Move** rises or falls from the current start voltage to a target voltage over a selected time interval.
+- **Hold** holds a constant voltage for a selected time interval.
+- **Sust** sustains a constant voltage for as long as the triggering gate remains high. Optionally a Sustain stage can drift toward the target of the next stage.
+- **Rise** is the same as Move except the target is always 100% (normally 10V).
+- **Fall** is the same as Move except the target is always 0% (0V).
 
 With these basic building blocks, a tremendous variety of envelope types may be constructed.
 
-Envelopes start and end at 0V, with a range between 0 and 10V inclusive. If an envelope ends at a non-zero voltage, then the envelope output instantly drops to 0 when the envelope completes.
+Envelopes start and end at 0%, with a typical range between 0 and 100%. If an envelope ends at a non-zero percentage, then the envelope output instantly drops to 0 when the envelope completes.
 
-Without any CV modulation, each envelope stage can be as short as 1 msec, or as long as 2.78 hours. With CV modulation the stage lengths can be shortened or lengthened even more.
+An amplitude control determines the voltage range between 0 and 100%, typically 10V. An offset control can shift the envelope higher or lower, typically to make the envelope bipolar.
+
+Without any CV modulation, stages can be as short as 1 msec, or as long as 2.78 hours. With CV modulation the stage lengths can be shortened or lengthened even more. Hold stages can actually be set to be nearly instantaneous (actually 1 sample), serving only to specify the target voltage of the previous Move stage.
+
+### Optional VCA
+
+
 
 ### Polyphony
 All input and output ports are polyphonic. The total number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels substitute 0V for any missing channels.
@@ -1045,7 +1053,7 @@ There are two possible configurations for a looping envelope
 - Endless loop: Patch the Idle output to the Gate input.
 - Gated loop: Patch the Idle output to the Retrigger input. The envelope will loop as long as the Gate input is held high. This will only work as an LFO if the envelope does not have a Sustain stage.
 
-By patching the same control voltage to all stage time inputs and setting the attenuverters to -100%, you get volt per octave control over the LFO frequency.
+The V/Oct input applies to all timed stages equally, giving you V/Oct control over the LFO rate.
 
 By using very short stage lengths, the looping envelope can be run at audio rates. However, the accuracy of stage timing is limited by the VCV sample rate, so the oscillator will not quite respond 1 V/Oct. Each stage timing can be off by as much as 1 sample, and this small error can become very significant at audio rates, especially as the pitch rises.
 
@@ -1060,6 +1068,17 @@ The factory default for a newly placed Envelope Factory has four stages that are
 If the Sustain Drift is kept at 0, then the default configuration behaves like a typical Attack Decay Sustain Release (ADSR) envelope. The first Move stage is the Attack, the second Move stage the Decay, the third Sustain stage as itself, and the fourth Move stage is the final Release.
 
 If the Drift is non-zero then the default configuration acts like an Attack Decay Break Decay2 Release (ADBDR) envelope. The Sustain stage defines both the Break point, as well as the Sustain's Decay2 rate. This is more like a physical piano where the note slowly decays while the sustain pedal is held down, and quickly decays once the sustain pedal is released.
+
+### Factory Presets
+There are a number of factory presets that implement some common envelope types. There are two versions of most of the presets: Editable presets provide the stated functionality, but can be easily modified into something else entirely. Locked presets lock various parameter values so that the envelope cannot be transformed into a different type without first unlocking the parameters. The locked versions also rename all the stage knobs and ports to make it obvious what each stage does. Locked presets are a great way to gain familiarity with how the stage configuration works.
+
+- Attack Decay Break Decay2 Release
+- Attack Decay Sustain Release
+- Attack Decay
+- Attack Hold Decay Sustain Release
+- Attack Sustain Release
+- Decay
+- Delay Attack Decay Sustain Release
 
 ### *Global controls*
 
@@ -1118,7 +1137,11 @@ The CV behavior depends on the setting of the Retrig Mode button.
 When configuring an envelope with retrig, it can be useful to set the manual Gate button to Toggle mode so you can set the gate high, giving you a chance to press the Retrig button.
 
 ### STAGE TRIGS (Stage triggers) output
-This output can produce a 1 msec trigger at the start of each stage. The small button above and to the left of each stage Gate output controls whether the stage generates a trigger or not. This output is especially useful if you want to use Envelope Factory as a timed sequencer. Note that consecutive triggers can merge into a single extended trigger when a stage is shorter than 1 msec.
+This output can produce a 1 msec trigger at the start of each stage and/or at the envelope EOC (End Of Cycle). The small button above and to the left of each stage Gate output controls whether the stage generates a trigger or not. Similarly the global Idle output has a small button to determine whether the EOC trigger is generated. The stage triggers are especially useful if you want to use Envelope Factory as a timed sequencer.
+
+By default the EOC trigger is enabled, and the stages triggers are disabled, making the Stage Trigs output a convenient EOC trigger. Note that EOC only triggers when an envelope proceeds to completion. Aborted envelopes do not generate an EOC trigger.
+
+Note that consecutive triggers can merge into a single extended trigger when a stage is shorter than 1 msec.
 
 ### IDLE (Idle gate) output and LED light
 The Idle output gate is always high at 10V when the generator is idle, and low at 0V when an envelope is in progress. This output can be patched to the Gate (or Retrig input with Gate toggled high) to create a looping envelope.
@@ -1127,11 +1150,17 @@ The LED light above the port glows yellow when the Idle gate is high. When worki
 
 ### ENV (Envelope) output
 
-The final envelope with a resting voltage of 0V that typically ascends to 10V before returning to 0V.
+The final envelope, typically with a resting voltage of 0V that typically ascends to 10V before returning to 0V.
+
+The standard mode formula for the envelope is ***(Envelope% x AmplitudeV) + OffsetV***
+
+The VCA mode formula is ***Envelope% x 10V x Level% x Velocity%<sub>ResponseAdjusted</sub>***
 
 ### INV (Inverse envelope) output
 
-An inverted form of the final envelope with a resting voltage of 10V that typically descends to 0V before returning to 10V. It is defined as 10V - ENV.
+An inverted form of the final envelope with a typical resting voltage of 10V that typically descends to 0V before returning to 10V. 
+
+The standard mode formula for the inverse envelope is ***((100% - Envelope%) x AmplitudeV) + OffsetV***
 
 ### *Stage controls*
 Each envelope stage has identical controls, inputs, and outputs.
