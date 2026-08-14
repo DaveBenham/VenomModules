@@ -43,9 +43,9 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|
 |![Reformation module image](doc/Reformation.PNG)|![Rhthm Explorer module image](doc/RhythmExplorer.PNG)|![Rhythm Explorer CV Expander module image](doc/REXCV.png)|![SHAPED VCA module image](doc/ShapedVCA.png)|
 
-|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4x2](#split-4x2)|[SPREAD<br />MERGE](#spread-merge)|[SPREAD<br />MERGE<br />EXPANDER](#spread-merge-expander)|[THRU](#thru)|[VCA<br />MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|
-|----|----|----|----|----|----|----|----|
-|![SLEW module image](doc/Slew.png)|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![Split 4x2 module image](doc/Split4x2.png)|![Spread Merge module image](doc/SpreadMerge.png)|![Spread Merge Expander module image](doc/SpreadMergeExpander.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|
+|[SLEW](#slew)|[SPHERE<br />TO XYZ](#sphere-to-xyz)|[SPLIT<br />4x2](#split-4x2)|[SPREAD<br />MERGE](#spread-merge)|[SPREAD<br />MERGE<br />EXPANDER](#spread-merge-expander)|[STEREO<br />MERGE<br />SPLIT](#stereo-merge-split)|[THRU](#thru)|[VCA<br />MIX 4](#vca-mix-4)|[VCA MIX 4 STEREO](#vca-mix-4-stereo)|
+|----|----|----|----|----|----|----|----|----|
+|![SLEW module image](doc/Slew.png)|![Sphere To XYZ module image](doc/SphereToXYZ.png)|![Split 4x2 module image](doc/Split4x2.png)|![Spread Merge module image](doc/SpreadMerge.png)|![Spread Merge Expander module image](doc/SpreadMergeExpander.png)|![Stere Merge Split module image](doc/StereoMergeSplit.png)|![THRU module image](doc/Thru.png)|![VCA MIX 4 module image](doc/VCAMix4.png)|![VCA Mix 4 Stereo module image](doc/VCAMix4Stereo.png)|
 
 |[VCO LAB](#vco-lab)|[VCO UNIT](#vco-unit)|[VENOM<br />BLANK](#venom-blank)|[WAVE<br />FOLDER](#wave-folder)|[WAVE<br />MANGLER](#wave-mangler)|
 |----|----|----|----|----|
@@ -4093,6 +4093,11 @@ All outputs are monophonic 0V if Split 4x2 is bypassed.
 
 [Return to Table Of Contents](#venom)
 
+## STERE MERGE SPLIT
+![Stere Merge Split module image](doc/StereoMergeSplit.png)  
+Compact and versatile polyphonic merge and split utility for stereo signals
+
+[Return to Table Of Contents](#venom)
 
 ## THRU
 ![THRU module image](doc/Thru.png)  
