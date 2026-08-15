@@ -1034,7 +1034,7 @@ Each stage can be configured independently to perform one of five actions:
 
 With these basic building blocks, a tremendous variety of envelope types may be constructed.
 
-Envelopes start and end at 0%, with a typical range between 0 and 100%. If an envelope ends at a non-zero percentage, then the envelope output instantly drops to 0 when the envelope completes.
+Envelopes start and end at 0%, with a typical range between 0 and 100%. If an envelope ends at a non-zero percentage, then the envelope output drops to 0 when the envelope becomes idle. The drop is instant if the Retrig From 0 option is enabled. Otherwise the drop is delayed by 2 samples so that looping envelopes don't have an unwanted 0 negative spike.
 
 In addition to the standard envelope, Envelope Factory also produces an inverted form that typically starts at 100%, drops to 0%, then returns to 100%.
 
