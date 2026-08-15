@@ -1088,7 +1088,7 @@ All input and output ports are polyphonic. The total number of output channels i
 
 ### *Global controls*
 
-**<u>Standard Mode</u>**
+**<u>Standard Mode</u>**  
 <img src="doc/EnvelopeFactory_Std.png" width="75"/>
 
 ### V/OCT (Volt per octave) input
@@ -1171,7 +1171,7 @@ An inverted form of the final envelope with a typical resting voltage of 10V tha
 
 The formula for the inverse envelope is ***((100% - Envelope%) x AmplitudeV) + OffsetV***
 
-**<u>VCA Modes</u>**
+**<u>VCA Modes</u>**  
 <img src="doc/EnvelopeFactory_VCA.png" width="75"/>
 
 The module context menu has an option to enable VCA mode. The VCA mode can be standard where envelopes are triggered normally, or you can choose Synced mode where the envelope triggers are synced with the incoming audio. In sync mode the envelope trigger is delayed until the VCA input crosses zero. This is useful for preventing clicks that could otherwise appear when using extremely fast attacks.
@@ -1312,7 +1312,7 @@ All active envelopes will instantly be terminated and the envelope generator wil
 
 ### Bypass
 
-All outputs are monophonic 0V if Envelope Factory or any of its expanders are bypassed.
+All outputs are monophonic 0V while Envelope Factory is bypassed.
 
 [Return to Table Of Contents](#venom)
 
