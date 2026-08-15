@@ -1022,6 +1022,7 @@ A novel Attack/Decay envelope generator that functions as an unusual VCA and wav
 ![ENVELOPE FACTORY module image](doc/EnvelopeFactory.png)  
 A highly configurable multi-stage polyphonic envelope generator supporting anywhere from 1 to 20 stages.
 
+### *Basic Operation*
 By default the Envelope Factory has four stages, but a module context menu "Stage count" option lets you select any count from 1 to 20. The module automatically expands or contracts to match the selected stage count. Modules to the right are automatically pushed right as needed when expanding. Cables attached to removed stages are automatically deleted.
 
 Each stage can be configured independently to perform one of five actions:
@@ -1035,25 +1036,26 @@ With these basic building blocks, a tremendous variety of envelope types may be 
 
 Envelopes start and end at 0%, with a typical range between 0 and 100%. If an envelope ends at a non-zero percentage, then the envelope output instantly drops to 0 when the envelope completes.
 
+In addition to the standard envelope, Envelope Factory also produces an inverted form that typically starts at 100%, drops to 0%, then returns to 0%.
+
 An amplitude control determines the voltage range between 0 and 100%, typically 10V. An offset control can shift the envelope higher or lower, typically to make the envelope bipolar.
 
 Without any CV modulation, stages can be as short as 1 msec, or as long as 2.78 hours. With CV modulation the stage lengths can be shortened or lengthened even more. Hold stages can actually be set to be nearly instantaneous (actually 1 sample), serving only to specify the target voltage of the previous Move stage.
 
-### Optional VCA
+Each stage has its own gate output that is high for as long as the stage is active. In addition, each stage can be selected to generate a trigger on a communal Stage Triggers output. There is also an Idle gate that is high whenever there is no active envelope. Additionally an end of cycle trigger can be generated at the Stage Triggers output.
 
+#### Optional VCA
 
+The Amplitude and Offset controls/inputs and Inverted output can be replaced by a VCA level control, audio input, Velocity input with velocity response control, and VCA output. When configured as a VCA, there is also an option to sync the envelope with the VCA input. In this case the triggers are delayed until the VCA input crosses 0. This is useful for preventing unwanted clicks when the envelope attack is extremely short.
 
-### Polyphony
-All input and output ports are polyphonic. The total number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels substitute 0V for any missing channels.
-
-### Looping envelopes
+#### Looping envelopes
 Envelope Factory can function as an LFO by using the Idle gate output to trigger the envelope. When the envelope completes the Idle gate will go high which will retrigger the envelope.
 
 There are two possible configurations for a looping envelope
 - Endless loop: Patch the Idle output to the Gate input.
 - Gated loop: Patch the Idle output to the Retrigger input. The envelope will loop as long as the Gate input is held high. This will only work as an LFO if the envelope does not have a Sustain stage.
 
-The V/Oct input applies to all timed stages equally, giving you V/Oct control over the LFO rate.
+There is a V/Oct input that applies to all timed stages equally, giving you V/Oct control over the LFO rate.
 
 By using very short stage lengths, the looping envelope can be run at audio rates. However, the accuracy of stage timing is limited by the VCV sample rate, so the oscillator will not quite respond 1 V/Oct. Each stage timing can be off by as much as 1 sample, and this small error can become very significant at audio rates, especially as the pitch rises.
 
@@ -1061,7 +1063,7 @@ In addition, all CV inputs can be driven at audio rates.
 
 Envelope Factory does not have any provision for oversampling, so audio rate outputs will be prone to digital aliasing.
 
-### Default configuration
+#### Default configuration
 
 The factory default for a newly placed Envelope Factory has four stages that are configured to function as either an ADSR or ADBDR envelope.
 
@@ -1069,7 +1071,7 @@ If the Sustain Drift is kept at 0, then the default configuration behaves like a
 
 If the Drift is non-zero then the default configuration acts like an Attack Decay Break Decay2 Release (ADBDR) envelope. The Sustain stage defines both the Break point, as well as the Sustain's Decay2 rate. This is more like a physical piano where the note slowly decays while the sustain pedal is held down, and quickly decays once the sustain pedal is released.
 
-### Factory Presets
+#### Factory Presets
 There are a number of factory presets that implement some common envelope types. There are two versions of most of the presets: Editable presets provide the stated functionality, but can be easily modified into something else entirely. Locked presets lock various parameter values so that the envelope cannot be transformed into a different type without first unlocking the parameters. The locked versions also rename all the stage knobs and ports to make it obvious what each stage does. Locked presets are a great way to gain familiarity with how the stage configuration works.
 
 - Attack Decay Break Decay2 Release
@@ -1079,8 +1081,15 @@ There are a number of factory presets that implement some common envelope types.
 - Attack Sustain Release
 - Decay
 - Delay Attack Decay Sustain Release
+- Timed step sequencer - 8 stages by default (Editable version only)
+
+#### Polyphony
+All input and output ports are polyphonic. The total number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels substitute 0V for any missing channels.
 
 ### *Global controls*
+
+**<u>Standard Mode</u>**
+<img src="doc/EnvelopeFactory_Std.png" width="75"/>
 
 ### V/OCT (Volt per octave) input
 CV at this input modulates all timed stages identically. Each positive volt doubles the rate (halves the time). Each negative volt halves the rate (doubles the time). This input is particularly useful when the envelope is configured to loop, thus creating an LFO with typical V/Oct control over the rate.
@@ -1115,7 +1124,7 @@ Controls whether a retriggered envelope starts from 0
 - **On** ***(Yellow)***: Retriggered envelopes always start from 0
 
 ### Retrig Mode small button
-Controls how Retrigger CV input is interpretted
+Controls how Retrigger CV input is interpreted
 - **Schmitt trigger** ***(Off, default)***: Retriggers on the leading edge of a high gate. The input goes high when rising above 2V, and low when falling below 0.2V.
 - **CV change start** ***(Yellow)***: Retriggers the instant a change is detected
 - **CV change end** ***(Blue)***: Retriggers when the input stops changing
@@ -1143,36 +1152,64 @@ By default the EOC trigger is enabled, and the stages triggers are disabled, mak
 
 Note that consecutive triggers can merge into a single extended trigger when a stage is shorter than 1 msec.
 
-### IDLE (Idle gate) output and LED light
+### IDLE (Idle gate), LED light, and EOC switch
 The Idle output gate is always high at 10V when the generator is idle, and low at 0V when an envelope is in progress. This output can be patched to the Gate (or Retrig input with Gate toggled high) to create a looping envelope.
 
 The LED light above the port glows yellow when the Idle gate is high. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are idle.
+
+Above and to the left of the Idle output is an EOC trigger switch. When enabled a 1 msec trigger will be generated at the Stage Trigs output whenever an envelope proceeds to completion. Aborted envelopes never generate an EOC trigger.
 
 ### ENV (Envelope) output
 
 The final envelope, typically with a resting voltage of 0V that typically ascends to 10V before returning to 0V.
 
-The standard mode formula for the envelope is ***(Envelope% x AmplitudeV) + OffsetV***
-
-The VCA mode formula is ***Envelope% x 10V x Level% x Velocity%<sub>ResponseAdjusted</sub>***
+The formula for the envelope in standard mode is ***(Envelope% x AmplitudeV) + OffsetV***
 
 ### INV (Inverse envelope) output
 
 An inverted form of the final envelope with a typical resting voltage of 10V that typically descends to 0V before returning to 10V. 
 
-The standard mode formula for the inverse envelope is ***((100% - Envelope%) x AmplitudeV) + OffsetV***
+The formula for the inverse envelope is ***((100% - Envelope%) x AmplitudeV) + OffsetV***
+
+**<u>VCA Modes</u>**
+<img src="doc/EnvelopeFactory_VCA.png" width="75"/>
+
+The module context menu has an option to enable VCA mode. The VCA mode can be standard where envelopes are triggered normally, or you can choose Synced mode where the envelope triggers are synced with the incoming audio. In sync mode the envelope trigger is delayed until the VCA input crosses zero. This is useful for preventing clicks that could otherwise appear when using extremely fast attacks.
+
+When using a VCA mode, the Amplitude and Offset controls and inputs, as well as the Inverse output are replaced by the following:
+
+### VCA level knob and audio input
+The knob specifies the attenuation level of the VCA with 100% being full volume.  
+The input is the audio to be attenuated by the envelope.
+
+### VEL (Velocity) input and response control knob
+The unipolar Velocity input is a second opportunity for attenuation that is multiplicative with the VCA Level. An input of 0V represents no output, and 10V representing 100%. The knob specifies the response curve for the velocity. The default noon value is a linear response. Counter-clockwise rotation creates a concave up response, similar to exponential. Clockwise rotation creates a concave down response, similar to logarithmic.
+
+The Velocity level is sampled the instant the envelope is triggered and held constant throughout the duration of the envelope.
+
+### ENV (Envelope) output
+The envelope is still output at the same port as standard mode. However, the formula for the envelope is changed.
+
+***Final Envelope = Envelope% x Level% x Velocity%<sub>ResponseAdjusted</sub> x 10V***
+
+### VCA output
+This is the audio input after it has been attenuated by the envelope and VCA.
 
 ### *Stage controls*
-Each envelope stage has identical controls, inputs, and outputs.
+The module context menu has a Stages option where you specify the number of stages you want for your envelope.
+
+The two square buttons at the top and the Gate output at the bottom have identical functionality for each stage.
 
 ### ACTION square button
 Controls what action the stage performs. The configuration and labeling of the other stage controls are automatically adjusted whenever the Action is changed.
 
-- **Move** - The envelope rises or falls from the starting level to the target level over a fixed period of time. The starting level is the current level at the start of the stage. The target level is specified by the following Hold or Sustain stage Level. If not followed by a Hold or Sustain, then the target alternates between 100% and 0%. The first Move not followed by a Hold/Sustain targets 100%, the next one 0%, then 100%, then 0%, etc. The LEDs above and below the Action button indicate which target is active for these Move stages. An LED glowing yellow above the button indicates a 100% target, and an LED glowing yellow below indicates 0%.
+- **Move** - The envelope rises or falls from the starting level to the target level over a fixed period of time. The starting level is the current level at the start of the stage. The target level is specified by the following Hold or Sustain stage Level. If not followed by a Hold or Sustain, then the target alternates between 100% and 0%, as indicated by the yellow LEDS above and below the Action button. An LED glowing yellow above the button indicates a 100% target, and an LED glowing yellow below indicates 0%.
 - **Hold** - The envelope holds the specified level constant for a fixed amount of time.
-- **Sustain** - The envelope holds the specified level constant for as long as the triggering Gate remains high.
+- **Sustain** - The envelope holds the specified level constant for as long as the triggering Gate remains high. If a non-zero Drift is specified then the sustain will actually drift toward the target of the next ungated stage rather than maintaining a constant level.
 - **Rise** - Same as Move, except the envelope always rises to a target of 100%, and the upper LED will glow yellow.
 - **Fall** - Same as Move, except the envelope always falls to a target of 0%, and the lower LED will glow yellow.
+
+All forms of Move normally start at the current level when the stage is initiated and then progress to the target value. However, if the first stage action is Fall then the envelope starts at 100% and falls to 0. This special case enables definition of a simple Decay envelope using a single stage.
 
 ### MODE square button
 Controls whether the stage length is impacted by the main Gate, and whether the envelope can be retriggered during the stage.
@@ -1181,8 +1218,15 @@ Controls whether the stage length is impacted by the main Gate, and whether the 
 - **RTrg (Retriggerable Full)** - The stage runs to completion and then the envelope advances to the next stage. However, the stage can be terminated prematurely by retriggering a new envelope. A retrigger happens when the Gate goes low before or during the stage, and then goes high during the RTrg stage.
 - **Gate (Gated)** - The stage is gated, meaning the stage runs to completion unless the main Gate goes low. This is the only mode available to the Sustain stage. When the main Gate goes low the envelope immediately proceeds to the next stage that is not Gated, or else terminates if none exists.
 
+### GATE output, trigger button, and LED light
+The stage gate output is high at 10V for as long as the stage is active, otherwise it is 0V.
+
+The small unlabeled button above and to the left of the port controls whether the onset of the stage produces a 1 msec trigger at the Gate Trigs output.
+
+The LED light above and to the right of the port glows yellow when the stage is active. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are in that stage.
+
 ### *Variable knobs and CV inputs*
-The functions of the remaining knobs and inputs change depending on the chosen stage Action.
+The functions of the remaining stage knobs and inputs change depending on the chosen stage Action.
 
 **<u>Move, Rise, and Fall action controls<u/>**  
 <img src="doc/EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="doc/EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="doc/EnvelopeFactory_Move.png" width="75"/>  
@@ -1201,6 +1245,8 @@ The knob specifies the shape of the stage, with the noon value of 0 representing
 The shape CV is scaled at 0.2 per Volt such that a 10V peak to peak input can cover the entire shape range from -1 to 1.
 
 Unlike some other envelope generators, changing the shape of a stage does not alter the length of the stage.
+
+If the envelope is looped and used as an audio source, then modulation of the Move Shapes can add interesting evolving timbres without changing the fundamental pitch.
 
 **<u>Hold action controls<u/>**  
 <img src="doc/EnvelopeFactory_Hold.png" width="75"/>
@@ -1236,16 +1282,24 @@ Typically a Sustain stage is preceded by a Move stage, in which case the envelop
 If the first envelope stage is a Sustain at Level 0, and the envelope is retriggered, and Retrig From 0 is off, then Sustain preserves the voltage at the time of retrigger instead of jumping to 0.
 
 ### Drift knob, CV and attenuverter
-Specifies the rate at which the Sustain output will drift toward the target voltage of the next ungated stage. The knob ranges from 0 to 1000 %/sec. The drift is always linear. If the target voltage is reached, then it will hold the target value throughout the rest of the Sustain stage.
+Typically this knob is kept at zero (fully counter-clockwise) to preserve normal Sustain behavior.
+
+If the value is non-zero then it specifies the rate at which the Sustain output will drift toward the target voltage of the next ungated stage. This feature was added to enable the stage to behave more like a sustain pedal on a piano, slowly fading until it reaches zero, or quickly dying if the pedal is released. However, the feature can be used more creatively, and can even drift to a higher level.
+
+The Drift knob ranges from 0 to 1000 %/sec. The drift is always linear. If the target voltage is reached, then it will hold the target value throughout the rest of the Sustain stage.
 
 The attenuverted CV is scaled at 10% per volt and summed with the knob value to establish the effective drift value. If the effective drift is 0 then the Sustain will hold the sustain level indefinitely.
 
-### GATE output, trigger button, and LED light
-The stage gate output is high at 10V for as long as the stage is active, otherwise it is 0V.
+### Randomization configuration
+The standard module context menu Randomize action only applies to stage controls, excluding stage Action and Mode.
 
-The small unlabeled button above and to the left of the port controls whether the onset of the stage produces a 1 msec trigger at the Gate Trigs output.
-
-The LED light above and to the right of the port glows yellow when the stage is active. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are in that stage.
+There is a Randomize configuration menu option that lets you specify which types of stage controls are randomized
+- Stage times (Move, Rise, Fall, and Hold actions)
+- Stage levels (Hold and Sustain actions)
+- Stage shapes (Move, Rise, and Fall actions)
+- Stage drifts (Sustain actions)
+- Stage attenuverters (All knobs for all actions)
+- Stage triggers (All actions)
 
 ### Automatic termination of envelopes
 All active envelopes will instantly be terminated and the envelope generator will return to an idle state if any of the following occur:
