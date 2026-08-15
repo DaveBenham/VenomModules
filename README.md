@@ -1036,9 +1036,9 @@ With these basic building blocks, a tremendous variety of envelope types may be 
 
 Envelopes start and end at 0%, with a typical range between 0 and 100%. If an envelope ends at a non-zero percentage, then the envelope output instantly drops to 0 when the envelope completes.
 
-In addition to the standard envelope, Envelope Factory also produces an inverted form that typically starts at 100%, drops to 0%, then returns to 0%.
+In addition to the standard envelope, Envelope Factory also produces an inverted form that typically starts at 100%, drops to 0%, then returns to 100%.
 
-An amplitude control determines the voltage range between 0 and 100%, typically 10V. An offset control can shift the envelope higher or lower, typically to make the envelope bipolar.
+An amplitude control determines the voltage range between 0 and 100%, typically 10V. An offset control can shift the envelope higher or lower while preserving the overall shape, typically to make looping envelopes bipolar.
 
 Without any CV modulation, stages can be as short as 1 msec, or as long as 2.78 hours. With CV modulation the stage lengths can be shortened or lengthened even more. Hold stages can actually be set to be nearly instantaneous (actually 1 sample), serving only to specify the target voltage of the previous Move stage.
 
