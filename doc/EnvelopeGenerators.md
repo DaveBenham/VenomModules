@@ -322,7 +322,7 @@ All input and output ports are polyphonic. The total number of output channels i
 ### *Global controls*
 
 **<u>Standard Mode</u>**  
-<img src="doc/EnvelopeFactory_Std.png" width="75"/>
+<"EnvelopeFactory_Std.png" width="75"/>
 
 ### V/OCT (Volt per octave) input
 CV at this input modulates all timed stages identically. Each positive volt doubles the rate (halves the time). Each negative volt halves the rate (doubles the time). This input is particularly useful when the envelope is configured to loop, thus creating an LFO with typical V/Oct control over the rate.
@@ -405,7 +405,7 @@ An inverted form of the final envelope with a typical resting voltage of 10V tha
 The formula for the inverse envelope is ***((100% - Envelope%) x AmplitudeV) + OffsetV***
 
 **<u>VCA Modes</u>**  
-<img src="doc/EnvelopeFactory_VCA.png" width="75"/>
+<"EnvelopeFactory_VCA.png" width="75"/>
 
 The module context menu has an option to enable VCA mode. The VCA mode can be standard where envelopes are triggered normally, or you can choose Synced mode where the envelope triggers are synced with the incoming audio. In sync mode the envelope trigger is delayed until the VCA input crosses zero. This is useful for preventing clicks that could otherwise appear when using extremely fast attacks.
 
@@ -462,7 +462,7 @@ The LED light above and to the right of the port glows yellow when the stage is 
 The functions of the remaining stage knobs and inputs change depending on the chosen stage Action.
 
 **<u>Move, Rise, and Fall action controls<u/>**  
-<img src="doc/EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="doc/EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="doc/EnvelopeFactory_Move.png" width="75"/>  
+<"EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<"EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<"EnvelopeFactory_Move.png" width="75"/>  
 Rise and Fall are speciall cases of Move, so all three use the same controls.
 
 ### Time knob, CV input and attenuverter
@@ -482,7 +482,7 @@ Unlike some other envelope generators, changing the shape of a stage does not al
 If the envelope is looped and used as an audio source, then modulation of the Move Shapes can add interesting evolving timbres without changing the fundamental pitch.
 
 **<u>Hold action controls<u/>**  
-<img src="doc/EnvelopeFactory_Hold.png" width="75"/>
+<"EnvelopeFactory_Hold.png" width="75"/>
 
 ### Level knob, CV input and attenuverter
 Specifies the Level of the Hold action, with 0% representing 0V, and 100% representing 10V.
@@ -503,7 +503,7 @@ Each positive volt of attenuverted CV doubles the time, and each negative volt h
 Note that a length of 0 is not truly zero - instead the stage will last exactly one sample.
 
 **<u>Sustain action controls<u/>**  
-<img src="doc/EnvelopeFactory_Sust.png" width="75"/>)
+<"EnvelopeFactory_Sust.png" width="75"/>)
 
 ### Level knob, CV input and attenuverter
 Specifies the Level of the Sustain action, with 0% representing 0V, and 100% representing 10V.
