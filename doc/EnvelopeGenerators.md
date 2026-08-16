@@ -503,7 +503,7 @@ Each positive volt of attenuverted CV doubles the time, and each negative volt h
 Note that a length of 0 is not truly zero - instead the stage will last exactly one sample.
 
 **<u>Sustain action controls<u/>**  
-<img src="EnvelopeFactory_Sust.png" width="75"/>)
+<img src="EnvelopeFactory_Sust.png" width="75"/>
 
 ### Level knob, CV input and attenuverter
 Specifies the Level of the Sustain action, with 0% representing 0V, and 100% representing 10V.
