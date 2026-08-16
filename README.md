@@ -11,19 +11,18 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
 [Acknowledgments](#acknowledgments)
 
-## Module Categories
-The collection has grown too large to be documented in one file. So the modules have been broken out into a series of categories. Many modules could be placed under multiple categories, but a somewhat arbitrary decision was made to place each module under a single primary category.
+**Module Categories**  
 
-[Controllers](doc/Controllers.md)  
-[Envelope Generators](doc/EnvelopeGenerators.md)
-[Logic, Random, and/or Routing Modules](doc/LogicRandomRouting.md)
-[Mixers](doc/Mixers.md)
-[Modulation](doc/Modulation.md)
-[Oscillators](doc/Oscillators.md)
-[Patch Management](doc/PatchManagement.md)
-[Polyphony Management](doc/PolyphonyManagement.md)
-[Quantizers](doc/Quantizers.md)
-[Sequencers](doc/Sequencers.md)
+- [Controllers](doc/Controllers.md)  
+- [Envelope Generators](doc/EnvelopeGenerators.md)
+- [Logic, Random, and/or Routing Modules](doc/LogicRandomRouting.md)
+- [Mixers](doc/Mixers.md)
+- [Modulation](doc/Modulation.md)
+- [Oscillators](doc/Oscillators.md)
+- [Patch Management](doc/PatchManagement.md)
+- [Polyphony Management](doc/PolyphonyManagement.md)
+- [Quantizers](doc/Quantizers.md)
+- [Sequencers](doc/Sequencers.md)
 
 |[AD/ASR<br />ENVELOPE<br />GENERATOR](doc/EnvelopeGenerators.md#adasr-envelope-generator)|[AUXILLIARY<br />CLONE<br />EXPANDER](doc/PolyphonyManagement.md#auxilliary-clone-expander)|[BAY MODULES](doc/PatchManagement.md#bay-modules)|[BENJOLIN<br />OSCILLATOR](doc/Oscillators.md#benjolin-oscillator)|[BENJOLIN<br />GATES<br />EXPANDER](doc/Oscillators.md#benjolin-gates-expander)|[BENJOLIN<br />VOLTS<br />EXPANDER](doc/Oscillators.md#benjolin-volts-expander)|
 |----|----|----|----|----|----|
