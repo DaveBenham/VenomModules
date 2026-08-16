@@ -1,7 +1,9 @@
 # Controllers
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## KNOB 5
-![Knob 5 module image](doc/Knob5.png)  
+![Knob 5 module image](Knob5.png)  
 Five independently configurable constant voltage knobs.
 
 ### Individual Knob configuration
@@ -54,7 +56,7 @@ All outputs are constant monophonic 0 V when KNOB 5 is bypassed.
 [Return to Table Of Contents](/README.md#venom)
 
 ## MOUSE PAD
-![Mouse Pad module image](doc/MousePad.png)  
+![Mouse Pad module image](MousePad.png)  
 Use your mouse as a controller, without having to point at any specific module. Activate the Mouse Pad output by pressing and holding some combination of Shift, Ctrl, and/or Alt (Option on Mac). A 10V gate is generated while active, and there are two indpendent CV outputs that track the mouse movement. The horizontal axis controls the X output, and vertical the Y.
 
 ### Activate section
@@ -98,7 +100,7 @@ All outputs are monophonic 0V if Mouse Pad is bypassed.
 
 
 ## POLY MUTE
-![Poly Mute module image](doc/PolyMute.png)  
+![Poly Mute module image](PolyMute.png)  
 Mute individual channels of two polyphonic inputs via buttons or CV.
 
 ### Polyphony channel count
@@ -160,7 +162,7 @@ If Poly Mute is bypassed then the poly inputs are passed unchanged to the output
 
 
 ## POLY OFFSET
-![Poly Offset module image](doc/PolyOffset.png)  
+![Poly Offset module image](PolyOffset.png)  
 Provides an offset control for each channel of a polyphonic signal. For each polyphonic output channel, the channel's knob voltage is added to the input voltage to get the final output voltage.
 
 ### Offset knobs
@@ -219,7 +221,7 @@ If Poly Offset is bypassed then the input is passed unchanged to the output.
 
 
 ## PUSH 5
-![Push 5 module image](doc/Push5.png)  
+![Push 5 module image](Push5.png)  
 Five independently configurable push buttons.
 
 ### Individual Button configuration

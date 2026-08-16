@@ -1,7 +1,9 @@
 # Envelope Generators
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## AD/ASR ENVELOPE GENERATOR
-![AD/ASR Envelope Generator module image](doc/AD_ASR.png)  
+![AD/ASR Envelope Generator module image](AD_ASR.png)  
 Hybrid polyphonic AD (Attack|Decay) and ASR (Attack|Sustain|Release) envelope generator with stage gates/triggers, looping capabilities, and precise V/Oct CV control over stage lengths covering an extremely wide range.
 
 ### Summary of Features
@@ -244,13 +246,13 @@ All outputs are constant monophonic 0V when the AD/ASR Envelope Generator is byp
 
 
 ## DYNAMIC AMPLIFYING SHAPING ENVELOPE
-![DASE image](doc/DASE.png)  
+![DASE image](DASE.png)  
 A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate modulation of the envelope shape.
 
 [Return to Table Of Contents](/README.md#venom)
 
 ## ENVELOPE FACTORY
-![ENVELOPE FACTORY module image](doc/EnvelopeFactory.png)  
+![ENVELOPE FACTORY module image](EnvelopeFactory.png)  
 A highly configurable multi-stage polyphonic envelope generator supporting anywhere from 1 to 20 stages.
 
 ### *Basic Operation*

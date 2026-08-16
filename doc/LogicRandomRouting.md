@@ -1,7 +1,9 @@
 # Logic, Random, and/or Routing
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## BERNOULLI SWITCH
-![Bernoulli Switch module image](doc/BernoulliSwitch.png)  
+![Bernoulli Switch module image](BernoulliSwitch.png)  
 The Bernoulli Switch stochastically routes two inputs to two outputs.
 
 ### General Operation
@@ -76,7 +78,7 @@ If Bernoulli Switch is bypassed then the A input is passed unchanged to the A ou
 [Return to Table Of Contents](/README.md#venom)
 
 ## BERNOULLI SWITCH EXPANDER
-![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)  
+![Bernoulli Switch Expander image](BernoulliSwitchExpander.png)  
 Adds CV inputs with attenuverters for all of the Bernoulli Switch parameters, all of which can be driven at audio rates.
 
 The expander must be placed to the right of the Bernoulli Switch. The LED near the top glows yellow when a successful connection is made.
@@ -100,7 +102,7 @@ All expander inputs as well as the probability CV attenuator are ignored when th
 
 
 ## LOGIC
-![Logic module image](doc/Logic.png)  
+![Logic module image](Logic.png)  
 
 The Logic module provides up to 9 independent polyphonic logic gates that can be configured for any of the standard logic operations. All logic gates support one, two, or more inputs. A merge option allows polyphonic input channels to be used as inputs for the same logic gate. Compound logic operations can be created by reusing earlier outputs as inputs, without introducing sample delays. Options for oversampling, output range, and DC offset removal make Logic ideal for audio applications, with undesired aliasing limited by the oversampling.
 
@@ -186,7 +188,7 @@ All outputs are monophonic 0V if LOGIC is bypassed.
 
 
 ## PAN 3D
-![Pan 3D module image](doc/Pan3D.png)  
+![Pan 3D module image](Pan3D.png)  
 
 A single input is panned across eight outputs in three dimensional space. The output ports are placed at the vertices of a virtual cube. X, Y, and Z panner controls indepently pan the input between outputs on opposite faces of the cube. The panners function linearly in amplitude, ranging from 0% to 100%. The three orthogonal panners are multiplicative. When all three controls are at an extreme, 100% of the input is panned to a single output. When all three controls are at 50%, then each output receives 12.5% of the input. A final Level control can further attenuate the final outputs.
 
@@ -226,7 +228,7 @@ All outputs are constant monophonic 0V if Pan 3D is bypassed.
 
 
 ## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
-![Poly Sample & Hold Analog Shift Register module image](doc/PolySHASR.png)  
+![Poly Sample & Hold Analog Shift Register module image](PolySHASR.png)  
 Ten row polyphonic sample and hold combined with a shift register, with oversampling options.
 
 Each row has its own polyphonic Trigger and Data inputs, and a polyphonic Hold output. In total that is 10 independent polyphonic sample and hold circuits. However, the inputs are normaled in a way that enables consecutive rows to function as a shift register.
@@ -315,7 +317,7 @@ If Poly S&H ASR is bypassed then all outputs are monophonic constant 0 V.
 [Return to Table Of Contents](/README.md#venom)
 
 ## WINCOMP
-![WINCOMP module image](doc/WinComp.PNG)  
+![WINCOMP module image](WinComp.PNG)  
 A windowed polyphonic comparator inspired by the VCV Free COMPARE module, including the following enhancements:
 - A tolerance factor to determine equivalency (the window)
 - Options to rectify and/or invert signal outputs
@@ -401,7 +403,7 @@ All outputs are monophonic 0V if the module is bypassed.
 
 
 ## WINCOMP 2 + LOGIC
-![Compare 2 module image](doc/Compare2.png)  
+![Compare 2 module image](Compare2.png)  
 A dual windowed comparator combined with logic operations inspired by the [Joranalogue Compare 2 Eurorack module](https://joranalogue.com/collections/eurorack/products/compare-2). The Venom module implements all the features of the Joranalogue hardware, and then adds:
 - polyphony, all inputs and outputs are fully polyphonic
 - options for gate output voltage levels

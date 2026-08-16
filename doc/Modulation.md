@@ -1,7 +1,9 @@
 # Modulation
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## MULTIMODE FILTER
-![Multimode Filter module image](doc/SVF.png)  
+![Multimode Filter module image](SVF.png)  
 Polyphonic stereo state variable filter for audio and low frequency use. It provides simultaneous outputs for low pass, high pass, band pass, and notch modes. It also provides a morph output that crossfades between different filter modes.
 
 The filter is highly resonant, yet will not self oscillate unless feedback is applied. This makes it an excellent choice for pinging.
@@ -159,17 +161,17 @@ Frequencies above and below the cutoff are attenuated.
 Frequencies at or near the cutoff are attenuated.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 The left and right inputs are replicated to all outputs when Multimode Filter is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## OCTAVER
-![Octaver module image](doc/Octaver.png)  
+![Octaver module image](Octaver.png)  
 An old school octave effect in the style of the Pearl OC-7 and Boss OC-2 analog effect pedals. Feed in a monophonic signal with a regular periodic waveform and it can generate a mix consisting of the original input plus 1 octave up, 1 octave down, and 2 octaves down. Just like the old pedals, an input mix of multiple pitches will lead to problems with tracking. 
 
 ### Polyphony
@@ -236,20 +238,20 @@ Oscilloscope traces showing the waveforms produced for each octave using differe
 For each input and mode combination, the original waveform is shown in red to the left, and to the right are the four resultant waveforms:  
 yellow = +1, red = 0, green = -1, blue = -2
 
-![Octaver example output waveforms image](doc/OctaverWaveforms.png)
+![Octaver example output waveforms image](OctaverWaveforms.png)
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 The signal input is copied to the output when Octaver is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## POLY SCALE
-![Poly Scale module image](doc/PolyScale.png)  
+![Poly Scale module image](PolyScale.png)  
 Provides a level control for each channel of a polyphonic signal. For each polyphonic output channel, the channel's input voltage is scaled (attenuated and/or iniverted and/or amplified) based on the Level knob for that channel, and then sent to the output.
 
 ### Level knobs
@@ -276,17 +278,17 @@ There is a "Polyphony channels" option in the module context menu that lets you 
 The number of polyphonic channels at the output is displayed in the LED panel. The display will be yellow if the number of output channels is greater than or equal to the input channel count. The display will be red if the selected channel count is less than the input channel count.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 If Poly Scale is bypassed then the input is passed unchanged to the output.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## REFORMATION
-![Reformation module image](doc/Reformation.PNG)  
+![Reformation module image](Reformation.PNG)  
 Transform CV or audio by mapping way point voltages to new values.
 
 ### General Operation
@@ -364,24 +366,24 @@ Note that oversampling cannot remove aliasing that may be present in inputs driv
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 ### Polyphony
 
 The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 The Input is passed unchanged to the Output when REFORMATION is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## SHAPED VCA
-![SHAPED VCA module image](doc/ShapedVCA.png)  
+![SHAPED VCA module image](ShapedVCA.png)  
 Shaped VCA is a stereo polyphonic voltage controlled amplifier with a variable response curve, and optional hard/soft clipping, ring modulation, amplitude modulation, and oversampling.
 
 The Shaped VCA can function as a typical voltage controlled amplifier or attenuator, or ring modulator, or amplitude modulator, or constant voltage source, or waveshaper, depending on which inputs are patched and how parameters are configured.
@@ -430,7 +432,7 @@ Oversampling uses significant CPU resources, so it is best to use the minimum ov
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 ### Level knob
 Sets the maximum gain applied to the input signal(s). The range is dependent on the Range paramater. The default value is unity gain, regardless which range is chosen.
@@ -558,15 +560,15 @@ Leave input unpatched
 The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 The Left and Right inputs are passed unchanged to the Left and Right outputs when the module is bypassed. The Right input remains normaled to the Left input while bypassed. However, the left input is not normaled to 10V while bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 ## SLEW
-![SLEW module image](doc/Slew.png)  
+![SLEW module image](Slew.png)  
 Polyphonic slew limiter and slope detector for both CV and audio processing.
 
 When you slew an input signal, you limit the maximum rate at which the signal can change voltage. The slew rate is measured as the number of milliseconds to rise or fall 10 Volts. The Slew module provides independent Rise and Fall times that can be linear or curved. Slew times and shapes can be modulated at audio rates. A V/Oct input is provided to proportionally scale the Rise/Fall times as the input frequency changes.
@@ -595,7 +597,7 @@ This color coded button sets the oversampling rate used to mitigate aliasing. Ov
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 ### FALL and RISE time
 The Fall and Rise times specify how many milliseconds it takes to rise or fall 10 Volts.
@@ -667,16 +669,16 @@ This is the final result of the slew processing.
 All inputs and outputs are fully polyphonic. The number of output polyphonic channels is set by the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the output polyphony count. Polyphonic inputs with fewer channels are assigned constant 0V for the missing channels.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 The IN (raw) input is replicated at the OUT (slew) output when Slew is bypassed. All other outputs are constant monophonic 0V.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## SPHERE TO XYZ
-![Sphere To XYZ module image](doc/SphereToXYZ.png)  
+![Sphere To XYZ module image](SphereToXYZ.png)  
 Converts spherical coordinates r, theta, phi into cartesian coordinates X, Y, Z using standard physics definitions:
 
 > x = r x sin(theta) x cos(phi)  
@@ -701,7 +703,7 @@ Oversampling uses significant CPU resources, so it is best to use the minimum ov
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 
 ### r input
@@ -732,16 +734,16 @@ This represents the y cartesian coordinate, after conversion.
 This represents the z cartesian coordinate, after conversion.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 All outputs are constant monophonic 0V when Sphere To XYZ is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## WAVE FOLDER
-![WAVE FOLDER module image](doc/WaveFolder.png)  
+![WAVE FOLDER module image](WaveFolder.png)  
 A polyphonic configurable wave folder and VCA.
 
 The incoming signal is amplified and then folded at +/-5 volts a fixed number of stages. Increasing amplification increases the number of folds, with a limit set by the Stages count. The signal can be amplified once before any folding, and/or once for each folding stage. The folding can be made asymmetric by applying a bias voltage to the signal prior to any amplification. The final result is soft clipped at +/-6V by tanh saturation.
@@ -770,7 +772,7 @@ Wave folding, ring modulation, and amplitude modulation can introduce many harmo
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 By default, oversampling is applied to all inputs.
 
@@ -833,16 +835,16 @@ The input is always oversampled at the level selected by the OverSample button.
 This is the final result of the wave folding.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 The poly input is passed through to the output if Wave Folder is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## WAVE MANGLER
-![WAVE MANGLER module image](doc/WaveMangler.png)  
+![WAVE MANGLER module image](WaveMangler.png)  
 A polyphonic distortion / waveshaper inspired by the [Doepfer A-136 Eurorack module](https://modulargrid.net/e/doepfer-a-136).
 
 The Venom module implements most of the features of the Doepfer hardware, though not necessarily in exactly the same way, and then adds polyphony and additional modulation options.
@@ -869,7 +871,7 @@ Wave shaping can introduce undesired digital aliasing in the output. Aliasing ca
 - x16 (dark blue)
 - x32 (purple)
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 ### OUT CLIP (output clipping) button
 
@@ -982,16 +984,16 @@ The summarized order of operations below is for those intrepid few that want to 
 11) If oversampling is enabled then the output is passed through a band limiting low pass filter to remove high frequency output that would be aliased after downsampling, and then the output is downsampled
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 If Wave Mangler is bypassed then all channels of the Wave input are passed through to the Wave output unchanged.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## WAVE MULTIPLIER
-![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)  
+![WAVE MULTIPLIER module image](WaveMultiplier.png)  
 A polyphonic waveshaper inspired by the [Doepfer A-137-2 Wave Multiplier II](https://doepfer.de/a1372.htm) with integrated LFO modulation. Its primary use is to fatten the sound of simple wave forms like sine, triangle, and saw. It does not work well with square or pulse waves.
 
 The Wave Multiplier works by mixing 4 copies of the incoming wave form with the original input. Each copy is compared to a different threshold, and if the current value is less than or equal to the threshold, then the value is shifted up as much as 5V. If greater than the threshold then the value is shifted down as much as 5V. If the input is a saw wave and the threshold is constant, then the net effect is a phase shift. If the input is a sine or triangle it is more like a fold operation. Applying modulation to the threshold adds movement to the sound.
@@ -1113,7 +1115,7 @@ If enabled, then DC offset will be removed from the Pulse, Shifted Wave, and Out
 
 Wave shifting and or audio rate level modulation can introduce undesireable inharmonic digital aliasing artifacts. Activating oversampling can mitigate those effects to yield a cleaner, more musical result.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 ### Polyphony
 
@@ -1124,11 +1126,11 @@ Inputs that match the output polyphony behave as expected. Monophonic inputs are
 The LFOs are special. If the Master LFO V/Oct input is monophonic (or unpatched), then the LFO outputs are monophonic, regardless wether there are any polyphonic inputs elsewhere. But if the V/Oct is polyphonic, then the LFO output channel count matches the channel count for the rest of the module, and missing LFO V/Oct channels are treated as constant 0V.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 If Wave Multiplier is bypassed, then all channels of the wave input are passed through unchanged to the shifted wave mix output. All other outputs are monophonic constant 0 volts.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 

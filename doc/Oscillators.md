@@ -1,7 +1,9 @@
 # Venom Oscillators
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## BENJOLIN OSCILLATOR
-![Benjolin Oscillator module image](doc/BenjolinOsc.png)  
+![Benjolin Oscillator module image](BenjolinOsc.png)  
 A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. It produces 7 outputs: two pairs of triangle and pulse waves with exponential FM, two varying width pulse outputs, and a stepped voltage output similar to a random sample & hold. Frequency range is very wide, from slow LFO rates to high audio rates. Connect a resonant filter with excellent ping characteristics, and you have a complete functional Benjolin.
 
 Also check out the premium [Venom Chaos Boxes Venjolin](https://github.com/DaveBenham/VenomPremium/blob/main/VenomChaosBoxes.md#venjolin) for a one module implementation of a complete Benjolin, including the filter.
@@ -63,7 +65,7 @@ Aliasing might not be noticeable with chaotic and/or low frequency outputs. But 
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 Due to float arithmetic limitations, the oscillators would stall at the lowest frequency if the VCV sample rate is set above 48 kHz and high oversample rates are used. To compensate, the maximum allowed oversampling is reduced as the VCV sample rate increases. This enables the oscillators to cover their full range regardless what VCV sample rate is used.
 
@@ -130,20 +132,20 @@ A Benjolin should not self oscillate unless given feedback from the filter band 
 
 The patch below closely emulates the features of the Benjolin version 2 from After Later Audio. A version of the patch wired up to show a fun example sound is available at https://patchstorage.com/venom-2-14-3-all-venom-benjolin/.
 
-![Complete Benjolin patch example image](doc/AllVenomBenjolin.png)
+![Complete Benjolin patch example image](AllVenomBenjolin.png)
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 All outputs are constant monophonic 0V when the Benjolin Oscillator is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## BENJOLIN GATES EXPANDER
-![Benjolin Gates Expander module image](doc/BenjolinGatesExpander.png)  
+![Benjolin Gates Expander module image](BenjolinGatesExpander.png)  
 Adds additional Rungler gate outputs to the Benjolin Oscillator.
 
 Any number of Gates expanders may be used. All expanders must be placed to the right of the Benjolin Oscillator in a contiguous chain. The upper left LED glows yellow when the expander is successfully connected to a base module.
@@ -191,17 +193,17 @@ There are four factory presets that default to mode = Gate and polarity = Unipol
 - XOR Gates - XOR logic is used with bits 1^2, 2^4, 4^7, 1^2^4^7, 2^3, 3^5, 5^8, 2^3^5^8
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 All outputs are constant monophonic 0V when the Benjolin Gates Expander is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## BENJOLIN VOLTS EXPANDER
-![Benjolin Volts Expander module image](doc/BenjolinVoltsExpander.png)  
+![Benjolin Volts Expander module image](BenjolinVoltsExpander.png)  
 Adds an additional Rungler CV output to the Benjolin Oscillator. It works as a configurable digital to analog converter.
 
 Any number of Volts expanders may be used. All expanders must be placed to the right of the Benjolin Oscillator in a contiguous chain. The upper left LED glows yellow when the expander is successfully connected to a base module.
@@ -224,26 +226,26 @@ Offsets the output by any value between -10V and 10V. The Offset is applied afte
 The final computed voltage is ouput here.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 The output is constant monophonic 0V when the Benjolin Volts Expander is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## BOUNDED VCO
-![Bounded VCO image](doc/BoundedVCO.png)  
+![Bounded VCO image](BoundedVCO.png)  
 An implementation of Peter Blasser's Bound/Bounce oscillation that constrains an oscillator with variable slopes between variable upper and lower bounds. This concept was used in his Ciat-Lonbarde Sidrax, Tetrax, and Quadrax organs, as well as the Ieaskul F. Mobenthey Fourses, Denum, and Swoop Eurorack modules.
 
 There are two ways to control the frequency of a Bounds/Bounce oscillation that have an inverse relationship. The frequency can be increased by either increasing the absolute value of the Bounce slopes or decreasing the distance between the upper and lower Bounds. Of course changing the distance between the bounds also changes the oscillation amplitude.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## VCO LAB
-![VCO Lab module image](doc/Oscillator.png)
+![VCO Lab module image](Oscillator.png)
 
 A polyphonic oscillator with a robust array of features for the mad scientist sound designers amongst us, including available oversampling to give clean anti-aliased output regardless which functions are combined.
 
@@ -325,7 +327,7 @@ This color coded button controls how much oversampling is applied to control ali
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 Note that oversampling is CPU intensive, so best to use the lowest amount of oversampling that gives satisfactory results.
 
@@ -494,7 +496,7 @@ Below is a summary of the wave shaping when using the default (yellow) mode for 
 |**Square**|< 50% pulse width|50% pulse width|> 50% pulse width|
 |**Saw**|exponential ramp|linear saw|logarithmic ramp|
 
-![Waveform shape modulation image](doc/OscillatorShapeModulation.png)
+![Waveform shape modulation image](OscillatorShapeModulation.png)
 
 #### Mix Shape Modulation button
 The mix also has a color coded Shape Mode button
@@ -511,7 +513,7 @@ Average shaping is best for maintaining 10V peak to peak output, as well as cons
 
 #### Waveform Phase Modulation
 The image below shows the phase relationship between the four waveforms when no phase modulation is applied.  
-![Waveform phase relationships image](doc/OscillatorWaveformPhase.png)
+![Waveform phase relationships image](OscillatorWaveformPhase.png)
 
 The phase of each waveform can be modulated relative to the other waveforms. This can have a dramatic impact on any resultant mix.
 
@@ -554,15 +556,15 @@ Each waveform has a color coded Lvl Asgn (Level Assign) button that controls how
 Each waveform has its own dedicated output, plus there is a Mix output.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 ## VCO UNIT
-![VCO Unit module image](doc/VCOUnit.png)  
+![VCO Unit module image](VCOUnit.png)  
 A smaller version of VCO Lab with only one waveform output at a time, without any mixing.
 
 A Wave switch is added to select between Sine, Triangle, Square, and Saw.
@@ -571,11 +573,11 @@ The behavior of Shape modulation changes depending on the waveform selected. Whe
 
 Pretty much all other VCO Lab functionality is the same, except there is no mix, level assignment, or mix shaping.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## XM-OP
-![XM-OP module image](doc/XM_OP.png)  
+![XM-OP module image](XM_OP.png)  
 Polyphonic synth voice with selectable waveform, modulation and feedback types (linear through-zero frequency, phase, ring, amplitude), and integer frequency ratios.
 
 XM-OP includes an ADSR (Attack, Decay, Sustain, Release) envelope generator, audio rate VCO, and VCA. The VCO output is always processed by the VCA.
@@ -696,19 +698,19 @@ The knob establishes the base level of the internal VCA output. It ranges from 0
 
 By default the Level VCA responds linearly. An exponential response is available via the context menu "Exponential level response" option.
 
-See [Level and Depth Modulation](/README.md.md#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
+See [Level and Depth Modulation](/README.md#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### DEPTH (XMOD modulation depth) knob and CV input
 The knob establishes the depth of the XMod modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
 
-See [Level and Depth Modulation](/README.md.md#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
+See [Level and Depth Modulation](/README.md#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### FDBK (feedback modulation depth) knob and CV input
 The knob establishes the depth of the feedback modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **FDBK** button at the top.
 
 By default the feedback source is the raw internal waveform, before any Level is applied. The context menu "Post level feedback" option uses the internal waveform after the Level has been applied.
 
-See [Level and Depth Modulation](/README.md.md#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
+See [Level and Depth Modulation](/README.md#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### Level and Depth modulation
 
@@ -738,7 +740,7 @@ Modulation can introduce unwanted inharmonic audio aliasing that can be mitigate
 
 Note that only the XMOD input is upsampled to the oversample rate. The other inputs can be driven at audio rates, but they are not upsampled.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 ### GATE (envelope gate) input
 The internal envelope is triggered on the leading edge of a gate. The envelope proceeds through the attack, decay, and sustain stages for as long as the gate remains high. The gate may also sync the VCO depending on how the SYNC/RTRG input is configured.
@@ -764,10 +766,10 @@ The 0-10V envelope is output here. The mode of the output is controlled by the s
 The output of the VCA is output here. This is the modulated VCO output, after being attenuated by the VCA.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 If XM-OP is bypassed then all outputs are constant monophonic 0V.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)

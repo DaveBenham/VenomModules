@@ -1,7 +1,9 @@
 # Polyphony Utilities
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## AUXILLIARY CLONE EXPANDER
-![Auxilliary Clone Expander module image](doc/AuxClone.png)  
+![Auxilliary Clone Expander module image](AuxClone.png)  
 This expander module adds additional cloned poly input/output pairs to [Clone Merge](x#clone-merge), [Poly Clone](x#poly-clone), or [Poly Unison](x#poly-unison).
 
 The expander must be placed immediately to the right of a Clone Merge, Poly Merge, or Poly Unison. The yellow LED in the upper left indicates whether the expander has successfully connected to a parent module.
@@ -33,7 +35,7 @@ The names of each input/output pair are linked. Changing the name of one will au
 
 
 ## CLONE MERGE
-![Clone Merge module image](doc/CloneMerge.png)  
+![Clone Merge module image](CloneMerge.png)  
 Clone Merge clones up to 8 monophonic inputs and merges the resultant channels into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Clone Merge provides a convenient way to replicate CV inputs to match the recursion count.
 
 Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](x#auxilliary-clone-expander).
@@ -65,7 +67,7 @@ If Clone Merge is bypassed then the output is constant monophonic 0V.
 
 
 ## MERGE 4x2
-![Merge 4x2 module image](doc/Merge4x2.png)  
+![Merge 4x2 module image](Merge4x2.png)  
 Merge 4x2 is a compact and versatile polyphonic merge utility that can combine monophonic and/or polyphonic inputs into a polyphonic output.
 
 There are two independent sections, each capable of merging up to four inputs into one output. If the top output is not patched, then the two sections are merged, thus allowing up to eight inputs to be merged into a single polyphonic output at the bottom output port.
@@ -84,7 +86,7 @@ All outputs are monophonic 0V if Merge 4x2 is bypassed.
 [Return to Table Of Contents](/README.md#venom)
 
 ## MERGE SPLIT
-![Merge Split module image](doc/MergeSplit.png)  
+![Merge Split module image](MergeSplit.png)  
 Merge Split is a compact and versatile polyphonic utility that can merge up to 4 monophonic or polyphonic inputs into one polyphonic output, and also split a single polyphonic input into any combination of monophonic and polyphonic outputs.
 
 The top merge section can merge up to 16 channels from the four inputs. A glowing red LED next to an input port indicates a polyphonic input that has channels that could not be merged.
@@ -108,7 +110,7 @@ All outputs are monophonic 0V if Merge Split is bypassed.
 
 
 ## MULTI MERGE
-![Multi Merge module image](doc/MultiMerge.png)  
+![Multi Merge module image](MultiMerge.png)  
 Merge one or more sets of mono and/or poly inputs into polyphonic outputs.
 
 This merge utility is extremely flexible, with many configurations possible. It can merge a set of monophonic inputs into one polyphonic output. It can also merge a set of polyphonic inputs into one polyphonic ouput. Or it can merge a mixture of mono and poly inputs into one polyphonic output. Finally, there can be multiple sets of merges, each with its own poly output.
@@ -129,7 +131,7 @@ All outputs are monophonic 0V if Multi Merge is bypassed.
 [Return to Table Of Contents](/README.md#venom)
 
 ## MULTI SPLIT
-![Multi Split module image](doc/MultiSplit.png)  
+![Multi Split module image](MultiSplit.png)  
 Split one or more poly inputs into multiple mono or poly outputs.
 
 This split utility is extremely flexible, with many configurations possible. Each polyphonic input can be split into any combination of monophonic and polyphonic outputs. The module has default Automatic behavior for distributing the input channels to the outputs. But the default behavior can be overridden by defining a specific channel count for one or more output ports via output port context menus. The hover tooltip for each output port includes information on the current channel configuration.
@@ -153,7 +155,7 @@ All outputs are monophonic 0V if Multi Split is bypassed.
 
 
 ## POLY CLONE
-![Poly Clone module image](doc/PolyClone.png)  
+![Poly Clone module image](PolyClone.png)  
 Poly Clone replicates each channel from a polyphonic input and merges the result into a single polyphonic output. It is especially useful with the Recurse modules when using polyphonic inputs. Poly Clone provides a convenient way to replicate channels in polyphonnic CV inputs to match the recursion count.
 
 Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](x#auxilliary-clone-expander).
@@ -187,7 +189,7 @@ If Poly Clone is bypassed then the output is constant monophonic 0 volts.
 
 
 ## POLY PRUNE
-![Poly Prune module image](doc/PolyPrune.png)  
+![Poly Prune module image](PolyPrune.png)  
 Remove selected channels and/or sort channels from a polyphonic input. Higher preserved channels are shifted down to fill gaps left by removed channels.
 
 There are two different stages for choosing which channels to preserve that can be used individually or in series.
@@ -304,7 +306,7 @@ If Poly Prune is bypassed then the poly input is passed unchanged to the output.
 
 
 ## POLY UNISON
-![Poly Unison module image](doc/PolyUnison.PNG)  
+![Poly Unison module image](PolyUnison.PNG)  
 Replicate each channel of a polyphonic input with a variable detune spread, and merge the results into a single polyphonic output.
 
 Up to four auxilliary poly inputs may also be cloned via the [Auxilliary Clone Expander](x#auxilliary-clone-expander). Note that auxilliary outputs on the expander are not detuned.
@@ -359,7 +361,7 @@ If Poly Unison is bypassed then the input is passed unchanged to the output.
 
 
 ## RECURSE
-![RECURSE module image](doc/Recurse.PNG)  
+![RECURSE module image](Recurse.PNG)  
 Uses polyphony to recursively process an input via SEND and RETURN up to 16 times. Polyphonic inputs may be used, which will limit the number of recursion passes to less than 16 for each input channel. There are no limits placed on any of the input or output voltages.
 
 ### Recursion Count knob and display
@@ -411,7 +413,7 @@ The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND w
 
 
 ## RECURSE STEREO
-![Recurse Stereo module image](doc/RecurseStereo.PNG)  
+![Recurse Stereo module image](RecurseStereo.PNG)  
 Recurse Stereo is identical to [Recurse](x#recurse) except the Input/Return inputs and Output/Send outputs are doubled to support left and right channels of a stereo pair.
 
 The number of input polyphonic channels is strictly controlled by the Left Input. Any extra channels in the Right Input are ignored.
@@ -428,7 +430,7 @@ Both left and right inputs are passed unchanged to the outputs when RECURSE STER
 
 
 ## SPLIT 4x2
-![Split 4x2 module image](doc/Split4x2.png)  
+![Split 4x2 module image](Split4x2.png)  
 Split 4x2 is a compact and versatile polyphonic split utility that can separate one or two polyphonic inputs into multiple monophonic or polyphonic outputs.
 
 There are two independent sections, each capable of splitting one input into four outputs. If the bottom input is not patched, then the two sections are merged, thus allowing the top input to be split into up to eight outputs.
@@ -448,18 +450,18 @@ All outputs are monophonic 0V if Split 4x2 is bypassed.
 
 
 ## SPREAD MERGE
-![Spread Merge module image](doc/SpreadMerge.png)  
+![Spread Merge module image](SpreadMerge.png)  
 
 [Return to Table Of Contents](/README.md#venom)
 
 
 ## SPREAD MERGE EXPANDER
-![Spread Merge Expander module image](doc/SpreadMergeExpander.png)  
+![Spread Merge Expander module image](SpreadMergeExpander.png)  
 
 [Return to Table Of Contents](/README.md#venom)
 
 ## STEREO MERGE SPLIT
-![Stereo Merge Split module image](doc/StereoMergeSplit.png)  
+![Stereo Merge Split module image](StereoMergeSplit.png)  
 Compact and versatile polyphonic merge and split utility for stereo signals
 
 [Return to Table Of Contents](/README.md#venom)

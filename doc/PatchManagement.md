@@ -1,7 +1,9 @@
 # Patch Management
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## BAY MODULES
-![Bay Input module image](doc/BayInput.png) &nbsp;![Bay Norm module image](doc/BayNorm.png) &nbsp;![Bay Output module image](doc/BayOutput.png)  
+![Bay Input module image](BayInput.png) &nbsp;![Bay Norm module image](BayNorm.png) &nbsp;![Bay Output module image](BayOutput.png)  
 Bay Input, Bay Norm, and Bay Output are polyphonic transmitter and receiver modules with user defined labels for making clean, self documenting patch bays. They are a great companion for the MindMeld PatchMaster user interface modules.
 
 None of the Bay modules are particularly useful on their own - Each Bay Input should be paired with at least one Bay Output and/or Bay Norm. Each input on a Bay Input is transmitted to the corresponding output on the Bay Output or Bay Norm. Each Bay Norm output has a corresponding Normal input that is used when the source Bay Input is not patched.
@@ -17,7 +19,7 @@ Bay Output and Bay Norm each have a context menu option to specify the Bay Input
 The Bay Input source is identified by the numeric VCV module instance ID, shown within parentheses in the context menu. The user defined Bay Input name is displayed before the numeric ID, and makes it easier to keep track of which Input is linked to which Output/Norm. Changing the name of a Bay Input does not break the link.
 
 ### Port Names / Labels
-Each port on a Bay Input/Output/Norm can be given a user defined name via the [standard Venom port context menu](/README.md.md.md#custom-names). The port name is displayed as a label above the port. The label for a Bay Norm output is taken from the output port. The normal input port name only appears in the hover text - it does not appear as a label.
+Each port on a Bay Input/Output/Norm can be given a user defined name via the [standard Venom port context menu](/README.md.md#custom-names). The port name is displayed as a label above the port. The label for a Bay Norm output is taken from the output port. The normal input port name only appears in the hover text - it does not appear as a label.
 
 #### Bay Input default port names
 The factory default input port name is always "Port " followed by the port number.
@@ -83,22 +85,22 @@ All Bay Output ports will be constant monophonic 0 volts if the Bay Output is by
 
 The Bay Norm output will be the normal input if the source Bay Input is bypassed. The Bay Norm output will be monophonic constant 0 volts if the Bay Norm is bypassed.
 
-[Return to Table Of Contents](/README.md.md.md#venom)
+[Return to Table Of Contents](/README.md.md#venom)
 
 
 ## BLOCKER
-![Blocker module image](doc/Blocker.png)  
+![Blocker module image](Blocker.png)  
 Blocks expander chains for modules like Venom Bypass and Stoermelder Strip.
 
 Both Venom Bypass and Stoermelder Strip can operate on contiguous neighbor modules to the left and/or right, up until there is a gap. They locate neighbors via the VCV expander mechanism. Blocker works by hiding itself from the expander mechanism, so Bypass and Strip think there is a gap. Even when Blocker is bypassed, it still blocks expansion.
 
 Blocker uses virtually no CPU, so it also works well as a 1hp blank.
 
-[Return to Table Of Contents](/README.md.md.md#venom)
+[Return to Table Of Contents](/README.md.md#venom)
 
 
 ## BYPASS MODULE
-![Bypass module image](doc/Bypass.png)  
+![Bypass module image](Bypass.png)  
 Bypass (disable) one or more modules at the end of patched cables via CV control or a manual button press.
 
 The Bypass module has input/output pairs that simply pass through all channels appearing at the input. However, the Bypass module also has the ability to virtually transmit a message through each cable to bypass the module (or group of modules) at the end of the cable.
@@ -163,13 +165,13 @@ A neighbor chain always terminates at any one of the following
 - A Venom [Blocker](#blocker). The Blocker is not part of the chain.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md.md#themes), [Custom Names](/README.md.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
-[Return to Table Of Contents](/README.md.md.md#venom)
+[Return to Table Of Contents](/README.md.md#venom)
 
 
 ## NULL CABLE
-![Null Cable module image](doc/NullCable.png)  
+![Null Cable module image](NullCable.png)  
 Nullify a cable by setting it to 0 channels via manual or CV control. A cable with 0 channels functions as if the cable is not even there. This is different than a mute where the output is set to constant 0 volts.
 
 The module has three identical sections that function independently, each with a Gate button and associated monophonic Gate CV input at the top, a polyphonic input in the middle, and polyphonic output at the bottom.
@@ -189,17 +191,17 @@ CV gates are Schmitt triggers that go high at 2V and go low at 0.2V.
 Note that the output will always be a null cable (0 channels) if there is no input.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md.md#themes), [Custom Names](/README.md.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 When Null Cable is bypassed the outputs continue to function as they did before the module was bypassed.
 
-[Return to Table Of Contents](/README.md.md.md#venom)
+[Return to Table Of Contents](/README.md.md#venom)
 
 
 ## THRU
-![THRU module image](doc/Thru.png)  
+![THRU module image](Thru.png)  
 A simple utility module with 5 polyphonic input/output pairs suitable for unity mixing of stacked inputs, and/or introduction of sample delays.
 
 ### Unity Mixing
@@ -209,23 +211,23 @@ Nothing special here - just taking advantage of VCV Rack's built in capability t
 Each input starting with the 2nd is normalled to the output above, with a delay of 1 sample added. So an input at port 1 with an output at port 5 will yield 4 sample delays, plus the delay introduced by the module itself, for a total of 5.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md.md#themes), [Custom Names](/README.md.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 Each input is passed to the output below when the module is bypassed. However, the inputs are ***not*** normalled to the output above when bypassed.
 
-[Return to Table Of Contents](/README.md.md.md#venom)
+[Return to Table Of Contents](/README.md.md#venom)
 
 
 ## VENOM BLANK
-![VENOM BLANK module image](doc/VenomBlank.PNG)  
+![VENOM BLANK module image](VenomBlank.PNG)  
 A 3hp blank with standard Venom themes.
 
-[Return to Table Of Contents](/README.md.md.md#venom)
+[Return to Table Of Contents](/README.md.md#venom)
 
 
 ## WIDGET MENU EXTENDER
-![WIDGET MENU EXTENDER module image](doc/WidgetMenuExtender.png)  
+![WIDGET MENU EXTENDER module image](WidgetMenuExtender.png)  
 Extend context menus to support parameter/port renaming and parameter custom defaults.
 
 Custom names and defaults are stored with the patch and restored upon patch load as long as the Widget Menu Extender remains with the patch.
@@ -267,6 +269,6 @@ When importing a selection set containing Widget Menu Extender, custom names and
 ### Bypass
 When bypassed, Widget Menu Extender behaves the same as if the Enable button is off - the extended context menu options will not be available, but existing custom names and defaults are preserved.
 
-[Return to Table Of Contents](/README.md.md.md#venom)
+[Return to Table Of Contents](/README.md.md#venom)
 
 

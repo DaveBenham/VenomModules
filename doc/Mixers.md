@@ -1,7 +1,9 @@
 # Mixers
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## CROSS FADE 3D
-![Cross Fade 3D module image](doc/CrossFade3D.png)  
+![Cross Fade 3D module image](CrossFade3D.png)  
 Eight inputs in three dimensional space are cross faded to a single output. The inputs are placed at the vertices of a virtual cube. X, Y, and Z controls independently cross fade between inputs on opposite faces of the cube. Each fader functions linearly in amplitude, ranging from 0% to 100%. The orthogonal faders are multiplicative, such that when all three controls are at an extreme, then 100% of the output comes from a single input. When all three controls are at 50% then each input contributes 12.5% to the output. A final Level control can further attenuate the final output.
 
 ### Polyphony
@@ -41,17 +43,17 @@ By default, polyphonic channels are preserved at the output. If the Mono Output 
 The final output level can be attenuated with the Level control. This may be especially useful when working with polyphonic inputs that are summed to a mono output.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 The output is constant monophonic 0V if the module is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## MIX 4
-![Mix 4 module image](doc/Mix4.png)  
+![Mix 4 module image](Mix4.png)  
 A compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
 ### General Operation
@@ -112,20 +114,20 @@ Soft oversampled clipping also provides saturation, but aliasing is greatly redu
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
    
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 The MIX output is monophonic 0V if MIX 4 is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## MIX 4 STEREO
-![Mix 4 Stereo module image](doc/Mix4Stereo.png)  
+![Mix 4 Stereo module image](Mix4Stereo.png)  
 A stereo compact polyphonic mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
 Mix 4 Stereo is identical to [Mix 4](#mix-4) except each of the inputs and outputs is doubled to support left and right channels so as to support stereo signals. A single input level knob controls each stereo input pair, and a single Mix level knob controls the stereo output pair.
@@ -138,11 +140,11 @@ When Mix 4 Stereo is bypassed, both the left and right Mix outputs are monophoni
 
 All other behaviors are the same as for Mix 4.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## MIX EXPANDERS
-![Mix Offset Expander module image](doc/MixOffset.png) &nbsp;![Mix Mute Expander module image](doc/MixMute.png) &nbsp;![Mix Solo Expander module image](doc/MixSolo.png) &nbsp;![Mix Fade Expander module image](doc/MixFade.png) &nbsp;![Mix Fade2 Expander module image](doc/MixFade2.png) &nbsp;![Mix Pan Expander module image](doc/MixPan.png) &nbsp;![Mix Send Expander module image](doc/MixSend.png)  
+![Mix Offset Expander module image](MixOffset.png) &nbsp;![Mix Mute Expander module image](MixMute.png) &nbsp;![Mix Solo Expander module image](MixSolo.png) &nbsp;![Mix Fade Expander module image](MixFade.png) &nbsp;![Mix Fade2 Expander module image](MixFade2.png) &nbsp;![Mix Pan Expander module image](MixPan.png) &nbsp;![Mix Send Expander module image](MixSend.png)  
 A collection of expander modules that extend the functionality of the four Mix modules: [Mix 4](#mix-4), [Mix 4 Stereo](#mix-4-stereo), [VCA Mix 4](#vca-mix-4), and [VCA Mix 4 Stereo](#vca-mix-4-stereo).
 
 Mix expanders must be placed to the right of the main mix module. Multiple expanders can be used for one mix module as long as they form a contiguous chain to the right. Each expander has an LED in the upper left that glows yellow if successfully connected to a mix module.
@@ -297,13 +299,13 @@ The position of the Send module in a chain of Mix expanders is important. Expand
 At most 16 Send modules can be used with a single mix module. The maximum is fewer than 16 if other expander types are used in addition to the Send modules.
 
 The Return inputs have a Chain button that changes the behavior of the expander for use with chained mixers. If enabled, then the Return knob is disabled, and the Left Return and Right Return inputs receive the chained Send from a prior Aux Send expander. For example, suppose you have three VCA Mix 4 Stereo modules chained together named Mix1, Mix2, and Mix3, and each has an Aux Send module, named Send1, Send2, and Send3. Leave the chain option off on Send1, and enable chain on Send2 and Send3. Patch the Send1 Send outputs to Send2 Return (Chain) inputs, and Send2 Send outputs to Send3 Return (Chain) inputs. Finally patch the Send3 Send outputs to the effect module inputs, and the effect outputs to the Send1 Return inputs. The Send1 Return knob controls the return level, and the Send3 Mute button can be used to mute the entire send chain.
-![Chained Send example](doc/ChainedSend.PNG)
+![Chained Send example](ChainedSend.PNG)
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## POLY FADE
-![Poly Fade module image](doc/PolyFade.png)  
+![Poly Fade module image](PolyFade.png)  
 Crossfade between channels of a polyphonic signal.
 
 ### Overview of basic functionality
@@ -482,17 +484,17 @@ By default the number of output channels is minimized to match the selected numb
 A module context menu option is available to disable the output channel minimization. In this case the effective input channels map directly to the output channels. Unused input channels become constant 0V in the output.
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 All outputs are monophonic 0 volts when Poly Fade is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## QUAD VC POLARIZER
-![Quad VC Polarizer module image](doc/QuadVCPolarizer.png)  
+![Quad VC Polarizer module image](QuadVCPolarizer.png)  
 Compact polyphonic bipolar VCA (ring modulator) and mixer inspired by Mutable Instruments Blinds.
 
 ### General operation - Blinds emulation
@@ -530,7 +532,7 @@ Sets the level of oversamping to apply to all inputs and outputs. Oversampling c
 
 There is also a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 ### N (Normal input value) button
 Sets the input voltage if the port is not patched
@@ -557,17 +559,17 @@ Optional clipping applied to the output
 - **Soft +/- 6V** (dark blue) = tanh saturation
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 All outputs are monophonic 0V when Quad VC Polarizer is bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## VCA MIX 4
-![VCA Mix 4 module image](doc/VCAMix4.png)  
+![VCA Mix 4 module image](VCAMix4.png)  
 A compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
 ### General Operation
@@ -663,21 +665,21 @@ Oversampling is used by some Clip options as well as the VCA bandlimitted option
 
 There is a context menu option to select the quality of the filters used for oversampling.
 
-See [Anti-aliasing via oversampling](/README.md.md#anti-aliasing-via-oversampling) for more information.
+See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) for more information.
 
 
 ### Standard Venom Context Menus
-[Venom Themes](/README.md.md#themes), [Custom Names](/README.md.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
 ### Bypass
 
 The numbered channel inputs are passed unchanged to their corresponding outputs when VCA Mix 4 is bypassed. The Mix output is monophonic 0V when bypassed.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 
 ## VCA MIX 4 STEREO
-![VCA Mix 4 module image](doc/VCAMix4Stereo.png)  
+![VCA Mix 4 module image](VCAMix4Stereo.png)  
 A stereo compact polyphonic VCA, mixer, attenuator, inverter, amplifier, and/or offset suitable for both audio and CV. The module includes options for bipolar VCA (ring mod), hard or soft clipping, and DC offset removal. Module functionality can be extended by a set of [Mix Expanders](#mix-expanders).
 
 VCA Mix 4 Stereo is a stereo version of the [VCA MIX 4](#vca-mix-4), sharing the same features, but with the following differences:
@@ -689,6 +691,6 @@ VCA Mix 4 Stereo is a stereo version of the [VCA MIX 4](#vca-mix-4), sharing the
 
 All other behaviors are the same as for Mix 4.
 
-[Return to Table Of Contents](/README.md.md#venom)
+[Return to Table Of Contents](/README.md#venom)
 
 

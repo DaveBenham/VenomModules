@@ -1,7 +1,9 @@
 # Quantizers
 
+[Return to Table Of Contents](/README.md#venom)
+
 ## HARMONIC QUANTIZER
-![Harmonic Quantizer module image](doc/HQ.PNG)  
+![Harmonic Quantizer module image](HQ.PNG)  
 Computes a selected harmonic or subharmonic partial relative to a fundamental root V/Oct, or quantizes an input V/Oct to the nearest partial relative to the root.
 
 This module is fully polyphonic. The number of output channels is the maximum channel count found across all three inputs. Any monophonic input is replicated to match the output channel count. A polyphonic input with fewer channels uses 0V for any missing channels.
@@ -70,7 +72,7 @@ The IN input is passed unchanged to the OUT output when the Harmonic Quantizer i
 
 
 ## NON-OCTAVE REPEATING SCALE INTERVALLIC QUANTIZER
-![Non-Octave Repeating Scale Intervallic Quantizer image](doc/NORS_IQ.png)  
+![Non-Octave Repeating Scale Intervallic Quantizer image](NORS_IQ.png)  
 Quantizer for any scale with up to 13 intervals between notes. The scale is defined by a root note for the scale, followed by a series of intervals. The first interval is added to the root to get the 2nd note in the scale. The second interval is added to the 2nd note to define the 3rd note, etc. The final interval defines the step from the Nth note of the scale to the root of the next pseudo-octave in the series. The total interval from one root to the next need not be an octave.
 
 The module is also convenient for defining extended chords based on intervals.
@@ -221,7 +223,7 @@ If the module is bypassed then the Trig input is passed unchanged to the Trig ou
 
 
 ## NORSIQ Chord To Scale
-![NORSIQ Chord To Scale module image](doc/NORSIQChord2Scale.png)  
+![NORSIQ Chord To Scale module image](NORSIQChord2Scale.png)  
 Converts up to 14 channels of a polyphonic "chord" input into a set of CV outputs that define a scale for the Non-Octave-Repeating Scale Intervallic Quantizer (NORSIQ).
 
 ### General Operation
@@ -274,7 +276,7 @@ All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 
 
 ## RATIO
-![Ratio module image](doc/Ratio.png)  
+![Ratio module image](Ratio.png)  
 Computes V/Oct CV for musical ratios using integral numerators and denominators.
 
 [Return to Table Of Contents](/README.md#venom)
