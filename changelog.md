@@ -1,4 +1,4 @@
-# Venom Modules Changelog
+# [Venom Modules](README.md) Changelog
 
 ## 2.16.0 (2026-??-??)
 ### New Modules
