@@ -61,7 +61,7 @@ struct PolyMute : VenomModule {
       fade[i].setRiseFall(100.f, 100.f);
     }
     configSwitch<FixedSwitchQuantity>(SOFT_PARAM, 0.f, 1.f, 0.f, "Soft switching", {"Off", "On"});
-    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 3.f, 0.f, "Gate mode", {"Mute", "Pass", "Toggle", "Exclusive pass"});
+    configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 3.f, 0.f, "Gate mode", {"Mute", "Pass", "Toggle", "Exclusive pass (disables Gates input)"});
     configInput(GATES_INPUT, "Channel gates");
     configInput(POLY1_INPUT, "Poly 1")->description = "Normalled to 10V";
     configInput(POLY2_INPUT, "Poly 2")->description = "Normalled to 10V";
@@ -104,7 +104,7 @@ struct PolyMute : VenomModule {
               state[i] = !state[i];
             break;
           case EXCLUSIVE:
-            if ((newCvVal != cvVal[i] && newCvVal) || (newButtonVal != buttonVal[i] && newButtonVal)) {
+            if (/*(newCvVal != cvVal[i] && newCvVal) || (*/newButtonVal != buttonVal[i] && newButtonVal) {
               for (int j=0; j<16; j++)
                 state[j] = (i==j);
             }
