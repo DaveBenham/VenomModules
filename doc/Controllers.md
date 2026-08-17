@@ -115,9 +115,13 @@ There is a button for each potential channel of a polyphonic cable. Active chann
 
 Red buttons indicate muted channels. White buttons indicate Pass (un-muted) channels.
 
-The behavior of the buttons change depending on whether the Gates CV input is patched.
+The behavior of the buttons change depending on whether the Gates CV input is patched and also whether the Gates mode is "Exclusive pass".
+
+Assuming the mode is anything other than "Exclusive pass", then:
 - Unpatched Gates CV input - Each button press toggles the state of that channel
 - Patched Gates CV input - Each button press temporarily inverts the state of the channel while the button remains pressed
+
+If the Gates mode is "Exclusive pass" then these buttons function as radio buttons. Whichever button is pressed last passes that channel, and all others are muted.
 
 ### GATES polyphonic input
 Controls the state of each channel if and only if the port is patched. The behavior of a gate is dependent on the current Mode setting.
@@ -127,9 +131,11 @@ Gates are Schmitt triggers that go high at 2V and go low at 0.2V
 Missing channels are assumed to be 0V (constant low gate).
 
 ### MODE (Gate mode) button
+Defines the behavior of polyphonic Gate inputs.
 - **Mute** ***(orange, default)*** - High gate mutes the channel. Low gate passes the channel.
 - **Pass** ***(green)*** - High gate passes the channel. Low gate mutes the channel.
 - **Toggle** ***(yellow)*** - Leading edge of a high gate toggles the state of the channel.
+- **Exclusive pass** ***(blue)*** - The Gates input is ignored. Buttons have exclusive control over which channel is passed.
 
 ### SOFT button
 Controls whether mute actions are instantaneous or slewed.
@@ -149,7 +155,7 @@ The inputs are normalled to 10V so Poly Mute can be used to conveniently generat
 The two inputs can be used for stereo processing. Or if only one input is patched, the corresponding output will have the muted results, and the 2nd output will have high gates for the preserved channels.
 
 ### OUT 1 and OUT 2 polyphonic outputs
-For each un-muted channel the the input value is copied to the output. For muted channels the output is set to 0V.
+For each un-muted channel the input value is copied to the output. For muted channels the output is set to 0V.
 
 ### Standard Venom Context Menus
 [Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
