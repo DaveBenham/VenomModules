@@ -1,6 +1,10 @@
 # Quantizers
+- [HARMONIC QUANTIZER](#harmonic-quantizer)
+- [NON-OCTAVE REPEATING SCALE INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)
+- [NORSIQ CHORD TO SCALE](#norsiq-chord-to-scale)
+- [RATIO](#ratio)
 
-[Return to Table Of Contents](/README.md#venom)
+[Venom top](/README.md#venom)
 
 ## HARMONIC QUANTIZER
 ![Harmonic Quantizer module image](HQ.PNG)  
@@ -68,7 +72,7 @@ The final computed partial is converted into a delta V/Oct and added to the ROOT
 
 The IN input is passed unchanged to the OUT output when the Harmonic Quantizer is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Quantizers top](#quantizers)|[Venom top](/README.md#venom)
 
 
 ## NON-OCTAVE REPEATING SCALE INTERVALLIC QUANTIZER
@@ -219,7 +223,7 @@ This output can also be used as an extended chord rooted at the Scale Root. Simp
 
 If the module is bypassed then the Trig input is passed unchanged to the Trig output. All other bypassed outputs are monophonic constant 0 volts.
 
-[Return to Table Of Contents](/README.md#venom)
+[Quantizers top](#quantizers)|[Venom top](/README.md#venom)
 
 
 ## NORSIQ Chord To Scale
@@ -272,13 +276,13 @@ This polyphonic output must be patched to the NORSIQ POLY INTERVALS input to def
 
 All outputs are constant monophonic 0V if NORSIQ Chord To Scale is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Quantizers top](#quantizers)|[Venom top](/README.md#venom)
 
 
 ## RATIO
 ![Ratio module image](Ratio.png)  
 Computes V/Oct CV for musical ratios using integral numerators and denominators.
 
-[Return to Table Of Contents](/README.md#venom)
+[Quantizers top](#quantizers)|[Venom top](/README.md#venom)
 
 

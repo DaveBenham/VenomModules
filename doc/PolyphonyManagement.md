@@ -1,6 +1,21 @@
-# Polyphony Utilities
+# Polyphony Management
+- [AUXILLIARY CLONE EXPANDER](#auxilliary-clone-expander)
+- [CLONE MERGE](#clone-merge)
+- [MERGE 4x2](#clone-4x2)
+- [MERGE SPLIT](#merge-split)
+- [MULTI MERGE](#multi-merge)
+- [MULTI SPLIT](#multi-split)
+- [POLY CLONE](#poly-clone)
+- [POLY PRUNE](#poly-prune)
+- [POLY UNISON](#poly-unison)
+- [RECURSE](#recurse)
+- [RECURSE STEREO](#recurse-stereo)
+- [SPLIT 4x2](#split-4x2)
+- [SPREAD MERGE](#spread-merge)
+- [SPREAD MERGE EXPANDER](#spread-merge-expander)
+- [STEREO MERGE SPLIT](#stereo-merge-split)
 
-[Return to Table Of Contents](/README.md#venom)
+[Venom top](/README.md#venom)
 
 ## AUXILLIARY CLONE EXPANDER
 ![Auxilliary Clone Expander module image](AuxClone.png)  
@@ -31,7 +46,7 @@ All outputs will be constant 0V and all port LEDS will be black under any of the
 
 The names of each input/output pair are linked. Changing the name of one will automatically change the name of the other.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## CLONE MERGE
@@ -63,7 +78,7 @@ All of the replicated inputs are merged into the single polyphonic output. The o
 
 If Clone Merge is bypassed then the output is constant monophonic 0V.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## MERGE 4x2
@@ -83,7 +98,7 @@ At most 16 channels can be merged, starting at the top, and working down. A glow
 
 All outputs are monophonic 0V if Merge 4x2 is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 ## MERGE SPLIT
 ![Merge Split module image](MergeSplit.png)  
@@ -106,7 +121,7 @@ There is a module context menu option to restore resplit mode for all four split
 
 All outputs are monophonic 0V if Merge Split is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## MULTI MERGE
@@ -128,7 +143,7 @@ Each input port has a context menu to explicitly set the number of input channel
 
 All outputs are monophonic 0V if Multi Merge is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 ## MULTI SPLIT
 ![Multi Split module image](MultiSplit.png)  
@@ -151,7 +166,7 @@ This all probably sounds confusing. But once you start patching, it will probabl
 
 All outputs are monophonic 0V if Multi Split is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## POLY CLONE
@@ -185,7 +200,7 @@ All of the replicated channels are merged into the single polyphonic output. The
 
 If Poly Clone is bypassed then the output is constant monophonic 0 volts.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## POLY PRUNE
@@ -302,7 +317,7 @@ The final output will have the channels with the minimum and maximum voltages fo
 
 If Poly Prune is bypassed then the poly input is passed unchanged to the output.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## POLY UNISON
@@ -357,7 +372,7 @@ All of the replicated channels are merged into the single polyphonic output. The
 
 If Poly Unison is bypassed then the input is passed unchanged to the output.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## RECURSE
@@ -409,7 +424,7 @@ Since the Return is normalled to the Send, it is possible to generate a polyphon
 
 The Input is passed unchanged to the Output when RECURSE is bypassed. The SEND will be monophonic 0V.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## RECURSE STEREO
@@ -426,7 +441,7 @@ The Recursion Count, Scale, Offset, and Modulation Timing settings are applied t
 
 Both left and right inputs are passed unchanged to the outputs when RECURSE STEREO is bypassed. The right input remains normalled to the left input while bypassed. Bypassed left and right send are monophonic 0V.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## SPLIT 4x2
@@ -446,24 +461,24 @@ A glowing red LED next to an input port indicates there is at least one polyphon
 
 All outputs are monophonic 0V if Split 4x2 is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## SPREAD MERGE
 ![Spread Merge module image](SpreadMerge.png)  
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 
 ## SPREAD MERGE EXPANDER
 ![Spread Merge Expander module image](SpreadMergeExpander.png)  
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 ## STEREO MERGE SPLIT
 ![Stereo Merge Split module image](StereoMergeSplit.png)  
 Compact and versatile polyphonic merge and split utility for stereo signals
 
-[Return to Table Of Contents](/README.md#venom)
+[Polyphony Management top](#polyphony-management)|[Venom top](/README.md#venom)
 
 

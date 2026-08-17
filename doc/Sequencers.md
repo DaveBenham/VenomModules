@@ -1,6 +1,12 @@
 # Sequencers
+- [LINEAR BEATS](#linear-beats)
+- [LINEAR BEATS EXPANDER](#linear-beats-expander)
+- [LINEAR MERGE](#linear-merge)
+- [LINEAR MERGE EXPANDER](#linear-merge-expander)
+- [RHYTHM EXPLORER](#rhythm-explorer)
+- [RHYTHM EXPLORER CV EXPANDER](#rhythm-explorer-cv-expander)
 
-[Return to Table Of Contents](/README.md#venom)
+[Venom top](/README.md#venom)
 
 ## LINEAR BEATS
 ![Linear Beats module image](LinearBeats.png)  
@@ -31,7 +37,7 @@ If the input gates are not guaranteed to be in sync, then you can add a clock in
 
 If Linear Beats is bypassed, then all inputs are passed through unchanged to the outputs.
 
-[Return to Table Of Contents](/README.md#venom)
+[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
 
 
 ## LINEAR BEATS EXPANDER
@@ -54,19 +60,19 @@ In addition to mutes, the expander has a Disable button / CV input pair that tur
 
 An expander is ignored if it is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
 
 
 ## LINEAR MERGE
 ![Linear Merge module image](LinearMerge.png)  
 
-[Return to Table Of Contents](/README.md#venom)
+[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
 
 
 ## LINEAR MERGE EXPANDER
 ![Linear Merge Expander module image](LinearMergeExpander.png)  
 
-[Return to Table Of Contents](/README.md#venom)
+[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
 
 
 ## Rhythm Explorer
@@ -392,6 +398,9 @@ Adds a [Rhythm Explorer CV Expander](x#rhythm-explorer-cv-expander) to either th
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.
 
+[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
+
+
 ## RHYTHM EXPLORER CV EXPANDER
 ![Rhythm Explorer CV Expander module image](REXCV.png)  
 Adds three channels of stepped CV output for each division of the parent Rhythm Explorer. All three channels for a division are updated each time the division fires, and the randomly generated CV repeats in a pattern the same way as the Rhythm Explorer division gates. The Rhythm Explorer module supports one expander on either side, so each division can have as many as 6 channels of CV.
@@ -431,4 +440,4 @@ Note that division CV outputs are not updated if the division is muted on the Rh
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.
 
-[Return to Table Of Contents](/README.md#venom)
+[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
