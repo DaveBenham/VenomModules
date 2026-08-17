@@ -8,7 +8,7 @@
 - [VCA MIX 4](#vca-mix-4)
 - [VCA MIX 4 STEREO](#vca-mix-4-stereo)
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 ## CROSS FADE 3D
 ![Cross Fade 3D module image](CrossFade3D.png)  
@@ -57,7 +57,7 @@ The final output level can be attenuated with the Level control. This may be esp
 
 The output is constant monophonic 0V if the module is bypassed.
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 
 ## MIX 4
@@ -131,7 +131,7 @@ See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) 
 
 The MIX output is monophonic 0V if MIX 4 is bypassed.
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 
 ## MIX 4 STEREO
@@ -148,7 +148,7 @@ When Mix 4 Stereo is bypassed, both the left and right Mix outputs are monophoni
 
 All other behaviors are the same as for Mix 4.
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 
 ## MIX EXPANDERS
@@ -309,7 +309,7 @@ At most 16 Send modules can be used with a single mix module. The maximum is few
 The Return inputs have a Chain button that changes the behavior of the expander for use with chained mixers. If enabled, then the Return knob is disabled, and the Left Return and Right Return inputs receive the chained Send from a prior Aux Send expander. For example, suppose you have three VCA Mix 4 Stereo modules chained together named Mix1, Mix2, and Mix3, and each has an Aux Send module, named Send1, Send2, and Send3. Leave the chain option off on Send1, and enable chain on Send2 and Send3. Patch the Send1 Send outputs to Send2 Return (Chain) inputs, and Send2 Send outputs to Send3 Return (Chain) inputs. Finally patch the Send3 Send outputs to the effect module inputs, and the effect outputs to the Send1 Return inputs. The Send1 Return knob controls the return level, and the Send3 Mute button can be used to mute the entire send chain.
 ![Chained Send example](ChainedSend.PNG)
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 
 ## POLY FADE
@@ -498,7 +498,7 @@ A module context menu option is available to disable the output channel minimiza
 
 All outputs are monophonic 0 volts when Poly Fade is bypassed.
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 
 ## QUAD VC POLARIZER
@@ -573,7 +573,7 @@ Optional clipping applied to the output
 
 All outputs are monophonic 0V when Quad VC Polarizer is bypassed.
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 
 ## VCA MIX 4
@@ -683,7 +683,7 @@ See [Anti-aliasing via oversampling](/README.md#anti-aliasing-via-oversampling) 
 
 The numbered channel inputs are passed unchanged to their corresponding outputs when VCA Mix 4 is bypassed. The Mix output is monophonic 0V when bypassed.
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 
 ## VCA MIX 4 STEREO
@@ -699,6 +699,6 @@ VCA Mix 4 Stereo is a stereo version of the [VCA MIX 4](#vca-mix-4), sharing the
 
 All other behaviors are the same as for Mix 4.
 
-[MIXERS top](#mixers) | [Venom top](/README.md#venom)
+[Mixers top](#mixers) | [Venom top](/README.md#venom)
 
 
