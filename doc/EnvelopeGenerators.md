@@ -319,6 +319,23 @@ There are a number of factory presets that implement some common envelope types.
 #### Polyphony
 All input and output ports are polyphonic. The total number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels substitute 0V for any missing channels.
 
+#### Randomization configuration
+The standard module context menu Randomize action only applies to stage controls, excluding stage Action and Mode.
+
+There is a Randomize configuration menu option that lets you specify which types of stage controls are randomized
+- Stage times (Move, Rise, Fall, and Hold actions)
+- Stage levels (Hold and Sustain actions)
+- Stage shapes (Move, Rise, and Fall actions)
+- Stage drifts (Sustain actions)
+- Stage attenuverters (All knobs for all actions)
+- Stage triggers (All actions)
+
+#### Automatic termination of envelopes
+All active envelopes will instantly be terminated and the envelope generator will return to an idle state if any of the following occur:
+- Any stage is reconfigured to perform a different Action
+- The number of stages is changed
+- The Envelope Factory is bypassed
+
 ### *Global controls*
 
 **<u>Standard Mode</u>**  
@@ -522,23 +539,6 @@ If the value is non-zero then it specifies the rate at which the Sustain output 
 The Drift knob ranges from 0 to 1000 %/sec. The drift is always linear. If the target voltage is reached, then it will hold the target value throughout the rest of the Sustain stage.
 
 The attenuverted CV is scaled at 10% per volt and summed with the knob value to establish the effective drift value. If the effective drift is 0 then the Sustain will hold the sustain level indefinitely.
-
-### Randomization configuration
-The standard module context menu Randomize action only applies to stage controls, excluding stage Action and Mode.
-
-There is a Randomize configuration menu option that lets you specify which types of stage controls are randomized
-- Stage times (Move, Rise, Fall, and Hold actions)
-- Stage levels (Hold and Sustain actions)
-- Stage shapes (Move, Rise, and Fall actions)
-- Stage drifts (Sustain actions)
-- Stage attenuverters (All knobs for all actions)
-- Stage triggers (All actions)
-
-### Automatic termination of envelopes
-All active envelopes will instantly be terminated and the envelope generator will return to an idle state if any of the following occur:
-- Any stage is reconfigured to perform a different Action
-- The number of stages is changed
-- The Envelope Factory is bypassed
 
 ### Standard Venom Context Menus
 [Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
