@@ -6,7 +6,7 @@
 - [RHYTHM EXPLORER](#rhythm-explorer)
 - [RHYTHM EXPLORER CV EXPANDER](#rhythm-explorer-cv-expander)
 
-[Venom top](/README.md#venom)
+[Sequencers top](#sequencers) | [Venom top](/README.md#venom)
 
 ## LINEAR BEATS
 ![Linear Beats module image](LinearBeats.png)  
@@ -37,7 +37,7 @@ If the input gates are not guaranteed to be in sync, then you can add a clock in
 
 If Linear Beats is bypassed, then all inputs are passed through unchanged to the outputs.
 
-[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
+[Sequencers top](#sequencers) | [Venom top](/README.md#venom)
 
 
 ## LINEAR BEATS EXPANDER
@@ -60,19 +60,19 @@ In addition to mutes, the expander has a Disable button / CV input pair that tur
 
 An expander is ignored if it is bypassed.
 
-[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
+[Sequencers top](#sequencers) | [Venom top](/README.md#venom)
 
 
 ## LINEAR MERGE
 ![Linear Merge module image](LinearMerge.png)  
 
-[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
+[Sequencers top](#sequencers) | [Venom top](/README.md#venom)
 
 
 ## LINEAR MERGE EXPANDER
 ![Linear Merge Expander module image](LinearMergeExpander.png)  
 
-[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
+[Sequencers top](#sequencers) | [Venom top](/README.md#venom)
 
 
 ## Rhythm Explorer
@@ -398,7 +398,7 @@ Adds a [Rhythm Explorer CV Expander](x#rhythm-explorer-cv-expander) to either th
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.
 
-[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
+[Sequencers top](#sequencers) | [Venom top](/README.md#venom)
 
 
 ## RHYTHM EXPLORER CV EXPANDER
@@ -440,4 +440,4 @@ Note that division CV outputs are not updated if the division is muted on the Rh
 ### Bypass
 All outputs are monophonic 0V when the module is bypassed.
 
-[Sequencers top](#sequencers)|[Venom top](/README.md#venom)
+[Sequencers top](#sequencers) | [Venom top](/README.md#venom)

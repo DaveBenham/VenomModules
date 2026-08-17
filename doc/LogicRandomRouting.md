@@ -7,7 +7,7 @@
 - [WINCOMP](#wincomp)
 - [WINCOMP 2 + LOGIC](#wincomp-2--logic)
 
-[Venom top](/README.md#venom)
+[Logic, Random & Routing top](#logic-random-andor-routing) | [Venom top](/README.md#venom)
 
 ## BERNOULLI SWITCH
 ![Bernoulli Switch module image](BernoulliSwitch.png)  
@@ -82,7 +82,7 @@ The following factory presets are available that emulate the four configurations
 ### Bypass Behavior
 If Bernoulli Switch is bypassed then the A input is passed unchanged to the A output, and likewise the B input to the B output. The B input is still normalled to the A input while bypassed.
 
-[Logic, Random & Routing top](#logic-random-andor-routing)|[Venom top](/README.md#venom)
+[Logic, Random & Routing top](#logic-random-andor-routing) | [Venom top](/README.md#venom)
 
 ## BERNOULLI SWITCH EXPANDER
 ![Bernoulli Switch Expander image](BernoulliSwitchExpander.png)  
@@ -105,7 +105,7 @@ All expander inputs as well as the probability CV attenuator are ignored when th
 
 [Watch this video](https://www.youtube.com/watch?v=VRERXi6RuPE) to see how the Bernoulli Switch coupled with the Bernoulli Switch Expander can transform a simple sine wave into a dynamic complex stereo sound.
 
-[Logic, Random & Routing top](#logic-random-andor-routing)|[Venom top](/README.md#venom)
+[Logic, Random & Routing top](#logic-random-andor-routing) | [Venom top](/README.md#venom)
 
 
 ## LOGIC
@@ -191,7 +191,7 @@ Produces the output for the selected logic operation. The output will be monopho
 
 All outputs are monophonic 0V if LOGIC is bypassed.
 
-[Logic, Random & Routing top](#logic-random-andor-routing)|[Venom top](/README.md#venom)
+[Logic, Random & Routing top](#logic-random-andor-routing) | [Venom top](/README.md#venom)
 
 
 ## PAN 3D
@@ -231,7 +231,7 @@ The final output levels can be attenuated with the Level control. Each output is
 
 All outputs are constant monophonic 0V if Pan 3D is bypassed.
 
-[Logic, Random & Routing top](#logic-random-andor-routing)|[Venom top](/README.md#venom)
+[Logic, Random & Routing top](#logic-random-andor-routing) | [Venom top](/README.md#venom)
 
 
 ## POLY SAMPLE & HOLD ANALOG SHIFT REGISTER
@@ -321,7 +321,7 @@ By default all held values are stored with the patch and restored upon patch loa
 
 If Poly S&H ASR is bypassed then all outputs are monophonic constant 0 V.
 
-[Logic, Random & Routing top](#logic-random-andor-routing)|[Venom top](/README.md#venom)
+[Logic, Random & Routing top](#logic-random-andor-routing) | [Venom top](/README.md#venom)
 
 ## WINCOMP
 ![WINCOMP module image](WinComp.PNG)  
@@ -406,7 +406,7 @@ An LED glows blue above the output ports if oversampling is enabled. The LED is 
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.
 
-[Logic, Random & Routing top](#logic-random-andor-routing)|[Venom top](/README.md#venom)
+[Logic, Random & Routing top](#logic-random-andor-routing) | [Venom top](/README.md#venom)
 
 
 ## WINCOMP 2 + LOGIC
@@ -535,6 +535,6 @@ There is a module context menu option to change which polyphonic channels are mo
 
 If WinComp 2 + Logic is bypassed then all outputs are constant monophonic 0V.
 
-[Logic, Random & Routing top](#logic-random-andor-routing)|[Venom top](/README.md#venom)
+[Logic, Random & Routing top](#logic-random-andor-routing) | [Venom top](/README.md#venom)
 
 

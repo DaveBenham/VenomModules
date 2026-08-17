@@ -10,7 +10,7 @@
 - [WAVE MANGLER](#wave-mangler)
 - [WAVE MULTIPLIER](#wave-multiplier)
 
-[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 ## MULTIMODE FILTER
 ![Multimode Filter module image](SVF.png)  
@@ -177,7 +177,7 @@ Frequencies at or near the cutoff are attenuated.
 
 The left and right inputs are replicated to all outputs when Multimode Filter is bypassed.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 
 ## OCTAVER
@@ -257,7 +257,7 @@ yellow = +1, red = 0, green = -1, blue = -2
 
 The signal input is copied to the output when Octaver is bypassed.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 
 ## POLY SCALE
@@ -294,7 +294,7 @@ The number of polyphonic channels at the output is displayed in the LED panel. T
 
 If Poly Scale is bypassed then the input is passed unchanged to the output.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 
 ## REFORMATION
@@ -389,7 +389,7 @@ The number of output polyphonic channels is set by the maximum number of channel
 
 The Input is passed unchanged to the Output when REFORMATION is bypassed.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 
 ## SHAPED VCA
@@ -575,7 +575,7 @@ The number of output polyphonic channels is set by the maximum number of channel
 ### Bypass
 The Left and Right inputs are passed unchanged to the Left and Right outputs when the module is bypassed. The Right input remains normaled to the Left input while bypassed. However, the left input is not normaled to 10V while bypassed.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 ## SLEW
 ![SLEW module image](Slew.png)  
@@ -684,7 +684,7 @@ All inputs and outputs are fully polyphonic. The number of output polyphonic cha
 ### Bypass
 The IN (raw) input is replicated at the OUT (slew) output when Slew is bypassed. All other outputs are constant monophonic 0V.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 
 ## SPHERE TO XYZ
@@ -749,7 +749,7 @@ This represents the z cartesian coordinate, after conversion.
 ### Bypass
 All outputs are constant monophonic 0V when Sphere To XYZ is bypassed.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 
 ## WAVE FOLDER
@@ -850,7 +850,7 @@ This is the final result of the wave folding.
 ### Bypass
 The poly input is passed through to the output if Wave Folder is bypassed.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 
 ## WAVE MANGLER
@@ -999,7 +999,7 @@ The summarized order of operations below is for those intrepid few that want to 
 ### Bypass
 If Wave Mangler is bypassed then all channels of the Wave input are passed through to the Wave output unchanged.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 
 ## WAVE MULTIPLIER
@@ -1141,6 +1141,6 @@ The LFOs are special. If the Master LFO V/Oct input is monophonic (or unpatched)
 ### Bypass
 If Wave Multiplier is bypassed, then all channels of the wave input are passed through unchanged to the shifted wave mix output. All other outputs are monophonic constant 0 volts.
 
-[Modulation top](#modulation)|[Venom top](/README.md#venom)
+[Modulation top](#modulation) | [Venom top](/README.md#venom)
 
 

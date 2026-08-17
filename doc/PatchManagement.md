@@ -7,7 +7,7 @@
 - [VENOM BLANK](#venom-blank)
 - [WIDGET MENU EXTENDER](#widget-menu-extender)
 
-[Venom top](/README.md#venom)
+[Patch Management top](#patch-management) | [Venom top](/README.md#venom)
 
 ## BAY MODULES
 ![Bay Input module image](BayInput.png) &nbsp;![Bay Norm module image](BayNorm.png) &nbsp;![Bay Output module image](BayOutput.png)  
@@ -92,7 +92,7 @@ All Bay Output ports will be constant monophonic 0 volts if the Bay Output is by
 
 The Bay Norm output will be the normal input if the source Bay Input is bypassed. The Bay Norm output will be monophonic constant 0 volts if the Bay Norm is bypassed.
 
-[Patch Management top](#patch-management)|[Venom top](/README.md#venom)
+[Patch Management top](#patch-management) | [Venom top](/README.md#venom)
 
 
 ## BLOCKER
@@ -103,7 +103,7 @@ Both Venom Bypass and Stoermelder Strip can operate on contiguous neighbor modul
 
 Blocker uses virtually no CPU, so it also works well as a 1hp blank.
 
-[Patch Management top](#patch-management)|[Venom top](/README.md#venom)
+[Patch Management top](#patch-management) | [Venom top](/README.md#venom)
 
 
 ## BYPASS MODULE
@@ -174,7 +174,7 @@ A neighbor chain always terminates at any one of the following
 ### Standard Venom Context Menus
 [Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
 
-[Patch Management top](#patch-management)|[Venom top](/README.md#venom)
+[Patch Management top](#patch-management) | [Venom top](/README.md#venom)
 
 
 ## NULL CABLE
@@ -204,7 +204,7 @@ Note that the output will always be a null cable (0 channels) if there is no inp
 
 When Null Cable is bypassed the outputs continue to function as they did before the module was bypassed.
 
-[Patch Management top](#patch-management)|[Venom top](/README.md#venom)
+[Patch Management top](#patch-management) | [Venom top](/README.md#venom)
 
 
 ## THRU
@@ -223,14 +223,14 @@ Each input starting with the 2nd is normalled to the output above, with a delay 
 ### Bypass
 Each input is passed to the output below when the module is bypassed. However, the inputs are ***not*** normalled to the output above when bypassed.
 
-[Patch Management top](#patch-management)|[Venom top](/README.md#venom)
+[Patch Management top](#patch-management) | [Venom top](/README.md#venom)
 
 
 ## VENOM BLANK
 ![VENOM BLANK module image](VenomBlank.PNG)  
 A 3hp blank with standard Venom themes.
 
-[Patch Management top](#patch-management)|[Venom top](/README.md#venom)
+[Patch Management top](#patch-management) | [Venom top](/README.md#venom)
 
 
 ## WIDGET MENU EXTENDER
@@ -276,6 +276,6 @@ When importing a selection set containing Widget Menu Extender, custom names and
 ### Bypass
 When bypassed, Widget Menu Extender behaves the same as if the Enable button is off - the extended context menu options will not be available, but existing custom names and defaults are preserved.
 
-[Patch Management top](#patch-management)|[Venom top](/README.md#venom)
+[Patch Management top](#patch-management) | [Venom top](/README.md#venom)
 
 

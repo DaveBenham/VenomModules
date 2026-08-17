@@ -3,7 +3,7 @@
  - [DYNAMIC AMPLIFYING SHAPING ENVELOPE](#dynamic-amplifying-shaping-envelope)
  - [ENVELOPE FACTORY](#envelope-factory)
 
-[Venom top](/README.md#venom)
+[Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
 
 ## AD/ASR ENVELOPE GENERATOR
 ![AD/ASR Envelope Generator module image](AD_ASR.png)  
@@ -245,14 +245,14 @@ Polyphonic CV input with fewer channels are assigned constant 0V for the missing
 
 All outputs are constant monophonic 0V when the AD/ASR Envelope Generator is bypassed.
 
-[Envelope Generators top](#envelope-generators)|[Venom top](/README.md#venom)
+[Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
 
 
 ## DYNAMIC AMPLIFYING SHAPING ENVELOPE
 ![DASE image](DASE.png)  
 A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate modulation of the envelope shape.
 
-[Envelope Generators top](#envelope-generators)|[Venom top](/README.md#venom)
+[Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
 
 ## ENVELOPE FACTORY
 ![ENVELOPE FACTORY module image](EnvelopeFactory.png)  
@@ -550,6 +550,6 @@ The attenuverted CV is scaled at 10% per volt and summed with the knob value to 
 
 All outputs are monophonic 0V while Envelope Factory is bypassed.
 
-[Envelope Generators top](#envelope-generators)|[Venom top](/README.md#venom)
+[Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
 
 

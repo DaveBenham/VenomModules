@@ -6,7 +6,7 @@
 - [POLY OFFSET](#poly-offset)
 - [PUSH 5](#push-5)
 
-[Venom top](/README.md#venom)
+[Controllers top](#controllers) | [Venom top](/README.md#venom)
 
 ## KNOB 5
 ![Knob 5 module image](Knob5.png)  
@@ -59,7 +59,7 @@ If all knobs currently share the same value, then the current value is displayed
 
 All outputs are constant monophonic 0 V when KNOB 5 is bypassed.
 
-[Controllers top](#controllers)|[Venom top](/README.md#venom)
+[Controllers top](#controllers) | [Venom top](/README.md#venom)
 
 ## MOUSE PAD
 ![Mouse Pad module image](MousePad.png)  
@@ -102,7 +102,7 @@ Multiple Mouse Pads can be effectively used if each is given a different combina
 
 All outputs are monophonic 0V if Mouse Pad is bypassed.
 
-[Controllers top](#controllers)|[Venom top](/README.md#venom)
+[Controllers top](#controllers) | [Venom top](/README.md#venom)
 
 
 ## POLY MUTE
@@ -170,7 +170,7 @@ For each un-muted channel the input value is copied to the output. For muted cha
 
 If Poly Mute is bypassed then the poly inputs are passed unchanged to the outputs. The Soft button has no effect when bypassing or un-bypassing the module.
 
-[Controllers top](#controllers)|[Venom top](/README.md#venom)
+[Controllers top](#controllers) | [Venom top](/README.md#venom)
 
 
 ## POLY OFFSET
@@ -229,7 +229,7 @@ The number of polyphonic channels at the output is displayed in the LED panel. T
 
 If Poly Offset is bypassed then the input is passed unchanged to the output.
 
-[Controllers top](#controllers)|[Venom top](/README.md#venom)
+[Controllers top](#controllers) | [Venom top](/README.md#venom)
 
 
 ## PUSH 5
@@ -294,6 +294,6 @@ If all buttons currently share the same value, then the current value is display
 
 All outputs are constant monophonic 0 V when PUSH 5 is bypassed.
 
-[Controllers top](#controllers)|[Venom top](/README.md#venom)
+[Controllers top](#controllers) | [Venom top](/README.md#venom)
 
 

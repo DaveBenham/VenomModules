@@ -7,7 +7,7 @@
 - [VCO UNIT](#vco-unit)
 - [XM-OP](#xm-op)
 
-[Venom top](/README.md#venom)
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
 ## BENJOLIN OSCILLATOR
 ![Benjolin Oscillator module image](BenjolinOsc.png)  
@@ -148,7 +148,7 @@ The patch below closely emulates the features of the Benjolin version 2 from Aft
 
 All outputs are constant monophonic 0V when the Benjolin Oscillator is bypassed.
 
-[Oscillators top](#oscillators)|[Venom top](/README.md#venom)
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
 
 ## BENJOLIN GATES EXPANDER
@@ -206,7 +206,7 @@ There are four factory presets that default to mode = Gate and polarity = Unipol
 
 All outputs are constant monophonic 0V when the Benjolin Gates Expander is bypassed.
 
-[Oscillators top](#oscillators)|[Venom top](/README.md#venom)
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
 
 ## BENJOLIN VOLTS EXPANDER
@@ -239,7 +239,7 @@ The final computed voltage is ouput here.
 
 The output is constant monophonic 0V when the Benjolin Volts Expander is bypassed.
 
-[Oscillators top](#oscillators)|[Venom top](/README.md#venom)
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
 
 ## BOUNDED VCO
@@ -248,7 +248,7 @@ An implementation of Peter Blasser's Bound/Bounce oscillation that constrains an
 
 There are two ways to control the frequency of a Bounds/Bounce oscillation that have an inverse relationship. The frequency can be increased by either increasing the absolute value of the Bounce slopes or decreasing the distance between the upper and lower Bounds. Of course changing the distance between the bounds also changes the oscillation amplitude.
 
-[Oscillators top](#oscillators)|[Venom top](/README.md#venom)
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
 
 ## VCO LAB
@@ -568,7 +568,7 @@ Each waveform has its own dedicated output, plus there is a Mix output.
 ### Bypass
 All outputs are monophonic 0V if the module is bypassed.
 
-[Oscillators top](#oscillators)|[Venom top](/README.md#venom)
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
 ## VCO UNIT
 ![VCO Unit module image](VCOUnit.png)  
@@ -580,7 +580,7 @@ The behavior of Shape modulation changes depending on the waveform selected. Whe
 
 Pretty much all other VCO Lab functionality is the same, except there is no mix, level assignment, or mix shaping.
 
-[Oscillators top](#oscillators)|[Venom top](/README.md#venom)
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
 
 ## XM-OP
@@ -781,4 +781,4 @@ The output of the VCA is output here. This is the modulated VCO output, after be
 
 If XM-OP is bypassed then all outputs are constant monophonic 0V.
 
-[Oscillators top](#oscillators)|[Venom top](/README.md#venom)
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
