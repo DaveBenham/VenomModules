@@ -376,7 +376,7 @@ The small unlabeled button to the right of the Soft Sync label controls the mode
 - **Trigger mode** ***(off, default)*** - The leading edge of an incoming trigger reverses the current direction of the waveform. A hard sync always resets the direction to forward. 
 - **Gate mode** ***(yellow)*** - A high gate puts the waveform in reverse mode. A low gate puts the waveform in forward mode. A hard sync never changes the direction.
 
-The trigger and gate detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point.
+The trigger and gate detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point. There is also an option to use +/- 50uV thresholds, which also only works for bipolar inputs.
 
 This port supports oversampling that can be disabled via the port context menu.
 
@@ -421,7 +421,7 @@ This port does not support oversampling.
 The Sync input resets the master oscillator phase to 0 upon the leading edge of an incomming trigger.  
 If using any of the one shot modes, the Sync is used to trigger the start of a wave cycle.
 
-The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point.
+The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point. There is also an option to use +/- 50uV thresholds, which also only works for bipolar inputs.
 
 This port supports oversampling that can be disabled via the port context menu.
 
