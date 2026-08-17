@@ -701,7 +701,9 @@ By default the Level VCA responds linearly. An exponential response is available
 See [Level and Depth Modulation](/README.md#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### DEPTH (XMOD modulation depth) knob and CV input
-The knob establishes the depth of the XMod modulation. It ranges from -100% to 100%. The type of modulation is controlled by the square **XMOD** button at the top.
+The knob and CV establish the depth of the XMod modulation. It ranges from -100% to 100%. The knob and CV value are summed. The type of modulation is controlled by the square **XMOD** button at the top.
+
+The FM and PM  depth scaling is fairly tame. A "High XM depth for FM & PM" context menu option exists that multiplies the depth by a factor of 5. This only applies to XM frequency and phase modulation.
 
 See [Level and Depth Modulation](/README.md#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
