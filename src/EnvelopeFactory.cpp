@@ -418,8 +418,8 @@ struct EnvelopeFactory : VenomModule {
         outputs[INV_OUTPUT].setVoltage(env[c] * curInput[c] * (params[AMP_PARAM].getValue()+1)*0.5f * velocity[c], c);
       }
       else {
-        float amp = clamp(inputs[AMP_INPUT].getNormalPolyVoltage(10.f, c) * params[AMP_PARAM].getValue(), -10.f, 10.f);
-        float off = clamp(inputs[OFF_INPUT].getNormalPolyVoltage(10.f, c) * params[OFF_PARAM].getValue(), -10.f, 10.f);
+        float amp = inputs[AMP_INPUT].getNormalPolyVoltage(10.f, c) * params[AMP_PARAM].getValue();
+        float off = inputs[OFF_INPUT].getNormalPolyVoltage(10.f, c) * params[OFF_PARAM].getValue();
         outputs[ENV_OUTPUT].setVoltage(env[c] * amp + off, c);
         outputs[INV_OUTPUT].setVoltage((1.f - env[c]) * amp + off, c);
       }
