@@ -707,6 +707,56 @@ struct EnvelopeFactoryWidget : VenomWidget {
       borderPanel->panelBorder->box.size = box.size;
     }
   }
+  
+  struct stageCountAction : history::Action {
+    int64_t modId;
+    int oldVal;
+    int newVal;
+  
+    stageCountAction(EnvelopeFactory *mod, int cnt) {
+      name = "set EnvelopeFactory stage count";
+      modId = mod->id;
+      oldVal = mod->stageCnt;
+      newVal = cnt;
+    }
+  
+    void undo() override {
+      EnvelopeFactory *mod = dynamic_cast<EnvelopeFactory*>(APP->engine->getModule(modId));
+      if (mod)
+        mod->stageCnt = oldVal;
+    }
+  
+    void redo() override {
+      EnvelopeFactory *mod = dynamic_cast<EnvelopeFactory*>(APP->engine->getModule(modId));
+      if (mod)
+        mod->stageCnt = newVal;
+    }
+  };  
+
+  struct vcaModeAction : history::Action {
+    int64_t modId;
+    int oldVal;
+    int newVal;
+  
+    vcaModeAction(EnvelopeFactory *mod, int mode) {
+      name = "set EnvelopeFactory VCA mode";
+      modId = mod->id;
+      oldVal = mod->vcaMode;
+      newVal = mode;
+    }
+  
+    void undo() override {
+      EnvelopeFactory *mod = dynamic_cast<EnvelopeFactory*>(APP->engine->getModule(modId));
+      if (mod)
+        mod->vcaMode = oldVal;
+    }
+  
+    void redo() override {
+      EnvelopeFactory *mod = dynamic_cast<EnvelopeFactory*>(APP->engine->getModule(modId));
+      if (mod)
+        mod->vcaMode = newVal;
+    }
+  };  
 
   void appendContextMenu(Menu* menu) override {
     EnvelopeFactory* module = dynamic_cast<EnvelopeFactory*>(this->module);
@@ -718,12 +768,26 @@ struct EnvelopeFactoryWidget : VenomWidget {
         return module->stageCnt - 1;
       },
       [=](int cnt) {
-        if (++cnt != module->stageCnt)
+        if (++cnt != module->stageCnt) {
+          APP->history->push(new stageCountAction(module, cnt));
           module->reset = true;
-        module->stageCnt = cnt;
+          module->stageCnt = cnt;
+        }
       }
     ));
-    menu->addChild(createIndexPtrSubmenuItem("VCA mode", {"Off","Standard VCA", "VCA with 0 crossing synced triggers"},&module->vcaMode));
+    menu->addChild(createIndexSubmenuItem(
+      "VCA mode",
+      {"Off","Standard VCA", "VCA with 0 crossing synced triggers"},
+      [=]() {
+        return module->vcaMode;
+      },
+      [=](int mode) {
+        if (mode != module->vcaMode) {
+          APP->history->push(new vcaModeAction(module, mode));
+          module->vcaMode = mode;
+        }
+      }
+    ));
     menu->addChild(createSubmenuItem("Randomize configuration", "", [=](Menu* submenu) {
       submenu->addChild(createBoolMenuItem("Stage times", "", [=](){return module->randTimes;}, [=](bool val){module->randTimes=val; module->configRandomize();}));
       submenu->addChild(createBoolMenuItem("Stage levels", "", [=](){return module->randLevels;}, [=](bool val){module->randLevels=val; module->configRandomize();}));
