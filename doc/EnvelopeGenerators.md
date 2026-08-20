@@ -350,12 +350,8 @@ CV at this input modulates all timed stages identically. Each positive volt doub
 ### AMP (Amplitude) knob and CV input
 Determines the magnitude of the final envelope. The input is attenuated and/or inverted by the knob to determine the effective 100% voltage. The knob attenuverter defaults to 100%, and the input is normalled to 10 volts, so if not patched, the envelope ranges between 0 and 10 volts (disregarding any offset).
 
-The effective amplitude is clamped to a value between -10 and 10 volts.
-
 ### OFF (Offset) knob and CV input
 Determines any offset that is added to the final envelope after the amplitude is applied. The input is attenuated and/or inverted by the knob to determine the effective offset. The knob attenuverter defaults to 0%, so by default no offset is applied.
-
-The effective offset is clamped to a value between -10 and 10 volts.
 
 ### Slow (Knob time range) small button
 Sets the range of all stage Time knobs
