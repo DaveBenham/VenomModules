@@ -34,13 +34,15 @@ struct LinearMerge : VenomModule {
     MIN,
     MAX,
     AVG,
-    SUM
+    SUM,
+    PREV
   };
   
   dsp::TSchmittTrigger<float> trigger[8],
                               clockTrig;
   bool oldGate = false;
-  int cnt = 0;
+  int cnt = 0,
+      prev = 0;
   
   LinearMerge() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -59,24 +61,48 @@ struct LinearMerge : VenomModule {
   }
   
   float getCV(std::vector<Input>& inputs, int select) {
-    float cv = (select==MIN) ? std::numeric_limits<float>::max() : (select==MAX ? std::numeric_limits<float>::lowest() : 0.f);
+    float cv = 0.f;
+    switch(select) {
+      case PREV:
+        if (prev >= 0)
+          return inputs[CV_INPUT+prev].getVoltage();
+        else
+          select = -prev;
+        break;
+      case MIN:
+        cv = std::numeric_limits<float>::max();
+        break;
+      case MAX:
+        cv = std::numeric_limits<float>::lowest();
+        break;
+      case AVG:
+      case SUM:
+        prev = -select;
+        break;
+    }
     for (int i=0; i<8; i++) {
       if (trigger[i].isHigh()) {
         float val = inputs[CV_INPUT+i].getVoltage();
         switch(select) {
           case FIRST:
+            prev = i;
             return val;
             break;
           case LAST:
+            prev = i;
             cv = val;
             break;
           case MIN:
-            if (val < cv)
+            if (val < cv) {
+              prev = i;
               cv = val;
+            }
             break;
           case MAX:
-            if (val > cv)
+            if (val > cv) {
+              prev = i;
               cv = val;
+            }
             break;
           default:
             cv += val;
