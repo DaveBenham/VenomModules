@@ -16,6 +16,7 @@ struct LinearMerge : VenomModule {
   enum InputId {
     ENUMS(CV_INPUT,8),
     ENUMS(GATE_INPUT,8),
+    CLOCK_INPUT,
     INPUTS_LEN
   };
   enum OutputId {
@@ -36,14 +37,16 @@ struct LinearMerge : VenomModule {
     SUM
   };
   
-  dsp::TSchmittTrigger<float> trigger[8];
+  dsp::TSchmittTrigger<float> trigger[8],
+                              clockTrig;
   bool oldGate = false;
   int cnt = 0;
   
   LinearMerge() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    configInput(CLOCK_INPUT, "Clock");
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 1.f, 0.f, "CV mode", {"Sample & Hold", "Track & Hold"});
-    configSwitch<FixedSwitchQuantity>(SELECT_PARAM, 0.f, 5.f, 0.f, "CV selection", {"First channel", "Last channel", "Minimum CV", "Maximum CV", "Average CV", "Sum CV"});
+    configSwitch<FixedSwitchQuantity>(SELECT_PARAM, 0.f, 5.f, 0.f, "CV selection", {"First port", "Last port", "Minimum CV", "Maximum CV", "Average CV", "Sum CV"});
     for (int i=0; i<8; i++) {
       std::string istr = std::to_string(i+1);
       std::string nm = "Gate " + istr;
@@ -61,17 +64,17 @@ struct LinearMerge : VenomModule {
       if (trigger[i].isHigh()) {
         float val = inputs[CV_INPUT+i].getVoltage();
         switch(select) {
-          case 0: //FIRST:
+          case FIRST: //FIRST:
             return val;
             break;
-          case 1: //LAST:
+          case LAST: //LAST:
             cv = val;
             break;
-          case 2: //MIN:
+          case MIN: //MIN:
             if (val < cv)
               cv = val;
             break;
-          case 3: //MAX:
+          case MAX: //MAX:
             if (val > cv)
               cv = val;
             break;
@@ -85,25 +88,27 @@ struct LinearMerge : VenomModule {
   
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    bool gate = false;
-    cnt = 0;
-    for (int i=0; i<8; i++) {
-      trigger[i].process(inputs[GATE_INPUT+i].getVoltage(), 0.2f, 2.f);
-      if (trigger[i].isHigh()) {
-        gate = true;
-        cnt += 1;
+    bool clock = clockTrig.process(inputs[CLOCK_INPUT].getVoltage(), 0.2f, 2.f) || !inputs[CLOCK_INPUT].isConnected(),
+         gate = oldGate;
+    if (clock) {
+      gate = false;
+      cnt = 0;
+      for (int i=0; i<8; i++) {
+        trigger[i].process(inputs[GATE_INPUT+i].getVoltage(), 0.2f, 2.f);
+        if (trigger[i].isHigh()) {
+          gate = true;
+          cnt += 1;
+        }
       }
+      outputs[GATE_OUTPUT].setVoltage(gate ? 10.f : 0.f);
     }
-    outputs[GATE_OUTPUT].setVoltage(gate ? 10.f : 0.f);
-    if (gate) {
-      if (params[MODE_PARAM].getValue() || gate != oldGate)
-        outputs[CV_OUTPUT].setVoltage(getCV(inputs, params[SELECT_PARAM].getValue()));
-      Module *exp = getRightExpander().module;
-      while (exp && exp->model == modelVenomLinearMergeExpander) {
-        if (!exp->isBypassed() && (exp->params[MODE_PARAM].getValue() || gate != oldGate))
-          exp->outputs[CV_OUTPUT].setVoltage(getCV(exp->inputs, exp->params[SELECT_PARAM].getValue()));
-        exp = exp->getRightExpander().module;
-      }
+    if (gate && (params[MODE_PARAM].getValue() || gate != oldGate))
+      outputs[CV_OUTPUT].setVoltage(getCV(inputs, params[SELECT_PARAM].getValue()));
+    Module *exp = getRightExpander().module;
+    while (exp && exp->model == modelVenomLinearMergeExpander) {
+      if (gate && !exp->isBypassed() && (exp->params[MODE_PARAM].getValue() || gate != oldGate))
+        exp->outputs[CV_OUTPUT].setVoltage(getCV(exp->inputs, exp->params[SELECT_PARAM].getValue()));
+      exp = exp->getRightExpander().module;
     }
     oldGate = gate;
   }
@@ -145,6 +150,7 @@ struct LinearMergeWidget : VenomWidget {
     setModule(module);
     setVenomPanel("LinearMerge");
 
+    addInput(createInputCentered<MonoPort>(Vec(20.f, 62.5f), module, LinearMerge::CLOCK_INPUT));
     addParam(createLockableParamCentered<ModeSwitch>(Vec(55.f, 46.5f), module, LinearMerge::MODE_PARAM));
     addParam(createLockableParamCentered<SelectSwitch>(Vec(55.f, 76.5f), module, LinearMerge::SELECT_PARAM));
     for (int i=0; i<8; i++){

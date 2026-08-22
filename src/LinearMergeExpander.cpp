@@ -30,7 +30,7 @@ struct LinearMergeExpander : VenomModule {
 
     configLight(EXPAND_LIGHT, "Left connection indicator");
     configSwitch<FixedSwitchQuantity>(MODE_PARAM, 0.f, 1.f, 0.f, "CV mode", {"Sample & Hold", "Track & Hold"});
-    configSwitch<FixedSwitchQuantity>(SELECT_PARAM, 0.f, 5.f, 0.f, "CV selection", {"First channel", "Last channel", "Minimum CV", "Maximum CV", "Average CV", "Sum CV"});
+    configSwitch<FixedSwitchQuantity>(SELECT_PARAM, 0.f, 5.f, 0.f, "CV selection", {"First port", "Last port", "Minimum CV", "Maximum CV", "Average CV", "Sum CV"});
     for (int i=0; i<8; i++) {
       std::string istr = std::to_string(i+1);
       std::string nm = "CV " + istr;
