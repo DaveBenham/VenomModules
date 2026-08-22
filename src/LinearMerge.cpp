@@ -64,17 +64,17 @@ struct LinearMerge : VenomModule {
       if (trigger[i].isHigh()) {
         float val = inputs[CV_INPUT+i].getVoltage();
         switch(select) {
-          case FIRST: //FIRST:
+          case FIRST:
             return val;
             break;
-          case LAST: //LAST:
+          case LAST:
             cv = val;
             break;
-          case MIN: //MIN:
+          case MIN:
             if (val < cv)
               cv = val;
             break;
-          case MAX: //MAX:
+          case MAX:
             if (val > cv)
               cv = val;
             break;
