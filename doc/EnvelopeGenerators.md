@@ -268,6 +268,11 @@ Each stage can be configured independently to perform one of five actions:
 - **Rise** is the same as Move except the target is always 100% (normally 10V).
 - **Fall** is the same as Move except the target is always 0% (0V).
 
+Most actions can be configured to have one of three modes:
+- **Full** The stage always proceeds to completion before the envelope progresses to the next stage. Retrigger is not allowed.
+- **RTrg** Same as Full except a retrigger can abort the stage prematurely to initiate the start of a new envelope.
+- **Gate** The stage proceeds to completion as long as the triggering gate remains high. If the gate goes low then the envelope proceeds to the next non-Gate stage. This is the only mode available to Sustain actions.
+
 With these basic building blocks, a tremendous variety of envelope types may be constructed.
 
 Envelopes start and end at 0%, with a typical range between 0 and 100%. If an envelope ends at a non-zero percentage, then the envelope output drops to 0 when the envelope becomes idle. The drop is instant if the Retrig From 0 option is enabled. Otherwise the drop is delayed by 2 samples so that looping envelopes don't have an unwanted downward spike to 0.
