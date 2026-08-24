@@ -187,6 +187,15 @@ struct VenomModule : Module {
       ));
     }  
   }
+  
+  void restoreAllFactoryNames() {
+    for (unsigned int i=0; i<paramQuantities.size(); i++)
+      paramQuantities[i]->name = paramExtensions[i].factoryName;
+    for (unsigned int i=0; i<inputInfos.size(); i++)
+      inputInfos[i]->name = inputExtensions[i].factoryName;
+    for (unsigned int i=0; i<outputInfos.size(); i++)
+      outputInfos[i]->name = outputExtensions[i].factoryName;
+  }
 
   struct ParamExtension {
     bool locked;
@@ -481,6 +490,11 @@ struct VenomWidget : ModuleWidget {
       menu->addChild(createMenuItem("Unlock all parameters", "",
         [=]() {
           module->setLockAll(false);
+        }
+      ));
+      menu->addChild(createMenuItem("Restore all factory names", "",
+        [=]() {
+          module->restoreAllFactoryNames();
         }
       ));
     }

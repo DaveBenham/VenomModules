@@ -21,6 +21,8 @@
   - New sync threshold option with miniscule 0.1 mV hysteresis centered about 0 V.
 - XM-OP
   - Added "High XM depth for FM & PM" context menu option: multiplies depth by 5
+- All modules
+  - Added "Restore all factory names" context menu option - restores both parameter and port names
 
 ### Bug Fixes
 - Documentation was reorganized so that deep links from an external site now work properly. The documentation has become too large to put everything in one file.
