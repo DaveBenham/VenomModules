@@ -71,7 +71,7 @@ struct SpreadMergeExpanderWidget : VenomWidget {
     setVenomPanel("SpreadMergeExpander");
 
     addChild(createLightCentered<SmallLight<YellowLight>>(Vec(5.5f,17.f), module, SpreadMergeExpander::EXPAND_LIGHT));
-    addParam(createLockableParamCentered<ModeSwitch>(Vec(22.5f, 76.5f), module, SpreadMergeExpander::MODE_PARAM));
+    addParam(createLockableParamCentered<ModeSwitch>(Vec(22.5f, 69.f), module, SpreadMergeExpander::MODE_PARAM));
     for (int i=0; i<8; i++){
       addInput(createInputCentered<MonoPort>(Vec(22.5f, 118.5f + 27.f*i), module, SpreadMergeExpander::CV_INPUT+i));
     }

@@ -138,9 +138,9 @@ struct SpreadMergeWidget : VenomWidget {
     setModule(module);
     setVenomPanel("SpreadMerge");
 
-    addParam(createLockableParamCentered<CountSwitch>(Vec(20.f, 46.5f), module, SpreadMerge::COUNT_PARAM));
-    addChild(createLightCentered<SmallLight<RedLight>>(Vec(20.f,65.f), module, SpreadMerge::ERR_LIGHT));
-    addParam(createLockableParamCentered<ModeSwitch>(Vec(55.f, 76.5f), module, SpreadMerge::MODE_PARAM));
+    addParam(createLockableParamCentered<CountSwitch>(Vec(20.f, 69.f), module, SpreadMerge::COUNT_PARAM));
+    addChild(createLightCentered<SmallLight<RedLight>>(Vec(20.f,86.5f), module, SpreadMerge::ERR_LIGHT));
+    addParam(createLockableParamCentered<ModeSwitch>(Vec(55.f, 69.f), module, SpreadMerge::MODE_PARAM));
     for (int i=0; i<8; i++){
       addInput(createInputCentered<MonoPort>(Vec(20.f, 118.5f + 27.f*i), module, SpreadMerge::GATE_INPUT+i));
       addInput(createInputCentered<MonoPort>(Vec(55.f, 118.5f + 27.f*i), module, SpreadMerge::CV_INPUT+i));
