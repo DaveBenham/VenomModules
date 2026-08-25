@@ -1,6 +1,6 @@
 # Modulation
 - [MULTIMODE FILTER](#multimode-filter)
-- [OCTOVER](#octover)
+- [OCTAVER](#octaver)
 - [POLY SCALE](#poly-scale)
 - [REFORMATION](#reformation)
 - [SHAPED VCA](#shaped-vca)
