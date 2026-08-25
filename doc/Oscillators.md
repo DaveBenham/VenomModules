@@ -254,6 +254,10 @@ There are two ways to control the frequency of a Bounds/Bounce oscillation that 
 
 There is a secondary pulse output that is high (5V) when the triangle is rising, and low (-5V) when the triangle is falling.
 
+Bounded VCO is fully polyphonic. The number of output channels is the maximum number of channels found across all inputs. Monophonic inputs are replicated to match the number of output channels. Polyphonic inputs that have fewer channels use constant 0V for missing channels.
+
+All CV inputs can be driven at audio rates.
+
 ### SLOW button
 Controls whether the Frequency knob is configured for audio rates or low frequency rates.
 - **Off** ***(dark gray, default)*** - Frequency knob ranges from ~8 Hz to 8372 Hz, with the default noon value at 261.63 Hz (C4).
@@ -281,7 +285,7 @@ The rising and falling slopes of the triangle output are specified by Frequency 
 #### FREQ (Frequency) knob and CV input with attenuverter
 The Frequency knob is scaled assuming the upper and lower bounds are constant yielding a 10V peak to peak triangle waveform. The frequency range is dependent on the Slow button setting.
 
-The Frequency bipolar CV input can modulate the knob frequency. It has an associated attenuverter that can attenuate and/or invert the signal. The CV is V/Oct when the attenuverter is at 100%.
+The bipolar Frequency CV input can modulate the knob frequency. It has an associated attenuverter that can attenuate and/or invert the signal. The CV is V/Oct when the attenuverter is at 100%.
 
 The CV can modulate the Frequency beyond the limits of the knob.
 
@@ -295,8 +299,40 @@ The knob is configured to show the percentage of time the oscillator spends risi
 
 The bipolar Skew CV input is additive with the knob value. It has an associated attenuverter that can attenuate and/or invert the signal. With the attenuverter at 100% the CV is scaled at 10% per volt.
 
+### Bounds control
 
+#### FLOOR knob and CV input with attenuverter
+Defines the lower bound.
 
+The knob ranges from -10V to 10V, with the default at -5V.
+
+The bipolar Floor CV input is additive with the knob value. It has an associated attenuverter that can attenuate and/or invert the signal.
+
+The final effective lower bound is clamped to a value between -12V and 12V.
+
+#### CEILING knob and CV input with attenuverter
+Defines the upper bound.
+
+The knob ranges from -10V to 10V, with the default at +5V.
+
+The bipolar Ceiling CV input is additive with the knob value. It has an associated attenuverter that can attenuate and/or invert the signal.
+
+The final effective upper bound is clamped to a value between -12V and 12V.
+
+### PULSE output
+
+The bipolar Pulse output is high at +5V when the triangle is rising, and -5V when the triangle is falling.
+
+### TRI (Triangle) output
+
+The triangle output may be unipolar or bipolar, depending on the upper and lower bounds. The output is nominally clamped between the upper and lower bounds, which can range between -12V and 12V. However, the output may temporarily stray beyond those bounds.
+
+### Standard Venom Context Menus
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+The output is constant monophonic 0V when Bounded VCO is bypassed.
 
 [Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
