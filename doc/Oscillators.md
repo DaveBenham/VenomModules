@@ -281,7 +281,7 @@ The rising and falling slopes of the triangle output are specified by Frequency 
 #### FREQ (Frequency) knob and CV input with attenuverter
 The Frequency knob is scaled assuming the upper and lower bounds are constant yielding a 10V peak to peak triangle waveform. The frequency range is dependent on the Slow button setting.
 
-The Frequency CV input can modulate the knob frequency. It has an associated attenuverter that can attenuate and/or invert the signal. The CV is V/Oct when the attenuverter is at 100%.
+The Frequency bipolar CV input can modulate the knob frequency. It has an associated attenuverter that can attenuate and/or invert the signal. The CV is V/Oct when the attenuverter is at 100%.
 
 The CV can modulate the Frequency beyond the limits of the knob.
 
@@ -293,7 +293,7 @@ The knob is configured to show the percentage of time the oscillator spends risi
 - 50% is a traditional perfect triangle
 - 99% approximates a saw wave with an ascending ramp
 
-The Skew CV is additive with the knob value. It has an associated attenuverter that can attenuate and/or invert the signal. With the attenuverter at 100% the CV is scaled at 10% per volt.
+The bipolar Skew CV input is additive with the knob value. It has an associated attenuverter that can attenuate and/or invert the signal. With the attenuverter at 100% the CV is scaled at 10% per volt.
 
 
 
