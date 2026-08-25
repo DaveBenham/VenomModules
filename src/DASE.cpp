@@ -165,7 +165,7 @@ struct DASE : VenomModule {
           lvlAmt = params[LEVEL_CV_PARAM].getValue(),
           respParam = params[RESP_PARAM].getValue(),
           respAmt = params[RESP_CV_PARAM].getValue(),
-          rptChange = static_cast<float>(pow(2.f, params[RATE_PARAM].getValue() + inputs[RATE_CV_PARAM].getVoltage() * params[RATE_CV_PARAM].getValue())) * 2.f / sampleRate,
+          rptChange = static_cast<float>(dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_CV_INPUT].getVoltage() * params[RATE_CV_PARAM].getValue())) * 2.f / sampleRate,
           rptAtk = clamp(params[SHAPE_PARAM].getValue() + inputs[SHAPE_CV_INPUT].getVoltage() * params[SHAPE_CV_PARAM].getValue()),
           depth = clamp(params[DEPTH_PARAM].getValue() + inputs[DEPTH_CV_INPUT].getVoltage() * params[DEPTH_CV_PARAM].getValue(), -1.f, 1.f) * 0.67f;
     float_4 rpt{};
@@ -188,7 +188,7 @@ struct DASE : VenomModule {
               newTrig = trigger[s].process(inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c), 0.2f, 2.f) & ((retrigger<2 ? float_4::mask() : float_4::zero()) | (envActive[s]==0.f)),
               baseAtk = clamp(atkParam + inputs[ATK_CV_INPUT].getPolyVoltageSimd<float_4>(c) * atkAmt);
       if (compEnv)
-        envDelta = undersample / (clamp(pow(2.f, lenParam + inputs[LEN_CV_INPUT].getPolyVoltageSimd<float_4>(c) * lenAmt), 0.03125f, 32.f) * sampleRate);
+        envDelta = undersample / (clamp(dsp::exp2_taylor5(lenParam + inputs[LEN_CV_INPUT].getPolyVoltageSimd<float_4>(c) * lenAmt), 0.03125f, 32.f) * sampleRate);
       envActive[s] = ifelse(newTrig, 1.f, envActive[s]);
       envPhase[s] = fmin(envPhase[s] + envDelta * envActive[s], 1.f);
       envPhase[s] = ifelse(newTrig, retrigger ? float_4::zero() : retrigPhase[s]*baseAtk, envPhase[s]);
