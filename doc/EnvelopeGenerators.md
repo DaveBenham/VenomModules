@@ -252,6 +252,45 @@ All outputs are constant monophonic 0V when the AD/ASR Envelope Generator is byp
 ![DASE image](DASE.png)  
 A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate modulation of the envelope shape.
 
+### Upper Primary Envelope controls
+
+#### ENVELOPE LENGTH
+
+#### ENVELOPE ATTACK
+
+#### INPUT LEVEL
+
+#### OUTPUT RESPONSE
+
+### Middle Configuration buttons
+
+#### RTrig (Retrigger) button
+
+#### Sync button
+
+#### Over (Oversample) button
+
+#### DC output button
+Controls whether the final output is AC or DC coupled
+- **Off** ***(dark gray, default)*** - the bipolar output is AC coupled
+- **On** ***(yellow)*** - the unipolar output is DC coupled.
+
+### Lower LFO modulation controls
+
+#### REPEAT RATE
+
+#### REPEAT LEVEL
+
+#### REPEAT ATTACK
+
+### Bottom main IO ports
+
+#### TRIG (Trigger) input
+
+#### IN input
+
+#### OUT output
+
 [Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
 
 ## ENVELOPE FACTORY
