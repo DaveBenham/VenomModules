@@ -67,7 +67,7 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 
 |[WAVE<br />MULTIPLIER](doc/Modulation.md#wave-multiplier)|[WIDGET<br />MENU<br />EXTENDER](doc/PatchManagement.md#widget-menu-extender)|[WINCOMP](doc/LogicRandomRouting.md#wincomp)|[WINCOMP 2 + LOGIC](doc/LogicRandomRouting.md#wincomp-2--logic)|[XM-OP](doc/Oscillators.md#xm-op)|
 |----|----|----|----|----|
-|![WAVE MULTIPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|![WinComp 2 + Logic module image](doc/Compare2.png)|![XM-OP module image](doc/XM_OP.png)|
+|![IPLIER module image](doc/WaveMultiplier.png)|![WIDGET MENU EXTENDER module imiage](doc/WidgetMenuExtender.png)|![WINCOMP module image](doc/WinComp.PNG)|![WinComp 2 + Logic module image](doc/Compare2.png)|![XM-OP module image](doc/XM_OP.png)|
 
 ## Color Coded Ports
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
