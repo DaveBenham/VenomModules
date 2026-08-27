@@ -1,6 +1,6 @@
 # Envelope Generators
  - [AD/ASR ENVELOPE GENERATOR](#adasr-envelope-generator)
- - [DYNAMIC AMPLIFYING SHAPING ENVELOPE](#dynamic-amplifying-shaping-envelope)
+ - [DASE - DYNAMIC AMPLIFYING SHAPING ENVELOPE](#dase--dynamic-amplifying-shaping-envelope)
  - [ENVELOPE FACTORY](#envelope-factory)
 
 [Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
@@ -248,9 +248,11 @@ All outputs are constant monophonic 0V when the AD/ASR Envelope Generator is byp
 [Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
 
 
-## DYNAMIC AMPLIFYING SHAPING ENVELOPE
+## DASE - DYNAMIC AMPLIFYING SHAPING ENVELOPE
 ![DASE image](DASE.png)  
 A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate modulation of the envelope shape.
+
+There are two active components to 
 
 ### Upper Primary Envelope controls
 
