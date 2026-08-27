@@ -206,8 +206,6 @@ struct EnvelopeFactory : VenomModule {
         reset = true;
         stages[i].action = nextAction;
       }
-      if (nextAction==2)
-        params[MODE_PARAM+i].setValue(2);
       nextAction = i<stageCnt-1 ? params[ACTION_PARAM+i+1].getValue() : 0;
       switch (stages[i].action) {
         case 0:
@@ -372,7 +370,7 @@ struct EnvelopeFactory : VenomModule {
             break;
           case 2: // sustain
             {
-              int nextStage = nextUngated(stage[c]);
+              int nextStage = mode == 2 ? nextUngated(stage[c]) : (stage[c]+1)>=stageCnt ? -1 : stage[c]+1;
               double drift = (bParam(stage[c])==-3.f ? 0. : std::pow(10., bParam(stage[c]))) + bCV(stage[c], c);
               if (phase[c]==0.) {
                 float v = clamp((aParam(stage[c])+3.f)*0.25f + aCV(stage[c], c));
