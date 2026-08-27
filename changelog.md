@@ -1,6 +1,6 @@
 # [Venom Modules](README.md) Changelog
 
-## 2.16.0 (2026-??-??)
+## 2.16.0 (2026-08-27)
 ### New Modules
 - Bounded VCO
 - DASE (Dynamic Amplifying Shaping Envelope)
