@@ -1,12 +1,12 @@
 # Quantizers
-- [HARMONIC QUANTIZER](#harmonic-quantizer)
+- [HQ - HARMONIC QUANTIZER](#hq---harmonic-quantizer)
 - [NON-OCTAVE REPEATING SCALE INTERVALLIC QUANTIZER](#non-octave-repeating-scale-intervallic-quantizer)
 - [NORSIQ CHORD TO SCALE](#norsiq-chord-to-scale)
 - [RATIO](#ratio)
 
 [Quantizers top](#quantizers) | [Venom top](/README.md#venom)
 
-## HARMONIC QUANTIZER
+## HQ - HARMONIC QUANTIZER
 ![Harmonic Quantizer module image](HQ.PNG)  
 Computes a selected harmonic or subharmonic partial relative to a fundamental root V/Oct, or quantizes an input V/Oct to the nearest partial relative to the root.
 
