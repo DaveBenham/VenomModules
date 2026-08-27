@@ -297,7 +297,7 @@ Controls whether the final output is AC or DC coupled
 ![ENVELOPE FACTORY module image](EnvelopeFactory.png)  
 A highly configurable multi-stage polyphonic envelope generator supporting anywhere from 1 to 20 stages.
 
-### *Basic Operation*
+## *Basic Operation*
 By default the Envelope Factory has four stages, but a module context menu "Stage count" option lets you select any count from 1 to 20. The module automatically expands or contracts to match the selected stage count. Modules to the right are automatically pushed right as needed when expanding. Cables attached to removed stages are automatically deleted.
 
 Each stage can be configured independently to perform one of five actions:
@@ -352,7 +352,7 @@ If the Sustain Drift is kept at 0, then the default configuration behaves like a
 If the Drift is non-zero then the default configuration acts like an Attack Decay Break Decay2 Release (ADBDR) envelope. The Sustain stage defines both the Break point, as well as the Sustain's Decay2 rate. This is more like a physical piano where the note slowly decays while the sustain pedal is held down, and quickly decays once the sustain pedal is released.
 
 #### Factory Presets
-There are a number of factory presets that implement some common envelope types. There are two versions of most of the presets: Editable presets provide the stated functionality, but can be easily modified into something else entirely. Locked presets lock various parameter values so that the envelope cannot be transformed into a different type without first unlocking the parameters. The locked versions also rename all the stage knobs and ports to make it obvious what each stage does. Locked presets are a great way to gain familiarity with how the stage configuration works.
+There are a number of factory presets that implement some common envelope types. There are two versions of each factory preset: Editable presets provide the stated functionality, but can be easily modified into something else entirely. Locked presets lock various parameter values so that the envelope cannot be transformed into a different type without first unlocking the parameters. The locked versions also rename all the stage knobs and ports to make it obvious what each stage does. Locked presets are a great way to gain familiarity with how the stage configuration works.
 
 - Attack Decay Break Decay2 Release
 - Attack Decay Sustain Release
@@ -361,7 +361,8 @@ There are a number of factory presets that implement some common envelope types.
 - Attack Sustain Release
 - Decay
 - Delay Attack Decay Sustain Release
-- Timed step sequencer - 8 stages by default (Editable version only)
+- Timed step sequencer - 8 stages by default: A normal sequencer except each stage is timed rather than advanced by a clock
+- Triggered step sequencer - 8 stages by default: The Gate button and input function as a Run control, and the Retrig button and input act as the sequencer clock
 
 #### Polyphony
 All input and output ports are polyphonic. The total number of output channels is set to the maximum channel count found across all inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels substitute 0V for any missing channels.
@@ -383,7 +384,7 @@ All active envelopes will instantly be terminated and the envelope generator wil
 - The number of stages is changed
 - The Envelope Factory is bypassed
 
-### *Global controls*
+## *Global controls*
 
 **<u>Standard Mode</u>**  
 <img src="EnvelopeFactory_Std.png" width="75"/>
@@ -488,7 +489,7 @@ The envelope is still output at the same port as standard mode. However, the for
 ### VCA output
 This is the audio input after it has been attenuated by the envelope and VCA.
 
-### *Stage controls*
+## *Stage controls*
 The module context menu has a Stages option where you specify the number of stages you want for your envelope.
 
 The two square buttons at the top and the Gate output at the bottom have identical functionality for each stage.
@@ -509,7 +510,7 @@ Controls whether the stage length is impacted by the main Gate, and whether the 
 
 - **Full** - The stage always runs to completion and then the envelope advances to the next stage. Retrigger is not allowed.
 - **RTrg (Retriggerable Full)** - The stage runs to completion and then the envelope advances to the next stage. However, the stage can be terminated prematurely by retriggering a new envelope. A retrigger happens when the Gate goes low before or during the stage, and then goes high during the RTrg stage.
-- **Gate (Gated)** - The stage is gated, meaning the stage runs to completion unless the main Gate goes low. This is the only mode available to the Sustain stage. When the main Gate goes low the envelope immediately proceeds to the next stage that is not Gated, or else terminates if none exists.
+- **Gate (Gated)** - The stage is gated, meaning the stage runs to completion unless the main Gate goes low. When the main Gate goes low the envelope immediately proceeds to the next stage that is not Gated, or else terminates if none exists.
 
 ### GATE output, trigger button, and LED light
 The stage gate output is high at 10V for as long as the stage is active, otherwise it is 0V.
