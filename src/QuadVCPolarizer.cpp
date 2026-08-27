@@ -49,7 +49,7 @@ struct QuadVCPolarizer : VenomModule {
       configParam(LEVEL_PARAM+i, -1.f, 1.f, 0.f, string::f("Level %d", i + 1), "%", 0, 100, 0);
       configParam(LEVEL_AMT_PARAM+i, -1.f, 1.f, 0.f, string::f("Level %d CV amount", i + 1), "%", 0, 100, 0);
       configInput(LEVEL_INPUT+i, string::f("Level %d CV", i + 1));
-      configInput(POLY_INPUT+i, string::f("Poly %d", i + 1));
+      configInput(POLY_INPUT+i, string::f("Poly %d", i + 1))->description = "Normalled to 5V";
       configOutput(POLY_OUTPUT+i, string::f("Poly %d", i + 1));
     }
     oversampleStages = 5;
@@ -143,6 +143,7 @@ struct QuadVCPolarizer : VenomModule {
 struct QuadVCPolarizerWidget : VenomWidget {
 
   QuadVCPolarizer* mod = NULL;
+  int norm = 0;
 
   struct LabelsWidget : widget::Widget {
     QuadVCPolarizer* mod=NULL;
@@ -249,6 +250,18 @@ struct QuadVCPolarizerWidget : VenomWidget {
       addOutput(createOutputCentered<PolyPort>(Vec(60.f, 94.f + 80.f*i), module, QuadVCPolarizer::POLY_OUTPUT+i));
     }
     
+  }
+  
+  void step() override {
+    VenomWidget::step();
+    if (module) {
+      if (norm != static_cast<int>(module->params[QuadVCPolarizer::NORM_PARAM].getValue())) {
+        norm = static_cast<int>(module->params[QuadVCPolarizer::NORM_PARAM].getValue());
+        std::string desc = norm ? "Normalled to 10V" : "Normalled to 5V";
+        for (int i=0; i<4; i++)
+          module->inputInfos[QuadVCPolarizer::POLY_INPUT+i]->description = desc;
+      }
+    }
   }
 
 };

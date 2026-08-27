@@ -75,6 +75,7 @@ struct SVF : VenomModule {
       range = 0;
   int rangeOver[2] {4,1};
   bool disableDCBlock = false;
+  bool absSpread = false;
   float_4 state[4][8]{}, 
           modeState[4][7][4][8]{},
           fdbkOld[8]{};
@@ -106,7 +107,7 @@ struct SVF : VenomModule {
     float maxFreq = 0;
     float getDisplayValue() override {
       if (displayBase == 2.f) {
-        float rtn = pow(2.f, getValue()*2.5f + 1.f) * displayMultiplier;
+        float rtn = dsp::exp2_taylor5(getValue()*2.5f + 1.f) * displayMultiplier;
         return rtn>maxFreq ? maxFreq : rtn;
       }
       else
@@ -196,6 +197,34 @@ struct SVF : VenomModule {
       notchDownSample[i].setOversample(oversample, 5);
     }
   }
+  
+  void configureSpread() {
+    SpreadQuantity *spreadQuantity = static_cast<SpreadQuantity*>(paramQuantities[SPREAD_PARAM]);
+    FreqQuantity *freqQuantity = static_cast<FreqQuantity*>(paramQuantities[FREQ_PARAM]);
+    ParamExtension *freqExt = &paramExtensions[FREQ_PARAM];
+    ParamExtension *spreadExt = &paramExtensions[SPREAD_PARAM];
+    if (absSpread) {
+      if (freqQuantity->name == freqExt->factoryName)
+        freqQuantity->name = freqName[1];
+      freqExt->factoryName = freqName[1];
+      if (spreadQuantity->name == spreadExt->factoryName)
+        spreadQuantity->name = spreadName[1];
+      spreadExt->factoryName = spreadName[1];
+      spreadQuantity->unit = " Hz";
+      spreadQuantity->displayBase = 2.f;
+      spreadQuantity->displayMultiplier = rangeFreq[range];
+    } else {
+      if (freqQuantity->name == freqExt->factoryName)
+        freqQuantity->name = freqName[0];
+      freqExt->factoryName = freqName[0];
+      if (spreadQuantity->name == spreadExt->factoryName)
+        spreadQuantity->name = spreadName[0];
+      spreadExt->factoryName = spreadName[0];
+      spreadQuantity->unit = "";
+      spreadQuantity->displayBase = 0.f;
+      spreadQuantity->displayMultiplier = 1.f;
+    }
+  }
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
@@ -237,31 +266,7 @@ struct SVF : VenomModule {
           dcBlockFilter[i][j].init(oversample, sampleRate);
     }
 
-    if ((dir==2) != (spreadQuantity->displayBase==2.f)) {
-      ParamExtension *freqExt = &paramExtensions[FREQ_PARAM];
-      ParamExtension *spreadExt = &paramExtensions[SPREAD_PARAM];
-      if (dir==2) {
-        if (freqQuantity->name == freqExt->factoryName)
-          freqQuantity->name = freqName[1];
-        freqExt->factoryName = freqName[1];
-        if (spreadQuantity->name == spreadExt->factoryName)
-          spreadQuantity->name = spreadName[1];
-        spreadExt->factoryName = spreadName[1];
-        spreadQuantity->unit = " Hz";
-        spreadQuantity->displayBase = 2.f;
-        spreadQuantity->displayMultiplier = rangeFreq[range];
-      } else {
-        if (freqQuantity->name == freqExt->factoryName)
-          freqQuantity->name = freqName[0];
-        freqExt->factoryName = freqName[0];
-        if (spreadQuantity->name == spreadExt->factoryName)
-          spreadQuantity->name = spreadName[0];
-        spreadExt->factoryName = spreadName[0];
-        spreadQuantity->unit = "";
-        spreadQuantity->displayBase = 0.f;
-        spreadQuantity->displayMultiplier = 1.f;
-      }
-    }
+    absSpread = (dir==2);
     
     float resParam = params[RES_PARAM].getValue(),
           driveParam = params[DRIVE_PARAM].getValue(),
@@ -394,16 +399,16 @@ struct SVF : VenomModule {
       if (inputMode)
         stereoIn = dcBlockFilter[STEREOIN][s].process(stereoIn);
       stereoIn *= 10.f;
-      freq = pow(2.f, freqParam + voctIn + freqIn*freqCVAmt + spreadParam + spreadIn*spreadCVAmt) * rangeFreq[range];
+      freq = dsp::exp2_taylor5(freqParam + voctIn + freqIn*freqCVAmt + spreadParam + spreadIn*spreadCVAmt) * rangeFreq[range];
       freq = ifelse(freq>maxFreq, maxFreq, freq);
       res = clamp(resParam + resIn * resCVAmt) * 4.5f;
       drive = clamp(driveParam + driveIn * driveCVAmt, minGain, 10.f);
-      fdbkAmt = clamp(pow(2.f, fdbkParam + fdbkIn*fdbkCVAmt));
+      fdbkAmt = clamp(dsp::exp2_taylor5(fdbkParam + fdbkIn*fdbkCVAmt));
       fdbkAmt = ifelse(fdbkAmt<0.001f, 0.f, fdbkAmt);
       if (range==0)
         fdbkAmt *= 0.5;
       f = 2.f * sin(sampleTimePi * freq);
-      q = (slope==0) ? 1.f / pow(2.f, res) : 1.f;
+      q = (slope==0) ? 1.f / dsp::exp2_taylor5(res) : 1.f;
       if (outConnected[MORPH]){
         morphBRatio = clamp(morphParam + morphIn*morphCVAmt);
         if (mode==1){
@@ -424,7 +429,7 @@ struct SVF : VenomModule {
         low = state[LOW][s] = state[LOW][s] + f * state[BAND][s];
         for (int i=0; i<slope; i++){ // slope loop
           if (i==slope-1)
-            q = 1.f / pow(2.f, res);
+            q = 1.f / dsp::exp2_taylor5(res);
           int b=LOW;
           if (outConnected[b] || outConnected[MORPH]){
             stereo = low;
@@ -624,6 +629,8 @@ struct SVF : VenomModule {
 
 struct SVFWidget : VenomWidget {
   
+  bool absSpread = false;
+  
   struct RangeSwitch : GlowingSvgSwitchLockable {
     RangeSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
@@ -744,6 +751,15 @@ struct SVFWidget : VenomWidget {
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("Disable audio output DC block", "", &module->disableDCBlock));    
     VenomWidget::appendContextMenu(menu);
+  }
+
+  void step() override {
+    VenomWidget::step();
+    SVF* mod = dynamic_cast<SVF*>(this->module);
+    if(mod && absSpread!=mod->absSpread) {
+      absSpread = mod->absSpread;
+      mod->configureSpread();
+    }
   }
 
 };

@@ -58,7 +58,7 @@ struct AD_ASR : VenomModule {
         case 3:
           offset = 8.f;
       }
-      return pow(2.f, module->params[paramId].getValue() + offset);
+      return dsp::exp2_taylor5(module->params[paramId].getValue() + offset);
     }
     void setDisplayValue(float v) override {
       int speedParam = static_cast<int>(module->params[SPEED_PARAM].getValue());
@@ -96,10 +96,10 @@ struct AD_ASR : VenomModule {
   float mode = 0.f,
         blockRetrigStage = 1.f;
 
-  const float normMinTime = pow(2.f, -12.f),
-              normMaxTime = pow(2.f, 7.5f),
-              slowMinTime = pow(2.f, -5.f),
-              slowMaxTime = pow(2.f, 11.5f);
+  const float normMinTime = dsp::exp2_taylor5(-12.f),
+              normMaxTime = dsp::exp2_taylor5(7.5f),
+              slowMinTime = dsp::exp2_taylor5(-5.f),
+              slowMaxTime = dsp::exp2_taylor5(11.5f);
 
   float_4 loop{};
 
@@ -184,67 +184,11 @@ struct AD_ASR : VenomModule {
       gateCVState[s][i] = 0.f;
     }
     oldChannels = channels;
-    // update stage output modes
-    if (riseOutMode != params[RISE_OUT_PARAM].getValue()){
-      riseOutMode = params[RISE_OUT_PARAM].getValue();
-      PortInfo* portInfo = outputInfos[RISE_OUTPUT];
-      PortExtension* portExt = &outputExtensions[RISE_OUTPUT];
-      bool chng = portInfo->name == portExt->factoryName;
-      switch(riseOutMode){
-        case 0:
-          portExt->factoryName="Rise gate";
-          break;
-        case 1:
-          portExt->factoryName="Rise start trigger";
-          break;
-        case 2:
-          portExt->factoryName="Rise end trigger";
-          break;
-      }
-      if (chng)
-        portInfo->name = portExt->factoryName;
-    }
-    if (susOutMode != params[SUS_OUT_PARAM].getValue()){
-      susOutMode = params[SUS_OUT_PARAM].getValue();
-      PortInfo* portInfo = outputInfos[RISE_OUTPUT];
-      PortExtension* portExt = &outputExtensions[RISE_OUTPUT];
-      bool chng = portInfo->name == portExt->factoryName;
-      switch(susOutMode){
-        case 0:
-          portExt->factoryName="Sustain gate";
-          break;
-        case 1:
-          portExt->factoryName="Sustain start trigger";
-          break;
-        case 2:
-          portExt->factoryName="Sustain end trigger";
-          break;
-      }
-      if (chng)
-        portExt->factoryName = portInfo->name;
-    }
-    if (fallOutMode != params[FALL_OUT_PARAM].getValue()){
-      fallOutMode = params[FALL_OUT_PARAM].getValue();
-      PortInfo* portInfo = outputInfos[RISE_OUTPUT];
-      PortExtension* portExt = &outputExtensions[RISE_OUTPUT];
-      bool chng = portInfo->name == portExt->factoryName;
-      switch(fallOutMode){
-        case 0:
-          portExt->factoryName="Fall gate";
-          break;
-        case 1:
-          portExt->factoryName="Fall start trigger";
-          break;
-        case 2:
-          portExt->factoryName="Fall end trigger";
-          break;
-        case 3:
-          portExt->factoryName="EOC trigger";
-          break;
-      }
-      if (chng)
-        portExt->factoryName = portInfo->name;
-    }
+
+    // out port name management moved to step()
+    riseOutMode = params[RISE_OUT_PARAM].getValue();
+    susOutMode = params[SUS_OUT_PARAM].getValue();
+    fallOutMode = params[FALL_OUT_PARAM].getValue();
     // reset gate button if toggle switch change and button not locked
     if (params[TOGGLE_PARAM].getValue() != toggleState) {
       if (!paramExtensions[GATE_PARAM].locked) // only change gateBtnState if gate button not locked
@@ -306,8 +250,8 @@ struct AD_ASR : VenomModule {
       gateCVNewState = ifelse(gateCVVal<0.2f, 0.f, gateCVNewState);
       float_4 gateCVTrig = ifelse(gateCVNewState > gateCVState[s], 1.f, 0.f);
       // compute current stage deltas
-      float_4 riseDelta = args.sampleTime * undersample / clamp(pow(2.f, inputs[RISE_CV_INPUT].getPolyVoltageSimd<float_4>(c)*riseCVAmt + riseParm), minTime, maxTime);
-      float_4 fallDelta = -args.sampleTime * undersample / clamp(pow(2.f, inputs[FALL_CV_INPUT].getPolyVoltageSimd<float_4>(c)*fallCVAmt + fallParm), minTime, maxTime);
+      float_4 riseDelta = args.sampleTime * undersample / clamp(dsp::exp2_taylor5(inputs[RISE_CV_INPUT].getPolyVoltageSimd<float_4>(c)*riseCVAmt + riseParm), minTime, maxTime);
+      float_4 fallDelta = -args.sampleTime * undersample / clamp(dsp::exp2_taylor5(inputs[FALL_CV_INPUT].getPolyVoltageSimd<float_4>(c)*fallCVAmt + fallParm), minTime, maxTime);
       float_4 delta{};
       delta = ifelse(stage[s]==1.f, riseDelta, delta);
       delta = ifelse(stage[s]==3.f, fallDelta, delta);
@@ -427,6 +371,13 @@ struct AD_ASR : VenomModule {
 
 struct AD_ASRWidget : VenomWidget {
 
+  int riseOutMode = 0,
+      susOutMode = 0,
+      fallOutMode = 0;
+  std::string riseOutModes[3]{"Rise gate", "Rise start trigger", "Rise end trigger"},
+              susOutModes[3]{"Sustain gate", "Sustain start trigger", "Sustain end trigger"},
+              fallOutModes[4]{"Fall gate", "Fall start trigger", "Fall end trigger", "EOC trigger"};
+
   struct SpeedSwitch : GlowingSvgSwitchLockable {
     SpeedSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallRedButtonSwitch.svg")));
@@ -510,6 +461,18 @@ struct AD_ASRWidget : VenomWidget {
     VenomWidget::step();
     AD_ASR* mod = dynamic_cast<AD_ASR*>(this->module);
     if(mod) {
+      if (riseOutMode != mod->riseOutMode) {
+        riseOutMode = mod->riseOutMode;
+        mod->setPortFactoryName(AD_ASR::RISE_OUTPUT, riseOutModes[riseOutMode], true);
+      }
+      if (susOutMode != mod->susOutMode) {
+        susOutMode = mod->susOutMode;
+        mod->setPortFactoryName(AD_ASR::SUS_OUTPUT, susOutModes[susOutMode], true);
+      }
+      if (fallOutMode != mod->fallOutMode) {
+        fallOutMode = mod->fallOutMode;
+        mod->setPortFactoryName(AD_ASR::FALL_OUTPUT, fallOutModes[fallOutMode], true);
+      }
       mod->lights[AD_ASR::TRIG_LIGHT].setBrightness(mod->trigBtnState>0 ? 1.f : 0.02f);
       mod->lights[AD_ASR::GATE_LIGHT].setBrightness(mod->gateBtnState>0 ? 1.f : 0.02f);
     }

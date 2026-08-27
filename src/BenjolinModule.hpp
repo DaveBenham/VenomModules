@@ -197,7 +197,7 @@ struct BenjolinVoltsExpander : BenjolinModule {
   
   float getBitValue(int i){
     float val = params[i].getValue();
-    return val ? std::pow(2,val-1) : 0.f;
+    return val ? dsp::exp2_taylor5(val-1) : 0.f;
   }
 
   struct BitQuantity : ParamQuantity {
@@ -209,7 +209,7 @@ struct BenjolinVoltsExpander : BenjolinModule {
 
     float getDisplayValue() override {
       float val = getValue();
-      return val ? std::pow(2,val-1) : 0.f;
+      return val ? dsp::exp2_taylor5(val-1) : 0.f;
     }
 
     void setDisplayValue(float v) override {

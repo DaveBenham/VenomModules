@@ -25,8 +25,9 @@ struct WidgetMenuExtender : VenomModule {
     ENABLE_BLUE_LIGHT,
     LIGHTS_LEN
   };
-
+  
   bool disable = false;
+  int initializeState = 0;
   dsp::SchmittTrigger trigIn;
   
   struct ParamDefault {
@@ -231,7 +232,7 @@ struct WidgetMenuExtender : VenomModule {
     }
   }
   
-  void initialPostDrawnProcess() override { // Called once from VenomModule process()
+  void initialLoad() { // called once by step()
     for (uint64_t i=0; i<defaults.size(); i++){
       ParamDefault* d = &defaults[i];
       Module* mod = APP->engine->getModule(d->modId);
@@ -260,6 +261,11 @@ struct WidgetMenuExtender : VenomModule {
       PortInfo* pi = mod->getOutputInfo(wr->id);
       if (pi) pi->name = wr->name;
     }
+    initializeState = 2; // initialize now complete
+  }
+  
+  void initialPostDrawnProcess() override { // Called once from VenomModule process()
+    initializeState = 1; // triggers initial load from step()
   }
 
   json_t* json_rename(WidgetRename* wr) {
@@ -397,7 +403,10 @@ struct WidgetMenuExtenderWidget : VenomWidget {
   void step() override {
     VenomWidget::step();
     WidgetMenuExtender* mod = dynamic_cast<WidgetMenuExtender*>(this->module);
-    if (!mod || mod->isBypassed()) return;
+    if (mod && mod->initializeState == 1)
+      mod->initialLoad();
+    if (!mod || mod->isBypassed() || mod->initializeState!=2)
+      return;
     bool enabled = mod->params[WidgetMenuExtender::ENABLE_PARAM].getValue();
     mod->lights[WidgetMenuExtender::ENABLE_RED_LIGHT].setBrightness(mod->disable ? LIGHT_ON : 0.f);
     mod->lights[WidgetMenuExtender::ENABLE_BLUE_LIGHT].setBrightness(enabled ? LIGHT_ON : mod->disable ? 0.f : LIGHT_OFF);

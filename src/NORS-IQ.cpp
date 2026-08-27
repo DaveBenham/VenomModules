@@ -71,7 +71,6 @@ struct NORS_IQ : VenomModule {
   int oldChannels = 0;
   float oldOut[16]{};
 
-  bool equalDivs = true;
   float poi = 1;
   int edpo = 12;
   int len = 0;
@@ -79,27 +78,24 @@ struct NORS_IQ : VenomModule {
   int intvl[INTVL_CNT]{};
   float step[INTVL_CNT]{};
   
-  std::string intvlStr(float val, bool display) {
-    constexpr size_t sz = 32;
-    char buf[sz];
+  float intvlVal(float val) {
     switch (static_cast<int>(params[INTVL_UNIT_PARAM].getValue())) {
       case RATIO_UNIT:
-        snprintf(buf, sz, display ? "%g:1" : "%g", pow(2.f, val));
+        return dsp::exp2_taylor5(val);
         break;
       case CENT_UNIT:
-        snprintf(buf, sz, display ? "%g \u00A2" : "%g", val*1200.f);
+        return val*1200.f;
         break;
       case VOLT_UNIT:
       default:
-        snprintf(buf, sz, display ? "%g V" : "%g", val);
+        return val;
         break;
     }
-    return std::string(buf, sz);
-  }  
+  }
 
   struct POIQuantity : ParamQuantity {
-    std::string getDisplayValueString() override {
-      return dynamic_cast<NORS_IQ*>(module)->intvlStr(getValue(), false);
+    float getDisplayValue() override {
+      return static_cast<NORS_IQ*>(module)->intvlVal(getValue());
     }
     void setDisplayValue(float v) override {
       if (module->params[INTVL_UNIT_PARAM].getValue() == RATIO_UNIT)
@@ -110,15 +106,14 @@ struct NORS_IQ : VenomModule {
   };
   
   struct IntervalQuantity : ParamQuantity {
-    std::string getDisplayValueString() override {
-      NORS_IQ* mod = dynamic_cast<NORS_IQ*>(module);
-      if (mod->equalDivs)
-        return std::to_string(static_cast<int>(std::round(getValue()*99+1)));
-      return mod->intvlStr(getValue()*2.f, false);
+    float getDisplayValue() override {
+      if (module->params[EQUAL_DIVS_PARAM].getValue() != 0.f)
+        return std::round(getValue()*99+1);
+      return static_cast<NORS_IQ*>(module)->intvlVal(getValue()*2.f);
     }
     void setDisplayValue(float v) override {
       NORS_IQ* mod = dynamic_cast<NORS_IQ*>(module);
-      if (mod->equalDivs)
+      if (mod->params[EQUAL_DIVS_PARAM].getValue() != 0.f)
         setValue((v-1.f)/99.f);
       else if (mod->params[INTVL_UNIT_PARAM].getValue() == RATIO_UNIT)
         setValue(log2(v)/2.f);
@@ -127,26 +122,23 @@ struct NORS_IQ : VenomModule {
     }
   };
   
-  std::string rootStr(float val, bool display) {
-    constexpr size_t sz = 32;
-    char buf[sz];
+  float rootVal(float val) {
     switch (static_cast<int>(params[ROOT_UNIT_PARAM].getValue())) {
       case HZ_UNIT:
-        snprintf(buf, sz, display ? "%g Hz" : "%g", pow(2.f, val + log2(dsp::FREQ_C4)));
+        return dsp::exp2_taylor5(val + static_cast<float>(log2(dsp::FREQ_C4)));
         break;
       case CENT_UNIT:
-        snprintf(buf, sz, display ? "%g \u00A2" : "%g", val*1200.f);
+        return val*1200.f;
         break;
       case VOLT_UNIT:
       default:
-        snprintf(buf, sz, display ? "%g V" : "%g", val);
+        return val;
     }
-    return std::string(buf, sz);
   };
 
   struct RootQuantity : ParamQuantity {
-    std::string getDisplayValueString() override {
-      return dynamic_cast<NORS_IQ*>(module)->rootStr(getValue(), false);
+    float getDisplayValue() override {
+      return static_cast<NORS_IQ*>(module)->rootVal(getValue());
     }
     void setDisplayValue(float v) override {
       if (module->params[ROOT_UNIT_PARAM].getValue() == HZ_UNIT)
@@ -170,7 +162,7 @@ struct NORS_IQ : VenomModule {
         break;
     }  
     paramQuantities[POI_PARAM]->unit = unit;
-    if (equalDivs)
+    if (params[EQUAL_DIVS_PARAM].getValue())
       unit = "";
     for (int i=0; i<INTVL_CNT; i++)
       paramQuantities[INTVL_PARAM+i]->unit = unit;
@@ -224,10 +216,7 @@ struct NORS_IQ : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    if ((params[EQUAL_DIVS_PARAM].getValue() != 0.f) != equalDivs) {
-      equalDivs = !equalDivs;
-      setIntervalUnit();
-    }
+    bool equalDivs = params[EQUAL_DIVS_PARAM].getValue() != 0.f;
     poi = clamp(params[POI_PARAM].getValue() + inputs[POI_INPUT].getVoltage(), 0.f, 4.f);
     edpo = clamp(params[EDPO_PARAM].getValue() + std::round(inputs[EDPO_INPUT].getVoltage()*10.f), 1.f, 100.f);
     float minIntvl = poi / edpo;
@@ -385,9 +374,10 @@ struct NORS_IQDisplay : LedDisplay {
     nvgFontFaceId(args.vg, font->handle);
     nvgFillColor(args.vg, SCHEME_YELLOW);
     std::string txt;
+    bool equalDivs = module ? (module->params[NORS_IQ::EQUAL_DIVS_PARAM].getValue()!=0.f) : true;
 
-    if (!module || (module && module->equalDivs)) {
-      txt = module ? module->intvlStr(module->poi, true) + string::f(" / %d", module->edpo) : "1200 \u00A2 / 12";
+    if (equalDivs) {
+      txt = module ? string::f("%g%s / %d",  module->intvlVal(module->poi), module->paramQuantities[NORS_IQ::POI_PARAM]->unit.c_str(), module->edpo) : "1200 \u00A2 / 12";
       nvgTextAlign(args.vg, NVG_ALIGN_RIGHT + NVG_ALIGN_TOP);
       nvgText(args.vg, 171.f, 6.f, txt.c_str(), NULL);
     }
@@ -396,12 +386,12 @@ struct NORS_IQDisplay : LedDisplay {
     nvgTextAlign(args.vg, NVG_ALIGN_CENTER + NVG_ALIGN_TOP);
     nvgText(args.vg, 195.1f, 6.f, txt.c_str(), NULL);
 
-    txt = module ? module->rootStr(module->root, true) : "261.626 Hz";
+    txt = module ? string::f("%g%s", module->rootVal(module->root), module->paramQuantities[NORS_IQ::ROOT_PARAM]->unit.c_str()) : "261.626 Hz";
     nvgTextAlign(args.vg, NVG_ALIGN_LEFT + NVG_ALIGN_TOP);
     nvgText(args.vg, 221.f, 6.f, txt.c_str(), NULL);
     
     x = 15.3f;
-    if (!module || (module && module->equalDivs)) {
+    if (equalDivs) {
       nvgTextAlign(args.vg, NVG_ALIGN_CENTER + NVG_ALIGN_BOTTOM);
       for (int i=0; i<(module ? module->len : 5); i++) {
         txt = string::f("%d", module ? module->intvl[i] : dummyIntvl[i]);
@@ -413,7 +403,7 @@ struct NORS_IQDisplay : LedDisplay {
       nvgFontSize(args.vg, 8);
       nvgTextLetterSpacing(args.vg, -1);
       for (int i=0; i<module->len; i++) {
-        txt = module->intvlStr(module->step[i], true);
+        txt = string::f("%g%s", module->intvlVal(module->step[i]), module->paramQuantities[NORS_IQ::INTVL_PARAM]->unit.c_str());
         txt2 = txt.substr(0,txt.length()-2);
         nvgTextAlign(args.vg, NVG_ALIGN_CENTER + NVG_ALIGN_TOP);
         nvgText(args.vg, x, 66.f, txt2.c_str(), NULL);
@@ -459,12 +449,22 @@ struct RootUnitSwitch : CKSSThreeLockable {
 
 struct NORS_IQWidget : VenomWidget {
 
+  template <typename TLight>
+  struct EqualDivsButton : VCVLightButtonLatchLockable<TLight> {
+    void onChange(const ChangeEvent &e)	override {
+      VCVLightButtonLatchLockable<TLight>::onChange(e);
+      if (this->module) {
+        static_cast<NORS_IQ*>(this->module)->setIntervalUnit();
+      }
+    }
+  };
+
   NORS_IQWidget(NORS_IQ* module) {
     setModule(module);
     setVenomPanel("NORS_IQ");
 
     addParam(createLockableParam<IntvlUnitSwitch>(Vec(31.743, 68.0), module, NORS_IQ::INTVL_UNIT_PARAM));
-    addParam(createLockableLightParamCentered<VCVLightButtonLatchLockable<MediumSimpleLight<WhiteLight>>>(Vec(77.871, 82.0), module, NORS_IQ::EQUAL_DIVS_PARAM, NORS_IQ::EQUAL_DIVS_LIGHT));
+    addParam(createLockableLightParamCentered<EqualDivsButton<MediumSimpleLight<WhiteLight>>>(Vec(77.871, 82.0), module, NORS_IQ::EQUAL_DIVS_PARAM, NORS_IQ::EQUAL_DIVS_LIGHT));
     addParam(createLockableParamCentered<RoundBlackKnobLockable>(Vec(125.0, 82.0), module, NORS_IQ::POI_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(164.1, 82.0), module, NORS_IQ::EDPO_PARAM));
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(201.2, 82.0), module, NORS_IQ::LENGTH_PARAM));

@@ -1,6 +1,46 @@
-# Venom Modules Changelog
-## 2.15.0 (2026-04-18)
+# [Venom Modules](README.md) Changelog
 
+## 2.16.0 (2026-08-27)
+### New Modules
+- Bounded VCO
+- DASE (Dynamic Amplifying Shaping Envelope)
+- Envelope Factory
+- Linear Merge
+- Linear Merge Expander
+- Ratio
+- Spread Merge
+- Spread Merge Expander
+- Stereo Merge Split
+
+### Enhancements
+- Poly Mute
+  - Add "Exclusive pass" (radio button) Gate Mode option
+- VCO Lab and VCO Unit
+  - Exponential FM no longer disabled when in 0 Hz carrier mode. Only has effect if bias is non-zero.
+  - New Soft Sync gate mode. If enabled then high gate is reverse, low gate is forward, and hard sync no longer resets direction to forward.
+  - New sync threshold option with miniscule 0.1 mV hysteresis centered about 0 V.
+- XM-OP
+  - Added "High XM depth for FM & PM" context menu option: multiplies depth by 5
+- All modules
+  - Added "Restore all factory names" context menu option - restores both parameter and port names
+
+### Bug Fixes
+- Documentation was reorganized so that deep links from an external site now work properly. The documentation has become too large to put everything in one file.
+- VCO LAB & VCO UNIT: Fixed Bias frequency display. Used to be off by factor of 100
+- SLEW: Fixed shape CV input names in hover text
+- NORS_IQ: Fixed unit display for interval and scale root knobs
+- Bay modules: Removed allocation actions related to label propagation from the audio thread.
+- Removed allocation actions related to name and unit string manipulation from dsp thread for all modules. Affected modules:
+  - AD_ASR Envelope Generator
+  - Multimode Filter
+  - Mix modules Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+  - Non-Octave-Repeating Intervallic Quantizer
+  - VCO Lab
+  - VCO Unit
+  - XM-OP
+  - Widget Menu Extender
+
+## 2.15.0 (2026-04-18)
 ### New Modules
 - Merge 4x2
 - Merge Split

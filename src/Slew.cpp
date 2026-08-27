@@ -72,8 +72,8 @@ struct Slew : VenomModule {
     configParam(RISE_SHAPE_CV_PARAM, -1.f, 1.f, 0.f, "Rise shape CV amount", "%", 0, 100, 0);
     configParam(FALL_SHAPE_CV_PARAM, -1.f, 1.f, 0.f, "Fall shape CV amount", "%", 0, 100, 0);
     
-    configInput(RISE_SHAPE_CV_INPUT, "Rise time CV");
-    configInput(FALL_SHAPE_CV_INPUT, "Fall time CV");
+    configInput(RISE_SHAPE_CV_INPUT, "Rise shape CV");
+    configInput(FALL_SHAPE_CV_INPUT, "Fall shape CV");
 
     configInput(RAW_INPUT, "Raw");
     configInput(VOCT_INPUT, "V/Oct");
@@ -143,8 +143,8 @@ struct Slew : VenomModule {
           }
         }
         // compute outputs
-        float_4 riseMult = pow(2.f, in[VOCT_INPUT] - params[RISE_TIME_PARAM].getValue() - in[RISE_TIME_CV_INPUT]*params[RISE_TIME_CV_PARAM].getValue());
-        float_4 fallMult = pow(2.f, in[VOCT_INPUT] - params[FALL_TIME_PARAM].getValue() - in[FALL_TIME_CV_INPUT]*params[FALL_TIME_CV_PARAM].getValue());
+        float_4 riseMult = dsp::exp2_taylor5(in[VOCT_INPUT] - params[RISE_TIME_PARAM].getValue() - in[RISE_TIME_CV_INPUT]*params[RISE_TIME_CV_PARAM].getValue());
+        float_4 fallMult = dsp::exp2_taylor5(in[VOCT_INPUT] - params[FALL_TIME_PARAM].getValue() - in[FALL_TIME_CV_INPUT]*params[FALL_TIME_CV_PARAM].getValue());
         float_4 diff = in[RAW_INPUT] - oldOut[s];
         out[RISE_OUTPUT] = ifelse(diff>minDelta, hi, lo);
         out[FALL_OUTPUT] = ifelse(diff<-minDelta, hi, lo);

@@ -25,14 +25,19 @@ void init(Plugin* p) {
   p->addModel(modelVenomBernoulliSwitch);
   p->addModel(modelVenomBernoulliSwitchExpander);
   p->addModel(modelVenomBlocker);
+  p->addModel(modelVenomBoundedVCO);
   p->addModel(modelVenomBypass);
   p->addModel(modelVenomCloneMerge);
   p->addModel(modelVenomCompare2);
   p->addModel(modelVenomCrossFade3D);
+  p->addModel(modelVenomDASE);
+  p->addModel(modelVenomEnvelopeFactory);
   p->addModel(modelVenomHQ);
   p->addModel(modelVenomKnob5);
   p->addModel(modelVenomLinearBeats);
   p->addModel(modelVenomLinearBeatsExpander);
+  p->addModel(modelVenomLinearMerge);
+  p->addModel(modelVenomLinearMergeExpander);
   p->addModel(modelVenomLogic);
   p->addModel(modelVenomMerge4x2);
   p->addModel(modelVenomMergeSplit);
@@ -65,6 +70,7 @@ void init(Plugin* p) {
   p->addModel(modelVenomPolyUnison);
   p->addModel(modelVenomPush5);
   p->addModel(modelVenomQuadVCPolarizer);
+  p->addModel(modelVenomRatio);
   p->addModel(modelVenomRecurse);
   p->addModel(modelVenomRecurseStereo);
   p->addModel(modelVenomReformation);
@@ -74,6 +80,9 @@ void init(Plugin* p) {
   p->addModel(modelVenomSlew);
   p->addModel(modelVenomSphereToXYZ);
   p->addModel(modelVenomSplit4x2);
+  p->addModel(modelVenomSpreadMerge);
+  p->addModel(modelVenomSpreadMergeExpander);
+  p->addModel(modelVenomStereoMergeSplit);
   p->addModel(modelVenomThru);
   p->addModel(modelVenomVCAMix4);
   p->addModel(modelVenomVCAMix4Stereo);

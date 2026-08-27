@@ -80,8 +80,8 @@ struct XM_OP : VenomModule {
       syncRtrgMode = 0;
   std::vector<int> oversampleValues = {1,2,4,8,16,32};
   OversampleFilter_4 upSample[4]{}, downSample[4]{};
-  float const minTime = pow(2.f,-12.f);
-  float const maxTime = pow(2.f,7.5f);
+  float const minTime = dsp::exp2_taylor5(-12.f);
+  float const maxTime = dsp::exp2_taylor5(7.5f);
   float_4 envPhasor[4]{},
           stage[4]{},
           relStart[4]{},
@@ -96,7 +96,8 @@ struct XM_OP : VenomModule {
   bool quantize = true,
        first = true,
        expLvl = false,
-       postLvlFdbk = false;
+       postLvlFdbk = false,
+       highDepth = false;
   
   int wave = 0,
       xmType = 0,
@@ -227,6 +228,34 @@ struct XM_OP : VenomModule {
     }
   }
 
+  void configSyncRtrgMode() {
+    switch(syncRtrgMode) {
+      case 0:
+        if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
+          inputInfos[SYNC_RTRG_INPUT]->name = "VCO sync";
+        inputExtensions[SYNC_RTRG_INPUT].factoryName = "VCO sync";
+        if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
+          inputInfos[GATE_INPUT]->name = "Envelope gate";
+        inputExtensions[GATE_INPUT].factoryName = "Envelope gate";
+        break;
+      case 1:
+        if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
+          inputInfos[SYNC_RTRG_INPUT]->name = "Envelope retrigger and VCO sync";
+        inputExtensions[SYNC_RTRG_INPUT].factoryName = "Envelope retrigger and VCO sync";
+        if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
+          inputInfos[GATE_INPUT]->name = "Envelope gate and VCO sync";
+        inputExtensions[GATE_INPUT].factoryName = "Envelope gate and VCO sync";
+        break;
+      default: //2
+        if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
+          inputInfos[SYNC_RTRG_INPUT]->name = "Envelope retrigger";
+        inputExtensions[SYNC_RTRG_INPUT].factoryName = "Envelope retrigger";
+        if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
+          inputInfos[GATE_INPUT]->name = "Envelope gate";
+        inputExtensions[GATE_INPUT].factoryName = "Envelope gate";
+    }
+  }
+
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
 
@@ -259,34 +288,7 @@ struct XM_OP : VenomModule {
     }
     oldChannels = channels;
     
-    if (params[SYNC_RTRG_MODE_PARAM].getValue() != syncRtrgMode) {
-      syncRtrgMode = params[SYNC_RTRG_MODE_PARAM].getValue();
-      switch(syncRtrgMode) {
-        case 0:
-          if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
-            inputInfos[SYNC_RTRG_INPUT]->name = "VCO sync";
-          inputExtensions[SYNC_RTRG_INPUT].factoryName = "VCO sync";
-          if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
-            inputInfos[GATE_INPUT]->name = "Envelope gate";
-          inputExtensions[GATE_INPUT].factoryName = "Envelope gate";
-          break;
-        case 1:
-          if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
-            inputInfos[SYNC_RTRG_INPUT]->name = "Envelope retrigger and VCO sync";
-          inputExtensions[SYNC_RTRG_INPUT].factoryName = "Envelope retrigger and VCO sync";
-          if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
-            inputInfos[GATE_INPUT]->name = "Envelope gate and VCO sync";
-          inputExtensions[GATE_INPUT].factoryName = "Envelope gate and VCO sync";
-          break;
-        default: //2
-          if (inputInfos[SYNC_RTRG_INPUT]->name == inputExtensions[SYNC_RTRG_INPUT].factoryName)
-            inputInfos[SYNC_RTRG_INPUT]->name = "Envelope retrigger";
-          inputExtensions[SYNC_RTRG_INPUT].factoryName = "Envelope retrigger";
-          if (inputInfos[GATE_INPUT]->name == inputExtensions[GATE_INPUT].factoryName)
-            inputInfos[GATE_INPUT]->name = "Envelope gate";
-          inputExtensions[GATE_INPUT].factoryName = "Envelope gate";
-      }
-    }
+    syncRtrgMode = params[SYNC_RTRG_MODE_PARAM].getValue(); // names managed in step()
 
     if (divKnob && quantize != static_cast<bool>(params[QUANT_PARAM].getValue())) {
       //make sure XM_OPWidget constructor has defined divKnob and multKnob before entering
@@ -336,9 +338,9 @@ struct XM_OP : VenomModule {
       float_4 rmod = inputs[RMOD_INPUT].getPolyVoltageSimd<float_4>(c),
               smod = inputs[SMOD_INPUT].getPolyVoltageSimd<float_4>(c),
               susLevel = clamp(susParam + smod*susCVAmt),
-              delta = ifelse(stage[s]==1.f, args.sampleTime / clamp(pow(2.f, smod*atkCVAmt + atkParam), minTime, maxTime),
-                        ifelse(stage[s]==2.f, args.sampleTime / clamp(pow(2.f, smod*decCVAmt + decParam), minTime, maxTime),
-                          ifelse(stage[s]==4.f, args.sampleTime / clamp(pow(2.f, smod*relCVAmt + relParam), minTime, maxTime), 0.f)));
+              delta = ifelse(stage[s]==1.f, args.sampleTime / clamp(dsp::exp2_taylor5(smod*atkCVAmt + atkParam), minTime, maxTime),
+                        ifelse(stage[s]==2.f, args.sampleTime / clamp(dsp::exp2_taylor5(smod*decCVAmt + decParam), minTime, maxTime),
+                          ifelse(stage[s]==4.f, args.sampleTime / clamp(dsp::exp2_taylor5(smod*relCVAmt + relParam), minTime, maxTime), 0.f)));
       envPhasor[s] = clamp(envPhasor[s]+delta);
       float_4 curve = normSigmoid(envPhasor[s], shape),
               envOut = ifelse(stage[s]<=1.f, curve,
@@ -367,12 +369,14 @@ struct XM_OP : VenomModule {
               level{},
               depth{},
               fdbk{},
-              vcoOut{};
+              vcoOut{},
+              fmpmDepth{};
       computeVal(level, levelEnv, envOut, levelParam, levelCVAmt, LEVEL_INPUT, c);
       level = clamp(level);
       if (expLvl)
         level = pow(level,6);
       computeVal(depth, depthEnv, envOut, depthParam, depthCVAmt, DEPTH_INPUT, c);
+      fmpmDepth = depth * (highDepth ? 5.f : 1.f);
       computeVal(fdbk, fdbkEnv, envOut, fdbkParam, fdbkCVAmt, FDBK_INPUT, c);
       if (quantize)
         baseFreq += log2(fmax(round(multParam + rmod*10.f*multCVAmt), 1.f) / fmax(round(divParam + rmod*10.f*divCVAmt), 1.f));
@@ -384,9 +388,9 @@ struct XM_OP : VenomModule {
           xmod = upSample[s].process(o ? 0.f : xmod*oversample);
         float_4 freq = baseFreq;
         if (xmodType == 0) // FM AC coupled
-          freq += xmodDcBlockFilter[s].process(xmod) * depth;
+          freq += xmodDcBlockFilter[s].process(xmod) * fmpmDepth;
         if (xmodType == 1) // FM DC coupled
-          freq += xmod * depth;
+          freq += xmod * fmpmDepth;
         if (fdbkType == 0) // FM AC coupled
           freq += fdbkDcBlockFilter[s].process(prevVcoOut[s]) * fdbk;
         if (fdbkType == 1) // FM DC coupled
@@ -410,7 +414,7 @@ struct XM_OP : VenomModule {
                 sawPhasor{},
                 offsetSawPhasor{};
         if (xmodType == 2) // PM
-          wavePhasor += xmod * depth * 250.f;
+          wavePhasor += xmod * fmpmDepth * 250.f;
         if (fdbkType == 2) // PM
           wavePhasor += prevVcoOut[s] * fdbk * 62.5f;
         wavePhasor = simd::fmod(wavePhasor, 1000.f);
@@ -473,6 +477,7 @@ struct XM_OP : VenomModule {
     json_object_set_new(rootJ, "expLvl", json_boolean(expLvl));
     json_object_set_new(rootJ, "PostLvlFdbk", json_boolean(postLvlFdbk));
     json_object_set_new(rootJ, "cvEnvAvail", json_boolean(true));
+    json_object_set_new(rootJ, "highDepth", json_boolean(highDepth));
     return rootJ;
   }
 
@@ -483,6 +488,8 @@ struct XM_OP : VenomModule {
       expLvl = json_boolean_value(jval);
     if ((jval = json_object_get(rootJ, "postLvlFdbk")))
       postLvlFdbk = json_boolean_value(jval);
+    if ((jval = json_object_get(rootJ, "highDepth")))
+      highDepth = json_boolean_value(jval);
     int val;
     if (!json_object_get(rootJ, "cvEnvAvail")){
       if ((val=params[XM_TYPE_PARAM].getValue()))
@@ -501,6 +508,7 @@ struct XM_OP : VenomModule {
 };
 
 struct XM_OPWidget : VenomWidget {
+  int syncRtrgMode = 0;
   
   struct WaveSwitch : GlowingSvgSwitchLockable {
     WaveSwitch() {
@@ -636,11 +644,23 @@ struct XM_OPWidget : VenomWidget {
     addOutput(createOutputCentered<PolyPort>(Vec(127.5f,339.5f), module, XM_OP::OSC_OUTPUT));
   }
 
+  void step() override {
+    VenomWidget::step();
+    if (module) {
+      XM_OP* mod = static_cast<XM_OP*>(module);
+      if (syncRtrgMode != mod->syncRtrgMode) {
+        syncRtrgMode = mod->syncRtrgMode;
+        mod->configSyncRtrgMode();
+      }
+    }
+  }
+
   void appendContextMenu(Menu* menu) override {
     XM_OP* module = dynamic_cast<XM_OP*>(this->module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createBoolPtrMenuItem("Exponential level response", "", &module->expLvl));
     menu->addChild(createBoolPtrMenuItem("Post level feedback", "", &module->postLvlFdbk));
+    menu->addChild(createBoolPtrMenuItem("High XM depth for FM & PM", "", &module->highDepth));
     VenomWidget::appendContextMenu(menu);
   }
 };
