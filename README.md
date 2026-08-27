@@ -33,7 +33,7 @@ This is the documentation for all free Venom modules. Check out the [Venom Premi
 |----|----|----|----|----|----|----|----|
 |![Bernoulli Switch module image](doc/BernoulliSwitch.png)|![Bernoulli Switch Expander image](doc/BernoulliSwitchExpander.png)|![Blocker module image](doc/Blocker.png)|![Blocker module image](doc/BoundedVCO.png)|![Bypass module image](doc/Bypass.png)|![Clone Merge module image](doc/CloneMerge.png)|![Cross Fade 3D module image](doc/CrossFade3D.png)|![DASE module image](doc/DASE.png)|
 
-|[ENVELOPE FACTORY](doc/EnvelopeGenerators.md#envelope-factory)|[HARMONIC<br />QUANTIZER](doc/Quantizers.md#harmonic-quantizer)|[KNOB 5](doc/Controllers.md#knob-5)|[LINEAR<br />BEATS](doc/Sequencers.md#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](doc/Sequencers.md#linear-beats-expander)|[LINEAR<br />MERGE](doc/Sequencers.md#linear-merge)|[LINEAR<br />MERGE<br />EXPANDER](doc/Sequencers.md#linear-merge-expander)|
+|[ENVELOPE FACTORY](doc/EnvelopeGenerators.md#envelope-factory)|[HARMONIC<br />QUANTIZER](doc/Quantizers.md#hq---harmonic-quantizer)|[KNOB 5](doc/Controllers.md#knob-5)|[LINEAR<br />BEATS](doc/Sequencers.md#linear-beats)|[LINEAR<br />BEATS<br />EXPANDER](doc/Sequencers.md#linear-beats-expander)|[LINEAR<br />MERGE](doc/Sequencers.md#linear-merge)|[LINEAR<br />MERGE<br />EXPANDER](doc/Sequencers.md#linear-merge-expander)|
 |----|----|----|----|----|----|----|
 |![Envelope Factory module image](doc/EnvelopeFactory.png)|![Harmonic Quantizer module image](doc/HQ.PNG)|![Knob 5 module image](doc/Knob5.png)|![Linear Beats module image](doc/LinearBeats.png)|![Linear Beats Expander module image](doc/LinearBeatsExpander.png)|![Linear Merge module image](doc/LinearMerge.png)|![Linear Merge module image](doc/LinearMergeExpander.png)|
 
