@@ -1,6 +1,6 @@
 # Envelope Generators
  - [AD/ASR ENVELOPE GENERATOR](#adasr-envelope-generator)
- - [DASE - DYNAMIC AMPLIFYING SHAPING ENVELOPE](#dase--dynamic-amplifying-shaping-envelope)
+ - [DASE - DYNAMIC AMPLIFYING SHAPING ENVELOPE](#dase---dynamic-amplifying-shaping-envelope)
  - [ENVELOPE FACTORY](#envelope-factory)
 
 [Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
@@ -250,11 +250,23 @@ All outputs are constant monophonic 0V when the AD/ASR Envelope Generator is byp
 
 ## DASE - DYNAMIC AMPLIFYING SHAPING ENVELOPE
 ![DASE image](DASE.png)  
-A novel Attack/Decay envelope generator that functions as an unusual VCA and waveshaper via audio rate modulation of the envelope shape.
+A novel Attack/Decay envelope generator that functions as an unusual VCA and wave shaper via audio rate modulation of the envelope shape. It also has internal modulation that can yield delay or tremolo type effects.
 
-There are two active components to 
+DASE has two active components that provide all of the functionality.
 
-### Upper Primary Envelope controls
+The primary component is an Attack Decay envelope. You specify the duration of the envelope, as well as the percentage of time spent in the attack stage. The decay stage is `100% - Attack%`. The main input modulates the Attack percentage at audio rates, causing the envelope shape to oscillate at the frequency of the input. The closer the phase is to the base envelope peak, the louder the output. Because the envelope is phase driven, the modulation does not alter the overall length of the envelope. The input has an attenuator to control the overall volume.
+
+The output is typically AC coupled to give a bipolar audio output. The output waveform is affected both by the input waveform, as well as the current phase of the envelope, providing continuous timbre changes throughout the length of the envelope. The output has a shape control that defines the response curve, from concave up, to linear, to concave down. This further shapes the oscillation output, as well as the overall volume envelope shape.
+
+The second DASE component is an internal low frequency oscillator that also modulates the envelope attack percentage. The LFO waveform can vary from a descending ramp, to triangle, to ascending ramp. There is control over modulation depth, as well as modulation shape (concave up to linear to concave down). The effect of the modulation can sound like a cross between delay and reverb with repeating distinct attacks, or like tremolo, depending on the rate of modulation, LFO shape, and depth. Not all LFO modulation sounds good, and configuration is not always intuitive, but with experimentation you can get amazing results.
+
+Most of the inputs are fully polyphonic. The output polyphonic channel count is the maximum channel count found across all polyphonic inputs. Monophonic inputs are replicated to match the output channel count. Polyphonic inputs with fewer channels use constant 0V for missing channels. All of the LFO modulation inputs are monophonic.
+
+All controls have both a medium size knob to set the base value, plus a CV input with a small attenuverter for modulation. The attenuated CV is always summed with the base value to establish the effective modulated value.
+
+All inputs can be modulated at audio rates.
+
+### Upper Envelope controls
 
 #### ENVELOPE LENGTH
 
@@ -292,6 +304,13 @@ Controls whether the final output is AC or DC coupled
 #### IN input
 
 #### OUT output
+
+### Standard Venom Context Menus
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+
+The output is constant monophonic 0V when DASE is bypassed.
 
 [Envelope Generators top](#envelope-generators) | [Venom top](/README.md#venom)
 
