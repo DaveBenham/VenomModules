@@ -235,13 +235,13 @@ A 3hp blank with standard Venom themes.
 
 ## WIDGET MENU EXTENDER
 ![WIDGET MENU EXTENDER module image](WidgetMenuExtender.png)  
-Extend context menus to support parameter/port renaming and parameter custom defaults.
+Extend context menus to support parameter/port renaming and parameter custom defaults for non-Venom modules.
 
 Custom names and defaults are stored with the patch and restored upon patch load as long as the Widget Menu Extender remains with the patch.
 
 Factory names and defaults are restored whenever the Widget Menu Extender is removed from the patch.
 
-Note that custom names and defaults are built into all of the Venom plugin modules (except for Rhythm Explorer). Widget Menu Extender brings that functionality to modules from foreign plugins (as well as Rhythm Explorer). The Venom module custom names and defaults are mainained independently from Widget Menu Extender.
+Note that custom names and defaults are built into all of the Venom plugin modules (except for Rhythm Explorer). Widget Menu Extender brings that functionality to non-Venom modules (as well as Rhythm Explorer). The Venom module custom names and defaults are mainained independently from Widget Menu Extender.
 
 ### ENABLE button
 Controls whether extended context menus are enabled or not. The button is bright blue when extended menus are On.
