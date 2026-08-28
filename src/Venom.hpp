@@ -214,6 +214,11 @@ struct VenomModule : Module {
       factoryName = "";
       inputLink = false;
       nameLink = -1;
+      min = 0.f;
+      max = 0.f;
+      dflt = 0.f;
+      initDflt = 0.f;
+      factoryDflt = 0.f;
     }
   };
   
@@ -594,11 +599,11 @@ struct RotarySwitch : TBase {
 };
 
 struct DigitalDisplay : Widget {
-  Module* module;
+  Module* module = NULL;
   std::string fontPath;
   std::string bgText;
   std::string text;
-  float fontSize;
+  float fontSize = 0.f;
   NVGcolor bgColor = nvgRGB(0x46,0x46, 0x46);
   NVGcolor fgColor = SCHEME_YELLOW;
   Vec textPos;

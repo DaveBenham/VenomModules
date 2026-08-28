@@ -28,7 +28,7 @@ struct MixModule : VenomModule {
   int stereoPanLaw=10; // Follow mono law
 
   // expander only
-  bool connected = false;
+  bool expConnected = false;
 
   enum ExpLightId {
     EXP_LIGHT,
@@ -381,7 +381,7 @@ struct MixBaseWidget : VenomWidget {
 
 struct MixExpanderWidget : VenomWidget {
   void step() override {
-    bool connected = false;
+    bool expConnected = false;
     MixModule* mixMod = static_cast<MixModule*>(this->module);
     MixModule* thisMixMod = mixMod;
     MixModule* fade = NULL;
@@ -392,7 +392,7 @@ struct MixExpanderWidget : VenomWidget {
     unsigned int expCnt = 0;
     while (mixMod) {
       if (mixMod->baseMod) {
-        connected = ((!pan || mixMod->stereo) && expCnt<=16);
+        expConnected = ((!pan || mixMod->stereo) && expCnt<=16);
         break;
       } else if (mixMod->mixType == MixModule::MIXFADE_TYPE || mixMod->mixType == MixModule::MIXFADE2_TYPE) {
         if (fade || mute || solo || !mixMod->leftExpander || !(mixMod->leftExpander->mixType==MixModule::MIXSOLO_TYPE || mixMod->leftExpander->mixType==MixModule::MIXMUTE_TYPE)) break;
@@ -417,10 +417,10 @@ struct MixExpanderWidget : VenomWidget {
       } else break;
       mixMod = mixMod->leftExpander;
     }
-    if(thisMixMod && thisMixMod->connected != connected) {
-      thisMixMod->connected = connected;
-      thisMixMod->lights[MixModule::EXP_LIGHT].setBrightness(connected);
-      if (!connected){
+    if(thisMixMod && thisMixMod->expConnected != expConnected) {
+      thisMixMod->expConnected = expConnected;
+      thisMixMod->lights[MixModule::EXP_LIGHT].setBrightness(expConnected);
+      if (!expConnected){
         for (int i=0; i<thisMixMod->getNumOutputs(); i++) {
           thisMixMod->outputs[i].setVoltage(0.f);
           thisMixMod->outputs[i].setChannels(1);

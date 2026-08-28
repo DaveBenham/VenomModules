@@ -46,7 +46,7 @@ struct Reformation : VenomModule {
   };
 
   float oldOversample = -1.f; // force initialization
-  int oversample, oversampleValues[5] = {1,4,8};
+  int oversample=0, oversampleValues[3] = {1,4,8};
   OversampleFilter_4 cv1UpSample[4][MAP_COUNT], cv2UpSample[4][MAP_COUNT],
                      inUpSample[4], driveUpSample[4], levelUpSample[4],
                      outDownSample[4];

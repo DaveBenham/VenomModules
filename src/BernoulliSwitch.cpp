@@ -53,7 +53,7 @@ struct BernoulliSwitch : VenomModule {
 
   dsp::SchmittTrigger trig[PORT_MAX_CHANNELS];
   dsp::SchmittTrigger normTrig[PORT_MAX_CHANNELS];
-  bool swap[PORT_MAX_CHANNELS];
+  bool swap[PORT_MAX_CHANNELS]{};
   dsp::SlewLimiter fade[PORT_MAX_CHANNELS];
   int oldChannels = 0;
   int lightChannel = 0;

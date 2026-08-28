@@ -32,6 +32,16 @@ struct TaskWorker {
     delete worker;
   }
 
+// Begin AI suggested code
+  // Delete copying
+  TaskWorker(const TaskWorker&) = delete;
+  TaskWorker& operator=(const TaskWorker&) = delete;
+
+  // Allow moving if needed
+  TaskWorker(TaskWorker&&) = default;
+  TaskWorker& operator=(TaskWorker&&) = default;
+// End AI suggested code
+
   void processWorker() {
     contextSet(workerContext);
     while (true) {

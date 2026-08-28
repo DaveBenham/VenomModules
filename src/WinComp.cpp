@@ -93,24 +93,6 @@ struct WinComp : VenomModule {
 
   dsp::ClockDivider lightDivider;
 
-  void setOversample() override {
-    for (int c=0; c<4; c++){
-      aUpSample[c].setOversample(oversample, oversampleStages);
-      bUpSample[c].setOversample(oversample, oversampleStages);
-      tolUpSample[c].setOversample(oversample, oversampleStages);
-      minDownSample[c].setOversample(oversample, oversampleStages);
-      maxDownSample[c].setOversample(oversample, oversampleStages);
-      clampDownSample[c].setOversample(oversample, oversampleStages);
-      overDownSample[c].setOversample(oversample, oversampleStages);
-      eqDownSample[c].setOversample(oversample, oversampleStages);
-      neqDownSample[c].setOversample(oversample, oversampleStages);
-      leqDownSample[c].setOversample(oversample, oversampleStages);
-      geqDownSample[c].setOversample(oversample, oversampleStages);
-      lsDownSample[c].setOversample(oversample, oversampleStages);
-      grDownSample[c].setOversample(oversample, oversampleStages);
-    }
-  }
-
   WinComp() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
     configParam(A_PARAM, -10.f, 10.f, 0.f, "A offset", " V");
@@ -147,10 +129,28 @@ struct WinComp : VenomModule {
     configLight(GR_LIGHT, "A>B indicator")->description = "yellow = mono, blue = poly";
     configLight(LS_LIGHT, "A<B indicator")->description = "yellow = mono, blue = poly";
 
-    setOversample();
     lightDivider.setDivision(32);
     
     oversampleStages = 5;
+    setOversample();
+  }
+
+  void setOversample() override {
+    for (int c=0; c<4; c++){
+      aUpSample[c].setOversample(oversample, oversampleStages);
+      bUpSample[c].setOversample(oversample, oversampleStages);
+      tolUpSample[c].setOversample(oversample, oversampleStages);
+      minDownSample[c].setOversample(oversample, oversampleStages);
+      maxDownSample[c].setOversample(oversample, oversampleStages);
+      clampDownSample[c].setOversample(oversample, oversampleStages);
+      overDownSample[c].setOversample(oversample, oversampleStages);
+      eqDownSample[c].setOversample(oversample, oversampleStages);
+      neqDownSample[c].setOversample(oversample, oversampleStages);
+      leqDownSample[c].setOversample(oversample, oversampleStages);
+      geqDownSample[c].setOversample(oversample, oversampleStages);
+      lsDownSample[c].setOversample(oversample, oversampleStages);
+      grDownSample[c].setOversample(oversample, oversampleStages);
+    }
   }
 
   void process(const ProcessArgs& args) override {

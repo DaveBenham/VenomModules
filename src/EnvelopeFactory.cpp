@@ -65,8 +65,8 @@ struct EnvelopeFactory : VenomModule {
   int stageCnt = 4,
       oldChannels = 0,
       stage[16]{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-  double phase[16],
-         driftVoltage[16], // for sustain only
+  double phase[16]{},
+         driftVoltage[16]{}, // for sustain only
          timeFactors[4]{1.,10.,100.,1000.};
   float env[16]{},
         oldRetrig[16]{},
@@ -565,7 +565,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
   };
 
   struct StagePlateWidget : FramebufferWidget {
-    std::string plateNames[5] {"EnvelopeStageMove", "EnvelopeStageHold", "EnvelopeStageSust"};
+    std::string plateNames[3] {"EnvelopeStageMove", "EnvelopeStageHold", "EnvelopeStageSust"};
     SvgWidget *sw;
     int currentTheme = -1,
         currentAction = -1;

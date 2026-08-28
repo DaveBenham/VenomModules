@@ -50,6 +50,8 @@ struct NORSIQChord2Scale : VenomModule {
       bool octaveFold = params[FOLD_PARAM].getValue();
       float chord[16]{};
       int channels = inputs[CHORD_INPUT].getChannels();
+      if (!channels)
+        channels = 1;
       inputs[CHORD_INPUT].readVoltages(chord);
       if (octaveFold) {
         if (channels>13) channels = 13;
@@ -58,8 +60,9 @@ struct NORSIQChord2Scale : VenomModule {
       }
       std::sort(chord, chord+channels);
       if (octaveFold) {
+        int lastChannel = channels-1;
         float whole;
-        float frac = std::modf(chord[channels-1]-chord[0], &whole);
+        float frac = std::modf(chord[lastChannel]-chord[0], &whole);
         if (frac > 1e-6) {
           chord[channels++] = chord[0] + whole + 1.f;
         }  
