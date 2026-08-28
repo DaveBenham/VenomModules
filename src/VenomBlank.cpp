@@ -8,6 +8,7 @@ namespace Venom {
 struct VenomBlank : VenomModule {
   VenomBlank() {
     venomConfig(0, 0, 0, 0);
+    nameableWidgets = false;
   }
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);

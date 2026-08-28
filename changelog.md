@@ -1,6 +1,6 @@
 # [Venom Modules](README.md) Changelog
 
-## 2.16.1 (2026-08-27)
+## 2.16.2 (2026-08-28)
 ### New Modules
 - Bounded VCO
 - DASE (Dynamic Amplifying Shaping Envelope)
@@ -26,9 +26,10 @@
 
 ### Bug Fixes
 - Documentation was reorganized so that deep links from an external site now work properly. The documentation has become too large to put everything in one file.
-- VCO LAB & VCO UNIT: Fixed Bias frequency display. Used to be off by factor of 100
-- SLEW: Fixed shape CV input names in hover text
-- NORS_IQ: Fixed unit display for interval and scale root knobs
+- VCO LAB & VCO UNIT: Fixed Bias frequency display. Used to be off by factor of 100.
+- SLEW: Fixed shape CV input names in hover text.
+- NORS_IQ: Fixed unit display for interval and scale root knobs.
+- Widget Menu Extender: No longer mistakenly adds context menu options to commercial Venom modules.
 - Bay modules: Removed allocation actions related to label propagation from the audio thread.
 - Removed allocation actions related to name and unit string manipulation from dsp thread for all modules. Affected modules:
   - AD_ASR Envelope Generator

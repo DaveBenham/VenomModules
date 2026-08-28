@@ -81,7 +81,8 @@ struct VenomModule : Module {
     return modThemes[currentTheme==0 ? (dark ? defaultDarkTheme : defaultTheme)+1 : currentTheme];
   }
 
-  bool lockableParams = false;
+  bool lockableParams = false,
+       nameableWidgets = true;
   void appendParamMenu(Menu* menu, int parmId) {
     ParamQuantity* q = paramQuantities[parmId];
     ParamExtension* e = &paramExtensions[parmId];
@@ -189,12 +190,17 @@ struct VenomModule : Module {
   }
   
   void restoreAllFactoryNames() {
-    for (unsigned int i=0; i<paramQuantities.size(); i++)
-      paramQuantities[i]->name = paramExtensions[i].factoryName;
+    if (lockableParams) {
+      for (unsigned int i=0; i<paramQuantities.size(); i++)
+        if (!paramExtensions[i].factoryName.empty())
+          paramQuantities[i]->name = paramExtensions[i].factoryName;
+    }
     for (unsigned int i=0; i<inputInfos.size(); i++)
-      inputInfos[i]->name = inputExtensions[i].factoryName;
+      if (!inputExtensions[i].factoryName.empty())
+        inputInfos[i]->name = inputExtensions[i].factoryName;
     for (unsigned int i=0; i<outputInfos.size(); i++)
-      outputInfos[i]->name = outputExtensions[i].factoryName;
+      if (!outputExtensions[i].factoryName.empty())
+        outputInfos[i]->name = outputExtensions[i].factoryName;
   }
 
   struct ParamExtension {
@@ -485,23 +491,27 @@ struct VenomWidget : ModuleWidget {
       ));
     }
 
-    if (module->lockableParams){
+    if (module->lockableParams || module->nameableWidgets){
       menu->addChild(new MenuSeparator);
-      menu->addChild(createMenuItem("Lock all parameters", "",
-        [=]() {
-          module->setLockAll(true);
-        }
-      ));
-      menu->addChild(createMenuItem("Unlock all parameters", "",
-        [=]() {
-          module->setLockAll(false);
-        }
-      ));
-      menu->addChild(createMenuItem("Restore all factory names", "",
-        [=]() {
-          module->restoreAllFactoryNames();
-        }
-      ));
+      if (module->lockableParams) {
+        menu->addChild(createMenuItem("Lock all parameters", "",
+          [=]() {
+            module->setLockAll(true);
+          }
+        ));
+        menu->addChild(createMenuItem("Unlock all parameters", "",
+          [=]() {
+            module->setLockAll(false);
+          }
+        ));
+      }
+      if (module->nameableWidgets) {
+        menu->addChild(createMenuItem("Restore all factory names", "",
+          [=]() {
+            module->restoreAllFactoryNames();
+          }
+        ));
+      }
     }
 
     menu->addChild(new MenuSeparator);
@@ -538,7 +548,7 @@ struct VenomWidget : ModuleWidget {
   }
 
   void step() override {
-    VenomModule* module = dynamic_cast<VenomModule*>(this->module);
+    VenomModule* module = static_cast<VenomModule*>(this->module);
     if (module){
       if (module->defaultTheme != getDefaultTheme()){
         module->defaultTheme = getDefaultTheme();
@@ -671,7 +681,7 @@ struct DigitalDisplay188 : DigitalDisplay {
 template <class TWidget>
 TWidget* createLockableParam(math::Vec pos, engine::Module* module, int paramId){
   if (module){
-    VenomModule* mod = dynamic_cast<VenomModule*>(module);
+    VenomModule* mod = static_cast<VenomModule*>(module);
     mod->lockableParams = true;
     mod->paramExtensions[paramId].lockable = true;
   }
@@ -681,7 +691,7 @@ TWidget* createLockableParam(math::Vec pos, engine::Module* module, int paramId)
 template <class TWidget>
 TWidget* createLockableParamCentered(math::Vec pos, engine::Module* module, int paramId){
   if (module){
-    VenomModule* mod = dynamic_cast<VenomModule*>(module);
+    VenomModule* mod = static_cast<VenomModule*>(module);
     mod->lockableParams = true;
     mod->paramExtensions[paramId].lockable = true;
   }
@@ -691,7 +701,7 @@ TWidget* createLockableParamCentered(math::Vec pos, engine::Module* module, int 
 template <class TWidget>
 TWidget* createLockableLightParamCentered(math::Vec pos, engine::Module* module, int paramId, int firstLightId){
   if (module){
-    VenomModule* mod = dynamic_cast<VenomModule*>(module);
+    VenomModule* mod = static_cast<VenomModule*>(module);
     mod->lockableParams = true;
     mod->paramExtensions[paramId].lockable = true;
   }
@@ -769,7 +779,7 @@ struct YellowRedLight : TBase {
 struct VCVSliderLockable : VCVSlider {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
@@ -799,42 +809,42 @@ struct GlowingSvgSwitch : app::SvgSwitch {
 struct GlowingSvgSwitchLockable : GlowingSvgSwitch {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct RoundHugeBlackKnobLockable : RoundHugeBlackKnob {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct RoundBigBlackKnobLockable : RoundBigBlackKnob {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct RoundLargeBlackKnobLockable : RoundLargeBlackKnob {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct RoundBlackKnobLockable : RoundBlackKnob {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct RoundSmallBlackKnobLockable : RoundSmallBlackKnob {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
@@ -845,35 +855,35 @@ struct RoundTinyBlackKnobLockable : RoundKnob {
   }
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct TrimpotLockable : Trimpot {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct CKSSLockable : CKSS {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct CKSSThreeLockable : CKSSThree {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
 struct CKSSThreeHorizontalLockable : CKSSThreeHorizontal {
   void appendContextMenu(Menu* menu) override {
     if (module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
@@ -881,7 +891,7 @@ template <typename TLightBase = WhiteLight>
 struct VCVLightBezelLockable : VCVLightBezel<TLightBase> {
   void appendContextMenu(Menu* menu) override {
     if (this->module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
@@ -889,7 +899,7 @@ template <typename TLightBase = WhiteLight>
 struct VCVLightBezelLatchLockable : VCVLightBezelLatch<TLightBase> {
   void appendContextMenu(Menu* menu) override {
     if (this->module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
@@ -897,7 +907,7 @@ template <typename TLight = WhiteLight>
 struct VCVLightButtonLockable : VCVLightButton<TLight> {
   void appendContextMenu(Menu* menu) override {
     if (this->module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
@@ -905,7 +915,7 @@ template <typename TLight = WhiteLight>
 struct VCVLightButtonLatchLockable : VCVLightLatch<TLight> {
   void appendContextMenu(Menu* menu) override {
     if (this->module)
-      dynamic_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
+      static_cast<VenomModule*>(this->module)->appendParamMenu(menu, this->paramId);
   }
 };
 
@@ -940,7 +950,7 @@ struct PolyPJ301MPort : app::SvgPort {
 struct VenomPort : app::SvgPort {
   void appendContextMenu(Menu* menu) override {
     if (this->module)
-      dynamic_cast<VenomModule*>(this->module)->appendPortMenu(menu, this->type, this->portId);
+      static_cast<VenomModule*>(this->module)->appendPortMenu(menu, this->type, this->portId);
   }
 };
 

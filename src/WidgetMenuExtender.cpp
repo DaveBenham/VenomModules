@@ -441,7 +441,7 @@ struct WidgetMenuExtenderWidget : VenomWidget {
       if (!foreignMod) return;
       plugin::Model* model = foreignMod->getModel();
       if (!model) return;
-      if (model->plugin->slug == "Venom" && model->slug != "RhythmExplorer") return;
+      if (model->plugin->brand == "Venom" && model->slug != "RhythmExplorer") return;
 
       if (paramWidget) mod->extendForeignParameterMenu(model, paramWidget, menu);
       else /*portWidget*/ mod->extendForeignPortMenu(portWidget, menu);
