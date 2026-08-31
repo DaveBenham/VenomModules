@@ -358,7 +358,7 @@ Each stage can be configured independently to perform one of five actions:
 Most actions can be configured to have one of three modes:
 - **Full** The stage always proceeds to completion before the envelope progresses to the next stage. Retrigger is not allowed.
 - **RTrg** Same as Full except a retrigger can abort the stage prematurely to initiate the start of a new envelope.
-- **Gate** The stage proceeds to completion as long as the triggering gate remains high. If the gate goes low then the envelope proceeds to the next non-Gate stage. This is the only mode available to Sustain actions.
+- **Gate** The stage proceeds to completion as long as the triggering gate remains high. If the gate goes low then the envelope proceeds to the next non-Gate stage.
 
 With these basic building blocks, a tremendous variety of envelope types may be constructed.
 
