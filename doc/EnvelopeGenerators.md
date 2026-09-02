@@ -492,7 +492,7 @@ This output can produce a 1 msec trigger at the start of each stage and/or at th
 
 By default the EOC trigger is enabled, and the stages triggers are disabled, making the Stage Trigs output a convenient EOC trigger. Note that EOC only triggers when an envelope proceeds to completion. Aborted envelopes do not generate an EOC trigger.
 
-Note that consecutive triggers can merge into a single extended trigger when a stage is shorter than 1 msec.
+Note that consecutive triggers can merge into a single extended trigger when a stage is shorter than 1 msec. If the module "Fast gate triggers" context menu option is enabled, then stage triggers are only 1 sample long. This prevents triggers from merging, but not all modules recognize triggers that only last 1 sample.
 
 ### IDLE (Idle gate), LED light, and EOC switch
 The Idle output gate is always high at 10V when the generator is idle, and low at 0V when an envelope is in progress. This output can be patched to the Gate (or Retrig input with Gate toggled high) to create a looping envelope.

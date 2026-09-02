@@ -78,6 +78,7 @@ struct EnvelopeFactory : VenomModule {
       eocPrimed = 0;
   bool reset = false,
        pendTrig[16]{},
+       fastTrigs = false,
        randTimes = true,
        randLevels = true,
        randDrifts = true,
@@ -422,6 +423,8 @@ struct EnvelopeFactory : VenomModule {
         outputs[INV_OUTPUT].setVoltage((1.f - env[c]) * amp + off, c);
       }
       outputs[TRIGS_OUTPUT].setVoltage(outTrig[c].remaining>0.f ? 10.f : 0.f, c);
+      if (fastTrigs)
+        outTrig[c].reset();
       for (int i=0; i<stageCnt; i++)
         outputs[GATE_OUTPUT+i].setVoltage(stage[c]==i ? 10.f : 0.f, c);
     }   
@@ -475,6 +478,7 @@ struct EnvelopeFactory : VenomModule {
     json_object_set_new(rootJ, "stages", array);
     json_object_set_new(rootJ, "stageCnt", json_integer(stageCnt));
     json_object_set_new(rootJ, "vcaType", json_integer(vcaMode));
+    json_object_set_new(rootJ, "fastTrigs", json_boolean(fastTrigs));
     json_object_set_new(rootJ, "randTimes", json_boolean(randTimes));
     json_object_set_new(rootJ, "randLevels", json_boolean(randLevels));
     json_object_set_new(rootJ, "randShapes", json_boolean(randShapes));
@@ -504,6 +508,8 @@ struct EnvelopeFactory : VenomModule {
       stageCnt = json_integer_value(val);
     if ((val = json_object_get(rootJ, "vcaType")))
       vcaMode = json_integer_value(val);
+    if ((val = json_object_get(rootJ, "fastTrigs")))
+      fastTrigs = json_boolean_value(val);
     if ((val = json_object_get(rootJ, "randTimes")))
       randTimes = json_boolean_value(val);
     if ((val = json_object_get(rootJ, "randLevels")))
@@ -786,6 +792,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
         }
       }
     ));
+    menu->addChild(createBoolPtrMenuItem("Fast gate triggers", "", &module->fastTrigs));
     menu->addChild(createSubmenuItem("Randomize configuration", "", [=](Menu* submenu) {
       submenu->addChild(createBoolMenuItem("Stage times", "", [=](){return module->randTimes;}, [=](bool val){module->randTimes=val; module->configRandomize();}));
       submenu->addChild(createBoolMenuItem("Stage levels", "", [=](){return module->randLevels;}, [=](bool val){module->randLevels=val; module->configRandomize();}));

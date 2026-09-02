@@ -1,5 +1,9 @@
 # [Venom Modules](README.md) Changelog
 
+## 2.16.3 (????-??-??)
+### Enhancements
+- Envelope Factory - add "Fast gate triggers" option
+
 ## 2.16.2 (2026-08-28)
 ### New Modules
 - Bounded VCO
