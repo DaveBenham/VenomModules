@@ -320,17 +320,17 @@ struct Compare2Widget : VenomWidget {
 
     int id=0;
     // compare outputs
-    for (float y=159.f; y<=221.f; y+=31.f){
-      for (float x=14.f; x<=113.f; x+=33.f){
+    for (int y=159; y<=221; y+=31){
+      for (int x=14; x<=113; x+=33){
         addOutput(createOutput<PolyPort>(Vec(x,y), module, id));
-        addChild(createLight<SmallLight<YellowLight>>(Vec(x+21.f, y-2.f), module, id++));
+        addChild(createLight<SmallLight<YellowLight>>(Vec(x+21, y-2), module, id++));
       }
     }
     // logic outputs
-    for (float y=264.f; y<=326.f; y+=31.f){
-      for (float x=14.f; x<=113.f; x+=33.f){
+    for (int y=264; y<=326; y+=31){
+      for (int x=14; x<=113; x+=33){
         addOutput(createOutput<PolyPort>(Vec(x,y), module, id));
-        addChild(createLight<SmallLight<YellowLight>>(Vec(x+21.f, y-2.f), module, id++));
+        addChild(createLight<SmallLight<YellowLight>>(Vec(x+21, y-2), module, id++));
       }
     }
   }

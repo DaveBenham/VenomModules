@@ -176,6 +176,7 @@ struct RhythmExplorer : VenomModule {
   dsp::PulseGenerator trigGenerator;
 
   RhythmExplorer() {
+    nameableWidgets = false;
 
     struct GlobalModeQuantity : SwitchQuantity {
       std::string getDisplayValueString() override {

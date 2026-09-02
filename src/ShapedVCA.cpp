@@ -42,8 +42,8 @@ struct ShapedVCA : VenomModule {
 //  bool oldLog = false;
   int algo = 0; // 0 = properly scaled with bipolar exp, 1 = unscaled, unipolar exp, 2 = unscaled, unipolar exp and funky log
   int range = -1; // force initialization
-  float levelOffset, levelOffsetVals[6] = {0.f, 0.f, 0.f, -1.f, -2.f, -10.f};
-  float levelScale, levelScaleVals[6] = {1.f, 2.f, 10.f, 2.f, 4.f, 20.f};
+  float levelOffset=0.f, levelOffsetVals[6] = {0.f, 0.f, 0.f, -1.f, -2.f, -10.f};
+  float levelScale=1.f, levelScaleVals[6] = {1.f, 2.f, 10.f, 2.f, 4.f, 20.f};
   float levelDefaultVals[6] = {1.f, 0.5f, 0.1f, 1.f, 0.75f, 0.55f};
   float offsetVals[3] = {0.f, -5.f, 5.f};
   float oldOversample = -1; // force initialization

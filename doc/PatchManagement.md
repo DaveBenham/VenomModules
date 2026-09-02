@@ -26,7 +26,7 @@ Bay Output and Bay Norm each have a context menu option to specify the Bay Input
 The Bay Input source is identified by the numeric VCV module instance ID, shown within parentheses in the context menu. The user defined Bay Input name is displayed before the numeric ID, and makes it easier to keep track of which Input is linked to which Output/Norm. Changing the name of a Bay Input does not break the link.
 
 ### Port Names / Labels
-Each port on a Bay Input/Output/Norm can be given a user defined name via the [standard Venom port context menu](/README.md#custom-names). The port name is displayed as a label above the port. The label for a Bay Norm output is taken from the output port. The normal input port name only appears in the hover text - it does not appear as a label.
+Each port on a Bay Input/Output/Norm can be given a user defined name via the [standard Venom port context menu](/README.md#custom-names). The port name is displayed as a label above the port, except the Bay Norm input name does not appear as a label - it only appears as hover text.
 
 #### Bay Input default port names
 The factory default input port name is always "Port " followed by the port number.
@@ -37,7 +37,7 @@ The factory default output port name depends on whether the module has been link
 - Unlinked default: "Port " followed by the port number
 
 #### Bay Norm default normal input port names
-The factory default is always the current output port name with "normal" appended.
+The factory default is always the current output port name with "normal" appended. The name only appears as hover text.
 
 ### 0 Channel outputs
 Bay Output and Bay Norm have an "Enable 0 Channel output" context menu option. If this option is enabled, then a Bay Output output will have 0 channels if the source Bay Input is not patched or there is no link. A Bay Norm output will have 0 channels if both the source input and the normal input are not patched or if there is no link.
@@ -235,13 +235,13 @@ A 3hp blank with standard Venom themes.
 
 ## WIDGET MENU EXTENDER
 ![WIDGET MENU EXTENDER module image](WidgetMenuExtender.png)  
-Extend context menus to support parameter/port renaming and parameter custom defaults.
+Extend context menus to support parameter/port renaming and parameter custom defaults for non-Venom modules.
 
 Custom names and defaults are stored with the patch and restored upon patch load as long as the Widget Menu Extender remains with the patch.
 
 Factory names and defaults are restored whenever the Widget Menu Extender is removed from the patch.
 
-Note that custom names and defaults are built into all of the Venom plugin modules (except for Rhythm Explorer). Widget Menu Extender brings that functionality to modules from foreign plugins (as well as Rhythm Explorer). The Venom module custom names and defaults are mainained independently from Widget Menu Extender.
+Note that custom names and defaults are built into all of the Venom plugin modules (except for Rhythm Explorer). Widget Menu Extender brings that functionality to non-Venom modules (as well as Rhythm Explorer). The Venom module custom names and defaults are mainained independently from Widget Menu Extender.
 
 ### ENABLE button
 Controls whether extended context menus are enabled or not. The button is bright blue when extended menus are On.

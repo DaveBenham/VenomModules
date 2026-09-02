@@ -21,6 +21,7 @@ struct Blocker : VenomModule {
   
   Blocker() {
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
+    nameableWidgets = false;
   }
 
   void process(const ProcessArgs& args) override {

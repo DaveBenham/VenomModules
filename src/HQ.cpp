@@ -214,7 +214,9 @@ struct HQ : VenomModule {
           pround += pfloat > pround ? 1 : -1;
         if (c == monitor)
           monitorVal = pround;
-        out[ci][c%4] = root + (pround>=0.f ? partials[static_cast<int>(pround)].voct : -partials[-static_cast<int>(pround)].voct);
+        int proundNdx = (pround>=0 ? pround : -pround),
+            proundSgn = (pround>=0 ? 1 : -1);
+        out[ci][c%4] = root + proundSgn*partials[proundNdx].voct;
       }
     }
     for (int c=0, ci=0; c<channels; c+=4, ci++){
