@@ -434,19 +434,19 @@ All active envelopes will instantly be terminated and the envelope generator wil
 
 ## *Global controls*
 
-**<u>Standard Mode</u>**  
+### Standard Mode
 <img src="EnvelopeFactory_Std.png" width="75"/>
 
-### V/OCT (Volt per octave) input
+#### V/OCT (Volt per octave) input
 CV at this input modulates all timed stages identically. Each positive volt doubles the rate (halves the time). Each negative volt halves the rate (doubles the time). This input is particularly useful when the envelope is configured to loop, thus creating an LFO with typical V/Oct control over the rate.
 
-### AMP (Amplitude) knob and CV input
+#### AMP (Amplitude) knob and CV input
 Determines the magnitude of the final envelope. The input is attenuated and/or inverted by the knob to determine the effective 100% voltage. The knob attenuverter defaults to 100%, and the input is normalled to 10 volts, so if not patched, the envelope ranges between 0 and 10 volts (disregarding any offset).
 
-### OFF (Offset) knob and CV input
+#### OFF (Offset) knob and CV input
 Determines any offset that is added to the final envelope after the amplitude is applied. The input is attenuated and/or inverted by the knob to determine the effective offset. The knob attenuverter defaults to 0%, so by default no offset is applied.
 
-### Slow (Knob time range) small button
+#### Slow (Knob time range) small button
 Sets the range of all stage Time knobs
 - **Fast** ***(Off, default)***: 0.001 sec - 10 sec
 - **Slow** ***(Yellow)***: 0.01 sec - 100 sec
@@ -455,17 +455,17 @@ Sets the range of all stage Time knobs
 
 Stage times can be lengthened or shortened beyond the knob limits through CV modulation.
 
-### Gate Mode small button
+#### Gate Mode small button
 Controls how the manual Gate button behaves
 - **Momentary** ***(Off, default)***: The Gate button remains high for as long as the button is held
 - **Toggle** ***(Yellow)***: Each press of the Gate button changes the state of the button
 
-### Retrig From 0 small button
+#### Retrig From 0 small button
 Controls whether a retriggered envelope starts from 0
 - **Off** ***(Off, default)***: A retriggered envelope starts from the current voltage rather than 0
 - **On** ***(Yellow)***: Retriggered envelopes always start from 0
 
-### Retrig Mode small button
+#### Retrig Mode small button
 Controls how Retrigger CV input is interpreted
 - **Schmitt trigger** ***(Off, default)***: Retriggers on the leading edge of a high gate. The input goes high when rising above 2V, and low when falling below 0.2V.
 - **CV change start** ***(Yellow)***: Retriggers the instant a change is detected
@@ -473,12 +473,12 @@ Controls how Retrigger CV input is interpreted
 
 The CV change modes are generally used with quantized V/Oct input so a new envelope is retriggered every time the pitch changes. The pitch CV could have glide applied, in which case the different modes specify whether the retrigger is fired at the beginning or end of the glide. If there is no glide then the two CV change modes give identical results.
 
-### GATE button and CV input
+#### GATE button and CV input
 An envelope is triggered when the Gate input rises above 2V. The gate returns to a low state when the input falls below 0.2V.
 
 The button works by adding 10V to the CV input when the button is high.
 
-### RETRIGGER button and CV input
+#### RETRIGGER button and CV input
 This is used to enable retriggering of an envelope while the main Gate input remains high. The label is a bit misleading in that this does not retrigger an envelope directly, but rather momentarily mutes the main Gate input for one sample. So the Retrigger can only have effect when the main Gate is high.
 
 The button always retriggers the instant it is pressed.
@@ -487,54 +487,54 @@ The CV behavior depends on the setting of the Retrig Mode button.
 
 When configuring an envelope with retrig, it can be useful to set the manual Gate button to Toggle mode so you can set the gate high, giving you a chance to press the Retrig button.
 
-### STAGE TRIGS (Stage triggers) output
+#### STAGE TRIGS (Stage triggers) output
 This output can produce a 1 msec trigger at the start of each stage and/or at the envelope EOC (End Of Cycle). The small button above and to the left of each stage Gate output controls whether the stage generates a trigger or not. Similarly the global Idle output has a small button to determine whether the EOC trigger is generated. The stage triggers are especially useful if you want to use Envelope Factory as a timed sequencer.
 
 By default the EOC trigger is enabled, and the stages triggers are disabled, making the Stage Trigs output a convenient EOC trigger. Note that EOC only triggers when an envelope proceeds to completion. Aborted envelopes do not generate an EOC trigger.
 
 Note that consecutive triggers can merge into a single extended trigger when a stage is shorter than 1 msec.
 
-### IDLE (Idle gate), LED light, and EOC switch
+#### IDLE (Idle gate), LED light, and EOC switch
 The Idle output gate is always high at 10V when the generator is idle, and low at 0V when an envelope is in progress. This output can be patched to the Gate (or Retrig input with Gate toggled high) to create a looping envelope.
 
 The LED light above the port glows yellow when the Idle gate is high. When working with polyphony the brightness of the LED is proportional to the percentage of channels that are idle.
 
 Above and to the left of the Idle output is an EOC trigger switch. When enabled a 1 msec trigger will be generated at the Stage Trigs output whenever an envelope proceeds to completion. Aborted envelopes never generate an EOC trigger.
 
-### ENV (Envelope) output
+#### ENV (Envelope) output
 
 The final envelope, typically with a resting voltage of 0V that typically ascends to 10V before returning to 0V.
 
 The formula for the envelope in standard mode is ***(Envelope% x AmplitudeV) + OffsetV***
 
-### INV (Inverse envelope) output
+#### INV (Inverse envelope) output
 
 An inverted form of the final envelope with a typical resting voltage of 10V that typically descends to 0V before returning to 10V. 
 
 The formula for the inverse envelope is ***((100% - Envelope%) x AmplitudeV) + OffsetV***
 
-**<u>VCA Modes</u>**  
+### VCA Modes
 <img src="EnvelopeFactory_VCA.png" width="75"/>
 
 The module context menu has an option to enable VCA mode. The VCA mode can be standard where envelopes are triggered normally, or you can choose Synced mode where the envelope triggers are synced with the incoming audio. In sync mode the envelope trigger is delayed until the VCA input crosses zero. This is useful for preventing clicks that could otherwise appear when using extremely fast attacks.
 
 When using a VCA mode, the Amplitude and Offset controls and inputs, as well as the Inverse output are replaced by the following:
 
-### VCA level knob and audio input
+#### VCA level knob and audio input
 The knob specifies the attenuation level of the VCA with 100% being full volume.  
 The input is the audio to be attenuated by the envelope.
 
-### VEL (Velocity) input and response control knob
+#### VEL (Velocity) input and response control knob
 The unipolar Velocity input is a second opportunity for attenuation that is multiplicative with the VCA Level. An input of 0V represents no output, and 10V representing 100%. The knob specifies the response curve for the velocity. The default noon value is a linear response. Counter-clockwise rotation creates a concave up response, similar to exponential. Clockwise rotation creates a concave down response, similar to logarithmic.
 
 The Velocity level is sampled the instant the envelope is triggered and held constant throughout the duration of the envelope.
 
-### ENV (Envelope) output
+#### ENV (Envelope) output
 The envelope is still output at the same port as standard mode. However, the formula for the envelope is changed.
 
 ***Final Envelope = Envelope% x Level% x Velocity%<sub>ResponseAdjusted</sub> x 10V***
 
-### VCA output
+#### VCA output
 This is the audio input after it has been attenuated by the envelope and VCA.
 
 ## *Stage controls*
@@ -542,7 +542,7 @@ The module context menu has a Stages option where you specify the number of stag
 
 The two square buttons at the top and the Gate output at the bottom have identical functionality for each stage.
 
-### ACTION square button
+#### ACTION square button
 Controls what action the stage performs. The configuration and labeling of the other stage controls are automatically adjusted whenever the Action is changed.
 
 - **Move** - The envelope rises or falls from the starting level to the target level over a fixed period of time. The starting level is the current level at the start of the stage. The target level is specified by the following Hold or Sustain stage Level. If not followed by a Hold or Sustain, then the target alternates between 100% and 0%, as indicated by the yellow LEDS above and below the Action button. An LED glowing yellow above the button indicates a 100% target, and an LED glowing yellow below indicates 0%.
@@ -553,14 +553,14 @@ Controls what action the stage performs. The configuration and labeling of the o
 
 All forms of Move normally start at the current level when the stage is initiated and then progress to the target value. However, if the first stage action is Fall then the envelope starts at 100% and falls to 0. This special case enables definition of a simple Decay envelope using a single stage.
 
-### MODE square button
+#### MODE square button
 Controls whether the stage length is impacted by the main Gate, and whether the envelope can be retriggered during the stage.
 
 - **Full** - The stage always runs to completion and then the envelope advances to the next stage. Retrigger is not allowed.
 - **RTrg (Retriggerable Full)** - The stage runs to completion and then the envelope advances to the next stage. However, the stage can be terminated prematurely by retriggering a new envelope. A retrigger happens when the Gate goes low before or during the stage, and then goes high during the RTrg stage.
 - **Gate (Gated)** - The stage is gated, meaning the stage runs to completion unless the main Gate goes low. When the main Gate goes low the envelope immediately proceeds to the next stage that is not Gated, or else terminates if none exists.
 
-### GATE output, trigger button, and LED light
+#### GATE output, trigger button, and LED light
 The stage gate output is high at 10V for as long as the stage is active, otherwise it is 0V.
 
 The small unlabeled button above and to the left of the port controls whether the onset of the stage produces a 1 msec trigger at the Gate Trigs output.
@@ -570,18 +570,18 @@ The LED light above and to the right of the port glows yellow when the stage is 
 ### *Variable knobs and CV inputs*
 The functions of the remaining stage knobs and inputs change depending on the chosen stage Action.
 
-**<u>Move, Rise, and Fall action controls<u/>**  
+### Move, Rise, and Fall action controls
 <img src="EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="EnvelopeFactory_Move.png" width="75"/>  
 Rise and Fall are speciall cases of Move, so all three use the same controls.
 
-### Time knob, CV input and attenuverter
+#### Time knob, CV input and attenuverter
 Specifies the time it takes to complete the Move action. Each positive volt of attenuverted CV doubles the time, and each negative volt halves the time.
 
 Note that the time is for a normal full Move stage. Retriggered envelopes starting with Move can result in a shortened Move, and ungated Move after a Gate release can result in shortened or extended Moves. In such circumstances, the time will be lengthened or shortened proportionally depending on the actual Level at the time the Move starts.
 
 If the starting voltage is already beyond the target voltage, then the envelope instantly jumps to the target voltage and advances to the next stage.
 
-### Shape knob, CV input and attenuverter
+#### Shape knob, CV input and attenuverter
 The knob specifies the shape of the stage, with the noon value of 0 representing linear. Counter-clockwise rotation specifies concave up curvature, with -1 being the most curvature. Clockwise rotation specifies concave down curvature, with 1 being the most curvature.
 
 The shape CV is scaled at 0.2 per Volt such that a 10V peak to peak input can cover the entire shape range from -1 to 1.
@@ -590,10 +590,10 @@ Unlike some other envelope generators, changing the shape of a stage does not al
 
 If the envelope is looped and used as an audio source, then modulation of the Move Shapes can add interesting evolving timbres without changing the fundamental pitch.
 
-**<u>Hold action controls<u/>**  
+### Hold action controls
 <img src="EnvelopeFactory_Hold.png" width="75"/>
 
-### Level knob, CV input and attenuverter
+#### Level knob, CV input and attenuverter
 Specifies the Level of the Hold action, with 0% representing 0V, and 100% representing 10V.
 
 The attenuverted CV is summed directly with the knob value, and the result is clamped to a value between 0 and 10 volts inclusive.
@@ -602,7 +602,7 @@ Typically a Hold stage is preceded by a Move stage, in which case the envelope w
 
 If the first envelope stage is a Hold at Level 0, and the envelope is retriggered, and Retrig From 0 is off, then Hold preserves the voltage at the time of retrigger instead of jumping to 0.
 
-### Time knob, CV input and attenuverter
+#### Time knob, CV input and attenuverter
 Specifies how long the Hold level is held constant before progressing to the next stage.
 
 The knob has an exponential scale, which normally would not allow for a length of 0. However, the minimum (fully counter-clockwise) value is interpreted as 0.
@@ -611,10 +611,10 @@ Each positive volt of attenuverted CV doubles the time, and each negative volt h
 
 Note that a length of 0 is not truly zero - instead the stage will last exactly one sample.
 
-**<u>Sustain action controls<u/>**  
+### Sustain action controls
 <img src="EnvelopeFactory_Sust.png" width="75"/>
 
-### Level knob, CV input and attenuverter
+#### Level knob, CV input and attenuverter
 Specifies the Level of the Sustain action, with 0% representing 0V, and 100% representing 10V.
 
 The attenuverted CV is summed directly with the knob value, and the result is clamped to a value between 0 and 10 volts inclusive.
@@ -623,7 +623,7 @@ Typically a Sustain stage is preceded by a Move stage, in which case the envelop
 
 If the first envelope stage is a Sustain at Level 0, and the envelope is retriggered, and Retrig From 0 is off, then Sustain preserves the voltage at the time of retrigger instead of jumping to 0.
 
-### Drift knob, CV and attenuverter
+#### Drift knob, CV and attenuverter
 Typically this knob is kept at zero (fully counter-clockwise) to preserve normal Sustain behavior.
 
 If the value is non-zero then it specifies the rate at which the Sustain output will drift toward the target voltage of the next ungated stage. This feature was added to enable the stage to behave more like a sustain pedal on a piano, slowly fading until it reaches zero, or quickly dying if the pedal is released. However, the feature can be used more creatively, and can even drift to a higher level.
