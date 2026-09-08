@@ -66,6 +66,7 @@ extern Model* modelVenomPolyScale;
 extern Model* modelVenomPolyUnison;
 extern Model* modelVenomPush5;
 extern Model* modelVenomQuadVCPolarizer;
+extern Model* modelVenomRandom;
 extern Model* modelVenomRatio;
 extern Model* modelVenomRecurse;
 extern Model* modelVenomRecurseStereo;

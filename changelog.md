@@ -1,6 +1,9 @@
 # [Venom Modules](README.md) Changelog
 
-## 2.16.3 (????-??-??)
+## 2.17.0 (????-??-??)
+### New Modules
+- Random
+
 ### Enhancements
 - Envelope Factory - add "Fast gate triggers" option
 
