@@ -3,6 +3,7 @@
 - [BENJOLIN GATES EXPANDER](#benjolin-gates-expander)
 - [BENJOLIN VOLTS EXPANDER](#benjolin-volts-expander)
 - [BOUNDED VCO](#bounded-vco)
+- [RANDOM](#random)
 - [VCO LAB](#vco-lab)
 - [VCO UNIT](#vco-unit)
 - [XM-OP](#xm-op)
