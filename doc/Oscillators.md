@@ -337,9 +337,29 @@ The output is constant monophonic 0V when Bounded VCO is bypassed.
 [Oscillators top](#oscillators) | [Venom top](/README.md#venom)
 
 
-## VCO LAB
-![VCO Lab module image](Oscillator.png)
+## RANDOM
+![Random module image](Random.png)  
+A fully polyphonic implementation of the VCV RANDOM CV generator with independent shape controls.
 
+### Summary of differences from the VCV Random module
+- All Venom Random inputs and outputs are polyphonic
+  - The output channel count defaults to the maximum channel count found across all inputs
+  - A module context menu option is available to override the default channel count with a specific value
+- External input has been renamed Data input
+- Random control applies to external data input as well as internally generated random values
+- Each output has its own independent shape control
+  - The Stepped output shape control displays the actual parameter step count rather than a percentage
+- Output triggers are either 1 msec or 1/2 a clock cycle, whichever is shorter. This greatly reduces the risk of high clock rates producing merged triggers.
+
+### Standard Venom Context Menus
+[Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
+
+### Bypass
+All outputs are constant monophonic 0V when Random is bypassed.
+
+
+## VCO LAB
+![VCO Lab module image](Oscillator.png)  
 A polyphonic oscillator with a robust array of features for the mad scientist sound designers amongst us, including available oversampling to give clean anti-aliased output regardless which functions are combined.
 
 ### Summary of features
