@@ -71,14 +71,20 @@ struct Random : VenomModule {
   dsp::TSchmittTrigger<float_4> clockTrigger[4]{};
   dsp::PulseGenerator pulseGenerator[16]{};
   int fixedChannels = 0;
+  bool linearSteps = false;
   
   struct StepsParamQuantity : ParamQuantity {
     float getDisplayValue() override {
-      return std::ceil(std::pow(getValue(),2)*15.f + 1.f);
+      Random* module = static_cast<Random*>(this->module);
+      return std::ceil((module->linearSteps ? getValue() : std::pow(getValue(),2)) * 15.f + 1.f);
     }
     
     void setDisplayValue(float val) override {
-      setValue(std::pow((val-1.f)/15.f, 0.5f) - 0.00001);
+      Random* module = static_cast<Random*>(this->module);
+      val = (val-1.f)/15.f;
+      if (!module->linearSteps)
+        val = std::pow(val, 0.5f);
+      setValue(val - 0.00001);
     }
   };
 
@@ -205,7 +211,7 @@ struct Random : VenomModule {
       // Stepped
       if (outputs[STEP_OUTPUT].isConnected()) {
         float_4 shape = clamp(params[STEP_PARAM].getValue() + inputs[STEP_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[STEP_CV_PARAM].getValue(), 0.f, 1.f);
-        float_4 steps = ceil(pow(shape, 2) * 15 + 1);
+        float_4 steps = ceil((linearSteps ? shape : pow(shape, 2)) * 15 + 1);
         float_4 v = ceil(phase[s] * steps) / steps;
         outputs[STEP_OUTPUT].setVoltageSimd(rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s]), c);
       }
@@ -260,6 +266,7 @@ struct Random : VenomModule {
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "fixedChannels", json_integer(fixedChannels));
+    json_object_set_new(rootJ, "linearSteps", json_boolean(linearSteps));
     return rootJ;
   }
   
@@ -268,6 +275,8 @@ struct Random : VenomModule {
     json_t* val = NULL;
     if ((val = json_object_get(rootJ, "fixedChannels")))
       fixedChannels = json_integer_value(val);
+    if ((val = json_object_get(rootJ, "linearSteps")))
+      linearSteps = json_boolean_value(val);
   }
 };
 
@@ -319,6 +328,7 @@ struct RandomWidget : VenomWidget {
     Random* module = static_cast<Random*>(this->module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createIndexPtrSubmenuItem("Polyphony channels", {"Auto","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"}, &module->fixedChannels));
+    menu->addChild(createBoolPtrMenuItem("Linear step count scale", "", &module->linearSteps));
     VenomWidget::appendContextMenu(menu);
   }
 };
