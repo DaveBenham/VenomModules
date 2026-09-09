@@ -448,6 +448,8 @@ The CV is additive with the slider value and is scaled at 10% per volt. The CV c
 ### Bypass
 All outputs are constant monophonic 0V when Random is bypassed.
 
+[Oscillators top](#oscillators) | [Venom top](/README.md#venom)
+
 
 ## VCO LAB
 ![VCO Lab module image](Oscillator.png)  
