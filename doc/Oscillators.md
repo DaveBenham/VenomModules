@@ -343,15 +343,22 @@ The output is constant monophonic 0V when Bounded VCO is bypassed.
 A fully polyphonic implementation of the VCV RANDOM CV generator with independent shape controls for each of the 4 different random outputs, and a triggerable sample and hold function.
 
 ### Summary of differences from the VCV Random module
-- All Venom Random inputs and outputs are polyphonic
-  - The output channel count defaults to the maximum channel count found across all inputs
-  - A module context menu option is available to override the default channel count with a specific value
-- External input has been renamed Data input
-- Random spread control applies to external data input as well as internally generated random values
-- Each random output has its own independent shape control
+- All Venom Random inputs and outputs are polyphonic. The VCV module only supports polyphony at the random outputs and the External Data input.
+- The VCV External input has been renamed Data input for Venom.
+- The Random spread control applies to external data input as well as internally generated random values. VCV ignores the Random spread when using external data.
+- Each Venom random output has its own independent shape control. VCV uses a single shared Shape control for all random outputs.
   - The Stepped output shape control displays the actual parameter step count rather than a percentage
   - The Stepped output control defaults to the same non-linear scale as the VCV module, but there is a context menu option for a linear scale.
-- Output triggers are either 1 msec or 1/2 a clock cycle, whichever is shorter. This greatly reduces the risk of high clock rates producing a constant high trigger state due to overlapping triggers.
+- Venom output triggers are either 1 msec or 1/2 a clock cycle, whichever is shorter. This greatly reduces the risk of high clock rates producing a constant high trigger state due to overlapping triggers.
+
+### Polyphony
+All inputs and outputs are fully polyphonic.
+
+By default the output polyphony count is the maximum channel count found across all inputs. The "Polyphony channels" context menu option lets you override the default channel count with a specific value between 1 and 16.
+
+Monophonic inputs are replicated to match the output channel count.
+
+Polyphonic inputs with fewer channels use constant 0V for the missing channels.
 
 ### RATE control
 Controls the rate of the internal clock that drives the sample and hold functionality.
@@ -402,8 +409,38 @@ The Rate control is ignored when using an external clock.
 ### TRIG (sample Trigger) output
 Produces a 1 msec trigger every time the sample and hold is triggered to capture a new value. If the sampling rate is faster than 500 Hz (2 msec cycle) then the trigger length is shortened to 1/2 clock cycle to avoid overlapping triggers. However, triggers may still overlap if using an extremely fast internal clock, or an irregular external clock.
 
+## *Random outputs*
+Each of the random outputs has its own shape control that specifies how the output transitions from one sampled value to the next over time. All outputs behave the same when the shape is at the minimum value - the output immediately jumps to the new sampled value and holds until the next sample. But they all produce different outputs when not at the minimum shape value. In these cases the output moves toward the new sampled value over time. The output should reach the sampled value by the time the next sample is triggered. In order for this to work perfectly, Random must know the exact phase of each sample cycle. As long as you are using the internal clock, or if the external clock is triggering at a constant rate, then the phase computation is always correct, and the sampled value is always reached by the end of the sample cycle. But the phase computation will not be correct if using an irregular external clock, which will distort the appearance of the random output waveform.
 
+### STEP (Step count) control and (Stepped) output
+The output divides the transition into evenly spaced intervals, both from a time and voltage perspective.
 
+The Step count slider specifies the number of steps, ranging from 1 to 16. The attenuated Step count CV is additive with the slider value, and the final effective step count is clamped to a value between 1 and 16.
+
+By default the scale used for the slider and CV is non-linear, which can be awkward to work with when trying to dial in a specific step count using CV.
+
+If the module "Linear step count scale" context menu option is enabled, then the slider and CV use a linear scale. Each 2/3 volt of CV (after attenuation) equates to 1 step when using the linear scale.
+
+### LIN (Linear) shape control and output
+The Linear output consists of straight line segments.
+
+The slider specifies how long it takes to transition from the previous sampled value to the current one, ranging from 0% to 100% of a sample cycle. The output rises or falls linearly until it reaches the current sampled value, and then holds for the remainder of the cycle.
+
+The CV is additive with the slider value and is scaled at 10% per volt. The CV can be attenuated and/or inverted by the attenuverter. The final effective shape is clamped to a value between 0 and 100%.
+
+### EXP (Exponential) shape control and output
+The Exponential output uses exponential curves when falling, and logarithmic curves when rising.
+
+The default slider value of 100% equates to a linear transition that takes the full sample cycle. The minimum value of 0% equates to instantaneous steps. The intermediate values give the exponential/logarithmic curves.
+
+The CV is additive with the slider value and is scaled at 10% per volt. The CV can be attenuated and/or inverted by the attenuverter. The final effective shape is clamped to a value between 0 and 100%.
+
+### SMTH (Smooth) shape control and output
+The smooth output uses sinusoidal curves to transition between sampled values.
+
+The slider specifies what percentage of the sample cycle is used to transition, after which the output is held at the sampled level for the remainder of the cycle. The default slider value of 100% results in a continuous smooth curve through the entire sample cycle. The value of 0% results in an instantaneous step.
+
+The CV is additive with the slider value and is scaled at 10% per volt. The CV can be attenuated and/or inverted by the attenuverter. The final effective shape is clamped to a value between 0 and 100%.
 
 ### Standard Venom Context Menus
 [Venom Themes](/README.md#themes), [Custom Names](/README.md#custom-names), and [Parameter Locks and Custom Defaults](/README.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
