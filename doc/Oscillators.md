@@ -360,6 +360,11 @@ Monophonic inputs are replicated to match the output channel count.
 
 Polyphonic inputs with fewer channels use constant 0V for the missing channels.
 
+### Oversampling
+Normally aliasing is not an issue when sampling at LFO rates, or when generating random CV at any rate. So by default Venom Random does not use oversampling. But if sampling regular waveforms at audio rates then aliasing can dramatically degrade the quality of the sampled output. An "Oversample" context menu option is available where you can select oversample rates of 2x, 4x, 8x, 16x, or 32x. This allows for clean audio outputs, even if sampling at high audio rates. Only the internal clock is oversampled, and the Trig and Data inputs are up-sampled to the oversample rate. The other inputs are ***not*** up-sampled. All of the outputs are bandlimited before being down-sampled to the native sample rate.
+
+Oversampling is CPU intensive, so you should use the minimum oversample rate that gives good results. Typically oversample rates of 2x, 4x, or 8x are adequate. See [Anti-aliasing via oversampling](https://github.com/DaveBenham/VenomModules/blob/main/README.md#anti-aliasing-via-oversampling) for more information.
+
 ### RATE control
 Controls the rate of the internal clock that drives the sample and hold functionality.
 
