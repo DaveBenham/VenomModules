@@ -4,6 +4,7 @@
 // Code derived from VCV Random algorithms
 
 #include "Venom.hpp"
+#include "Filter.hpp"
 
 namespace Venom {
 
@@ -70,7 +71,13 @@ struct Random : VenomModule {
   dsp::TTimer<float_4> clockTimer[4]{};
   dsp::TSchmittTrigger<float_4> clockTrigger[4]{};
   dsp::PulseGenerator pulseGenerator[16]{};
-  int fixedChannels = 0;
+  OversampleFilter_4 dataUpSample[4]{}, trigUpSample[4]{},
+                     trigDownSample[4]{}, 
+                     stepDownSample[4]{}, linDownSample[4]{}, expDownSample[4]{}, smthDownSample[4]{};
+  int fixedChannels = 0,
+      oversample = 1,
+      overIndex = 0,
+      overVal[6]{1,2,4,8,16,32};
   bool linearSteps = false;
   
   struct StepsParamQuantity : ParamQuantity {
@@ -127,6 +134,8 @@ struct Random : VenomModule {
     configOutput(LIN_OUTPUT, "Linear");
     configOutput(EXP_OUTPUT, "Exponential");
     configOutput(SMTH_OUTPUT, "Smooth");
+
+    oversampleStages = 5;
   }
   
   float_4 random4() {
@@ -136,6 +145,31 @@ struct Random : VenomModule {
     return rtn;
   }
 
+  void setOversample() override {
+    for (int i=0; i<4; i++){
+      dataUpSample[i].setOversample(oversample, oversampleStages);
+      trigUpSample[i].setOversample(oversample, oversampleStages);
+      trigDownSample[i].setOversample(oversample, oversampleStages);
+      stepDownSample[i].setOversample(oversample, oversampleStages);
+      linDownSample[i].setOversample(oversample, oversampleStages);
+      expDownSample[i].setOversample(oversample, oversampleStages);
+      smthDownSample[i].setOversample(oversample, oversampleStages);
+    }
+  }
+  
+  float_4 getOversampledInput(OversampleFilter_4 &fltr, int id, int c, int o) {
+    float_4 data = inputs[id].getPolyVoltageSimd<float_4>(c);
+    if (oversample>1 && inputs[id].isConnected())
+      data = fltr.process(o ? 0.f : data*oversample);
+    return data;
+  }
+  
+  float_4 downsampleOutput(OversampleFilter_4 &fltr, float_4 val) {
+    if (oversample > 1)
+      val = fltr.process(val);
+    return val;
+  }
+  
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
 
@@ -144,109 +178,137 @@ struct Random : VenomModule {
       for (int i=0; i<INPUTS_LEN; i++)
         channels = std::max(channels, inputs[i].getChannels());
     }
-    float trigBrightness = 3.f / channels;
-
-    float offset = params[OFFSET_PARAM].getValue() ? -5.f : 0.f;
+    if (oversample != overVal[overIndex]) {
+      oversample = overVal[overIndex];
+      setOversample();
+    }
+    float trigBrightness = 1.f / channels,
+          offset = params[OFFSET_PARAM].getValue() ? -5.f : 0.f,
+          sampleTime = args.sampleTime / oversample;
+    float_4 prob{},
+            rand{},
+            stepShape{},
+            linShape{},
+            expShape{},
+            smthShape{},
+            v{},
+            trigOut{},
+            sampleTrig{};
     for (int s=0, c=0; c<channels; s++, c+=4) {
-      // clock triggers
-      if (inputs[TRIG_INPUT].isConnected()) {
-        clockTimer[s].process(args.sampleTime);
-        clockTrig = clockTrigger[s].process(inputs[TRIG_INPUT].getPolyVoltageSimd<float_4>(c), 0.1f, 2.f);
-        clockFreq[s] = ifelse(clockTrig, 1.f / clockTimer[s].time, clockFreq[s]);
-        clockTimer[s].time = ifelse(clockTrig, 0.f, clockTimer[s].time);
-        deltaPhase = fmin(clockFreq[s] * args.sampleTime, 0.5f);
-      }
-      else if (inputs[RATE_CV_INPUT].getChannels()<=1) {
-        if (!s) {
-          clockFreq[s] = dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_CV_INPUT].getVoltage() * params[RATE_CV_PARAM].getValue());
-          deltaPhase = fmin(clockFreq[s] * args.sampleTime, 0.5f);
-          clockPhase[s] = clockPhase[0][0] + deltaPhase[0];
+      for (int o=0; o<oversample; o++) {
+        // clock triggers
+        if (inputs[TRIG_INPUT].isConnected()) {
+          clockTimer[s].process(sampleTime);
+          clockTrig = clockTrigger[s].process(getOversampledInput(trigUpSample[s], TRIG_INPUT, c, o), 0.1f, 2.f);
+          clockFreq[s] = ifelse(clockTrig, 1.f / clockTimer[s].time, clockFreq[s]);
+          clockTimer[s].time = ifelse(clockTrig, 0.f, clockTimer[s].time);
+          deltaPhase = fmin(clockFreq[s] * sampleTime, 0.5f);
+        }
+        else if (inputs[RATE_CV_INPUT].getChannels()<=1) {
+          if (!s) {
+            if (!o){
+              clockFreq[s] = dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[RATE_CV_PARAM].getValue());
+              deltaPhase = fmin(clockFreq[s] * sampleTime, 0.5f);
+            }
+            clockPhase[s] = clockPhase[0][0] + deltaPhase[0];
+            clockTrig = clockPhase[s] >= 1.f;
+            clockPhase[s] = ifelse(clockTrig, clockPhase[s] - 1.f, clockPhase[s]);
+          }
+          else
+            clockPhase[s] = clockPhase[0];
+        }
+        else {
+          if (!o){
+            clockFreq[s] = dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[RATE_CV_PARAM].getValue());
+            deltaPhase = fmin(clockFreq[s] * sampleTime, 0.5f);
+          }
+          clockPhase[s] += deltaPhase;
           clockTrig = clockPhase[s] >= 1.f;
           clockPhase[s] = ifelse(clockTrig, clockPhase[s] - 1.f, clockPhase[s]);
         }
-        else
-          clockPhase[s] = clockPhase[0];
-      }
-      else {
-        clockFreq[s] = dsp::exp2_taylor5(params[RATE_PARAM].getValue() + inputs[RATE_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[RATE_CV_PARAM].getValue());
-        deltaPhase = fmin(clockFreq[s] * args.sampleTime, 0.5f);
-        clockPhase[s] += deltaPhase;
-        clockTrig = clockPhase[s] >= 1.f;
-        clockPhase[s] = ifelse(clockTrig, clockPhase[s] - 1.f, clockPhase[s]);
-      }
-      float brightness = lights[RATE_LIGHT].getBrightness();
-      for (int i=0; i<4; i++)
-        if (clockTrig[i])
-          brightness += trigBrightness;
-      lights[RATE_LIGHT].setBrightness(brightness);
-
-      // sample triggers
-      float_4 prob = clamp(params[PROB_PARAM].getValue() + inputs[PROB_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[PROB_CV_PARAM].getValue(), 0.f, 1.f);
-      float_4 rand = clamp(params[RAND_PARAM].getValue() + inputs[RAND_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[RAND_CV_PARAM].getValue(), 0.f, 1.f);
-      float_4 sampleTrig = clockTrig & (prob >= random4());
-      lastVoltage[s] = ifelse(sampleTrig, nextVoltage[s], lastVoltage[s]);
-      nextVoltage[s] = ifelse(
-        sampleTrig, 
-        crossfade(
-          lastVoltage[s],
-          inputs[DATA_INPUT].isConnected() ? 
-            inputs[DATA_INPUT].getPolyVoltageSimd<float_4>(c) :
-            random4() * 10.f + offset,
-          rand
-        ),
-        nextVoltage[s]
-      );
-      phase[s] = ifelse(sampleTrig, 0.f, phase[s]);
-      brightness = lights[PROB_LIGHT].getBrightness();
-      for (int i=0; i<4; i++)
-        if (sampleTrig[i]) {
-          brightness += trigBrightness;
-          pulseGenerator[s*4+i].trigger();
+        float brightness = lights[RATE_LIGHT].getBrightness();
+        for (int i=0; i<4; i++)
+          if (clockTrig[i])
+            brightness += trigBrightness;
+        lights[RATE_LIGHT].setBrightness(brightness);
+  
+        // sample triggers
+        if (!o) {
+          prob = clamp(params[PROB_PARAM].getValue() + inputs[PROB_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[PROB_CV_PARAM].getValue(), 0.f, 1.f);
+          rand = clamp(params[RAND_PARAM].getValue() + inputs[RAND_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[RAND_CV_PARAM].getValue(), 0.f, 1.f);
         }
-      lights[PROB_LIGHT].setBrightness(brightness);
+        sampleTrig = clockTrig & (prob >= random4());
+        lastVoltage[s] = ifelse(sampleTrig, nextVoltage[s], lastVoltage[s]);
+        nextVoltage[s] = ifelse(
+          sampleTrig, 
+          crossfade(
+            lastVoltage[s],
+            inputs[DATA_INPUT].isConnected() ? 
+              getOversampledInput(dataUpSample[s], DATA_INPUT, c, o) :
+              random4() * 10.f + offset,
+            rand
+          ),
+          nextVoltage[s]
+        );
+        phase[s] = ifelse(sampleTrig, 0.f, phase[s]);
+        brightness = lights[PROB_LIGHT].getBrightness();
+        for (int i=0; i<4; i++) {
+          if (sampleTrig[i]) {
+            brightness += trigBrightness;
+            pulseGenerator[s*4+i].trigger();
+          }
+        }
+        lights[PROB_LIGHT].setBrightness(brightness);
+    
+        // Advance phase
+        phase[s] = fmin(1.f, phase[s] + deltaPhase);
+    
+        // Stepped
+        if (outputs[STEP_OUTPUT].isConnected()) {
+          if (!0){
+            stepShape = clamp(params[STEP_PARAM].getValue() + inputs[STEP_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[STEP_CV_PARAM].getValue(), 0.f, 1.f);
+            stepShape = ceil((linearSteps ? stepShape : pow(stepShape, 2)) * 15 + 1);
+          }
+          v = ceil(phase[s] * stepShape) / stepShape;
+          outputs[STEP_OUTPUT].setVoltageSimd(downsampleOutput(stepDownSample[s], rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s])), c);
+        }
+    
+        // Linear
+        if (outputs[LIN_OUTPUT].isConnected()) {
+          if (!0){
+            linShape = 1.f / clamp(params[LIN_PARAM].getValue() + inputs[LIN_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[LIN_CV_PARAM].getValue(), 0.f, 1.f);
+          }
+          v = ifelse(linShape<1e6f, fmin(phase[s] * linShape, 1.f), 1.f);
+          outputs[LIN_OUTPUT].setVoltageSimd(downsampleOutput(linDownSample[s], rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s])), c);
+        }
+    
+        // Exponential
+        if (outputs[EXP_OUTPUT].isConnected()) {
+          if (!0){
+            expShape = pow(clamp(params[EXP_PARAM].getValue() + inputs[EXP_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[EXP_CV_PARAM].getValue(), 0.f, 1.f), 8);
+          }
+          v = ifelse(0.999f<expShape, phase[s], ifelse(1e-20f<expShape, (pow(expShape, phase[s])-1.f)/(expShape-1.f), 1.f));
+          outputs[EXP_OUTPUT].setVoltageSimd(downsampleOutput(expDownSample[s], rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s])), c);
+        }
   
-      // Advance phase
-      phase[s] = fmin(1.f, phase[s] + deltaPhase);
-  
-      // Stepped
-      if (outputs[STEP_OUTPUT].isConnected()) {
-        float_4 shape = clamp(params[STEP_PARAM].getValue() + inputs[STEP_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[STEP_CV_PARAM].getValue(), 0.f, 1.f);
-        float_4 steps = ceil((linearSteps ? shape : pow(shape, 2)) * 15 + 1);
-        float_4 v = ceil(phase[s] * steps) / steps;
-        outputs[STEP_OUTPUT].setVoltageSimd(rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s]), c);
-      }
-  
-      // Linear
-      if (outputs[LIN_OUTPUT].isConnected()) {
-        float_4 shape = clamp(params[LIN_PARAM].getValue() + inputs[LIN_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[LIN_CV_PARAM].getValue(), 0.f, 1.f);
-        float_4 slope = 1.f / shape;
-        float_4 v = ifelse(slope<1e6f, fmin(phase[s] * slope, 1.f), 1.f);
-        outputs[LIN_OUTPUT].setVoltageSimd(rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s]), c);
-      }
-  
-      // Exponential
-      if (outputs[EXP_OUTPUT].isConnected()) {
-        float_4 shape = clamp(params[EXP_PARAM].getValue() + inputs[EXP_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[EXP_CV_PARAM].getValue(), 0.f, 1.f);
-        float_4 b = pow(shape, 8);
-        float_4 v = ifelse(0.999f<b, phase[s], ifelse(1e-20f<b, (pow(b, phase[s])-1.f)/(b-1.f), 1.f));
-        outputs[EXP_OUTPUT].setVoltageSimd(rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s]), c);
-      }
-
-      // Smooth
-      if (outputs[SMTH_OUTPUT].isConnected()) {
-        float_4 shape = clamp(params[SMTH_PARAM].getValue() + inputs[SMTH_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[SMTH_CV_PARAM].getValue(), 0.f, 1.f);
-        float_4 p = 1.f / shape;
-        float_4 v = ifelse(p<1e6f, fmin(phase[s]*p, 1.f), 1.f);
-        v = ifelse(p<1e6f, cos(M_PI*v), 1.f);
-        v = ifelse(p<1e5f, (1.f-v)/2.f, 1.f);
-        outputs[SMTH_OUTPUT].setVoltageSimd(rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s]), c);
-      }
-  
-      // Trigger output
-      for (int i=s*4, j=0, end=std::min(s*4+4, channels); i<end; i++, j++) {
-        outputs[TRIG_OUTPUT].setVoltage(pulseGenerator[i].process(args.sampleTime) ? 10.f : 0.f, i);
-        if (phase[s][j] > 0.5f)
-          pulseGenerator[i].reset();
+        // Smooth
+        if (outputs[SMTH_OUTPUT].isConnected()) {
+          if (!o){
+            smthShape = 1.f / clamp(params[SMTH_PARAM].getValue() + inputs[SMTH_CV_INPUT].getPolyVoltageSimd<float_4>(c) * params[SMTH_CV_PARAM].getValue(), 0.f, 1.f);
+          }
+          v = ifelse(smthShape<1e6f, fmin(phase[s]*smthShape, 1.f), 1.f);
+          v = ifelse(smthShape<1e6f, cos(M_PI*v), 1.f);
+          v = ifelse(smthShape<1e6f, (1.f-v)/2.f, 1.f);
+          outputs[SMTH_OUTPUT].setVoltageSimd(downsampleOutput(smthDownSample[s], rescale(v, 0.f, 1.f, lastVoltage[s], nextVoltage[s])), c);
+        }
+    
+        // Trigger output
+        for (int i=c, j=0, end=std::min(c+4, channels); i<end; i++, j++) {
+          trigOut[j] = pulseGenerator[i].process(sampleTime) ? 10.f : 0.f;
+          if (phase[s][j] > 0.5f)
+            pulseGenerator[i].reset();
+        }
+        outputs[TRIG_OUTPUT].setVoltageSimd(downsampleOutput(trigDownSample[s], trigOut), c);
       }
     }
     for (int i=0; i<OUTPUTS_LEN; i++)
@@ -266,6 +328,7 @@ struct Random : VenomModule {
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "fixedChannels", json_integer(fixedChannels));
+    json_object_set_new(rootJ, "overIndex", json_integer(overIndex));
     json_object_set_new(rootJ, "linearSteps", json_boolean(linearSteps));
     return rootJ;
   }
@@ -275,6 +338,8 @@ struct Random : VenomModule {
     json_t* val = NULL;
     if ((val = json_object_get(rootJ, "fixedChannels")))
       fixedChannels = json_integer_value(val);
+    if ((val = json_object_get(rootJ, "overIndex")))
+      overIndex = json_integer_value(val);
     if ((val = json_object_get(rootJ, "linearSteps")))
       linearSteps = json_boolean_value(val);
   }
@@ -328,6 +393,7 @@ struct RandomWidget : VenomWidget {
     Random* module = static_cast<Random*>(this->module);
     menu->addChild(new MenuSeparator);
     menu->addChild(createIndexPtrSubmenuItem("Polyphony channels", {"Auto","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"}, &module->fixedChannels));
+    menu->addChild(createIndexPtrSubmenuItem("Oversample", {"Off","2","4","8","16","32"}, &module->overIndex));
     menu->addChild(createBoolPtrMenuItem("Linear step count scale", "", &module->linearSteps));
     VenomWidget::appendContextMenu(menu);
   }
