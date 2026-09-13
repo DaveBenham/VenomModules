@@ -1,6 +1,6 @@
 # [Venom Modules](README.md) Changelog
 
-## 2.17.0 (????-??-??)
+## 2.17.0 (2026-09-13)
 ### New Modules
 - Random
 
