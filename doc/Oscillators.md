@@ -350,6 +350,7 @@ A fully polyphonic implementation of the VCV RANDOM CV generator with independen
   - The Stepped output shape control displays the actual parameter step count rather than a percentage
   - The Stepped output control defaults to the same non-linear scale as the VCV module, but there is a context menu option for a linear scale.
 - Venom output triggers are either 1 msec or 1/2 a clock cycle, whichever is shorter. This greatly reduces the risk of high clock rates producing a constant high trigger state due to overlapping triggers.
+- Oversampling is available to enable sampling at audio rates without introducing unwanted digital aliasing.
 
 ### Polyphony
 All inputs and outputs are fully polyphonic.
