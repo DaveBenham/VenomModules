@@ -1,11 +1,13 @@
 # [Venom Modules](README.md) Changelog
 
-## 2.17.1 (2026-09-13)
+## 2.17.2 (2026-09-15)
 ### New Modules
 - Random
 
 ### Enhancements
-- Envelope Factory - add "Fast gate triggers" option
+- Envelope Factory 
+  - add "Fast gate triggers" option
+  - add new retrigger input mode: "Change on CV start or end"
 
 ## 2.16.2 (2026-08-28)
 ### New Modules

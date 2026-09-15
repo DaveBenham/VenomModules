@@ -109,7 +109,7 @@ struct EnvelopeFactory : VenomModule {
     configSwitch<FixedSwitchQuantity>(SLOW_PARAM, 0.f, 3.f, 0.f, "Knob time range", {"Fast 0.001 - 10 s", "Slow 0.01 - 100 s", "Crawl 0.1 - 1000 s", "Glacial 1 - 10000 s"});
     configSwitch<FixedSwitchQuantity>(FROM0_PARAM, 0.f, 1.f, 0.f, "Retrigger from 0", {"Off", "On"});
     configSwitch<FixedSwitchQuantity>(GATE_MODE_PARAM, 0.f, 1.f, 0.f, "Manual gate mode", {"Momentary", "Toggle"});
-    configSwitch<FixedSwitchQuantity>(RETRIG_MODE_PARAM, 0.f, 2.f, 0.f, "Retrigger input mode", {"Schmitt trigger leading edge", "CV change start", "CV change end"});
+    configSwitch<FixedSwitchQuantity>(RETRIG_MODE_PARAM, 0.f, 3.f, 0.f, "Retrigger input mode", {"Schmitt trigger leading edge", "CV change start", "CV change end", "CV change start or end"});
     configSwitch<FixedSwitchQuantity>(GATE_IN_PARAM, 0.f, 1.f, 0.f, "Manual gate", {"Low", "High"});
     configSwitch<FixedSwitchQuantity>(RETRIG_PARAM, 0.f, 1.f, 0.f, "Manual retrigger", {"Low", "High"});
     configInput(GATE_INPUT, "Gate");
@@ -249,7 +249,7 @@ struct EnvelopeFactory : VenomModule {
         eocPrimed = 0;
       }
       bool cvRetrig = retrigMode==0 ? retrigTrig[c].process(inputs[RETRIG_INPUT].getPolyVoltage(c), 0.2f, 2.f) :
-                      (retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig[c])==(retrigMode==1?1:-1)),
+                      (retrigMode==3 ? (retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig[c]))!=0 : retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig[c])==(retrigMode==1?1:-1)),
            trig = gateTrig[c].process(buttonRetrig || cvRetrig ? 0.f : params[GATE_IN_PARAM].getValue()*10.f + inputs[GATE_INPUT].getPolyVoltage(c), 0.2f, 2.f),
            gate = gateTrig[c].isHigh();
       oldRetrig[c] = inputs[RETRIG_INPUT].getPolyVoltage(c);
@@ -650,11 +650,12 @@ struct EnvelopeFactoryWidget : VenomWidget {
     }
   };
 
-  struct TriSwitch : GlowingSvgSwitchLockable {
-    TriSwitch() {
+  struct RetrigSwitch : GlowingSvgSwitchLockable {
+    RetrigSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallLightBlueButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
     }
   };
 
@@ -670,7 +671,7 @@ struct EnvelopeFactoryWidget : VenomWidget {
     addParam(createLockableParamCentered<SlowSwitch>(Vec(22.f, 171.5f), module, EnvelopeFactory::SLOW_PARAM));
     addParam(createLockableParamCentered<OnOffSwitch>(Vec(52.f, 171.5f), module, EnvelopeFactory::FROM0_PARAM));
     addParam(createLockableParamCentered<OnOffSwitch>(Vec(22.f, 199.5f), module, EnvelopeFactory::GATE_MODE_PARAM));
-    addParam(createLockableParamCentered<TriSwitch>(Vec(52.f, 199.5f), module, EnvelopeFactory::RETRIG_MODE_PARAM));
+    addParam(createLockableParamCentered<RetrigSwitch>(Vec(52.f, 199.5f), module, EnvelopeFactory::RETRIG_MODE_PARAM));
     manualGate = createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(22.,227.5f), module, EnvelopeFactory::GATE_IN_PARAM, EnvelopeFactory::GATE_IN_LIGHT);
     addParam(manualGate);
     addParam(createLockableLightParamCentered<VCVLightBezelLockable<MediumSimpleLight<WhiteLight>>>(Vec(52.,227.5f), module, EnvelopeFactory::RETRIG_PARAM, EnvelopeFactory::RETRIG_LIGHT));

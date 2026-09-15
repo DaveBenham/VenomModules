@@ -468,10 +468,11 @@ Controls whether a retriggered envelope starts from 0
 #### Retrig Mode small button
 Controls how Retrigger CV input is interpreted
 - **Schmitt trigger** ***(Off, default)***: Retriggers on the leading edge of a high gate. The input goes high when rising above 2V, and low when falling below 0.2V.
-- **CV change start** ***(Yellow)***: Retriggers the instant a change is detected
+- **CV change start** ***(Yellow)***: Retriggers the instant a change is first detected
 - **CV change end** ***(Blue)***: Retriggers when the input stops changing
+- **CV change start or end** ***(Green)***: Retriggers when the input starts or stops changing
 
-The CV change modes are generally used with quantized V/Oct input so a new envelope is retriggered every time the pitch changes. The pitch CV could have glide applied, in which case the different modes specify whether the retrigger is fired at the beginning or end of the glide. If there is no glide then the two CV change modes give identical results.
+The CV change modes are generally used with quantized V/Oct input so a new envelope is retriggered every time the pitch changes. The pitch CV could have glide applied, in which case the different modes specify whether the retrigger is fired at the beginning or end of the glide, or both. If there is no glide then the three CV change modes give identical results.
 
 #### GATE button and CV input
 An envelope is triggered when the Gate input rises above 2V. The gate returns to a low state when the input falls below 0.2V.
