@@ -472,7 +472,7 @@ Controls how Retrigger CV input is interpreted
 - **CV change end** ***(Blue)***: Retriggers when the input stops changing
 - **CV change start or end** ***(Green)***: Retriggers when the input starts or stops changing
 
-The CV change modes are generally used with quantized V/Oct input so a new envelope is retriggered every time the pitch changes. The pitch CV could have glide applied, in which case the different modes specify whether the retrigger is fired at the beginning or end of the glide, or both. If there is no glide then the three CV change modes give identical results.
+The CV change modes are generally used with quantized V/Oct input so a new envelope is retriggered every time the pitch changes. The pitch CV could have glide applied, in which case the different modes specify whether the retrigger is fired at the beginning or end of the glide, or both. If there is no glide then the three CV change modes give identical results. The glide start and end detection works best with linear glide. Non-linear glide may give unexpected results.
 
 #### GATE button and CV input
 An envelope is triggered when the Gate input rises above 2V. The gate returns to a low state when the input falls below 0.2V.
