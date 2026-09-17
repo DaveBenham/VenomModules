@@ -75,7 +75,7 @@ struct EnvelopeFactory : VenomModule {
         curInput[16]{},
         velocity[16]{};
   int vcaMode = 0,
-      eocPrimed = 0;
+      eocPrimed[16]{};
   bool reset = false,
        pendTrig[16]{},
        fastTrigs = false,
@@ -246,7 +246,7 @@ struct EnvelopeFactory : VenomModule {
         env[c] = 0.f;
         outTrig[c].reset();
         pendTrig[c] = false;
-        eocPrimed = 0;
+        eocPrimed[c] = 0;
       }
       bool cvRetrig = retrigMode==0 ? retrigTrig[c].process(inputs[RETRIG_INPUT].getPolyVoltage(c), 0.2f, 2.f) :
                       (retrigMode==3 ? (retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig[c]))!=0 : retrigTrig[c].processEvent(inputs[RETRIG_INPUT].getPolyVoltage(c)!=oldRetrig[c])==(retrigMode==1?1:-1)),
@@ -275,16 +275,16 @@ struct EnvelopeFactory : VenomModule {
       outTrig[c].process(args.sampleTime);    
       if (stage[c] == -1) { // idle on entry
         outputs[IDLE_OUTPUT].setVoltage(10.f, c);
-        if (!eocPrimed && (!trig || from0 || vcaMode==2))
+        if (!eocPrimed[c] && (!trig || from0 || vcaMode==2))
           env[c] = 0.f;
-        if (eocPrimed) {
+        if (eocPrimed[c]) {
           if (params[IDLE_PARAM].getValue())
             outTrig[c].trigger();
-          eocPrimed--;
+          eocPrimed[c]--;
         }
       }  
       else {
-        eocPrimed = 2;
+        eocPrimed[c] = 2;
         if (phase[c] == 0. && params[TRIG_PARAM+stage[c]].getValue())
           outTrig[c].trigger();
         outputs[IDLE_OUTPUT].setVoltage(0.f, c);
