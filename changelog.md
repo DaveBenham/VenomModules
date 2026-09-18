@@ -1,6 +1,6 @@
 # [Venom Modules](README.md) Changelog
 
-## 2.17.5 (2026-09-17)
+## 2.17.6 (2026-09-17)
 ### New Modules
 - Random
 
@@ -10,7 +10,8 @@
   - add new retrigger input mode: "Change on CV start or end"
 
 ### Bug Fix
-- Envelope Factory repaired polyphonic EOC trigger
+- Repaired polyphonic EOC trigger in Envelope Factory
+- Hopefully fixed sporadic crashes when deleting Bay Input
 
 ## 2.16.2 (2026-08-28)
 ### New Modules

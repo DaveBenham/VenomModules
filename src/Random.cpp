@@ -183,7 +183,7 @@ struct Random : VenomModule {
       setOversample();
     }
     float trigBrightness = 1.f / channels,
-          offset = params[OFFSET_PARAM].getValue() ? -5.f : 0.f,
+          offset = params[OFFSET_PARAM].getValue() ? 0.f : -5.f,
           sampleTime = args.sampleTime / oversample;
     float_4 prob{},
             rand{},
