@@ -1,13 +1,13 @@
 # [Venom Modules](README.md) Changelog
 
-## 2.17.6 (2026-09-17)
+## 2.17.6 (2026-09-18)
 ### New Modules
 - Random
 
 ### Enhancements
 - Envelope Factory 
   - add "Fast gate triggers" option
-  - add new retrigger input mode: "Change on CV start or end"
+  - add new retrigger input mode: "CV change start or end"
 
 ### Bug Fix
 - Repaired polyphonic EOC trigger in Envelope Factory
