@@ -195,13 +195,14 @@ struct BayOutputModule : BayModule {
   }
   
   void propagateSrcLabels() {
+    BayInput* tempSrcMod = srcMod && srcId>=0 && sources.count(srcId) ? srcMod : NULL;
     for (int i=0; i<OUTPUTS_LEN; i++) {
       PortInfo* oi = outputInfos[i];
       PortExtension* oe = &outputExtensions[i];
       bool propagate = (oi->name == oe->factoryName);
-      if (srcMod) {
-        if (oe->factoryName != srcMod->inputInfos[i]->name) {
-          oe->factoryName = srcMod->inputInfos[i]->name;
+      if (tempSrcMod) {
+        if (oe->factoryName != tempSrcMod->inputInfos[i]->name) {
+          oe->factoryName = tempSrcMod->inputInfos[i]->name;
           if (propagate)
             oi->name = oe->factoryName;
         }
