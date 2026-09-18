@@ -252,10 +252,10 @@ struct Random : VenomModule {
         );
         phase[s] = ifelse(sampleTrig, 0.f, phase[s]);
         brightness = lights[PROB_LIGHT].getBrightness();
-        for (int i=0; i<4; i++) {
-          if (sampleTrig[i]) {
+        for (int i=c, j=0, end=std::min(c+4, channels); i<end; i++, j++) {
+          if (sampleTrig[j]) {
             brightness += trigBrightness;
-            pulseGenerator[s*4+i].trigger();
+            pulseGenerator[i].trigger();
           }
         }
         lights[PROB_LIGHT].setBrightness(brightness);
