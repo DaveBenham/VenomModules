@@ -11,7 +11,7 @@
 
 ### Bug Fix
 - Repaired polyphonic EOC trigger in Envelope Factory
-- Hopefully fixed sporadic crashes when deleting Bay Input
+- Fixed bug introduced in v2.16 that caused sporadic crashes when deleting Bay Input
 
 ## 2.16.2 (2026-08-28)
 ### New Modules
