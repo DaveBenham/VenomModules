@@ -2,9 +2,20 @@
 
 ## 2.18.0dev (????-??-??)
 ### Enhancements
-- Improve AC coupling performance when oversampled
+- Improve AC coupling CPU usage when oversampled and/or improve AC coupling behavior
+  - DASE
+  - Logic
+  - Mix 4
+  - Mix 4 Stereo
+  - Multimode Filter
+  - Octaver
+  - VCA Mix 4
+  - VCA Mix 4 Stereo
   - VCO Lab
   - VCO Unit
+  - Wave Mangler
+  - Wave Multiplier
+  - XM-OP
 
 ## 2.17.6 (2026-09-18)
 ### New Modules

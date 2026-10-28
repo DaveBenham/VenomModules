@@ -98,8 +98,8 @@ struct Mix4 : MixBaseModule {
     if (args.sampleRate != sampleRate){
       sampleRate = args.sampleRate;
       for (int i=0; i<4; i++){
-        dcBlockBeforeFilter[i].init(oversample, sampleRate);
-        dcBlockAfterFilter[i].init(oversample, sampleRate);
+        dcBlockBeforeFilter[i].init(sampleRate);
+        dcBlockAfterFilter[i].init(sampleRate);
       }
     }
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||

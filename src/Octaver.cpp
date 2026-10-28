@@ -114,8 +114,8 @@ struct Octaver : VenomModule {
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
       for (int i=0; i<4; i++) {
-        inDcBlock[i].init(oversample, sampleRate);
-        up1DcBlock[i].init(oversample, sampleRate);
+        inDcBlock[i].init(sampleRate);
+        up1DcBlock[i].init(sampleRate, oversample);
       }
       maxRise = 1280.f / sampleRate / oversample;
       maxFall = -40.f / sampleRate / oversample;
@@ -125,7 +125,7 @@ struct Octaver : VenomModule {
     int mode = params[MODE_PARAM].getValue(),
         channels = inputs[SIGNAL_INPUT].getChannels();
     for (int s=0, c=0; c < channels; s++, c+=4) {
-      float_4 in = inputs[SIGNAL_INPUT].getPolyVoltageSimd<float_4>(c) * oversample,
+      float_4 in = inDcBlock[s].process(inputs[SIGNAL_INPUT].getPolyVoltageSimd<float_4>(c)) * oversample,
               out{},
               inAmt = clamp(params[DRY_PARAM].getValue() + params[DRY_CV_PARAM].getValue() * inputs[DRY_CV_INPUT].getPolyVoltageSimd<float_4>(c)),
               up1Amt = clamp(params[UP1_PARAM].getValue() + params[UP1_CV_PARAM].getValue() * inputs[UP1_CV_INPUT].getPolyVoltageSimd<float_4>(c)),
@@ -134,7 +134,6 @@ struct Octaver : VenomModule {
               drive = clamp(params[DRIVE_PARAM].getValue() + params[DRIVE_CV_PARAM].getValue() * inputs[DRIVE_CV_INPUT].getPolyVoltageSimd<float_4>(c), 0.f, 10.f);
       for (int o=0; o<oversample; o++) {
         in = upSample[s].process(o ? 0.f : in);
-        in = inDcBlock[s].process(in);
         float_4 up1 = abs(in) * 2.f,
                 dn1,
                 dn2;

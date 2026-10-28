@@ -149,10 +149,10 @@ struct VCAMix4Stereo : MixBaseModule {
     if (args.sampleRate != sampleRate){
       sampleRate = args.sampleRate;
       for (int i=0; i<4; i++){
-        leftDcBlockBeforeFilter[i].init(oversample, sampleRate);
-        leftDcBlockAfterFilter[i].init(oversample, sampleRate);
-        rightDcBlockBeforeFilter[i].init(oversample, sampleRate);
-        rightDcBlockAfterFilter[i].init(oversample, sampleRate);
+        leftDcBlockBeforeFilter[i].init(sampleRate);
+        leftDcBlockAfterFilter[i].init(sampleRate);
+        rightDcBlockBeforeFilter[i].init(sampleRate);
+        rightDcBlockAfterFilter[i].init(sampleRate);
       }
     }
     if( static_cast<int>(params[MODE_PARAM].getValue()) != mode ||

@@ -116,13 +116,12 @@ struct Logic : VenomModule {
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
       setOversample();
-      sampleRate = 0;
     }
     if (sampleRate != args.sampleRate) {
       sampleRate = args.sampleRate;
       for (int c=0; c<CHANNEL_COUNT; c++) {
         for (int i=0; i<4; i++)
-          dcBlock[c][i].init(sampleRate, oversample);
+          dcBlock[c][i].init(sampleRate);
       }
     }
 

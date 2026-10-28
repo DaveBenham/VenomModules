@@ -123,14 +123,13 @@ struct WaveMultiplier : VenomModule {
     if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
       setOversample();
-      sampleRate = 0;
     }
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
       for (int i=0; i<16; i++){
-        pulseDCBlock[i].init(oversample, sampleRate);
-        shiftWaveDCBlock[i].init(oversample, sampleRate);
-        mixDCBlock[i].init(oversample, sampleRate);
+        pulseDCBlock[i].init(sampleRate);
+        shiftWaveDCBlock[i].init(sampleRate);
+        mixDCBlock[i].init(sampleRate);
       }
     }
 
@@ -212,22 +211,22 @@ struct WaveMultiplier : VenomModule {
           }
           level = misc[LEVEL] * levelAmt + levelParam;
           mixOut *= level;
-          if (params[DC_PARAM].getValue())
-            mixOut = mixDCBlock[c].process(mixOut);
           if (oversample>1)
             mixOut = mixDownSample[c].process(mixOut);
+          if ((o==oversample-1) && params[DC_PARAM].getValue())
+            mixOut = mixDCBlock[c].process(mixOut);
         }
         if (hasPulseOut){
-          if (params[DC_PARAM].getValue())
-            pulse = pulseDCBlock[c].process(pulse);
           if (oversample>1)
             pulse = pulseDownSample[c].process(pulse);
+          if ((o==oversample-1) && params[DC_PARAM].getValue())
+            pulse = pulseDCBlock[c].process(pulse);
         }
         if (hasShiftWaveOut){
-          if (params[DC_PARAM].getValue())
-            shiftWave = shiftWaveDCBlock[c].process(shiftWave);
           if (oversample>1)
             shiftWave = shiftWaveDownSample[c].process(shiftWave);
+          if ((o==oversample-1) && params[DC_PARAM].getValue())
+            shiftWave = shiftWaveDCBlock[c].process(shiftWave);
         }
       }
       for (int i=0; i<4; i++){

@@ -270,8 +270,8 @@ struct XM_OP : VenomModule {
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
       for (int i=0; i<4; i++){
-        xmodDcBlockFilter[i].init(oversample, sampleRate);
-        fdbkDcBlockFilter[i].init(oversample, sampleRate);
+        xmodDcBlockFilter[i].init(sampleRate);
+        fdbkDcBlockFilter[i].init(sampleRate, oversample);
       }
     }
 
@@ -371,6 +371,8 @@ struct XM_OP : VenomModule {
               fdbk{},
               vcoOut{},
               fmpmDepth{};
+      if (xmodType == 0) // FM AC coupled
+        xmod = xmodDcBlockFilter[s].process(xmod);
       computeVal(level, levelEnv, envOut, levelParam, levelCVAmt, LEVEL_INPUT, c);
       level = clamp(level);
       if (expLvl)
@@ -388,7 +390,7 @@ struct XM_OP : VenomModule {
           xmod = upSample[s].process(o ? 0.f : xmod*oversample);
         float_4 freq = baseFreq;
         if (xmodType == 0) // FM AC coupled
-          freq += xmodDcBlockFilter[s].process(xmod) * fmpmDepth;
+          freq += xmod * fmpmDepth;
         if (xmodType == 1) // FM DC coupled
           freq += xmod * fmpmDepth;
         if (fdbkType == 0) // FM AC coupled

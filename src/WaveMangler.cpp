@@ -119,14 +119,13 @@ struct WaveMangler : VenomModule {
     if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
       setOversample();
-      sampleRate = 0.f;
     }
     // update DC Block configuration
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
       for (int i=0; i<4; i++){
-        dcBlockInFilter[i].init(oversample, sampleRate);
-        dcBlockOutFilter[i].init(oversample, sampleRate);
+        dcBlockInFilter[i].init(sampleRate);
+        dcBlockOutFilter[i].init(sampleRate);
       }
     }
     // get channel count
@@ -144,6 +143,8 @@ struct WaveMangler : VenomModule {
         if (!o) {
           for (int i=0; i<INPUTS_LEN; i++)
             in[i] = inputs[i].getPolyVoltageSimd<float_4>(c);
+          if (params[DC_IN_PARAM].getValue())
+            in[WAVE_INPUT] = dcBlockInFilter[s].process(in[WAVE_INPUT]);
         }
         // upsample inputs
         if (oversample > 1){
@@ -152,9 +153,6 @@ struct WaveMangler : VenomModule {
               in[i] = upSample[i][s].process(o ? float_4::zero() : in[i]*oversample);
           }
         }
-        // DC block input
-        if (params[DC_IN_PARAM].getValue())
-          in[WAVE_INPUT] = dcBlockInFilter[s].process(in[WAVE_INPUT]);
         // compute offsets
         inOff = params[IN_OFFSET_PARAM].getValue() + in[IN_OFFSET_INPUT] * params[IN_OFFSET_AMT_PARAM].getValue();
         outOff = params[OUT_OFFSET_PARAM].getValue() + in[OUT_OFFSET_INPUT] * params[OUT_OFFSET_AMT_PARAM].getValue();
@@ -199,13 +197,13 @@ struct WaveMangler : VenomModule {
         }
         // offset output
         out += outOff;
-        // DC block output
-        if (params[DC_OUT_PARAM].getValue())
-          out = dcBlockOutFilter[s].process(out);
         // downsample output
         if (oversample > 1)
           out = downSample[s].process(out);
       } // end oversample loop
+      // DC block output
+      if (params[DC_OUT_PARAM].getValue())
+        out = dcBlockOutFilter[s].process(out);
       // write output
       outputs[WAVE_OUTPUT].setVoltageSimd(out, c);
     } // end channel loop

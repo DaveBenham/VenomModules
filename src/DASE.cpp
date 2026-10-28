@@ -125,14 +125,13 @@ struct DASE : VenomModule {
     if (oversample != oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())]) {
       oversample = oversampleValues[static_cast<int>(params[OVER_PARAM].getValue())];
       setOversample();
-      sampleRate = 0.f;
     }
     // update DC Block configuration & undersample rate
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
       maxRptDelta = 200.f / sampleRate;
       for (int i=0; i<4; i++){
-        dcBlockFilter[i].init(oversample, sampleRate);
+        dcBlockFilter[i].init(sampleRate);
       }
       if (sampleRate < 49000)
         undersample = 1;
@@ -217,12 +216,12 @@ struct DASE : VenomModule {
         float_4 atk = clamp(baseAtk + mainIn*lvl + rpt[sync ? s : 0]);
         envOut = ifelse((envPhase[s]==0.f) & (retrigger?float_4::mask():float_4::zero()), 0.f, ifelse(envPhase[s]<atk, envPhase[s]/atk, ifelse((1.f-atk)<=1e-6f, 0.f, (1.f-envPhase[s])/(1.f-atk))))*envActive[s];
         envOut = normSigmoid(envOut, shape); 
-        if (!dcOut)
-          envOut = dcBlockFilter[s].process(envOut);
         // downsample output
         if (oversample > 1)
           envOut = downSample[s].process(envOut);
       } // end oversample loop
+      if (!dcOut)
+        envOut = dcBlockFilter[s].process(envOut);
       // write output
       outputs[MAIN_OUTPUT].setVoltageSimd(envOut*10.f, c);
       envPhase[s] = ifelse(envPhase[s]>=1.f, 0.f, envPhase[s]);
