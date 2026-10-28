@@ -354,13 +354,12 @@ struct VCOUnit : VenomModule {
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
       setOversample();
-      sampleRate = 0;
     }
     if (sampleRate != args.sampleRate){
       sampleRate = args.sampleRate;
       for (int i=0; i<4; i++){
-        linDcBlockFilter[i].init(oversample, sampleRate);
-        outDcBlockFilter[i].init(oversample, sampleRate);
+        linDcBlockFilter[i].init(sampleRate);
+        outDcBlockFilter[i].init(sampleRate);
       }
     }
     // get channel count
@@ -374,7 +373,7 @@ struct VCOUnit : VenomModule {
     }
     int simdCnt = (channels+3)/4;
     
-    float_4 expIn{}, linIn{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn{}, syncIn{}, freq[4]{},
+    float_4 expIn{}, linIn{}, linInSrc[4]{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn{}, syncIn{}, freq[4]{},
             shapeIn{}, phaseIn{}, offsetIn{}, levelIn{}, out[4]{}, wavePhasor{}, wavePhase{}, sawPhasor{}, offsetSawPhasor{};
     float vOctParm = mode<2 ? params[FREQ_PARAM].getValue() + params[OCTAVE_PARAM].getValue() : params[FREQ_PARAM].getValue();
     float k =  1000.f * args.sampleTime / oversample;
@@ -396,6 +395,11 @@ struct VCOUnit : VenomModule {
     bool procOver[INPUTS_LEN]{};
     for (int i=0; i<INPUTS_LEN; i++)
       procOver[i] = oversample>1 && inputs[i].isConnected() && !disableOver[i];
+    if (inputs[LIN_INPUT].isConnected()) {
+      for (int s=0, c=0; s<simdCnt; s++, c+=4){
+        linInSrc[s] = linDCCouple ? inputs[LIN_INPUT].getPolyVoltageSimd<float_4>(c) : linDcBlockFilter[s].process(inputs[LIN_INPUT].getPolyVoltageSimd<float_4>(c));
+      }
+    }
     // main loops
     for (int o=0; o<oversample; o++){
       for (int s=0, c=0; s<simdCnt; s++, c+=4){
@@ -420,14 +424,12 @@ struct VCOUnit : VenomModule {
           }
         } // else preserve prior expIn value
         if (s==0 || inputs[LIN_INPUT].isPolyphonic()) {
-          linIn = (o && !disableOver[LIN_INPUT]) ? float_4::zero() : inputs[LIN_INPUT].getPolyVoltageSimd<float_4>(c);
+          linIn = (o && !disableOver[LIN_INPUT]) ? float_4::zero() : linInSrc[s];
           if (procOver[LIN_INPUT]){
             if (o==0) linIn *= oversample;
             linIn = linUpSample[s].process(linIn);
           }
         } // else preserve prior linIn value
-        if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
-          linIn = linDcBlockFilter[s].process(linIn);
         float_4 rev{};
         if (softSync) {
           if (s==0 || inputs[REV_INPUT].isPolyphonic()) {
@@ -735,10 +737,6 @@ struct VCOUnit : VenomModule {
         if (once){
           out[s] = simd::ifelse(onceActive[s]==float_4::zero(), float_4::zero(), out[s]);
         }
-        // Remove DC offset
-        if (params[DC_PARAM].getValue()) {
-          out[s] = outDcBlockFilter[s].process(out[s]);
-        }
         // Downsample outputs
         if (oversample>1) {
           out[s] = outDownSample[s].process(out[s]);
@@ -747,8 +745,9 @@ struct VCOUnit : VenomModule {
     }
     
     // Write output
+    bool dcOut = params[DC_PARAM].getValue();
     for (int s=0, c=0; s<simdCnt; s++, c+=4) {
-      outputs[OUTPUT].setVoltageSimd( out[s], c );
+      outputs[OUTPUT].setVoltageSimd( dcOut ? outDcBlockFilter[s].process(out[s]) : out[s], c );
     }
     outputs[OUTPUT].setChannels(channels);
   }

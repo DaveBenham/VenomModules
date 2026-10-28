@@ -1,5 +1,11 @@
 # [Venom Modules](README.md) Changelog
 
+## 2.18.0dev (????-??-??)
+### Enhancements
+- Improve AC coupling performance when oversampled
+  - VCO Lab
+  - VCO Unit
+
 ## 2.17.6 (2026-09-18)
 ### New Modules
 - Random

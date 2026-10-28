@@ -63,8 +63,8 @@ struct SVF : VenomModule {
   std::string spreadName[2] {"Cutoff spread", "Cutoff frequency right"};
 
   using float_4 = simd::float_4;
-  float maxFreq;
-  float sampleRate;
+  float maxFreq = 0.f;
+  float sampleRate = 0.f;
   float rangeFreq[2] {dsp::FREQ_C4, 2.f};
   float rangeMaxFreq[2][8] {
  //sample rate 11kHz 12kHz 22kHz 24kHz 44kHz  48kHz  88kHz  96kHz+
@@ -245,7 +245,6 @@ struct SVF : VenomModule {
       freqQuantity->displayMultiplier = rangeFreq[range];
       if (dir == 2)
         spreadQuantity->displayMultiplier = rangeFreq[range];
-      sampleRate = 0.f;
     }
     // update sampleRate
     if (sampleRate != args.sampleRate){
@@ -263,7 +262,7 @@ struct SVF : VenomModule {
       spreadQuantity->maxFreq = maxFreq;
       for (int i=0; i<6; i++)
         for (int j=0; j<8; j++)
-          dcBlockFilter[i][j].init(oversample, sampleRate);
+          dcBlockFilter[i][j].init(sampleRate*4); // goofy - lowers the DC block HPF cutoff by 2 octaves
     }
 
     absSpread = (dir==2);

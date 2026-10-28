@@ -492,13 +492,12 @@ struct Oscillator : VenomModule {
     if (oversample != oversampleValues[params[OVER_PARAM].getValue()]) {
       oversample = oversampleValues[params[OVER_PARAM].getValue()];
       setOversample();
-      sampleRate = 0;
     }
     if (sampleRate != args.sampleRate) {
       sampleRate = args.sampleRate;
       for (int i=0; i<4; i++){
         for (int j=0; j<6; j++)
-          dcBlockFilter[i][j].init(oversample, sampleRate);
+          dcBlockFilter[i][j].init(sampleRate);
       }
     }
     // get channel count
@@ -512,7 +511,7 @@ struct Oscillator : VenomModule {
     }
     int simdCnt = (channels+3)/4;
     
-    float_4 expIn{}, linIn{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn{}, syncIn{}, freq[4]{},
+    float_4 expIn{}, linIn{}, linInSrc[4]{}, expDepthIn[4]{}, linDepthIn[4]{}, vOctIn[4]{}, revIn{}, syncIn{}, freq[4]{},
             shapeIn[5]{}, phaseIn[5]{}, offsetIn[5]{}, levelIn[5]{},
             sinOut[4]{}, triOut[4]{}, sqrOut[4]{}, sawOut[4]{}, mixOut[4]{},
             sinPhasor{}, triPhasor{}, sqrPhasor{}, sawPhasor{}, offsetSawPhasor{}, globalPhasor{},
@@ -549,6 +548,11 @@ struct Oscillator : VenomModule {
     bool procOver[INPUTS_LEN]{};
     for (int i=0; i<INPUTS_LEN; i++)
       procOver[i] = oversample>1 && inputs[i].isConnected() && !disableOver[i];
+    if (inputs[LIN_INPUT].isConnected()) {
+      for (int s=0, c=0; s<simdCnt; s++, c+=4){
+        linInSrc[s] = linDCCouple ? inputs[LIN_INPUT].getPolyVoltageSimd<float_4>(c) : dcBlockFilter[s][LINFM].process(inputs[LIN_INPUT].getPolyVoltageSimd<float_4>(c));
+      }
+    }
     // main loops
     for (int o=0; o<oversample; o++){
       for (int s=0, c=0; s<simdCnt; s++, c+=4){
@@ -573,14 +577,12 @@ struct Oscillator : VenomModule {
           }
         } // else preserve prior expIn value
         if (s==0 || inputs[LIN_INPUT].isPolyphonic()) {
-          linIn = (o && !disableOver[LIN_INPUT]) ? float_4::zero() : inputs[LIN_INPUT].getPolyVoltageSimd<float_4>(c);
+          linIn = (o && !disableOver[LIN_INPUT]) ? float_4::zero() : linInSrc[s];
           if (procOver[LIN_INPUT]){
             if (o==0) linIn *= oversample;
             linIn = linUpSample[s].process(linIn);
           }
         } // else preserve prior linIn value
-        if (inputs[LIN_INPUT].isConnected() && !linDCCouple)
-          linIn = dcBlockFilter[s][LINFM].process(linIn);
         if (s==0 || inputs[MIX_PHASE_INPUT].isPolyphonic()) {
           phaseIn[MIX] = (o && !disableOver[MIX_PHASE_INPUT]) ? float_4::zero() : inputs[MIX_PHASE_INPUT].getPolyVoltageSimd<float_4>(c);
           if (procOver[MIX_PHASE_INPUT]){
@@ -1088,19 +1090,6 @@ struct Oscillator : VenomModule {
           sawOut[s] = simd::ifelse(onceActive[s]==float_4::zero(), float_4::zero(), sawOut[s]);
           mixOut[s] = simd::ifelse(onceActive[s]==float_4::zero(), float_4::zero(), mixOut[s]);
         }
-        // Remove DC offset
-        if (params[DC_PARAM].getValue()) {
-          if (outputs[SIN_OUTPUT].isConnected())
-            sinOut[s] = dcBlockFilter[s][SIN].process(sinOut[s]);
-          if (outputs[TRI_OUTPUT].isConnected())
-            triOut[s] = dcBlockFilter[s][TRI].process(triOut[s]);
-          if (outputs[SQR_OUTPUT].isConnected())
-            sqrOut[s] = dcBlockFilter[s][SQR].process(sqrOut[s]);
-          if (outputs[SAW_OUTPUT].isConnected())
-            sawOut[s] = dcBlockFilter[s][SAW].process(sawOut[s]);
-          if (outputs[MIX_OUTPUT].isConnected())
-            mixOut[s] = dcBlockFilter[s][MIX].process(mixOut[s]);
-        }
         // Downsample outputs
         if (oversample>1) {
           if (outputs[SIN_OUTPUT].isConnected())
@@ -1119,6 +1108,19 @@ struct Oscillator : VenomModule {
     
     float_4 out{};
     for (int s=0, c=0; s<simdCnt; s++, c+=4) {
+      // Remove DC offset
+      if (params[DC_PARAM].getValue()) {
+        if (outputs[SIN_OUTPUT].isConnected())
+          sinOut[s] = dcBlockFilter[s][SIN].process(sinOut[s]);
+        if (outputs[TRI_OUTPUT].isConnected())
+          triOut[s] = dcBlockFilter[s][TRI].process(triOut[s]);
+        if (outputs[SQR_OUTPUT].isConnected())
+          sqrOut[s] = dcBlockFilter[s][SQR].process(sqrOut[s]);
+        if (outputs[SAW_OUTPUT].isConnected())
+          sawOut[s] = dcBlockFilter[s][SAW].process(sawOut[s]);
+        if (outputs[MIX_OUTPUT].isConnected())
+          mixOut[s] = dcBlockFilter[s][MIX].process(mixOut[s]);
+      }
       outputs[SIN_OUTPUT].setVoltageSimd( sinOut[s], c );
       outputs[TRI_OUTPUT].setVoltageSimd( triOut[s], c );
       outputs[SQR_OUTPUT].setVoltageSimd( sqrOut[s], c );
