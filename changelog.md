@@ -2,6 +2,9 @@
 
 ## 2.18.0dev (????-??-??)
 ### Enhancements
+- Add new Phase Threshold Soft Sync mode (generates subharmonics if follower is lower than leader)
+  - VCO Lab
+  - VCO Unit
 - Improve AC coupling CPU usage when oversampled and/or improve AC coupling behavior
   - DASE
   - Logic
