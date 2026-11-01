@@ -478,7 +478,7 @@ A polyphonic oscillator with a robust array of features for the mad scientist so
 - Independent controls/inputs for exponential FM and true linear through 0 FM
 - Linear FM input defaults to AC coupled, with an option for DC coupled
 - Audio rate modulation of phase provides functionality often incorrectly referred to as through 0 linear FM.
-- Independent inputs for hard sync (reset phase to 0), and soft sync (reverse waveform)
+- Independent inputs for hard sync (reset phase to 0), and 3 modes of soft sync (triggered reverse, gated reverse, phase reset conditional on phase threshold)
 - Octave control
 - Square pulse width range can be 0-100% or 3-97%
 - Optional DC offset removal for the outputs
@@ -586,10 +586,11 @@ When in 0 Hz carrier mode the knob sets the range for the linear FM depth. Low f
 
 ### Soft Sync input
 The small unlabeled button to the right of the Soft Sync label controls the mode of soft sync.
-- **Trigger mode** ***(off, default)*** - The leading edge of an incoming trigger reverses the current direction of the waveform. A hard sync always resets the direction to forward. 
-- **Gate mode** ***(yellow)*** - A high gate puts the waveform in reverse mode. A low gate puts the waveform in forward mode. A hard sync never changes the direction.
+- **Triggered reverse mode** ***(off, default)*** - The leading edge of an incoming trigger reverses the current direction of the waveform. The fundamental output frequency follows the syncing signal one octave lower. This mode is of limited use if the frequency is below the syncing frequency. A hard sync always resets the direction to forward.
+- **Gated reverse mode** ***(yellow)*** - A high gate puts the waveform in reverse mode. A low gate puts the waveform in forward mode. The fundamental output frequency follows the syncing signal in the same octave. Asymmetric high vs low gate times gives motion to the timbre. This mode is of limited use if the frequency is below the syncing frequency. A hard sync never changes the direction.
+- **Phase threshold mode** ***(green)*** - Same as a hard sync except the phase is only reset to 0 if the wave has progressed at least 270 degrees since the last hard or soft sync. Sounds the same as hard sync if the pitch is at or above the syncing signal. Generates subharmonics if the pitch is below the syncing signal.
 
-The trigger and gate detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point. There is also an option to use +/- 50uV thresholds, which also only works for bipolar inputs.
+The trigger and gate detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point. There is also an option to use +/- 50uV thresholds, which also only works for bipolar inputs, but is helpful for generating symmetric high vs low gate times.
 
 This port supports oversampling that can be disabled via the port context menu.
 
@@ -634,7 +635,9 @@ This port does not support oversampling.
 The Sync input resets the master oscillator phase to 0 upon the leading edge of an incomming trigger.  
 If using any of the one shot modes, the Sync is used to trigger the start of a wave cycle.
 
-The trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point. There is also an option to use +/- 50uV thresholds, which also only works for bipolar inputs.
+If synced by an audio signal, the fundamental output frequency follows the frequency of the syncing signal. Hard sync is of limited use if the frequency is lower than the syncing signal because the output is increasingly attenuated as the frequency drops.
+
+The sync trigger detection is implemented as a Schmitt trigger that goes high above 2V and goes low below 0.2V. Those thresholds allow for both unipolar and bipolar trigger signals to be used. A module context menu option allows you to change to a 0V high threshold and -2V low threshold, which only works for bipolar inputs, but synchronizes the trigger with the 0 crossing point. There is also an option to use +/- 50uV thresholds, which also only works for bipolar inputs.
 
 This port supports oversampling that can be disabled via the port context menu.
 
