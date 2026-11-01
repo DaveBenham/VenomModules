@@ -74,7 +74,7 @@ struct VCOUnit : VenomModule {
   float lvlScale = 0.1f;
   float shpScale = 0.2f;
   float syncHi = 2.0f, syncLo = 0.2f;
-  bool softSync = false; // true if soft sync connected
+  bool revSync = false; // true if soft sync connected and soft sync mode is not threshSync
   bool alternate = false;
   bool disableDPW = false;
   bool aliasSuppress = false;
@@ -84,7 +84,7 @@ struct VCOUnit : VenomModule {
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4]{}, phaseUpSample[4]{}, offsetUpSample[4]{}, levelUpSample[4]{},
                      outDownSample[4]{};
-  float_4 phasor[4]{}, phasorDir[4]{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}};
+  float_4 phasor[4]{}, threshMet[4]{}, phasorDir[4]{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}};
   DCBlockFilter_4 linDcBlockFilter[4]{}, outDcBlockFilter[4]{};
   bool linDCCouple = false;
   bool linNoThru0 = false;
@@ -199,7 +199,7 @@ struct VCOUnit : VenomModule {
     configInput(SYNC_INPUT, "Hard Sync");
     configLight(SYNC_LIGHT, "Hard Sync oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configInput(REV_INPUT, "Soft sync");
-    configSwitch<FixedSwitchQuantity>(REV_GATE_PARAM, 0.f, 1.f, 0.f, "Soft sync mode", {"Trigger changes current direction", "Low gate forward, high gate reverse"});
+    configSwitch<FixedSwitchQuantity>(REV_GATE_PARAM, 0.f, 2.f, 0.f, "Soft sync mode", {"Trigger changes current direction", "Low gate forward, high gate reverse", "Phase threshold"});
     configLight(REV_LIGHT, "Soft sync oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
     configInput(VOCT_INPUT, "V/Oct");
     configOutput(OUTPUT, "VCO");
@@ -380,16 +380,19 @@ struct VCOUnit : VenomModule {
     float_4 basePhaseDelta{}, lowFreq{}, denInv{};
 
     alternate = (mode==2);
-    if (softSync != inputs[REV_INPUT].isConnected()) { // force forward if soft sync disconnected
-      if (softSync) {
+
+    bool softSync = inputs[REV_INPUT].isConnected();
+    bool revGate = params[REV_GATE_PARAM].getValue()==1 && softSync;
+    bool threshSync = params[REV_GATE_PARAM].getValue()==2 && softSync;
+    if (revSync != (softSync && !threshSync)) {
+      if (revSync) { // if no longer reverse soft syncing then reset phasor directions and reset soft sync triggers
         for (int i=0; i<4; i++) 
           phasorDir[i] = 1.f;
         for (int i=0; i<16; i++)
           revTrig[i].process(0.f);
       }
-      softSync = !softSync;
+      revSync = !revSync;
     }
-    bool revGate = params[REV_GATE_PARAM].getValue() && softSync;
     
     int shapeMode = static_cast<int>(params[SHAPE_MODE_PARAM].getValue());
     bool procOver[INPUTS_LEN]{};
@@ -442,6 +445,9 @@ struct VCOUnit : VenomModule {
           for (int i=0; i<4; i++){
             rev[i] = revTrig[c+i].process(revIn[i], syncLo, syncHi);
           }
+          if (threshSync){
+            rev = ifelse(threshMet[s]>0.f, rev, 0.f);
+          }
         }
         float_4 sync{};
         if (inputs[SYNC_INPUT].isConnected()) {
@@ -456,6 +462,9 @@ struct VCOUnit : VenomModule {
             sync[i] = syncTrig[c+i].process(syncIn[i], syncLo, syncHi) && !(noRetrigger && onceActive[s][i]);
           }
         } else onceActive[s] = float_4::zero();
+        if (threshSync) {
+          sync = ifelse(rev>0.f, rev, sync);
+        }
         if (!alternate) {
           freq[s] = vOctIn[s] + vOctParm + expIn*expDepthIn[s]*params[EXP_PARAM].getValue();
           freq[s] = dsp::exp2_taylor5(freq[s]) + linIn*linDepthIn[s]*params[LIN_PARAM].getValue();
@@ -472,12 +481,13 @@ struct VCOUnit : VenomModule {
             syncStart[i] = revTrig[c+i].isHigh() ? 1000.f : 0.f;
           }
         }
-        else {
+        else if(!threshSync) {
           phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
           phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
         }
         basePhaseDelta = freq[s] * phasorDir[s] * k;
         phasor[s] += basePhaseDelta;
+        threshMet[s] = ifelse(phasor[s]>=750.f, 1.f, threshMet[s]);
         if (aliasSuppress) {
           basePhaseDelta *= 0.001f;
           lowFreq = simd::abs(basePhaseDelta) < 1e-3;
@@ -490,6 +500,7 @@ struct VCOUnit : VenomModule {
           onceActive[s] = simd::ifelse(tempPhasor != phasor[s], float_4::zero(), onceActive[s]);
         phasor[s] = tempPhasor;
         phasor[s] = simd::ifelse(sync>0.f, syncStart, phasor[s]);
+        threshMet[s] = ifelse(sync>0.f, 0.f, threshMet[s]);
         if (once)
           onceActive[s] = simd::ifelse(sync>float_4::zero(), 1.f, onceActive[s]);
         if (gated){
@@ -863,6 +874,14 @@ struct VCOUnitWidget : VenomWidget {
     }
   };
 
+  struct SoftSyncSwitch : GlowingSvgSwitchLockable {
+    SoftSyncSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+    }
+  };
+
   struct WaveSwitch : GlowingSvgSwitchLockable {
     WaveSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/wave_sin.svg")));
@@ -968,7 +987,7 @@ struct VCOUnitWidget : VenomWidget {
     addInput(createOverInputCentered<OverPort>(Vec(24.f, 293.5f), module, VCOUnit::SYNC_INPUT));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(37.5f, 282.f), module, VCOUnit::SYNC_LIGHT));
     addInput(createOverInputCentered<OverPort>(Vec(67.5f, 293.5f), module, VCOUnit::REV_INPUT));
-    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(84.f,268.5f), module, VCOUnit::REV_GATE_PARAM));
+    addParam(createLockableParamCentered<SoftSyncSwitch>(Vec(84.f,268.5f), module, VCOUnit::REV_GATE_PARAM));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(81.f, 282.f), module, VCOUnit::REV_LIGHT));
 
     addInput(createInputCentered<PolyPort>(Vec(24.f, 341.5f), module, VCOUnit::VOCT_INPUT));

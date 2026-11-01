@@ -195,7 +195,7 @@ struct Oscillator : VenomModule {
   float syncHi = 2.0f, syncLo = 0.2f;
   float lvlScale[5]{0.1f, 0.1f, 0.1f, 0.1f, 0.1f};
   float shpScale[4]{0.2f, 0.2f, 0.2f, 0.2f};
-  bool softSync = false; // true if soft sync connected
+  bool revSync = false; // true if soft sync connected and soft sync mode is not threshSync
   bool alternate = false;
   bool aliasSuppress = false;
   using float_4 = simd::float_4;
@@ -204,7 +204,7 @@ struct Oscillator : VenomModule {
   OversampleFilter_4 expUpSample[4]{}, linUpSample[4]{}, revUpSample[4]{}, syncUpSample[4]{},
                      shapeUpSample[4][5]{}, phaseUpSample[4][5]{}, offsetUpSample[4][5]{}, levelUpSample[4][5]{},
                      outDownSample[4][5]{};
-  float_4 phasor[4]{}, phasorDir[4]{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}};
+  float_4 phasor[4]{}, threshMet[4]{}, phasorDir[4]{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}};
   DCBlockFilter_4 dcBlockFilter[4][6]{}; // Sin, Tri, Sqr, Saw, Mix, Lin FM Input
   bool linDCCouple = false;
   bool linNoThru0 = false;
@@ -325,7 +325,7 @@ struct Oscillator : VenomModule {
     configParam<FreqQuantity>(FREQ_PARAM, -4.f, 4.f, 0.f, "Frequency", " Hz");
     configParam(OCTAVE_PARAM, -4.f, 4.f, 0.f, "Octave");
     configLight(REV_LIGHT, "Soft sync oversample indicator")->description = "off = none, yellow = oversampled, red = disabled";
-    configSwitch<FixedSwitchQuantity>(REV_GATE_PARAM, 0.f, 1.f, 0.f, "Soft sync mode", {"Trigger changes current direction", "Low gate forward, high gate reverse"});
+    configSwitch<FixedSwitchQuantity>(REV_GATE_PARAM, 0.f, 2.f, 0.f, "Soft sync mode", {"Trigger changes current direction", "Low gate forward, high gate reverse", "Phase threshold"});
     configInput(REV_INPUT, "Soft sync");
     configParam(EXP_PARAM, -1.f, 1.f, 0.f, "Exponential FM", "%", 0.f, 100.f);
     configParam(LIN_PARAM, -1.f, 1.f, 0.f, "Linear FM", "%", 0.f, 100.f);
@@ -522,16 +522,6 @@ struct Oscillator : VenomModule {
 
     alternate = (mode==2);
     
-    if (softSync != inputs[REV_INPUT].isConnected()) { // force forward if soft sync disconnected
-      if (softSync) {
-        for (int i=0; i<4; i++)
-          phasorDir[i] = 1.f;
-        for (int i=0; i<16; i++)
-          revTrig[i].process(0.f);
-      }
-      softSync = !softSync;
-    }
-    
     int sinMode = static_cast<int>(params[SINSHP_PARAM].getValue());
     int triMode = static_cast<int>(params[TRISHP_PARAM].getValue());
     int sqrMode = static_cast<int>(params[PW_PARAM].getValue());
@@ -539,7 +529,19 @@ struct Oscillator : VenomModule {
     int mixMode = static_cast<int>(params[MIXSHP_PARAM].getValue());
     int mixType = mixMode % 3;
     
-    bool revGate = params[REV_GATE_PARAM].getValue() && softSync;
+    bool softSync = inputs[REV_INPUT].isConnected();
+    bool revGate = params[REV_GATE_PARAM].getValue()==1 && softSync;
+    bool threshSync = params[REV_GATE_PARAM].getValue()==2 && softSync;
+    if (revSync != (softSync && !threshSync)) {
+      if (revSync) { // if no longer reverse soft syncing then reset phasor directions and reset soft sync triggers
+        for (int i=0; i<4; i++) 
+          phasorDir[i] = 1.f;
+        for (int i=0; i<16; i++)
+          revTrig[i].process(0.f);
+      }
+      revSync = !revSync;
+    }
+
     bool procSin = outputs[SIN_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SIN_ASIGN_PARAM].getValue() != 1.f);
     bool procTri = outputs[TRI_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[TRI_ASIGN_PARAM].getValue() != 1.f);
     bool procSqr = outputs[SQR_OUTPUT].isConnected() || (outputs[MIX_OUTPUT].isConnected() && params[SQR_ASIGN_PARAM].getValue() != 1.f);
@@ -602,6 +604,9 @@ struct Oscillator : VenomModule {
           for (int i=0; i<4; i++){
             rev[i] = revTrig[c+i].process(revIn[i], syncLo, syncHi);
           }
+          if (threshSync){
+            rev = ifelse(threshMet[s]>0.f, rev, 0.f);
+          }
         }
         float_4 sync{};
         if (inputs[SYNC_INPUT].isConnected()) {
@@ -616,6 +621,9 @@ struct Oscillator : VenomModule {
             sync[i] = syncTrig[c+i].process(syncIn[i], syncLo, syncHi) && !(noRetrigger && onceActive[s][i]);
           }
         } else onceActive[s] = float_4::zero();
+        if (threshSync) {
+          sync = ifelse(rev>0.f, rev, sync);
+        }
         if (!alternate) {
           freq[s] = vOctIn[s] + vOctParm + expIn*expDepthIn[s]*params[EXP_PARAM].getValue();
           freq[s] = dsp::exp2_taylor5(freq[s]) + linIn*linDepthIn[s]*params[LIN_PARAM].getValue();
@@ -632,12 +640,13 @@ struct Oscillator : VenomModule {
             syncStart[i] = revTrig[c+i].isHigh() ? 1000.f : 0.f;
           }
         }
-        else {
+        else if(!threshSync) {
           phasorDir[s] = simd::ifelse(rev>0.f, phasorDir[s]*-1.f, phasorDir[s]);
           phasorDir[s] = simd::ifelse(sync>0.f, 1.f, phasorDir[s]);
         }
         basePhaseDelta = freq[s] * phasorDir[s] * k;
         phasor[s] += basePhaseDelta;
+        threshMet[s] = ifelse(phasor[s]>=750.f, 1.f, threshMet[s]);
         if (aliasSuppress) {
           basePhaseDelta *= 0.001f;
           lowFreq = simd::abs(basePhaseDelta) < 1e-3;
@@ -650,6 +659,7 @@ struct Oscillator : VenomModule {
           onceActive[s] = simd::ifelse(tempPhasor != phasor[s], float_4::zero(), onceActive[s]);
         phasor[s] = tempPhasor;
         phasor[s] = simd::ifelse(sync>0.f, syncStart, phasor[s]);
+        threshMet[s] = ifelse(sync>0.f, 0.f, threshMet[s]);
         if (once)
           onceActive[s] = simd::ifelse(sync>float_4::zero(), 1.f, onceActive[s]);
         if (gated){
@@ -1304,6 +1314,14 @@ struct OscillatorWidget : VenomWidget {
     }
   };
 
+  struct SoftSyncSwitch : GlowingSvgSwitchLockable {
+    SoftSyncSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallGreenButtonSwitch.svg")));
+    }
+  };
+
   struct AssignSwitch : GlowingSvgSwitchLockable {
     AssignSwitch() {
       addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
@@ -1401,7 +1419,7 @@ struct OscillatorWidget : VenomWidget {
     addParam(createLockableParamCentered<RotarySwitch<RoundBlackKnobLockable>>(Vec(29.f,157.f), module, Oscillator::OCTAVE_PARAM));
 
     addInput(createOverInputCentered<OverPort>(Vec(64.f, 158.f), module, Oscillator::REV_INPUT));
-    addParam(createLockableParamCentered<DCBlockSwitch>(Vec(80.5f,133.f), module, Oscillator::REV_GATE_PARAM));
+    addParam(createLockableParamCentered<SoftSyncSwitch>(Vec(80.5f,133.f), module, Oscillator::REV_GATE_PARAM));
     addChild(createLightCentered<SmallLight<YellowRedLight<>>>(Vec(77.5f, 146.5f), module, Oscillator::REV_LIGHT));
 
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(Vec(29.f,206.f), module, Oscillator::EXP_PARAM));
