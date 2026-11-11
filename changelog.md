@@ -2,6 +2,9 @@
 
 ## 2.18.0dev (????-??-??)
 ### Enhancements
+- Allow 0 recursive passes
+  - Recurse
+  - Recurse Stereo
 - Add new Phase Threshold Soft Sync mode (generates subharmonics if follower is lower than leader)
   - VCO Lab
   - VCO Unit

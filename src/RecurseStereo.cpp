@@ -37,6 +37,7 @@ struct RecurseStereo : VenomModule {
 
   int recurCount = 1;
   bool recurCountErr = false;
+  bool allow0 = true;
   int order = 0;
   int oldOrder = -1;
 
@@ -45,6 +46,21 @@ struct RecurseStereo : VenomModule {
     PRE_START_N,
     POST_RETURN_N,
     POST_RETURN_1
+  };
+
+  float interpretRecurCount(float val) {
+    return std::round(allow0 ? (val-1.f)*16.f/15.f : val);
+  }
+
+  struct RecurQuantity : ParamQuantity {
+    float getDisplayValue() override {
+      RecurseStereo* mod = reinterpret_cast<RecurseStereo*>(this->module);
+      return mod->interpretRecurCount(getValue());
+    }
+    void setDisplayValue(float v) override {
+      RecurseStereo* mod = reinterpret_cast<RecurseStereo*>(this->module);
+      setValue(mod->allow0 ? (v*15.f/16.f)+1.f : v);
+    }
   };
 
   RecurseStereo() {
@@ -62,7 +78,7 @@ struct RecurseStereo : VenomModule {
       }
     };
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-    configParam(COUNT_PARAM, 1.f, 16.f, 1.f, "Recursion Count", "");
+    configParam<RecurQuantity>(COUNT_PARAM, 1.f, 16.f, 1.f, "Recursion Count", "");
     configParam(SCALE_PARAM, -10.f, 10.f, 1.f, "Scale", "");
     configParam(OFFSET_PARAM, -10.f, 10.f, 0.f, "Offset", " V");
     configParam<TimingQuantity>(TIMING_PARAM, 0.f, 3.f, 0.f, "Modulation Timing", "");
@@ -94,75 +110,88 @@ struct RecurseStereo : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    recurCount = static_cast<int>(params[COUNT_PARAM].getValue());
-    int inChannels = std::max({1, inputs[IN_L_INPUT].getChannels()});
-    recurCountErr = (inChannels > 16 / recurCount);
-    int outChannels = recurCountErr ? 16 / recurCount : inChannels;
-    ModTiming timing = static_cast<ModTiming>(params[TIMING_PARAM].getValue());
-    float scaleParam = params[SCALE_PARAM].getValue();
-    float offsetParam = params[OFFSET_PARAM].getValue();
-    bool sendConnectedL = outputs[SEND_L_OUTPUT].isConnected();
-    bool sendConnectedR = outputs[SEND_R_OUTPUT].isConnected();
-    bool returnConnectedL = inputs[RETURN_L_INPUT].isConnected();
-    bool returnConnectedR = inputs[RETURN_R_INPUT].isConnected();
-    bool mod = inputs[SCALE_INPUT].isConnected() || inputs[OFFSET_INPUT].isConnected() || scaleParam != 1.0f || offsetParam != 0.0f;
-    bool right = sendConnectedR || outputs[OUT_R_OUTPUT].isConnected();
-    float scale = 0.f;
-    float offset = 0.f;
-    float rtnL = 0.f;
-    float rtnR = 0.f;
-    for (int c=0; c<outChannels; c++) {
-      rtnL = inputs[IN_L_INPUT].getVoltage(c);
-      if(right)
-        rtnR = inputs[IN_R_INPUT].getNormalPolyVoltage(rtnL, c);
-      if (mod) {
-        scale = inputs[SCALE_INPUT].getNormalPolyVoltage(1.0f, c) * scaleParam;
-        offset = inputs[OFFSET_INPUT].getNormalPolyVoltage(0.0f, c) + offsetParam;
-        if (timing == PRE_START_1){
+    recurCount = static_cast<int>(interpretRecurCount(params[COUNT_PARAM].getValue()));
+    int inChannels = inputs[IN_L_INPUT].getChannels();
+    if (recurCount) {
+      inChannels = std::max({1, inChannels});
+      recurCountErr = (inChannels > 16 / recurCount);
+      int outChannels = recurCountErr ? 16 / recurCount : inChannels;
+      ModTiming timing = static_cast<ModTiming>(params[TIMING_PARAM].getValue());
+      float scaleParam = params[SCALE_PARAM].getValue();
+      float offsetParam = params[OFFSET_PARAM].getValue();
+      bool sendConnectedL = outputs[SEND_L_OUTPUT].isConnected();
+      bool sendConnectedR = outputs[SEND_R_OUTPUT].isConnected();
+      bool returnConnectedL = inputs[RETURN_L_INPUT].isConnected();
+      bool returnConnectedR = inputs[RETURN_R_INPUT].isConnected();
+      bool mod = inputs[SCALE_INPUT].isConnected() || inputs[OFFSET_INPUT].isConnected() || scaleParam != 1.0f || offsetParam != 0.0f;
+      bool right = sendConnectedR || outputs[OUT_R_OUTPUT].isConnected();
+      float scale = 0.f;
+      float offset = 0.f;
+      float rtnL = 0.f;
+      float rtnR = 0.f;
+      for (int c=0; c<outChannels; c++) {
+        rtnL = inputs[IN_L_INPUT].getVoltage(c);
+        if(right)
+          rtnR = inputs[IN_R_INPUT].getNormalPolyVoltage(rtnL, c);
+        if (mod) {
+          scale = inputs[SCALE_INPUT].getNormalPolyVoltage(1.0f, c) * scaleParam;
+          offset = inputs[OFFSET_INPUT].getNormalPolyVoltage(0.0f, c) + offsetParam;
+          if (timing == PRE_START_1){
+            rtnL = order==0 ? rtnL * scale + offset : (rtnL + offset) * scale;
+            if (right)
+              rtnR = order==0 ? rtnR * scale + offset : (rtnR + offset) * scale;
+          }
+        }
+        for (int o=c*recurCount, end=o+recurCount; o<end; o++) {
+          if (mod && timing == PRE_START_N) {
+            rtnL = order==0 ? rtnL * scale + offset : (rtnL + offset) * scale;
+            if (right)
+              rtnR = order==0 ? rtnR * scale + offset : (rtnR + offset) * scale;
+          }
+          if (sendConnectedL)
+            outputs[SEND_L_OUTPUT].setVoltage(rtnL, o);
+          if (sendConnectedR)
+            outputs[SEND_R_OUTPUT].setVoltage(rtnR, o);
+          if (returnConnectedL)
+            rtnL = inputs[RETURN_L_INPUT].getVoltage(o);
+          if (returnConnectedR)
+            rtnR = inputs[RETURN_R_INPUT].getVoltage(o);
+          if (mod && timing == POST_RETURN_N){
+            rtnL = order==0 ? rtnL * scale + offset : (rtnL + offset) * scale;
+            if (right)
+              rtnR = order==0 ? rtnR * scale + offset : (rtnR + offset) * scale;
+          }
+        }
+        if (mod && timing == POST_RETURN_1){
           rtnL = order==0 ? rtnL * scale + offset : (rtnL + offset) * scale;
           if (right)
             rtnR = order==0 ? rtnR * scale + offset : (rtnR + offset) * scale;
         }
-      }
-      for (int o=c*recurCount, end=o+recurCount; o<end; o++) {
-        if (mod && timing == PRE_START_N) {
-          rtnL = order==0 ? rtnL * scale + offset : (rtnL + offset) * scale;
-          if (right)
-            rtnR = order==0 ? rtnR * scale + offset : (rtnR + offset) * scale;
-        }
-        if (sendConnectedL)
-          outputs[SEND_L_OUTPUT].setVoltage(rtnL, o);
-        if (sendConnectedR)
-          outputs[SEND_R_OUTPUT].setVoltage(rtnR, o);
-        if (returnConnectedL)
-          rtnL = inputs[RETURN_L_INPUT].getVoltage(o);
-        if (returnConnectedR)
-          rtnR = inputs[RETURN_R_INPUT].getVoltage(o);
-        if (mod && timing == POST_RETURN_N){
-          rtnL = order==0 ? rtnL * scale + offset : (rtnL + offset) * scale;
-          if (right)
-            rtnR = order==0 ? rtnR * scale + offset : (rtnR + offset) * scale;
-        }
-      }
-      if (mod && timing == POST_RETURN_1){
-        rtnL = order==0 ? rtnL * scale + offset : (rtnL + offset) * scale;
+        outputs[OUT_L_OUTPUT].setVoltage(rtnL, c);
         if (right)
-          rtnR = order==0 ? rtnR * scale + offset : (rtnR + offset) * scale;
+          outputs[OUT_R_OUTPUT].setVoltage(rtnR, c);
       }
-      outputs[OUT_L_OUTPUT].setVoltage(rtnL, c);
-      if (right)
-        outputs[OUT_R_OUTPUT].setVoltage(rtnR, c);
+      for (int c=outChannels; c<inChannels; c++){
+        outputs[OUT_L_OUTPUT].setVoltage(0.0f, c);
+        if (right)
+          outputs[OUT_R_OUTPUT].setVoltage(0.0f, c);
+      }
+      outputs[SEND_L_OUTPUT].setChannels(outChannels * recurCount);
+      outputs[OUT_L_OUTPUT].setChannels(outChannels);
+      if (right) {
+        outputs[SEND_R_OUTPUT].setChannels(outChannels * recurCount);
+        outputs[OUT_R_OUTPUT].setChannels(outChannels);
+      }
     }
-    for (int c=outChannels; c<inChannels; c++){
-      outputs[OUT_L_OUTPUT].setVoltage(0.0f, c);
-      if (right)
-        outputs[OUT_R_OUTPUT].setVoltage(0.0f, c);
-    }
-    outputs[SEND_L_OUTPUT].setChannels(outChannels * recurCount);
-    outputs[OUT_L_OUTPUT].setChannels(outChannels);
-    if (right) {
-      outputs[SEND_R_OUTPUT].setChannels(outChannels * recurCount);
-      outputs[OUT_R_OUTPUT].setChannels(outChannels);
+    else {
+      recurCountErr = false;
+      outputs[OUT_L_OUTPUT].setChannels(inChannels);
+      outputs[OUT_L_OUTPUT].writeVoltages(inputs[IN_L_INPUT].getVoltages());
+      int rChannels = inputs[IN_R_INPUT].getChannels();
+      outputs[OUT_R_OUTPUT].setChannels(rChannels ? rChannels : inChannels);
+      outputs[OUT_R_OUTPUT].writeVoltages(inputs[rChannels ? IN_R_INPUT : IN_L_INPUT].getVoltages());
+      outputs[SEND_L_OUTPUT].setChannels(0);
+      outputs[SEND_R_OUTPUT].setChannels(0);
     }
 
     if (order != oldOrder) {
@@ -176,6 +205,7 @@ struct RecurseStereo : VenomModule {
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "orderOp", json_integer(order));
+    json_object_set_new(rootJ, "allow0", json_boolean(allow0));
     return rootJ;
   }
 
@@ -184,6 +214,8 @@ struct RecurseStereo : VenomModule {
     json_t* val = json_object_get(rootJ, "orderOp");
     if (val)
       order = json_integer_value(val);
+    val = json_object_get(rootJ, "allow0");
+    allow0 = val ? json_boolean_value(val) : false;
   }
 
 };
@@ -210,7 +242,7 @@ struct RecurseStereoWidget : VenomWidget {
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 10.9)));
     countDisplay->module = module;
     addChild(countDisplay);
-    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(18.134, 14.97)), module, RecurseStereo::COUNT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 14.97)), module, RecurseStereo::COUNT_PARAM));
     addInput(createInputCentered<PolyPort>(mm2px(Vec(7.299, 29.4)), module, RecurseStereo::SCALE_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 29.4)), module, RecurseStereo::SCALE_PARAM));
     addInput(createInputCentered<PolyPort>(mm2px(Vec(7.297, 43.85)), module, RecurseStereo::OFFSET_INPUT));
@@ -241,6 +273,7 @@ struct RecurseStereoWidget : VenomWidget {
       [=]() {return module->order;},
       [=](int i) {module->order = i;}
     ));
+    menu->addChild(createBoolPtrMenuItem("Allow 0 recursion", "", &module->allow0));
     VenomWidget::appendContextMenu(menu);
   }
 

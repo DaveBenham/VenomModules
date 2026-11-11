@@ -33,6 +33,7 @@ struct Recurse : VenomModule {
 
   int recurCount = 1;
   bool recurCountErr = false;
+  bool allow0 = true;
   int order = 0;
   int oldOrder = -1;
   
@@ -41,6 +42,21 @@ struct Recurse : VenomModule {
     PRE_START_N,
     POST_RETURN_N,
     POST_RETURN_1
+  };
+
+  float interpretRecurCount(float val) {
+    return std::round(allow0 ? (val-1.f)*16.f/15.f : val);
+  }
+
+  struct RecurQuantity : ParamQuantity {
+    float getDisplayValue() override {
+      Recurse* mod = reinterpret_cast<Recurse*>(this->module);
+      return mod->interpretRecurCount(getValue());
+    }
+    void setDisplayValue(float v) override {
+      Recurse* mod = reinterpret_cast<Recurse*>(this->module);
+      setValue(mod->allow0 ? (v*15.f/16.f)+1.f : v);
+    }
   };
 
   Recurse() {
@@ -58,7 +74,7 @@ struct Recurse : VenomModule {
       }
     };
     venomConfig(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-    configParam(COUNT_PARAM, 1.f, 16.f, 1.f, "Recursion Count", "");
+    configParam<RecurQuantity>(COUNT_PARAM, 1.f, 16.f, 1.f, "Recursion Count", "");
     configParam(SCALE_PARAM, -10.f, 10.f, 1.f, "Scale", "");
     configParam(OFFSET_PARAM, -10.f, 10.f, 0.f, "Offset", " V");
     configParam<TimingQuantity>(TIMING_PARAM, 0.f, 3.f, 0.f, "Modulation Timing", "");
@@ -80,44 +96,53 @@ struct Recurse : VenomModule {
 
   void process(const ProcessArgs& args) override {
     VenomModule::process(args);
-    recurCount = static_cast<int>(params[COUNT_PARAM].getValue());
-    int inChannels = std::max({1, inputs[IN_INPUT].getChannels()});
-    recurCountErr = (inChannels > 16 / recurCount);
-    int outChannels = recurCountErr ? 16 / recurCount : inChannels;
-    ModTiming timing = static_cast<ModTiming>(params[TIMING_PARAM].getValue());
-    float scaleParam = params[SCALE_PARAM].getValue();
-    float offsetParam = params[OFFSET_PARAM].getValue();
-    bool sendConnected = outputs[SEND_OUTPUT].isConnected();
-    bool returnConnected = inputs[RETURN_INPUT].isConnected();
-    bool mod = inputs[SCALE_INPUT].isConnected() || inputs[OFFSET_INPUT].isConnected() || scaleParam != 1.0f || offsetParam != 0.0f;
-    float scale = 0.f;
-    float offset = 0.f;
-    for (int c=0; c<outChannels; c++) {
-      float rtn = inputs[IN_INPUT].getVoltage(c);
-      if (mod) {
-        scale = inputs[SCALE_INPUT].getNormalPolyVoltage(1.0f, c) * scaleParam;
-        offset = inputs[OFFSET_INPUT].getNormalPolyVoltage(0.0f, c) + offsetParam;
-        if (timing == PRE_START_1)
+    int inChannels = inputs[IN_INPUT].getChannels();
+    recurCount = static_cast<int>(interpretRecurCount(params[COUNT_PARAM].getValue()));
+    if (recurCount) {
+      inChannels = std::max({1, inChannels});
+      recurCountErr = (inChannels > 16 / recurCount);
+      int outChannels = recurCountErr ? 16 / recurCount : inChannels;
+      ModTiming timing = static_cast<ModTiming>(params[TIMING_PARAM].getValue());
+      float scaleParam = params[SCALE_PARAM].getValue();
+      float offsetParam = params[OFFSET_PARAM].getValue();
+      bool sendConnected = outputs[SEND_OUTPUT].isConnected();
+      bool returnConnected = inputs[RETURN_INPUT].isConnected();
+      bool mod = inputs[SCALE_INPUT].isConnected() || inputs[OFFSET_INPUT].isConnected() || scaleParam != 1.0f || offsetParam != 0.0f;
+      float scale = 0.f;
+      float offset = 0.f;
+      for (int c=0; c<outChannels; c++) {
+        float rtn = inputs[IN_INPUT].getVoltage(c);
+        if (mod) {
+          scale = inputs[SCALE_INPUT].getNormalPolyVoltage(1.0f, c) * scaleParam;
+          offset = inputs[OFFSET_INPUT].getNormalPolyVoltage(0.0f, c) + offsetParam;
+          if (timing == PRE_START_1)
+            rtn = order==0 ? rtn * scale + offset : (rtn + offset) * scale;
+        }
+        for (int o=c*recurCount, end=o+recurCount; o<end; o++) {
+           if (mod && timing == PRE_START_N)
+             rtn = order==0 ? rtn * scale + offset : (rtn + offset) * scale;
+           if (sendConnected)
+             outputs[SEND_OUTPUT].setVoltage(rtn, o);
+           if (returnConnected)
+             rtn = inputs[RETURN_INPUT].getVoltage(o);
+           if (mod && timing == POST_RETURN_N)
+             rtn = order==0 ? rtn * scale + offset : (rtn + offset) * scale;
+        }
+        if (mod && timing == POST_RETURN_1)
           rtn = order==0 ? rtn * scale + offset : (rtn + offset) * scale;
+        outputs[OUT_OUTPUT].setVoltage(rtn, c);
       }
-      for (int o=c*recurCount, end=o+recurCount; o<end; o++) {
-         if (mod && timing == PRE_START_N)
-           rtn = order==0 ? rtn * scale + offset : (rtn + offset) * scale;
-         if (sendConnected)
-           outputs[SEND_OUTPUT].setVoltage(rtn, o);
-         if (returnConnected)
-           rtn = inputs[RETURN_INPUT].getVoltage(o);
-         if (mod && timing == POST_RETURN_N)
-           rtn = order==0 ? rtn * scale + offset : (rtn + offset) * scale;
-      }
-      if (mod && timing == POST_RETURN_1)
-        rtn = order==0 ? rtn * scale + offset : (rtn + offset) * scale;
-      outputs[OUT_OUTPUT].setVoltage(rtn, c);
+      for (int c=outChannels; c<inChannels; c++)
+        outputs[OUT_OUTPUT].setVoltage(0.0f, c);
+      outputs[SEND_OUTPUT].setChannels(outChannels * recurCount);
+      outputs[OUT_OUTPUT].setChannels(outChannels);
     }
-    for (int c=outChannels; c<inChannels; c++)
-      outputs[OUT_OUTPUT].setVoltage(0.0f, c);
-    outputs[SEND_OUTPUT].setChannels(outChannels * recurCount);
-    outputs[OUT_OUTPUT].setChannels(outChannels);
+    else {
+      recurCountErr = false;
+      outputs[OUT_OUTPUT].setChannels(inChannels);
+      outputs[OUT_OUTPUT].writeVoltages(inputs[IN_INPUT].getVoltages());
+      outputs[SEND_OUTPUT].setChannels(0);
+    }
 
     if (order != oldOrder) {
       oldOrder = order;
@@ -130,6 +155,7 @@ struct Recurse : VenomModule {
   json_t* dataToJson() override {
     json_t* rootJ = VenomModule::dataToJson();
     json_object_set_new(rootJ, "orderOp", json_integer(order));
+    json_object_set_new(rootJ, "allow0", json_boolean(allow0));
     return rootJ;
   }
 
@@ -138,6 +164,8 @@ struct Recurse : VenomModule {
     json_t* val = json_object_get(rootJ, "orderOp");
     if (val)
       order = json_integer_value(val);
+    val = json_object_get(rootJ, "allow0");
+    allow0 = val ? json_boolean_value(val) : false;
   }
 
 };
@@ -165,7 +193,7 @@ struct RecurseWidget : VenomWidget {
     CountDisplay* countDisplay = createWidget<CountDisplay>(mm2px(Vec(3.5, 39.8)));
     countDisplay->module = module;
     addChild(countDisplay);
-    addParam(createLockableParamCentered<RotarySwitch<RoundSmallBlackKnobLockable>>(mm2px(Vec(18.134, 43.87)), module, Recurse::COUNT_PARAM));
+    addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.134, 43.87)), module, Recurse::COUNT_PARAM));
     addInput(createInputCentered<PolyPort>(mm2px(Vec(7.299, 58.3)), module, Recurse::SCALE_INPUT));
     addParam(createLockableParamCentered<RoundSmallBlackKnobLockable>(mm2px(Vec(18.136, 58.3)), module, Recurse::SCALE_PARAM));
     addInput(createInputCentered<PolyPort>(mm2px(Vec(7.297, 72.75)), module, Recurse::OFFSET_INPUT));
@@ -191,6 +219,7 @@ struct RecurseWidget : VenomWidget {
       [=]() {return module->order;},
       [=](int i) {module->order = i;}
     ));
+    menu->addChild(createBoolPtrMenuItem("Allow 0 recursion", "", &module->allow0));
     VenomWidget::appendContextMenu(menu);
   }
 
