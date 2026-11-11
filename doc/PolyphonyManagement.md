@@ -385,6 +385,10 @@ Specifies how many recursion passes should be applied to each input channel. The
 
 The display is yellow if all input channels can recurse the requested number of times. The display is red if one or more input channels is dropped.
 
+The Recursion Count may range between 0 and 16. A count of 0 gives the same result as bypassing the module - all input channels are passed directly to the output and the Send output is monophonic 0 volts.
+
+If the "Allow 0 recursion" option in the module context menu is disabled then the minimum Recursion Count becomes 1. Patches created prior to Venom version 2.18 automatically disable the 0 recursion in order to preserve old behavior.
+
 ### Input and Output
 
 The Input is the signal to be recursively processed, and the result is sent to the Output. The number of output channels will match the input unless channels had to be dropped due to channel count limitations during send and return.
