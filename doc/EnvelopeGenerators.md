@@ -572,7 +572,7 @@ The LED light above and to the right of the port glows yellow when the stage is 
 The functions of the remaining stage knobs and inputs change depending on the chosen stage Action.
 
 ### Move, Rise, and Fall action controls
-<img src="EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="EnvelopeFactory_Move.png" width="75"/>  
+<img src="EnvelopeFactory_Move.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="EnvelopeFactory_Rise.png" width="75"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="EnvelopeFactory_Fall.png" width="75"/>  
 Rise and Fall are speciall cases of Move, so all three use the same controls.
 
 #### Time knob, CV input and attenuverter
