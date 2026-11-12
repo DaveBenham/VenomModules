@@ -1,8 +1,9 @@
-# [Venom Modules](README.md) Changelog
+# [Venom plugin](plugin.md) Changelog
 
 ## 2.18.0dev (????-??-??)
 ### Enhancements
-- Allow 0 recursive passes
+- Incorporate Venom documentation into the VCV Library
+- Allow 0 recursive passes (same as module bypass)
   - Recurse
   - Recurse Stereo
 - Add new Phase Threshold Soft Sync mode (generates subharmonics if follower is lower than leader)
