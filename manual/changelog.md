@@ -1,0 +1,536 @@
+# [Venom plugin](plugin.md) Changelog
+
+## 2.18.0dev (????-??-??)
+### Enhancements
+- Incorporate Venom documentation into the VCV Library
+- Allow 0 recursive passes (same as module bypass)
+  - Recurse
+  - Recurse Stereo
+- Add new Phase Threshold Soft Sync mode (generates subharmonics if follower is lower than leader)
+  - VCO Lab
+  - VCO Unit
+- Improve AC coupling CPU usage when oversampled and/or improve AC coupling behavior
+  - DASE
+  - Logic
+  - Mix 4
+  - Mix 4 Stereo
+  - Multimode Filter
+  - Octaver
+  - VCA Mix 4
+  - VCA Mix 4 Stereo
+  - VCO Lab
+  - VCO Unit
+  - Wave Mangler
+  - Wave Multiplier
+  - XM-OP
+
+## 2.17.6 (2026-09-18)
+### New Modules
+- Random
+
+### Enhancements
+- Envelope Factory 
+  - add "Fast gate triggers" option
+  - add new retrigger input mode: "CV change start or end"
+
+### Bug Fix
+- Repaired polyphonic EOC trigger in Envelope Factory
+- Fixed bug introduced in v2.16 that caused sporadic crashes when deleting Bay Input
+
+## 2.16.2 (2026-08-28)
+### New Modules
+- Bounded VCO
+- DASE (Dynamic Amplifying Shaping Envelope)
+- Envelope Factory
+- Linear Merge
+- Linear Merge Expander
+- Ratio
+- Spread Merge
+- Spread Merge Expander
+- Stereo Merge Split
+
+### Enhancements
+- Poly Mute
+  - Add "Exclusive pass" (radio button) Gate Mode option
+- VCO Lab and VCO Unit
+  - Exponential FM no longer disabled when in 0 Hz carrier mode. Only has effect if bias is non-zero.
+  - New Soft Sync gate mode. If enabled then high gate is reverse, low gate is forward, and hard sync no longer resets direction to forward.
+  - New sync threshold option with miniscule 0.1 mV hysteresis centered about 0 V.
+- XM-OP
+  - Added "High XM depth for FM & PM" context menu option: multiplies depth by 5
+- All modules
+  - Added "Restore all factory names" context menu option - restores both parameter and port names
+
+### Bug Fixes
+- Documentation was reorganized so that deep links from an external site now work properly. The documentation has become too large to put everything in one file.
+- VCO LAB & VCO UNIT: Fixed Bias frequency display. Used to be off by factor of 100.
+- SLEW: Fixed shape CV input names in hover text.
+- NORS_IQ: Fixed unit display for interval and scale root knobs.
+- Widget Menu Extender: No longer mistakenly adds context menu options to commercial Venom modules.
+- Bay modules: Removed allocation actions related to label propagation from the audio thread.
+- Removed allocation actions related to name and unit string manipulation from dsp thread for all modules. Affected modules:
+  - AD_ASR Envelope Generator
+  - Multimode Filter
+  - Mix modules Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+  - Non-Octave-Repeating Intervallic Quantizer
+  - VCO Lab
+  - VCO Unit
+  - XM-OP
+  - Widget Menu Extender
+
+## 2.15.0 (2026-04-18)
+### New Modules
+- Merge 4x2
+- Merge Split
+- Null Cable
+- Octaver
+- Poly Mute
+- Poly Prune
+- Rhythm Explorer CV Expander
+- Split 4x2
+
+### Enhancements
+- XM-OP
+  - Add context menu options for exponential level response and post level feedback so as to better replicate Bogaudio FM-OP sound
+- Rhythm Explorer
+  - External seed of 10 V forces use of internal random seed
+- Entire plugin
+  - Give consistent appearance to all LED lights
+  - Improve rendering of square switches
+
+### Bug Fixes
+- The Trig button on the Poly Sample & Hold Analog Shift Register was not working unless the top trigger input was patched
+- Fixed Poly Offset custom min/max restoration on patch load
+- Restore bypassed module parameter locks and custom defaults on load
+- Linear Beats Add left expander option sometimes misplaced the expander
+- Rhythm Explorer bar count now properly defaults to fixed 1/4 divisions with option for old behavior when 48 PPQN used 1/8 and 96 PPQN used 1/16. Old patches default to old behavior.
+
+## 2.14.5 (2025-12-16)
+### Enhancement
+- Multimode Filter
+  - New Spread direction Right Absolute in which the Cutoff Frequency knob and CV only applies to the left, and the Spread knob and CV becomes the right cutoff
+
+### Bug Fixes
+- Linear Beats All New mode was broken as per https://github.com/DaveBenham/VenomModules/issues/33
+- XM-OP would sometimes crash on patch load if quantize is off as per https://github.com/DaveBenham/VenomModules/issues/34
+
+## 2.14.2 (2025-12-06)
+### Enhancements
+- Multimode Filter
+  - Five new Morph modes
+    - BP <-> Notch
+    - Dry <-> Wet LP
+    - Dry <-> Wet HP
+    - Dry <-> Wet BP
+    - Dry <-> Wet Notch
+  - New input coupling option button
+    - DC (default) - old behavior
+    - AC - This can eliminate saturation asymmetry when the input has a DC offset
+  - New Gain VCA polarity option button
+    - Unipolar (default) - old behavior
+    - Bipolar - This can only have an effect with Gain CV
+  - Gain range extended to 10
+    - CV now scaled at 1 per Volt instead of 0.2 per Volt
+    - Effective gain now clamped to 0V - 10V or -10V - 10V, depending on VCA polarity
+    - This can be a breaking change for old patches with Gain CV
+- Wincomp
+  - Added context menu option to normal B input to the previous sample from the A input so Wincomp can function as a crude slope detector.
+
+### Bug Fix
+- Multimode Filter Notch output was sometimes inverted
+
+## 2.14.1 (2025-11-25)
+### New Module
+- Multimode Filter
+
+### Enhancements
+- AD/ASR Envelope Generator
+  - Added a Glacial speed with stage lengths as long as 48 minutes 
+- SLEW
+  - Added context menu to adjust sensitivity of oversampled slope detector
+- XM-OP
+  - Added a DC coupled FM option for XMod and Feedback
+  - Added options to apply envelope attenuation to CV instead of or in addition to the control knob
+  - Added button to enable or disable ratio quantization
+
+## 2.13.2 (2025-10-05)
+### New Modules
+- AD/ASR Envelope Generator
+- Slew
+- Wave Mangler
+- WinComp 2 + Logic
+- XM-OP
+
+### Enhancements
+- Benjolin Oscillator
+  - Add Rungler shift register LEDs
+- Clone Merge, Poly Clone, Poly Unison, Aux Clone
+  - Add option to group output channels by individual input channel (original behavior), or input set
+- Knob 5, Poly Offset
+  - New knob configuration options to set custom ranges and custom quantize intervals
+- Push 5
+  - New button configuration options to set custom on and off values.
+
+### Bug Fix for unpublished 2.13.1
+- Poly Offset was not properly restoring knob range on load
+
+## 2.12.3 (2025-06-05)
+### Enhancements
+- Cross Fade 3D and Pan 3D
+  - Added CV Scale context menu option for -200% to 200%. Allows +/- 5V bipolar sine or triangle CV to transistion to an extreme, hold, and then transition again, without requiring external amplification.
+- Knob 5
+  - Smooth response to knob change
+
+## 2.12.1 (2025-05-09)
+### New Modules
+- Cross Fade 3D
+- Pan 3D
+- Sphere To XYZ
+- Wave Multiplier
+
+### Enhancements
+- All modules with DC block options
+  - Improved the DC block algorithm to compensate for changes to overampling and or VCV sample rate (potential patch sound breaking change)
+- VCO Lab and VCO Unit
+  - Added a module context menu option to measure LFO frequency in BPM instead of Hz
+  - Added pseudo PWM shape modes to sine, triangle, and saw, as well as skew shape modes to sine and triangle.
+  - Added linear FM option to disable through-zero
+  - Added context menu option to set default audio rate oversampling
+  - Linear FM now sounds consistent as sample rate and/or oversample rate change (due to DC block improvement).
+- VCO Unit
+  - Shape mode now always has 8 options, regardless which waveform is selected. The square waveform rotates through the three modes to make 8. This change guarantees that cycling through all the waveform options will not change the shape mode for a particular waveform.
+- Poly Fade
+  - Added context menu option to disable output channel minimization
+- Poly Offset Quantize behavior
+  - Old behavior that quantizes the output no longer quantizes the offset knob displays
+  - Added new options to quantize the offset only, which does quantize the knob displays
+- Multi Merge
+  - Add context menu options to explicitly set the number of channels on inputs, overriding the actual input channel count.
+- Rhythm Explorer
+  - Added 96 ppqn clock option
+  - Added dotted rate options
+- Poly Unison
+  - Detune CV now scales 10V to match the detune knob range
+    - Old patches default to old behavior of V/Oct for Detune CV
+- Bay Modules better preserve links when performing duplication or copy/paste
+  - New behavior: Duplication of linked outputs where the input is missing from the selection attempt to establish the link to the original uncopied input
+  - Continued old behavior: Duplication of input/output pairs establish the link between the new copies
+
+### Bug Fix
+- WinComp
+  - Absolute value was applied to Tolerance input, but not the tolerance offset parameter
+  - Module now correctly sums the tolerance input with the offset before taking the absolute value
+
+### Additional Change
+- Mix 4, Mix 4 Stereo, VCA Mix 4, and VCA Mix 4 Stereo
+  - In the interest of avoiding memory allocation during the audio process, the Mix modules are now limited to a maximum of 16 expanders. Prior to v2.12 there was no limit.
+
+## 2.11.1 (2024-12-17)
+### Enhancements
+- All modules with oversampling options
+  - New context menu option to select the quality of the oversampling filters
+    - New patches default to 10th order (better)
+    - Pre-existing patches use 6th order
+- VCO Lab and VCO Unit
+  - Improved audio quality of square and saw waves with DPW anti-aliasing
+    - Added context menu option to disable DPW
+    - Pre-existing patches default to DPW disabled
+  - Added option to set the sync trigger thresholds
+    - Default continues to be 2V high, 0.2V low, which works for both unipolar and bipolar triggers
+    - 0V high, -2V low triggers at 0 crossing point, but only works with bipolar triggers
+  - Removed max frequency limit
+
+### Bug Fixes
+- VCA Mix 4 and VCA Mix 4 Stereo: Band limiting (oversampling) VCA Mode options were improperly implemented
+
+## 2.11.0 (2024-11-11)
+### New Modules
+- Wave Folder
+
+### Enhancements
+- Poly Fade
+  - Improved audio quality
+    - New phasor input slew rate parameter, defaults to off
+    - Removed audio pops when changing internal phasor direction
+    - Reduced audio pops when changing channels or start channel
+  - New context menu option to disable "Reset if direction off"
+  - ***(breaking change)*** Ping pong internal phasor rate is now 1/2 displayed rate to preserve constant rate of channel switching
+
+### Bug Fixes
+- Repaired default themes system that was broken in v2.4.1
+
+## 2.10.0 (2024-10-25)
+### New Modules
+- Mouse Pad
+- Poly Fade
+- Quad VC Polarizer
+- VCO Unit
+
+### Enhancements
+- Mix Pan Expander
+  - Add polyphony support to CV inputs
+- VCO Lab
+  - Add waveform morphing shape modes
+    - Sine: square <--> sine <--> saw
+    - Triangle: sine <--> triangle <--> square
+    - Square: triangle <--> square <--> saw
+    - Saw: square <--> saw <--> even
+  - Sum of Level parameter and Level CV now limited to 100%
+    - Module context option to disable Level limit
+    - Old patches default to unlimited
+  - Level CV can now be configured for unipolar or bipolar (ring mod) input
+    - Default is unipolar
+    - Old patches default to bipolar
+  - Level CV Ring Mod context menu option renamed VCA unity = 5V
+  - Square Full PWM shape option color changed from blue to orange to match new VCO Unit module
+
+### Bug Fixes
+- Bay Modules
+  - Fix crash on some platforms when a linked Bay Input is deleted.
+- Benjolin Gates Expander
+  - Fix LED gate indicators broken in v2.9.1
+- Bypass
+  - Trigger button did not work properly via PatchMaster control when in momentary mode. It now works properly as long as Trigger input not patched.
+- Mix 4 and VCA Mix 4
+  - Bug fix for Pre Offset when using the Mix Offset expander
+
+## 2.9.1 (2024-09-08)
+### Enhancements
+- Benjolin Oscillator
+  - Added menu option to configure Rungler DAC to use bits 6,7,8 as Rob Hordijk's original design instead of bits 2,4,7
+  - Significantly improved CPU usage of Volts and Gates expanders
+
+## 2.9.0 (2024-08-22)
+### New Modules
+- Benjolin Gates Expander
+- Benjolin Volts Expander
+- Thru
+
+### Enhancements
+- All Venom modules with expanders
+  - Added context menu options to add expanders
+- Mixers
+  - Added an extra clipping mode for saturation limiting at +/- 6V
+- Benjolin Oscillator
+  - Detune VCO 1 a tiny bit so PWM is not flat at initiation
+  - Add context menu option for unipolar clock input
+- VCO Lab
+  - Added shape mode options to Sin, Tri, and Saw waveforms
+  - Rearranged faceplate to be more logical
+  - Changed Sin, Tri, and Saw shape CV so 10 VPP covers full range, with option for old behavior
+  
+### Bug Fixes
+- VCO Lab
+  - Fix Polyphonic CV level when level input is monophonic
+- Logic
+  - Fix locking for reuse and operator parameters
+
+## 2.8.0 (2024-06-26)
+### New Modules
+- Bay Input
+- Bay Normal
+- Bay Output
+- Blocker
+- Bypass
+- VCO Lab
+
+### Enhancements
+- Benjolin Oscillator
+  - Minor reduction in CPU usage
+- Knob 5
+  - New quantize options: Off, Integers, Semitones
+  - New display unit options: Volts, Cents
+  - Reduced CPU usage
+- Linear Beats
+  - Save toggle CV context menu option with patch
+- Mix Aux Send Expander
+  - Add a chain option for use when VCA mixers are chained
+- Poly Offset
+  - New quantize options: Off, Integers, Semitones
+  - New display unit options: Volts, Cents
+  - BREAKING CHANGE: mono input now cloned to match selected channel count
+- Poly Scale
+  - New output channel count option
+  - Mono input cloned to match selected channel count
+- Shaped VCA
+  - Allow exponential shape output to be bipolar in bipolar VCA mode
+  - Added additional VCA modes to better work with +/- 5V inputs with shaping
+  - Changed Bias knob to bipolar +/- 5V instead of unipolar 0-5V
+  - Modified context menu options for backward compatibility
+
+### Bug Fixes
+- Benjolin
+  - Clamped the oscillator frequency to between ~0.03 Hz and ~12.5 kHz to prevent loss of output.
+- Mix Fade and Mix Fade 2
+  - Fixed range of level output to 0-10 V. Was erroneously 0-1 V.
+- VCA Mix 4 and VCA Mix 4 Stereo
+  - Fixed output polyphony for excluded inputs
+  - Fixed right chain input normalization to left chain input in the stereo version
+  - Fixed summing of polyphonic chain inputs to a single channel if in Unipolar Poly Sum mode
+- All modules that have an option for DC offset removal
+  - The old DC removal algorithm was failing on some machines, so it has been replaced by an entirely new algorithm
+  - This has the potential to alter the sound of older patches that use Venom DC offset removal
+
+## 2.7.0 (2024-03-11)
+### New Modules
+- Auxilliary Clone Expander
+- Multi Merge
+- Multi Split
+- Poly Offset
+- Poly Scale
+
+### Enhancements
+- Modified Clone Merge, Poly Clone, and Poly Unison to work with the Auxilliary Clone Expander
+
+### Bug Fixes
+- Fixed a bug with Venom expander modules. Prior to version 2.7, Venom expander modules could misbehave and possibly crash VCV Rack if an expander or base module was deleted.
+
+## 2.6.1 (2024-02-28)
+### Enhancements
+- Harmonic Quantizer: Add detune parameters
+- Parameter tooltips: Moved "locked" indicator from name to description
+- Port tooltips: Added normalled values to description
+- Light tooltips: Moved color key from name to description
+
+### Bug Fixes
+- Benjolin Oscillator: Fix CV1, CV2, Clock normalled values (were 20% of intended value), with option to use old behavior
+
+## 2.6.0 (2024-02-14)
+### New Modules
+- Benjolin Oscillator
+- Knob 5
+- Logic
+- NORSIQ Chord To Scale
+- Poly Sample & Hold Analog Shift Register
+- Push 5
+- Widget Menu Extender
+
+### Enhancements
+- Improved discrimination of DC offset removal by lowering cutoff frequency to 2 Hz
+- All Venom parameters and input/output ports have user configurable names (except Rhythm Explorer)
+
+### Bug Fixes
+- Fixed locked switch context menu
+  - Linear Beats Expander
+  - Reformation
+  - Shaped VCA
+- Rhythm Explorer - Fixed some polyphonic port displays
+
+## 2.5.0 (2023-11-22)
+### New Modules
+- Linear Beats
+- Linear Beats Expander
+- Mix Offset Expander
+- Mix Mute Expander
+- Mix Solo Expander
+- Mix Fade Expander
+- Mix Fade 2 Expander
+- Mix Pan Expander
+- Mix Aux Send Expander
+- Non-Octave Repeating Scale Intervallic Quantizer
+
+### Enhancements
+- Add hover help text to all LED lights.
+- All modules: Polyphonic ports now use brass cores, while monophonic ports use steel.
+- Shaped VCA:
+  - The response curve displayed range is now -100% exp to 100% log instead of -1 to 1
+  - Improved 4 quadrant logarithmic response with option for old behavior
+- Bernoulli Switch:
+  - Added "Normal Value" parameter that specifies what value is normaled to the A input, either the raw trig input, or the Schmitt trigger result
+  - Bernoulli Gate and Toggled Bernoulli Gate presets now send normaled Schmitt trigger gates instead of the the raw trigger input, so those modes now truly behave like the Mutable Instruments Branches.
+  - Increased anti-pop crossfade time from 2.5 msec to 10 msec.
+
+### Bug Fixes
+- Bernoulli Switch: Fixed a number of bugs dealing with polyphony
+- WinComp: Force minimum tolerance of 1e-6 (behind the scene) to account for limitations of float.
+  
+## 2.4.1 (2023-09-01)
+### Enhancements
+- Venom Default Dark Theme option has been added to all module context menus
+- Modules using default theme use normal default if VCV dark panel option is off, and dark default if VCV dark panel option is on
+- Added option to set custom default value for most parameters via parameter context menus
+- Presets now save and restore parameter lock and default value settings
+
+## 2.4.0 (2023-08-04)
+### New Module
+- Venom Blank
+
+### Enhancements
+- Rhythm Explorer: There are now options to select 24 or 48 PPQN input clocks, as well as options to set output gate widths to input clock width, 50% of division width, or 100% of division width.
+
+### Bug Fix
+- Rhythm Explorer: Fix initial load switch display when lock is active
+
+## 2.3.2 (2023-07-23)
+### New Module
+- Bernoulli Switch Expander
+
+## 2.3.0 (2023-07-03)
+### New Modules
+- Poly Unison
+- Reformation
+- Shaped VCA
+
+### Behavior Change
+- Bernoulli Switch: The B input now remains normalled to the A input when bypassed, which in turn can affect the bypassed B output.
+
+### Bug Fixes
+- HQ
+  - The selected channel for monitoring is now saved with the patch
+- Recurse Stereo
+  - Fixed Right Signal output label  
+- VCA Mix 4
+  - Excluded patched channel outputs no longer contribute to the polyphony count in the Mix output
+- VCA Mix 4 Stereo
+  - Excluded patched channel outputs no longer contribute to the polyphony count in the Mix output
+  - Fixed Right Mix output label
+
+## 2.2.0 (2023-04-24)
+### New Modules
+- Mix 4
+- Mix 4 Stereo
+- VCA Mix 4
+- VCA Mix 4 Stereo
+
+### Behavior Change
+- Recurse Stereo: The right input now remains normalled to the left input when bypassed, which in turn can affect the bypassed right output.
+
+### Enhancements
+- Each Venom plugin parameter (knob, switch, button, etc.) has been given context menu options to lock or unlock the parameter.
+- Each Venom plugin module has been given module context menu options to lock or unlock all parameters of that module instance.
+- The new parameter lock/unlock options do not apply to Rhythm Explorer as it already had its own parameter locking implementation.
+
+### Discontinued
+- Removed the hidden VCO that will never be released. When/if I do release a VCO, it will be entirely different code.
+
+## 2.1.4 (2023-03-20)
+### Enhancements
+- Bernoulli Switch
+  - Add anti-pop switching and oversampling options to the module context menu to better support audio output
+  - The A and B outputs now produce the same number of channels in all cases
+  - Add presets to emulate the four possible Mutable Instruments Branches configurations
+- WinComp
+  - Add oversampling module context menu options to better support audio output
+  - Move Absolute Value and Invert module context menu options to individual port context menus
+- Recurse and Recurse Stereo
+  - Show all normalled connections on faceplate
+- Rhythm Explorer
+  - Add "All - Reset" and "All - New" division modes. The "All - New" option enables creation of multiple rhythm generators that share a common clock, as well as shared  reset and dice triggers.
+  - Add Reset Timing context menu option
+  - Dice and Reset buttons now remain lit until they take effect
+  - Preserve seed between sessions
+  - User presets now preserve seed so entire pattern can be saved
+  - Cleanup run start behavior
+  - Update Vermona Random Rhythm factory preset to support two rhythm generators, like the Vermona.
+  - Round the square button corners
+
+## 2.0.1 (2023-02-12)
+### Initial release
+- Bernoulli Switch
+- Clone Merge
+- Harmonic Quantizer (HQ)
+- Poly Clone
+- Recurse
+- Recurse Stereo
+- Rhythm Explorer
+- WinComp
