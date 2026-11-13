@@ -68,12 +68,12 @@ By default, the Stage Amp VCA is unipolar, meaning any net amplification level l
 
 The Stage Amp CV port also has the context menu option to disable oversampling, with the LED above and to the right indicating oversampling state.
 
-***Actual stage folding formula***
+#### Actual stage folding formula
 
-*Without any stage amplification, the folding formula for each stage is V<sub>out</sub> = clip(V<sub>in</sub>) - (V<sub>in</sub> - clip(V<sub>in</sub>)), where clipping occurs at +/-5 volts.  
-This can be re-written as V<sub>out</sub> = 2 x clip(V<sub>in</sub>) - V<sub>in</sub>*
+Without any stage amplification, the folding formula for each stage is **V***out* **= clip( V***in* **) - (V***in* **- clip( V***in* **))**, where clipping occurs at +/-5 volts.  
+This can be re-written as **V***out* **= 2 x clip(V***in* **) - V***in*
 
-*The stage amplification is only applied to the clip expression as follows: V<sub>out</sub> = 2 x clip(V<sub>in</sub> x Amp<sub>stage</sub>) - V<sub>in</sub>*
+The stage amplification is only applied to the clip expression as follows: **V***out* **= 2 x clip( V***in* **x Amp***stage* **) - V***in*
 
 ### BIAS knob and CV input
 
