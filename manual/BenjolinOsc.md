@@ -129,7 +129,7 @@ A Benjolin should not self oscillate unless given feedback from the filter band 
 
 The patch below closely emulates the features of the Benjolin version 2 from After Later Audio. A version of the patch wired up to show a fun example sound is available at https://patchstorage.com/venom-2-14-3-all-venom-benjolin/.
 
-![Complete Benjolin patch example image](AllVenomBenjolin.png)
+![Complete Benjolin patch example image](images/AllVenomBenjolin.png)
 
 ### Standard Venom Context Menus
 [Venom Themes](plugin.md#themes), [Custom Names](plugin.md#custom-names), and [Parameter Locks and Custom Defaults](plugin.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
