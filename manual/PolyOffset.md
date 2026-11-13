@@ -35,7 +35,7 @@ If either **custom interval** option is chosen, then a **Custom quantize interva
 #### Display unit
 Determines how knob values are displayed and entered in knob context menu and hover text. Output values are always in Volts.
 - **Volts (V)** (default)
-- **Cents (&cent;)**
+- **Cents (¢)**
 
 ### Output polyphonic channel count
 By default the number of output channels matches the number of input channels. Knobs for channels above the output count are ignored.
