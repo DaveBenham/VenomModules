@@ -6,7 +6,7 @@ By default this module behaves the same as the Audible Instruments Quad VC Polar
 
 There are 4 independent module channels, each with an Input, Output, Level attenuverter, and Level CV with Level Amount attenuverter.
 
-The formula for the output is ***V<sub>out</sub> = V<sub>in</sub> x NetLevel%***, where ***NetLevel% = (Level% + V<sub>CV</sub>/V<sub>unity</sub> x CV%)***, clamped to +/- 200%
+The formula for the output is **V***out* **= V***in* **x NetLevel%**, where **NetLevel% = (Level% + V***cv* **/ V***unity* **x CV%)**, clamped to +/- 200%
 
 The input port is normalled to 5V, and the unity voltage is 5V. The way the math works, you can attenuate an input signal and add an offset by patching the input to the Level CV input, and leaving the Input port unpatched. The Level knob becomes the offset, and the CV Level knob the attenuator.
 
