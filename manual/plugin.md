@@ -155,7 +155,7 @@ Finally thanks to Ewan Hemingway. Through discussions and studying the Befaco Ev
 [Recurse Stereo](RecurseStereo.md)  
 [Reformation](Reformation.md)  
 [Rhythm Explorer](RhythmExplorer.md)  
-[REx CV Expander](REXCV.md)  
+[Rhythm Explorer CV Expander](REXCV.md)  
 [Shaped VCA](ShapedVCA.md)  
 [Slew](Slew.md)  
 [Sphere To XYZ](SphereToXYZ.md)  
