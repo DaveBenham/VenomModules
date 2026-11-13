@@ -1,5 +1,9 @@
 A single input is panned across eight outputs in three dimensional space. The output ports are placed at the vertices of a virtual cube. X, Y, and Z panner controls indepently pan the input between outputs on opposite faces of the cube. The panners function linearly in amplitude, ranging from 0% to 100%. The three orthogonal panners are multiplicative. When all three controls are at an extreme, 100% of the input is panned to a single output. When all three controls are at 50%, then each output receives 12.5% of the input. A final Level control can further attenuate the final outputs.
 
+Omri Cohen has produced an introductory video for Pan 3D as well as [Cross Fade 3D](CrossFade3D.md):
+
+https://www.youtube.com/watch?v=-kM_sOxuURI
+
 ### Polyphony
 Every input and output is fully polyphonic. The output channel count is the maximum channel count found across all inputs. Monophonic inputs are replicated to match the final output channel count. Polyphonic inputs with fewer channels use constant 0V for any missing channels.
 
