@@ -188,7 +188,7 @@ The Velocity level is sampled the instant the envelope is triggered and held con
 #### ENV (Envelope) output
 The envelope is still output at the same port as standard mode. However, the formula for the envelope is changed.
 
-***Final Envelope = Envelope% x Level% x Velocity%<sub>ResponseAdjusted</sub> x 10V***
+***Final Envelope = Envelope% x Level% x ResponseAdjustedVelocity% x 10V***
 
 #### VCA output
 This is the audio input after it has been attenuated by the envelope and VCA.
@@ -227,7 +227,7 @@ The LED light above and to the right of the port glows yellow when the stage is 
 The functions of the remaining stage knobs and inputs change depending on the chosen stage Action.
 
 ### Move, Rise, and Fall action controls
-![Move stage image](images/EnvelopeFactory_Move.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Rise stage image](images/EnvelopeFactory_Rise.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Fall stage image](images/EnvelopeFactory_Fall.png)  
+![Move stage image](images/EnvelopeFactory_Move.png) . ![Rise stage image](images/EnvelopeFactory_Rise.png) . ![Fall stage image](images/EnvelopeFactory_Fall.png)  
 Rise and Fall are speciall cases of Move, so all three use the same controls.
 
 #### Time knob, CV input and attenuverter
