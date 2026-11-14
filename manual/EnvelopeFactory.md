@@ -213,8 +213,8 @@ All forms of Move normally start at the current level when the stage is initiate
 Controls whether the stage length is impacted by the main Gate, and whether the envelope can be retriggered during the stage.
 
 - **Full** - The stage always runs to completion and then the envelope advances to the next stage. Retrigger is not allowed.
-- **RTrg (Retriggerable Full)** - The stage runs to completion and then the envelope advances to the next stage. However, the stage can be terminated prematurely by retriggering a new envelope. A retrigger happens when the Gate goes low before or during the stage, and then goes high during the RTrg stage.
-- **Gate (Gated)** - The stage is gated, meaning the stage runs to completion unless the main Gate goes low. When the main Gate goes low the envelope immediately proceeds to the next stage that is not Gated, or else terminates if none exists.
+- **RTrg (Retriggerable Full)** - The stage runs to completion and then the envelope advances to the next stage. However, the stage can be terminated prematurely by retriggering a new envelope. A retrigger happens when the gate goes low before or during the stage, and then goes high during the RTrg stage.
+- **Gate (Gated)** - The stage is gated, meaning the stage runs to completion unless the gate goes low. Upon completion the envelope advances to the next stage. If the gate goes low before completion then the envelope immediately proceeds to the next stage that is not gated, or else terminates if none exists.
 
 #### GATE output, trigger button, and LED light
 The stage gate output is high at 10V for as long as the stage is active, otherwise it is 0V.
