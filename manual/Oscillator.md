@@ -114,7 +114,7 @@ Below are the knob ranges by mode when the Octave is at 0. Note that the Octave 
 |Mode|Minimum|Default|Maximum|
 |---|---|---|---|
 |Audio frequency|16.352 Hz (C0)|261.63 Hz (C4)|4186 Hz (C8)|
-|Low frequency|0.125 Hz<br />(7.5 BPM)|2 Hz<br />(120 BPM)|32 Hz<br />(1920 BPM)|
+|Low frequency|0.125 Hz (7.5 BPM)|2 Hz (120 BPM)|32 Hz (1920 BPM)|
 |0 Hz carrier bias|-8 Hz|0 Hz|8 Hz|
 
 When in 0 Hz carrier mode, a 0 Hz bias produces a static linear FM sound. A non 0 bias provides a rhythmic motion to the sound - the higher the bias magnitude, the faster the rhythm.
