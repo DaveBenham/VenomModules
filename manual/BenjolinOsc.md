@@ -1,6 +1,6 @@
 A complex chaotic oscillator emulating the oscillator and rungler components of a Benjolin. It produces 7 outputs: two pairs of triangle and pulse waves with exponential FM, two varying width pulse outputs, and a stepped voltage output similar to a random sample & hold. Frequency range is very wide, from slow LFO rates to high audio rates. Connect a resonant filter with excellent ping characteristics, and you have a complete functional Benjolin.
 
-Also check out the premium [Venom Chaos Boxes Venjolin](https://github.com/DaveBenham/VenomPremium/blob/main/VenomChaosBoxes.md#venjolin) for a one module implementation of a complete Benjolin, including the filter.
+Also check out the premium Venom Chaos Boxes Venjolin for a one module implementation of a complete Benjolin, including the filter.
 
 The Benjolin was invented by Rob Hordijk in 2009. It is a non-traditional / experimental electronic musical instrument that uses a small number of simple circuits and a minimal number of knobs to create an astonishing range of sounds and patterns. Extensive use of feedback and cross-modulation makes the Benjolin a chaotic sound source, with the ability to create stable patterns as well.
 
