@@ -6,7 +6,7 @@ This is the documentation for the Venom plugin [version 2.17.6](changelog.md) co
 [Parameter Locks and Custom Defaults](#parameter-locks-and-custom-defaults)  
 [Venom Expander Modules](#venom-expander-modules)  
 [Anti-aliasing via oversampling](#anti-aliasing-via-oversampling)  
-[Acknowledgments](#acknowledgments)
+[Acknowledgments](#acknowledgments)  
 [Module List](#module-list)
 
 ## Color Coded Ports
