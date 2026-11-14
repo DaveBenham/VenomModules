@@ -179,57 +179,101 @@ The envelopes are output here. The small button beside the label configures the 
 Retrigger and ASR Rise behavior can be modified by patching one or more of the stage gate outputs into the TRIG and/or GATE inputs. These configurations take advantage of VCV's stackable input ports. Note that the patched stage output(s) must be configured to produce a gate for these configurations to work.
 
 #### Non-looping Mode 1
-- Feedback: None
+- Feedback: *None*
   - AD Trigger
-    - Rise To Full: Yes
-    - Rise Retrigger: No
-    - Sustain At Full: No*
-    - Fall Retrigger: From current
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *No*
+    - Sustain At Full: *No**
+    - Fall Retrigger: *From current*
   - ASR Gate
-    - Rise To Full: While gate high
-    - Sustain At Full: While gate high
-    - Fall Retrigger: From current
-- Feedback: Rise->Gate
+    - Rise To Full: *While gate high*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *From current*
+- Feedback: *Rise->Gate*
   - AD Trigger
-    - Rise To Full: Yes
-    - Rise Retrigger: No
-    - Sustain At Full: No*
-    - Fall Retrigger: From current
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *No*
+    - Sustain At Full: *No**
+    - Fall Retrigger: *From current*
   - ASR Gate
-    - Rise To Full: Yes
-    - Sustain At Full: While gate high
-    - Fall Retrigger: From current
-- Feedback: Rise->Trig, Fall->Trig
+    - Rise To Full: *Yes*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *From current*
+- Feedback: *Rise->Trig, Fall->Trig*
   - AD Trigger
-    - Rise To Full: Yes
-    - Rise Retrigger: No
-    - Sustain At Full: No*
-    - Fall Retrigger: No
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *No*
+    - Sustain At Full: *No**
+    - Fall Retrigger: *No*
   - ASR Gate
-    - Rise To Full: While gate high
-    - Sustain At Full: While gate high
-    - Fall Retrigger: No
-- Feedback: Rise->Gate, Sus->Trig, Fall->Trig
+    - Rise To Full: *While gate high*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *No*
+- Feedback: *Rise->Gate, Sus->Trig, Fall->Trig*
   - AD Trigger
-    - Rise To Full: Yes
-    - Rise Retrigger: No
-    - Sustain At Full: No*
-    - Fall Retrigger: No
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *No*
+    - Sustain At Full: *No**
+    - Fall Retrigger: *No*
   - ASR Gate
-    - Rise To Full: Yes
-    - Sustain At Full: While gate high
-    - Fall Retrigger: No
+    - Rise To Full: *Yes*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *No*
 
 \* An AD envelope will sustain 10V if a high GATE is received after the AD is triggered by TRIG  
 
 #### Non-looping Mode 2
-|Mode|Feedback|AD Trig<br />Rise<br />To Full|AD Trig<br />Rise<br />Retrigger|AD Trig<br />Sustain<br />At Full|AD Trig<br />Fall<br />Retrigger|ASR Gate<br />Rise<br />To Full|ASR Gate<br />Sustain<br />At Full|ASR Gate<br />Fall<br />Retrigger|
-|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-|2|None|Yes|From 0|No|From 0|While<br />gate<br />high|While<br />gate<br />high|From 0|
-|2|RISE->TRIG|Yes|No|No|From 0|While<br />gate<br />high|While<br />gate<br />high|From 0|
-|2|RISE->GATE|Yes|No|No|From 0|Yes|While<br />gate<br />high|From 0|
-|2|RISE->TRIG<br />SUS->TRIG<br />FALL->TRIG|Yes|No|No|No|While<br />gate<br />high|While<br />gate<br />high|No|
-|2|RISE->GATE<br />SUS->TRIG<br />FALL->TRIG|Yes|No|No|No|Yes|While<br />gate<br />high|No|
+
+- Feedback: *None*
+  - AD Trigger
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *From 0*
+    - Sustain At Full: *No*
+    - Fall Retrigger: *From 0*
+  - ASR Gate
+    - Rise To Full: *While gate high*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *From 0*
+- Feedback: *Rise->Trig*
+  - AD Trigger
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *No*
+    - Sustain At Full: *No*
+    - Fall Retrigger: *From 0*
+  - ASR Gate
+    - Rise To Full: *While gate high*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *From 0*
+- Feedback: *Rise->Gate*
+  - AD Trigger
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *No*
+    - Sustain At Full: *No*
+    - Fall Retrigger: *From 0*
+  - ASR Gate
+    - Rise To Full: *Yes*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *From 0*
+- Feedback: *Rise->Trig, Sus->Trig, Fall->Trig*
+  - AD Trigger
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *No*
+    - Sustain At Full: *No*
+    - Fall Retrigger: *No*
+  - ASR Gate
+    - Rise To Full: *While gate high*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *No*
+- Feedback: *Rise->Gate, Sus->Trig, Fall->Trig*
+  - AD Trigger
+    - Rise To Full: *Yes*
+    - Rise Retrigger: *No*
+    - Sustain At Full: *No*
+    - Fall Retrigger: *No*
+  - ASR Gate
+    - Rise To Full: *Yes*
+    - Sustain At Full: *While gate high*
+    - Fall Retrigger: *No*
 
 ### Timed gate generator
 
