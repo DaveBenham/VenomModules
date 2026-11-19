@@ -290,9 +290,7 @@ The attenuverted CV is scaled at 10% per volt and summed with the knob value to 
 
 ## *Stage timing details*
 
-Whenever a stage change is detected, then the current stage persists to the end of the sample, and the next scheduled stage doesn't begin until the subsequent sample. This means that every stage that is entered always lasts for at least one sample, even a stage with zero time. This also has important consequences for Sustain actions, making it possible for Sustain to be effectively used with all modes. Typical sustain behavior as with a traditional ADSR would use Gate mode. But Full mode can be used to create a step sequencer. Even a Retrig mode could be useful under really esoteric conditions.
-
-The exact behavior of a Sustain stage depends on the gate state upon stage entry, as well as the gate state from the previous sample prior to entry.
+Whenever a stage change is detected, then the current stage persists to the end of the sample, and the next scheduled stage doesn't begin until the subsequent sample. This means that every stage that is entered always lasts for at least one sample, even a stage with zero time. This also has important consequences for Sustain actions, making it possible for Sustain to be effectively used with all modes. The exact behavior of a Sustain stage depends on the gate state upon stage entry, as well as the gate state from the previous sample prior to entry.
 
 **Sustain behavior for each Mode**
 |Mode|Entry gate state|Prior gate state|Behavior|
@@ -304,6 +302,12 @@ The exact behavior of a Sustain stage depends on the gate state upon stage entry
 |RTrg|Low|High or Low|Sustain for one sample, then advance to next stage|
 |Gate|High|High or Low|Sustain until gate goes low, then advance to next ungated stage|
 |Gate|Low|High or Low|Sustain for one sample, then advance to next ungated stage|
+
+For typical sustain behavior like with a traditional ADSR you would use Gate mode.
+
+But a series of Sustain actions in Full mode can be used to create a step sequencer. Remember that a retrigger works by interrupting any high gate for 1 sample. So when a retrigger is received, the gate goes low for one sample, triggering the end of the current sustain stage. The next sustain stage begins on the next sample when the gate has gone high again. So the retrigger becomes the step sequencer clock.
+
+Sustain is not typically used with Retrigger mode, but if you think hard enough, you could probably come up with a scenario where it could be useful.
 
 ### Standard Venom Context Menus
 [Venom Themes](plugin.md#themes), [Custom Names](plugin.md#custom-names), and [Parameter Locks and Custom Defaults](plugin.md#parameter-locks-and-custom-defaults) are available via standard Venom context menus.
