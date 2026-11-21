@@ -11,7 +11,7 @@
   "manualUrl": "https://github.com/DaveBenham/VenomModules/blob/main/README.md",
   "sourceUrl": "https://github.com/DaveBenham/VenomModules",
   "donateUrl": "https://paypal.me/DaveBenhamMusic",
-  "changelogUrl": "https://github.com/DaveBenham/VenomModules/blob/main/changelog.md",
+  "changelogUrl": "https://github.com/DaveBenham/VenomModules/blob/main/manual/changelog.md",
   "modules": [
     {
       "slug": "AD_ASR",

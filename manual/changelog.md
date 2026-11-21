@@ -3,6 +3,9 @@
 ## 2.18.0dev (????-??-??)
 ### Enhancements
 - Incorporate Venom documentation into the VCV Library
+- XM-OP: 
+  - New option to double XMOD and Feedback CV so 10 volts peak to peak can cover entire depth and feedback knob range
+  - Clarified RM and AM behavior in documentation
 - Allow 0 recursive passes (same as module bypass)
   - Recurse
   - Recurse Stereo
@@ -24,6 +27,9 @@
   - Wave Multiplier
   - XM-OP
 
+### Bug Fix
+- XM-OP: Fixed envelope release profile when attack aborted prior to reaching sustain level
+
 ## 2.17.6 (2026-09-18)
 ### New Modules
 - Random
@@ -33,7 +39,7 @@
   - add "Fast gate triggers" option
   - add new retrigger input mode: "CV change start or end"
 
-### Bug Fix
+### Bug Fixes
 - Repaired polyphonic EOC trigger in Envelope Factory
 - Fixed bug introduced in v2.16 that caused sporadic crashes when deleting Bay Input
 
