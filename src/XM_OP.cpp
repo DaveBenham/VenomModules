@@ -97,7 +97,8 @@ struct XM_OP : VenomModule {
        first = true,
        expLvl = false,
        postLvlFdbk = false,
-       highDepth = false;
+       highDepth = false,
+       xmodFdbkCv2x = false;
   
   int wave = 0,
       xmType = 0,
@@ -202,28 +203,29 @@ struct XM_OP : VenomModule {
     return ((buffer[0] - buffer[1] - buffer[1] + buffer[2])*denInv + 1.f) / 2.f;
   }
   
-  void computeVal(float_4 &var, int envMode, float_4 &env, float paramVal, float cvAmt, int cvPort, int channel) {
+  void computeVal(float_4 &var, int envMode, float_4 &env, float paramVal, float cvAmt, int cvPort, int channel, bool cv2x=false) {
+    float cvDiv = cv2x ? 5.f : 10.f;
     switch (envMode) {
       case 0: // off
-        var = paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f;
+        var = paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/cvDiv;
         break;
       case 1: // knob only
-        var = (paramVal * env) + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f);
+        var = (paramVal * env) + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/cvDiv);
         break;
       case 2: // CV
-        var = paramVal + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f * env);
+        var = paramVal + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/cvDiv * env);
         break;
       case 3: // both
-        var = (paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f) * env;
+        var = (paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/cvDiv) * env;
         break;
       case 4: // knob inverted
-        var = (paramVal * (1.f - env)) + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f);
+        var = (paramVal * (1.f - env)) + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/cvDiv);
         break;
       case 5: // CV inverted
-        var = paramVal + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f * (1.f - env));
+        var = paramVal + (cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/cvDiv * (1.f - env));
         break;
       case 6: // both inverted
-        var = (paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/10.f) * (1.f - env);
+        var = (paramVal + cvAmt * inputs[cvPort].getPolyVoltageSimd<float_4>(channel)/cvDiv) * (1.f - env);
         break;
     }
   }
@@ -377,9 +379,9 @@ struct XM_OP : VenomModule {
       level = clamp(level);
       if (expLvl)
         level = pow(level,6);
-      computeVal(depth, depthEnv, envOut, depthParam, depthCVAmt, DEPTH_INPUT, c);
+      computeVal(depth, depthEnv, envOut, depthParam, depthCVAmt, DEPTH_INPUT, c, xmodFdbkCv2x);
       fmpmDepth = depth * (highDepth ? 5.f : 1.f);
-      computeVal(fdbk, fdbkEnv, envOut, fdbkParam, fdbkCVAmt, FDBK_INPUT, c);
+      computeVal(fdbk, fdbkEnv, envOut, fdbkParam, fdbkCVAmt, FDBK_INPUT, c, xmodFdbkCv2x);
       if (quantize)
         baseFreq += log2(fmax(round(multParam + rmod*10.f*multCVAmt), 1.f) / fmax(round(divParam + rmod*10.f*divCVAmt), 1.f));
       else
@@ -480,6 +482,7 @@ struct XM_OP : VenomModule {
     json_object_set_new(rootJ, "PostLvlFdbk", json_boolean(postLvlFdbk));
     json_object_set_new(rootJ, "cvEnvAvail", json_boolean(true));
     json_object_set_new(rootJ, "highDepth", json_boolean(highDepth));
+    json_object_set_new(rootJ, "xmodFdbkCv2x", json_boolean(xmodFdbkCv2x));
     return rootJ;
   }
 
@@ -492,6 +495,8 @@ struct XM_OP : VenomModule {
       postLvlFdbk = json_boolean_value(jval);
     if ((jval = json_object_get(rootJ, "highDepth")))
       highDepth = json_boolean_value(jval);
+    if ((jval = json_object_get(rootJ, "xmodFdbkCv2x")))
+      xmodFdbkCv2x = json_boolean_value(jval);
     int val;
     if (!json_object_get(rootJ, "cvEnvAvail")){
       if ((val=params[XM_TYPE_PARAM].getValue()))
@@ -663,6 +668,7 @@ struct XM_OPWidget : VenomWidget {
     menu->addChild(createBoolPtrMenuItem("Exponential level response", "", &module->expLvl));
     menu->addChild(createBoolPtrMenuItem("Post level feedback", "", &module->postLvlFdbk));
     menu->addChild(createBoolPtrMenuItem("High XM depth for FM & PM", "", &module->highDepth));
+    menu->addChild(createBoolPtrMenuItem("XMod & Fdbk CV 2x", "", &module->xmodFdbkCv2x));
     VenomWidget::appendContextMenu(menu);
   }
 };

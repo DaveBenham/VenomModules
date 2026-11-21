@@ -3,6 +3,9 @@
 ## 2.18.0dev (????-??-??)
 ### Enhancements
 - Incorporate Venom documentation into the VCV Library
+- XM-OP: 
+  - New option to double XMOD and Feedback CV so 10 volts peak to peak can cover entire depth and feedback knob range
+  - Clarified RM and AM behavior in documentation
 - Allow 0 recursive passes (same as module bypass)
   - Recurse
   - Recurse Stereo
