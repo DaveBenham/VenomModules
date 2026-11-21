@@ -1,4 +1,4 @@
-This is the documentation for the Venom plugin [version 2.17.6](changelog.md) containing free modules for VCV Rack. This page documents features that are common to all Venom modules. The [Module List](#module-list) at the end includes documentation links for every module in the plugin.
+This is the documentation for the Venom plugin [version 2.17.6](changelog.md) containing free modules for VCV Rack. This page documents features that are common to all Venom modules. The [Module List](#module-list) at the end includes documentation links for each individual module in the plugin.
 
 [Color Coded Ports](#color-coded-ports)  
 [Themes](#themes)  
@@ -13,8 +13,6 @@ This is the documentation for the Venom plugin [version 2.17.6](changelog.md) co
 All polyphonic ports use brass cores, while monophonic ports use steel cores.
 
 Input ports are on the base faceplate color, and output ports are on a contrasting background color.
-
-[Return to Table Of Contents](#venom)
 
 ## Themes
 The context menu of every module includes options to set the default theme and default dark theme for the Venom plugin, as well as a theme override for each module instance.
