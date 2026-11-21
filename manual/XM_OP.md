@@ -125,7 +125,9 @@ See [Level and Depth Modulation](#level-and-depth-modulation) for information on
 ### DEPTH (XMOD modulation depth) knob and CV input
 The knob and CV establish the depth of the XMod modulation. It ranges from -100% to 100%. The knob and CV value are summed. The type of modulation is controlled by the square **XMOD** button at the top.
 
-The FM and PM  depth scaling is fairly tame. A "High XM depth for FM & PM" context menu option exists that multiplies the depth by a factor of 5. This only applies to XM frequency and phase modulation.
+The FM and PM depth scaling is fairly tame. A "High XM depth for FM & PM" context menu option exists that multiplies the depth by a factor of 5. This only applies to XM frequency and phase modulation.
+
+RM and AM modulation is always computed at full value, and the depth controls a crossfade between the unmodulated and the modulated values. Negative depth inverts the modulator before applying RM or AM.
 
 See [Level and Depth Modulation](#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
@@ -134,6 +136,8 @@ The knob establishes the depth of the feedback modulation. It ranges from -100% 
 
 By default the feedback source is the raw internal waveform, before any Level is applied. The context menu "Post level feedback" option uses the internal waveform after the Level has been applied.
 
+RM and AM modulation is always computed at full value, and the feedback amount controls a crossfade between the unmodulated and the modulated values. Negative amounts invert the modulator before applying RM or AM.
+
 See [Level and Depth Modulation](#level-and-depth-modulation) for information on the associated Env button, CV input, and attenuverter.
 
 ### Level and Depth modulation
@@ -141,7 +145,9 @@ See [Level and Depth Modulation](#level-and-depth-modulation) for information on
 The Level, Depth, and Feedback controls each have an associated Envelope mode button above, and CV input below with attenuverter.
 
 #### CV input and attenuverter
-The CV input is scaled at 10% per volt. The value is attenuated and/or inverted by the small attenuverter knob, and the effective CV value is summed with the parent knob value. The final value is clamped to values between 0% and 100% for the Level. The final value is unconstrained for the XMod and Feedback depths.
+By default the CV input is scaled at 10% per volt. The value is attenuated and/or inverted by the small attenuverter knob, and the effective CV value is summed with the parent knob value. The final value is clamped to values between 0% and 100% for the Level. The final value is unconstrained for the XMod and Feedback depths.
+
+Since XMOD depth and Feedback amount knobs range between -100% and 100%, a standard 10Vpp (volts peak to peak) CV signal can only cover half the knob range. The "XMod & Fdbk CV 2x" context menu option doubles the CV intensity so 10Vpp can cover the full knob range.
 
 #### ENV (envelope mode) button
 Controls how the internal envelope further modulates the control
