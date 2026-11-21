@@ -361,7 +361,7 @@ struct XM_OP : VenomModule {
       envPhasor[s] = ifelse(newStage==stage[s], envPhasor[s],
                        ifelse(newStage==1.f, invNormSigmoid(envOut, shape),
                          ifelse((newStage==4.f) & (envOut<susLevel), invNormSigmoid((susLevel-envOut)/susLevel, shape), 0.f)));
-      relStart[s] = ifelse((newStage!=stage[s]) & (newStage==4.f), envOut, relStart[s]);
+      relStart[s] = ifelse((newStage!=stage[s]) & (newStage==4.f), ifelse(envOut<susLevel,susLevel,envOut), relStart[s]);
 
       float_4 baseFreq = inputs[VOCT_INPUT].getPolyVoltageSimd<float_4>(c)
                          + dtuneParam + rmod*dtuneCVAmt,

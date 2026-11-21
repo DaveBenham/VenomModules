@@ -24,6 +24,9 @@
   - Wave Multiplier
   - XM-OP
 
+### Bug Fix
+- XM-OP: Fixed envelope release profile when attack aborted prior to reaching sustain level
+
 ## 2.17.6 (2026-09-18)
 ### New Modules
 - Random
@@ -33,7 +36,7 @@
   - add "Fast gate triggers" option
   - add new retrigger input mode: "CV change start or end"
 
-### Bug Fix
+### Bug Fixes
 - Repaired polyphonic EOC trigger in Envelope Factory
 - Fixed bug introduced in v2.16 that caused sporadic crashes when deleting Bay Input
 
