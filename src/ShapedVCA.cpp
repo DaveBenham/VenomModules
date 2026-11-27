@@ -21,6 +21,7 @@ struct ShapedVCA : VenomModule {
     LEVEL_PARAM,
     BIAS_PARAM,
     CURVE_PARAM,
+    SH_PARAM,
     PARAMS_LEN
   };
   enum InputId {
@@ -39,7 +40,12 @@ struct ShapedVCA : VenomModule {
     LIGHTS_LEN
   };
 
-//  bool oldLog = false;
+  using float_4 = simd::float_4;
+  float_4 lSgnPrev[4]{},
+          rSgnPrev[4]{},
+          lGain[4]{},
+          rGain[4]{};
+
   int algo = 0; // 0 = properly scaled with bipolar exp, 1 = unscaled, unipolar exp, 2 = unscaled, unipolar exp and funky log
   int range = -1; // force initialization
   float levelOffset=0.f, levelOffsetVals[6] = {0.f, 0.f, 0.f, -1.f, -2.f, -10.f};
@@ -70,6 +76,7 @@ struct ShapedVCA : VenomModule {
     configInput(CURVE_INPUT, "Response curve");
     configInput(LEFT_INPUT, "Left")->description = "Normalled to 10 volts";
     configInput(RIGHT_INPUT, "Right")->description = "Normalled to left input";
+    configSwitch<FixedSwitchQuantity>(SH_PARAM, 0.f, 1.f, 0.f, "0 cross S&H", {"Off", "On"});
     configOutput(LEFT_OUTPUT, "Left");
     configOutput(RIGHT_OUTPUT, "Right");
     configSwitch<FixedSwitchQuantity>(OFFSET_PARAM, 0.f, 2.f, 0.f, "Output offset", {"None", "-5 V", "+5 V"});
@@ -123,7 +130,6 @@ struct ShapedVCA : VenomModule {
     float bias = params[BIAS_PARAM].getValue();
     float offset = offsetVals[static_cast<int>(params[OFFSET_PARAM].getValue())];
     int clip = static_cast<int>(params[CLIP_PARAM].getValue());
-    using float_4 = simd::float_4;
     float_4 leftIn[4], rightIn[4], levelIn[4], curveIn[4], gain, shape, leftOut[4], rightOut[4];
     bool leftInConnected = inputs[LEFT_INPUT].isConnected(),
          rightInConnected = inputs[RIGHT_INPUT].isConnected(),
@@ -132,7 +138,8 @@ struct ShapedVCA : VenomModule {
          leftOutConnected = outputs[LEFT_OUTPUT].isConnected(),
          rightOutConnected = outputs[RIGHT_OUTPUT].isConnected(),
          ringMod = (static_cast<int>(params[MODE_PARAM].getValue())%2),
-         half = params[MODE_PARAM].getValue()>1.5f;
+         half = params[MODE_PARAM].getValue()>1.5f,
+         sh = params[SH_PARAM].getValue();
 
     for( int o=0; o<oversample; o++){
       for( int s=0, c=0; s<simdCnt; s++, c+=4){
@@ -159,8 +166,20 @@ struct ShapedVCA : VenomModule {
             levelIn[s]*=2.f;
           gain = crossfade(levelIn[s], ifelse(shape>0.f, 11.f*levelIn[s]/(10.f*simd::abs(levelIn[s])+1.f), simd::sgn(levelIn[s])*simd::pow(levelIn[s],4)), ifelse(shape>0.f, shape, -shape));
         }
-        leftOut[s] = leftIn[s] * gain * level;
-        rightOut[s] = rightIn[s] * gain * level;
+        if (sh) {
+          float_4 lSgn = sgn(leftIn[s]),
+                  rSgn = sgn(rightIn[s]);
+          lGain[s] = ifelse(lSgnPrev[s]!=lSgn, gain, lGain[s]);
+          rGain[s] = ifelse(rSgnPrev[s]!=rSgn, gain, rGain[s]);
+          leftOut[s] = leftIn[s] * lGain[s] * level;
+          rightOut[s] = rightIn[s] * rGain[s] * level;
+          lSgnPrev[s] = lSgn;
+          rSgnPrev[s] = rSgn;
+        }
+        else {
+          leftOut[s] = leftIn[s] * gain * level;
+          rightOut[s] = rightIn[s] * gain * level;
+        }
         if (clip == HARD_CLIP){
           leftOut[s] = clamp(leftOut[s], -10.f, 10.f);
           rightOut[s] = clamp(rightOut[s], -10.f, 10.f);
@@ -250,6 +269,13 @@ struct ShapedVCAWidget : VenomWidget {
     }
   };
 
+  struct SHSwitch : GlowingSvgSwitchLockable {
+    SHSwitch() {
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallOffButtonSwitch.svg")));
+      addFrame(Svg::load(asset::plugin(pluginInstance,"res/smallYellowButtonSwitch.svg")));
+    }
+  };
+
   ShapedVCAWidget(ShapedVCA* module) {
     setModule(module);
     setVenomPanel("ShapedVCA");
@@ -264,6 +290,7 @@ struct ShapedVCAWidget : VenomWidget {
     addInput(createInputCentered<PolyPort>(Vec(22.5f,202.5f), module, ShapedVCA::CURVE_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(22.5f,240.f), module, ShapedVCA::LEFT_INPUT));
     addInput(createInputCentered<PolyPort>(Vec(22.5f,270.f), module, ShapedVCA::RIGHT_INPUT));
+    addParam(createLockableParamCentered<SHSwitch>(Vec(37.531f,257.013f), module, ShapedVCA::SH_PARAM));
     addOutput(createOutputCentered<PolyPort>(Vec(22.5f,309.f), module, ShapedVCA::LEFT_OUTPUT));
     addOutput(createOutputCentered<PolyPort>(Vec(22.5f,339.f), module, ShapedVCA::RIGHT_OUTPUT));
     addParam(createLockableParamCentered<OffsetSwitch>(Vec(37.531f,326.013f), module, ShapedVCA::OFFSET_PARAM));

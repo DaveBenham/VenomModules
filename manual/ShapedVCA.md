@@ -93,6 +93,11 @@ Note that the Intermediate and Original options have no effect if using 0-5V uni
 
 The Right input is normaled to the Left input. The Left input is normaled to 10V so that Shaped VCA without any patched inputs can function as a constant CV source with the Level knob setting the value. The 10V normaled input is also convenient for using Shaped VCA as a waveshaper for the Level input.
 
+### S&H (0 crossing sample & hold) button adjacent to input ports
+If enabled (yellow) then the VCA gain is only updated when the left and right input signals cross 0V. This is applied independently for each polyphonic channel of both the left and right inputs. The purpose is to avoid clicks when using level envelopes with extremely steep attack and/or decay.
+
+This option should only be used with bipolar inputs.
+
 ### Left and Right outputs
 
 After applying the effective gain to the inputs, the final result is sent to the Left and Right outputs.

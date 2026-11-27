@@ -1,8 +1,10 @@
 # [Venom plugin](plugin.md) Changelog
 
-## 2.18.0dev (????-??-??)
+## 2.18.0 (????-??-??)
 ### Enhancements
 - Incorporate Venom documentation into the VCV Library
+- Shaped VCA:
+  - Add 0 crossing sample & hold mode for clickless operation with sharp attacks and/or cutoffs
 - XM-OP: 
   - New option to double XMOD and Feedback CV so 10 volts peak to peak can cover entire depth and feedback knob range
   - Clarified RM and AM behavior in documentation
